@@ -155,15 +155,6 @@ td.num {
   font-weight: 600;
 }
 
-svg {
-  width: 100%;
-  height: 390px;
-  display: block;
-  background: #fbfcfd;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-
 .plotly-panel {
   width: 100%;
   height: 440px;
