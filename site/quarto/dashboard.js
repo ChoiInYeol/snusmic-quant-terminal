@@ -17,7 +17,7 @@ const plotBaseLayout = {
 async function loadJson(path) {
   const candidates = [`data/${path}`, `../data/${path}`];
   for (const candidate of candidates) {
-    const response = await fetch(candidate);
+    const response = await fetch(`${candidate}?v=${Date.now()}`, { cache: "no-store" });
     if (response.ok) return response.json();
   }
   return [];
