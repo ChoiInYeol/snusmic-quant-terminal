@@ -29,8 +29,8 @@ def sample_report():
 def test_build_report_rows_includes_googlefinance_formulas():
     rows = build_report_rows([sample_report()])
 
-    assert rows[1][15] == '=IFERROR(GOOGLEFINANCE($H2,"price"),"")'
-    assert rows[1][16] == '=IF(OR($M2="",$P2=""),"",$M2/$P2-1)'
+    assert rows[1][16] == '=IFERROR(GOOGLEFINANCE($H2,"price"),"")'
+    assert rows[1][17] == '=IF(OR($M2="",$Q2=""),"",$M2/$Q2-1)'
 
 
 def test_build_payload_has_three_tabs():

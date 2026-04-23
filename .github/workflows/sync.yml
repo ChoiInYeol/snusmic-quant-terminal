@@ -6,24 +6,71 @@ on:
       pages:
         description: "SNUSMIC research pages to sync"
         required: false
-        default: "1-5"
+        default: "1-7"
       enable_hybrid_ocr:
         description: "Start OpenDataLoader hybrid OCR backend"
         required: false
         default: "false"
+      force_full:
+        description: "Run even when no new report is detected"
+        required: false
+        default: "true"
   schedule:
     - cron: "30 23 * * *"
+    - cron: "0 11 * * *"
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  sync:
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.decide.outputs.should_run }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Detect new page-one reports
+        id: detect
+        if: github.event_name == 'schedule'
+        run: |
+          PYTHONPATH=src python - <<'PY' >> "$GITHUB_OUTPUT"
+          from pathlib import Path
+          from snusmic_pipeline.change_detection import new_report_urls
+          urls = new_report_urls(Path("data/manifest.json"))
+          print(f"has_new={'true' if urls else 'false'}")
+          print("new_urls<<EOF")
+          for url in urls:
+              print(url)
+          print("EOF")
+          PY
+
+      - name: Decide whether to run full sync
+        id: decide
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "should_run=${{ github.event.inputs.force_full || 'true' }}" >> "$GITHUB_OUTPUT"
+          elif [ "${{ steps.detect.outputs.has_new }}" = "true" ]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "No new reports on page one; skipping heavy sync."
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  sync:
+    needs: check
+    if: needs.check.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     env:
       GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
       GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
-      PAGES: ${{ github.event.inputs.pages || '1-5' }}
+      PAGES: ${{ github.event.inputs.pages || '1-7' }}
       ENABLE_HYBRID_OCR: ${{ github.event.inputs.enable_hybrid_ocr || 'false' }}
     steps:
       - name: Check out repository
@@ -69,14 +116,29 @@ jobs:
             uv run python -m snusmic_pipeline sync --pages "$PAGES"
           fi
 
+      - name: Build GitHub Pages site
+        run: uv run python -m snusmic_pipeline build-site
+
       - name: Commit data updates
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/manifest.json data/extracted_reports.csv data/pdfs
+          git add data/manifest.json data/extracted_reports.csv data/price_metrics.json data/portfolio_backtests.json data/pdfs
           if git diff --cached --quiet; then
             echo "No data changes to commit"
           else
             git commit -m "Refresh SNUSMIC report data"
             git push
           fi
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site/public
+
+      - name: Deploy Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

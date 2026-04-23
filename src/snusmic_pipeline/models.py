@@ -37,6 +37,7 @@ class ExtractedReport:
     base_target: float | None = None
     bull_target: float | None = None
     target_currency: str = ""
+    investment_points: str = ""
     extraction_status: str = "pending"
     note: str = ""
     raw_matches: dict[str, str] = field(default_factory=dict)

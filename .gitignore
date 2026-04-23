@@ -10,3 +10,4 @@ venv/
 *.tmp
 .DS_Store
 data/opendataloader/
+site/public/

@@ -1,4 +1,5 @@
 from snusmic_pipeline.fetch_index import clean_html_text, fetch_reports, parse_pages
+from snusmic_pipeline.cli import build_parser
 
 
 class FakeResponse:
@@ -24,6 +25,13 @@ class FakeSession:
 
 def test_parse_pages_range_and_list():
     assert parse_pages("1-3,5") == [1, 2, 3, 5]
+
+
+def test_sync_default_pages_is_one_to_seven():
+    parser = build_parser()
+    args = parser.parse_args(["sync", "--skip-sheet", "--no-market-data"])
+
+    assert args.pages == "1-7"
 
 
 def test_clean_html_text_unescapes_entities():

@@ -3,20 +3,44 @@ from __future__ import annotations
 import hashlib
 import re
 from pathlib import Path
+from urllib.parse import unquote
 
 import requests
 
 from .fetch_index import DEFAULT_TIMEOUT
 from .models import DownloadedPdf, ReportMeta
 
-_SAFE_FILENAME_RE = re.compile(r"[^A-Za-z0-9._%-]+")
+_SAFE_FILENAME_RE = re.compile(r"[\\/:*?\"<>|]+")
+_LEGACY_SAFE_FILENAME_RE = re.compile(r"[^A-Za-z0-9._%-]+")
 
 
 def safe_pdf_filename(meta: ReportMeta) -> str:
     date = (meta.date or "unknown")[:10]
-    slug = meta.slug or hashlib.sha256(meta.pdf_url.encode("utf-8")).hexdigest()[:16]
-    safe_slug = _SAFE_FILENAME_RE.sub("-", slug).strip(".-") or "report"
+    slug = unquote(meta.slug or hashlib.sha256(meta.pdf_url.encode("utf-8")).hexdigest()[:16])
+    safe_slug = _SAFE_FILENAME_RE.sub("-", slug).strip(".- ") or "report"
     return f"{date}_{safe_slug}.pdf"
+
+
+def legacy_pdf_filename(meta: ReportMeta) -> str:
+    date = (meta.date or "unknown")[:10]
+    slug = meta.slug or hashlib.sha256(meta.pdf_url.encode("utf-8")).hexdigest()[:16]
+    safe_slug = _LEGACY_SAFE_FILENAME_RE.sub("-", slug).strip(".-") or "report"
+    return f"{date}_{safe_slug}.pdf"
+
+
+def migrate_legacy_pdf_name(meta: ReportMeta, pdf_dir: Path) -> Path | None:
+    target = pdf_dir / safe_pdf_filename(meta)
+    legacy = pdf_dir / legacy_pdf_filename(meta)
+    if target == legacy:
+        return target if target.exists() else None
+    if target.exists():
+        if legacy.exists():
+            legacy.unlink()
+        return target
+    if legacy.exists():
+        legacy.rename(target)
+        return target
+    return None
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -39,6 +63,9 @@ def download_pdf(
 ) -> DownloadedPdf:
     pdf_dir.mkdir(parents=True, exist_ok=True)
     target = pdf_dir / safe_pdf_filename(meta)
+    migrated = migrate_legacy_pdf_name(meta, pdf_dir)
+    if migrated:
+        target = migrated
     if not meta.pdf_url:
         return DownloadedPdf(meta=meta, path=None, sha256=None, status="missing_pdf_url", note="No PDF URL in post content")
 

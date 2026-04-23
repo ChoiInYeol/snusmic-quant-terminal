@@ -13,6 +13,9 @@ from .extract_pdf import extract_report
 from .fetch_index import fetch_reports, parse_pages
 from .models import DownloadedPdf, ExtractedReport
 from .opendataloader_fallback import OpenDataLoaderUnavailable, convert_pdfs_to_markdown
+from .quant import compute_portfolio_backtests, compute_price_metrics, dataclass_rows
+from .change_detection import new_report_urls
+from .site_builder import build_site
 from .sheet_sync import build_payload, sync_google_sheet
 
 
@@ -29,6 +32,11 @@ def write_manifest(downloads: list[DownloadedPdf], path: Path) -> None:
         item = asdict(download.meta)
         item.update({"pdf_path": str(download.path) if download.path else "", "sha256": download.sha256, "download_status": download.status, "download_note": download.note})
         data.append(item)
+    path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=_json_default) + "\n", encoding="utf-8")
+
+
+def write_json(path: Path, data: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=_json_default) + "\n", encoding="utf-8")
 
 
@@ -82,6 +90,7 @@ def apply_opendataloader_fallback(
             report.base_target = parsed["base_target"]  # type: ignore[assignment]
             report.bull_target = parsed["bull_target"]  # type: ignore[assignment]
             report.target_currency = str(parsed["target_currency"])
+            report.investment_points = str(parsed["investment_points"])
             report.extraction_status = str(parsed["status"])
             note = str(parsed["note"])
             report.note = f"OpenDataLoader fallback; {note}".strip("; ")
@@ -109,6 +118,15 @@ def run_sync(args: argparse.Namespace) -> int:
 
     write_manifest(downloads, data_dir / "manifest.json")
     write_csv(extracted, data_dir / "extracted_reports.csv")
+    if args.market_data:
+        price_metrics = compute_price_metrics(extracted)
+        portfolio_backtests = compute_portfolio_backtests(extracted, price_metrics)
+    else:
+        price_metrics = []
+        portfolio_backtests = []
+        logs.append("Market data skipped by --no-market-data")
+    write_json(data_dir / "price_metrics.json", dataclass_rows(price_metrics))
+    write_json(data_dir / "portfolio_backtests.json", dataclass_rows(portfolio_backtests))
 
     payload = build_payload(extracted, page_counts(extracted), logs)
     sheet_id = args.sheet_id or os.environ.get("GOOGLE_SHEET_ID", "")
@@ -128,12 +146,30 @@ def run_sync(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_check_new(args: argparse.Namespace) -> int:
+    urls = new_report_urls(Path(args.manifest))
+    has_new = bool(urls)
+    print("has_new=true" if has_new else "has_new=false")
+    for url in urls:
+        print(url)
+    if args.github_output:
+        with Path(args.github_output).open("a", encoding="utf-8") as handle:
+            handle.write(f"has_new={'true' if has_new else 'false'}\n")
+    return 0
+
+
+def run_build_site(args: argparse.Namespace) -> int:
+    build_site(Path(args.data_dir), Path(args.public_dir))
+    print(f"Built site at {args.public_dir}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Collect SNUSMIC PDFs and sync Google Sheets.")
     subparsers = parser.add_subparsers(dest="command")
 
     sync = subparsers.add_parser("sync", help="Fetch reports, download PDFs, extract rows, and optionally sync Sheets.")
-    sync.add_argument("--pages", default="1-5", help="Page range/list, for example 1-5 or 1,3,5.")
+    sync.add_argument("--pages", default="1-7", help="Page range/list, for example 1-7 or 1,3,5.")
     sync.add_argument("--data-dir", default="data", help="Output data directory.")
     sync.add_argument("--sheet-id", default="", help="Google Sheets spreadsheet id. Defaults to GOOGLE_SHEET_ID.")
     sync.add_argument("--skip-sheet", action="store_true", help="Only write local PDF/CSV/manifest outputs.")
@@ -142,7 +178,18 @@ def build_parser() -> argparse.ArgumentParser:
     sync.add_argument("--opendataloader-fallback", action=argparse.BooleanOptionalAction, default=True, help="Use opendataloader-pdf for reports that pypdf cannot parse cleanly.")
     sync.add_argument("--opendataloader-output-dir", default="data/opendataloader", help="OpenDataLoader markdown output directory.")
     sync.add_argument("--opendataloader-hybrid", default=os.environ.get("OPENDATALOADER_HYBRID", ""), help="Optional OpenDataLoader hybrid mode, for example docling-fast.")
+    sync.add_argument("--market-data", action=argparse.BooleanOptionalAction, default=True, help="Fetch yfinance data and compute return/portfolio metrics.")
     sync.set_defaults(func=run_sync)
+
+    check_new = subparsers.add_parser("check-new", help="Check page one for new reports before running a heavy sync.")
+    check_new.add_argument("--manifest", default="data/manifest.json")
+    check_new.add_argument("--github-output", default="")
+    check_new.set_defaults(func=run_check_new)
+
+    build_site_parser = subparsers.add_parser("build-site", help="Build the GitHub Pages static dashboard.")
+    build_site_parser.add_argument("--data-dir", default="data")
+    build_site_parser.add_argument("--public-dir", default="site/public")
+    build_site_parser.set_defaults(func=run_build_site)
     return parser
 
 

@@ -10,10 +10,22 @@ from .models import DownloadedPdf, ExtractedReport
 _TICKER_RE = re.compile(r"\(([A-Z0-9]{1,10})\)")
 _TITLE_TICKER_RE = re.compile(r"([A-Z]{1,6})\s*(?:US\s*)?(?:Equity|NASDAQ|NYSE|TSE|TYO)", re.IGNORECASE)
 _CURRENT_PRICE_RE = re.compile(r"현재\s*주가\s*[:：]?\s*([$₩]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)", re.IGNORECASE)
-_TARGET_PRICE_RE = re.compile(r"목표\s*주가\s*[:：]?\s*([$₩]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)", re.IGNORECASE)
+_TARGET_PRICE_RE = re.compile(r"목표\s*주가\s*[:：]?\s*([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)", re.IGNORECASE)
+_PRE_TARGET_PRICE_RE = re.compile(
+    r"([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)[ \t]*원?[을를]?[ \t]*(?:[A-Za-z]+[ \t]+case[ \t]+)?목표[ \t]*주가",
+    re.IGNORECASE,
+)
+_EN_TARGET_PRICE_RE = re.compile(
+    r"(?:target\s+price|price\s+target|fair\s+value|목표\s*주가)[^0-9$₩¥]{0,80}([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)",
+    re.IGNORECASE,
+)
 _SCENARIO_RE = re.compile(
     r"\b(Bear|Base|Bull)\b[^0-9$₩]{0,80}([$₩]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)",
     re.IGNORECASE,
+)
+_INVESTMENT_SECTION_RE = re.compile(
+    r"(투자포인트|Investment\s+Point|Investment\s+points|Key\s+Points|Why\s+invest|Valuation)\s*[:：]?\s*(.{80,900})",
+    re.IGNORECASE | re.DOTALL,
 )
 
 KNOWN_EXCHANGES = {
@@ -31,10 +43,15 @@ KNOWN_EXCHANGES = {
     "SRAD": "NASDAQ",
     "TEM": "NASDAQ",
     "CLBT": "NASDAQ",
+    "ISRG": "NASDAQ",
+    "PLTR": "NASDAQ",
+    "FLNC": "NASDAQ",
+    "LEU": "NYSE",
     "6857": "TYO",
     "4680": "TYO",
     "5253": "TYO",
     "2124": "TYO",
+    "5726": "TYO",
     "GRND": "NYSE",
     "FNKO": "NASDAQ",
     "LEVI": "NYSE",
@@ -62,23 +79,55 @@ KNOWN_COMPANY_TICKERS = {
     "Grindr Inc.": "GRND",
     "Funko Inc.": "FNKO",
     "Levi Strauss & Co": "LEVI",
+    "Intuitive Surgical": "ISRG",
+    "OSAKA Titanium Technologies Co.,Ltd.": "5726",
+    "Palantir Technologies Inc.": "PLTR",
+    "Fluence Energy Inc.": "FLNC",
+    "Centrus Energy Corp": "LEU",
 }
 
 
 def parse_money(value: str | None) -> float | None:
     if not value:
         return None
-    cleaned = value.replace("$", "").replace("₩", "").replace(",", "").strip()
+    cleaned = value.replace("$", "").replace("₩", "").replace("¥", "").replace(",", "").strip()
     try:
         return float(cleaned)
     except ValueError:
         return None
 
 
+def compact_text(value: str) -> str:
+    return re.sub(r"\s+", " ", value).strip()
+
+
+def extract_investment_points(text: str) -> str:
+    search_area = text[:12000]
+    match = _INVESTMENT_SECTION_RE.search(search_area)
+    if match:
+        snippet = compact_text(match.group(2))
+    else:
+        paragraphs = [compact_text(part) for part in re.split(r"\n\s*\n", text[:5000]) if len(compact_text(part)) >= 80]
+        snippet = paragraphs[1] if len(paragraphs) > 1 else (paragraphs[0] if paragraphs else "")
+    if len(snippet) > 420:
+        snippet = snippet[:417].rstrip() + "..."
+    return snippet
+
+
 def extract_text_from_pdf(path: Path, max_pages: int | None = None) -> str:
     reader = PdfReader(str(path))
     pages = reader.pages[:max_pages] if max_pages else reader.pages
     return "\n".join(page.extract_text() or "" for page in pages)
+
+
+def target_price_from_text(text: str) -> tuple[float | None, str]:
+    for pattern in [_PRE_TARGET_PRICE_RE, _TARGET_PRICE_RE, _EN_TARGET_PRICE_RE]:
+        match = pattern.search(text)
+        if match:
+            value = parse_money(match.group(1))
+            if value is not None:
+                return value, match.group(0)
+    return None, ""
 
 
 def ticker_from_text(text: str, fallback_company: str = "") -> str:
@@ -115,7 +164,7 @@ def infer_currency(text: str, ticker: str) -> str:
     first_page = text[:3000]
     if "$" in first_page or "USD" in first_page.upper():
         return "USD"
-    if ticker in {"6857", "4680", "5253", "2124"}:
+    if ticker in {"6857", "4680", "5253", "2124", "5726"}:
         return "JPY"
     return "USD"
 
@@ -123,7 +172,7 @@ def infer_currency(text: str, ticker: str) -> str:
 def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object]:
     ticker = ticker_from_text(text, fallback_company=fallback_company)
     current_match = _CURRENT_PRICE_RE.search(text)
-    target_match = _TARGET_PRICE_RE.search(text)
+    single_target, target_raw = target_price_from_text(text)
 
     scenario_values: dict[str, float] = {}
     for match in _SCENARIO_RE.finditer(text[:15000]):
@@ -133,8 +182,13 @@ def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object
             if value is not None:
                 scenario_values[scenario] = value
 
-    single_target = parse_money(target_match.group(1)) if target_match else None
     base_target = scenario_values.get("base", single_target)
+    if single_target is not None and (
+        "base" in target_raw.lower()
+        or base_target is None
+        or (single_target > 1000 and base_target < single_target * 0.2)
+    ):
+        base_target = single_target
     exchange, googlefinance_symbol, exchange_note = infer_exchange_and_symbol(ticker)
     notes = []
     if exchange_note:
@@ -153,12 +207,13 @@ def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object
         "base_target": base_target,
         "bull_target": scenario_values.get("bull"),
         "target_currency": infer_currency(text, ticker),
+        "investment_points": extract_investment_points(text),
         "status": "ok" if ticker and base_target is not None else "needs_review",
         "note": "; ".join(notes),
         "raw_matches": {
             "company": fallback_company,
             "current_price": current_match.group(0) if current_match else "",
-            "target_price": target_match.group(0) if target_match else "",
+            "target_price": target_raw,
         },
     }
 
@@ -185,6 +240,7 @@ def extract_report(download: DownloadedPdf, max_pages: int = 4) -> ExtractedRepo
     report.base_target = parsed["base_target"]  # type: ignore[assignment]
     report.bull_target = parsed["bull_target"]  # type: ignore[assignment]
     report.target_currency = str(parsed["target_currency"])
+    report.investment_points = str(parsed["investment_points"])
     report.extraction_status = str(parsed["status"])
     report.note = str(parsed["note"])
     report.raw_matches = parsed["raw_matches"]  # type: ignore[assignment]

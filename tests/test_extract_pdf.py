@@ -48,3 +48,11 @@ def test_known_overseas_company_mapping_beats_noisy_parentheses():
     assert parsed["exchange"] == "TYO"
     assert parsed["googlefinance_symbol"] == "TYO:2124"
     assert parsed["target_currency"] == "JPY"
+
+
+def test_target_price_before_korean_label_beats_following_year_noise():
+    text = "8,100원을 Base case 목표주가로 제시한다. 동사는 22년 코스닥으로 이전 상장했다."
+
+    parsed = parse_report_text(text, fallback_company="인카금융서비스")
+
+    assert parsed["base_target"] == 8100

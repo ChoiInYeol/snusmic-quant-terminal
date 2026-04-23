@@ -1,12 +1,13 @@
 # SNUSMIC Google Finance Sheets
 
-This project collects the first five pages of SNUSMIC equity research reports, downloads the linked PDFs, extracts ticker and target-price data, and syncs the result to Google Sheets with `GOOGLEFINANCE` formulas.
+This project collects the first seven pages of SNUSMIC equity research reports, downloads the linked PDFs, extracts ticker and target-price data, computes post-publication return analytics, and publishes a GitHub Pages dashboard. Google Sheets sync remains available as an optional output.
 
 ## Local Run
 
 ```bash
 uv sync --group dev
-uv run python -m snusmic_pipeline sync --pages 1-5 --skip-sheet
+uv run python -m snusmic_pipeline sync --pages 1-7 --skip-sheet
+uv run python -m snusmic_pipeline build-site
 ```
 
 The local run writes:
@@ -14,6 +15,9 @@ The local run writes:
 - `data/pdfs/` for downloaded PDFs
 - `data/manifest.json` for source metadata and file hashes
 - `data/extracted_reports.csv` for extracted rows
+- `data/price_metrics.json` for yfinance post-publication metrics
+- `data/portfolio_backtests.json` for cohort backtests
+- `site/public/` for the generated dashboard artifact
 
 ## Google Sheets Sync
 
@@ -29,10 +33,14 @@ OpenDataLoader PDF is used as a fallback extraction layer when the fast `pypdf` 
 
 ```bash
 uv run opendataloader-pdf-hybrid --port 5002 --force-ocr --ocr-lang "ko,en"
-uv run python -m snusmic_pipeline sync --pages 1-5 --opendataloader-hybrid docling-fast
+uv run python -m snusmic_pipeline sync --pages 1-7 --opendataloader-hybrid docling-fast
 ```
 
 The GitHub workflow installs Java and can run the same command path. Keep hybrid OCR off unless scanned PDFs appear, because the OCR stack is much heavier than the fast local parser.
+
+## GitHub Pages
+
+The workflow checks only `http://snusmic.com/research/` on scheduled runs. If page one has no new report links compared with `data/manifest.json`, it skips the heavy sync, OCR, yfinance, and Pages deployment. Manual runs can force a full refresh.
 
 ## GitHub Actions
 

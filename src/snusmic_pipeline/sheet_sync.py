@@ -28,6 +28,7 @@ REPORT_HEADERS = [
     "Base 목표가",
     "Bull 목표가",
     "목표가 통화",
+    "투자포인트",
     "GoogleFinance 현재가",
     "Base 대비 괴리율",
     "추출 상태",
@@ -50,7 +51,7 @@ def build_report_rows(reports: list[ExtractedReport]) -> list[list[Any]]:
     rows: list[list[Any]] = [REPORT_HEADERS]
     for index, report in enumerate(reports, start=2):
         current_formula = f'=IFERROR(GOOGLEFINANCE($H{index},"price"),"")'
-        upside_formula = f'=IF(OR($M{index}="",$P{index}=""),"",$M{index}/$P{index}-1)'
+        upside_formula = f'=IF(OR($M{index}="",$Q{index}=""),"",$M{index}/$Q{index}-1)'
         rows.append(
             [
                 report.meta.page,
@@ -68,6 +69,7 @@ def build_report_rows(reports: list[ExtractedReport]) -> list[list[Any]]:
                 _number_or_blank(report.base_target),
                 _number_or_blank(report.bull_target),
                 report.target_currency,
+                report.investment_points,
                 current_formula if report.googlefinance_symbol else "",
                 upside_formula if report.base_target is not None and report.googlefinance_symbol else "",
                 report.extraction_status,
@@ -81,9 +83,9 @@ def build_summary_rows() -> list[list[Any]]:
     return [
         ["Metric", "Value"],
         ["Total reports", f'=COUNTA(\'{REPORT_SHEET}\'!D2:D)'],
-        ["Extracted OK", f'=COUNTIF(\'{REPORT_SHEET}\'!R2:R,"ok")'],
-        ["Needs review", f'=COUNTIF(\'{REPORT_SHEET}\'!R2:R,"<>ok")'],
-        ["Top upside rows", f'=SORT(FILTER(\'{REPORT_SHEET}\'!D2:R,\'{REPORT_SHEET}\'!Q2:Q<>""),14,FALSE)'],
+        ["Extracted OK", f'=COUNTIF(\'{REPORT_SHEET}\'!S2:S,"ok")'],
+        ["Needs review", f'=COUNTIF(\'{REPORT_SHEET}\'!S2:S,"<>ok")'],
+        ["Top upside rows", f'=SORT(FILTER(\'{REPORT_SHEET}\'!D2:T,\'{REPORT_SHEET}\'!R2:R<>""),15,FALSE)'],
     ]
 
 
