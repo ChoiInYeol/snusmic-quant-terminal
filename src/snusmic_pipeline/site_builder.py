@@ -39,7 +39,6 @@ def build_reports_json(data_dir: Path, public_dir: Path) -> list[dict[str, Any]]
         filename = report.get("PDF 파일명", "")
         report["GitHub PDF"] = repo_pdf_url(filename) if filename else ""
         report["Markdown"] = repo_markdown_url(filename) if filename else ""
-        report["Insight Prompt"] = "해당 .md 을 ChatGPT, Claude에게 입력하여 인사이트를 얻으세요."
         metric = metrics.get(report.get("리포트명", ""), {})
         report["Company"] = report.get("종목명", "")
         report["Report Date"] = format_kst_datetime(report.get("게시일", ""))
@@ -164,6 +163,7 @@ def render_index_html() -> str:
       <div class="toolbar">
         <input id="reportSearch" placeholder="종목, 티커, 리포트 검색">
       </div>
+      <p class="small" style="margin-bottom:12px">Markdown 파일을 ChatGPT나 Claude에 입력하면 리포트별 인사이트를 더 깊게 뽑아볼 수 있습니다.</p>
       <div id="reportStats" class="grid stats"></div>
       <div class="table-wrap"><table id="reportsTable"></table></div>
     </section>
@@ -299,7 +299,7 @@ def render_index_html() -> str:
       return [
         { key:"Report Date", label:"Date" }, { key:"Company", label:"Company" },
         { key:"Bear 목표가", label:"Bear target", num:true }, { key:"Base 목표가", label:"Base target", num:true }, { key:"Bull 목표가", label:"Bull target", num:true },
-        { key:"Report Price", label:"Report price", num:true }, { key:"Markdown", label:"Markdown" }, { key:"Insight Prompt", label:"Prompt" }, { key:"GitHub PDF", label:"PDF" }
+        { key:"Report Price", label:"Report price", num:true }, { key:"Markdown", label:"Markdown" }, { key:"GitHub PDF", label:"PDF" }
       ];
     }
     function renderReports(all) {
