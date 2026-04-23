@@ -152,7 +152,7 @@ def optimize_strategies(
             stop_loss_pct=trial.suggest_categorical("stop_loss_pct", [0.06, 0.08, 0.10, 0.12]),
             reward_risk=trial.suggest_categorical("reward_risk", [2.0, 3.0, 4.0]),
             rebalance=trial.suggest_categorical("rebalance", ["daily", "weekly", "biweekly", "monthly"]),
-            lookback_days=trial.suggest_categorical("lookback_days", [126, 252, 378, 504]),
+            lookback_days=504,
             min_target_upside=trial.suggest_categorical("min_target_upside", [0.0, 0.10, 0.20]),
         )
         result = run_walk_forward_backtest(reports, prices, config)

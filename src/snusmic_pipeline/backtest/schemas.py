@@ -21,7 +21,7 @@ class BacktestConfig:
     stop_loss_pct: float = 0.08
     reward_risk: float = 3.0
     rebalance: str = "weekly"
-    lookback_days: int = 252
+    lookback_days: int = 504
     risk_free_rate: float = 0.03
     min_target_upside: float = 0.0
     exit_on_signal_loss: bool = True

@@ -10,7 +10,7 @@ subtitle: "v3 기본 전략과 파라미터 해석"
 1. 리포트 발간 다음 거래일부터 종목이 candidate pool에 들어옵니다.
 2. MTT, RS, 목표가 여력 조건을 매 리밸런싱일 직전 데이터로만 평가합니다.
 3. 조건을 통과한 종목이 execution pool에 들어옵니다.
-4. weighting 방법이 execution pool 내부 비중을 정합니다.
+4. weighting 방법이 리밸런싱일 이전 2년, 504거래일 가격 데이터만 사용해 execution pool 내부 비중을 정합니다.
 5. 손절, R:R 익절, 목표가 도달, signal loss, pool 만료 조건으로 편출합니다.
 
 ## Default Strategies

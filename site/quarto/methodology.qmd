@@ -23,7 +23,7 @@ subtitle: "수집, warehouse, walk-forward 전략 평가 기준"
 - 리포트 발간 다음 거래일부터 해당 종목이 candidate pool에 편입됩니다.
 - 전략은 candidate pool에서 MTT, RS, 목표가 여력, 손절/익절 조건으로 execution pool을 구성합니다.
 - 실제 모델 수익은 execution pool에 보유된 종목의 비중 가중 산술 일수익률로 계산하고, equity는 일별로 복리 누적합니다.
-- 비중 최적화는 execution pool 내부 배분에만 사용하며, lookback window는 리밸런싱일 이전 가격만 사용합니다.
+- 비중 최적화는 execution pool 내부 배분에만 사용하며, lookback window는 리밸런싱일 이전 2년, 504거래일로 고정합니다.
 - 편출 시 realized return contribution이 확정되고, 아직 보유 중인 포지션은 live return으로 분리됩니다.
 
 ## Signals
