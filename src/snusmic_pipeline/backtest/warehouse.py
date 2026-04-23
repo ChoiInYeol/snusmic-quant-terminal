@@ -385,6 +385,15 @@ def _current_positions(positions: pd.DataFrame) -> list[dict[str, Any]]:
     rows["date"] = rows["date"].astype(str)
     latest = rows.groupby("run_id")["date"].transform("max")
     rows = rows[rows["date"] == latest].copy()
+    last_valid = positions.dropna(subset=["close"]).copy()
+    if not last_valid.empty:
+        last_valid["date"] = last_valid["date"].astype(str)
+        last_valid = last_valid.sort_values("date").groupby(["run_id", "symbol"], as_index=False).tail(1)
+        last_valid = last_valid[["run_id", "symbol", "close", "gross_return"]].rename(columns={"close": "last_close", "gross_return": "last_gross_return"})
+        rows = rows.merge(last_valid, how="left", on=["run_id", "symbol"])
+        rows["close"] = rows["close"].fillna(rows["last_close"])
+        rows["gross_return"] = rows["gross_return"].fillna(rows["last_gross_return"])
+        rows = rows.drop(columns=["last_close", "last_gross_return"])
     rows = rows.sort_values(["run_id", "weight"], ascending=[True, False])
     return _records(rows)
 
