@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snusmic-google-finance-sheets"
+version = "0.1.0"
+description = "Collect SNUSMIC research PDFs, extract target prices, and sync a Google Sheet."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "requests",
+  "pypdf",
+  "opendataloader-pdf[hybrid]",
+  "google-auth",
+  "google-api-python-client",
+]
+
+[project.scripts]
+snusmic-sync = "snusmic_pipeline.cli:main"
+
+[dependency-groups]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
