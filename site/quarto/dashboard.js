@@ -296,12 +296,22 @@ function eventLabel(value) {
 function reasonLabel(value) {
   return {
     rebalance_entry: "조건 충족",
+    report_publication: "리포트 발간",
     signal_loss: "조건 이탈",
     stop_loss: "손절",
     take_profit_rr: "R:R 익절",
     target_hit: "목표가 도달",
+    aging_out: "추적 만료",
     candidate_target_hit: "목표가 도달",
     candidate_aging_out: "추적 만료",
+  }[value] || value;
+}
+
+function candidateEventLabel(value) {
+  return {
+    candidate_add: "후보 편입",
+    candidate_refresh: "후보 갱신",
+    candidate_exit: "후보 제외",
   }[value] || value;
 }
 
@@ -404,11 +414,11 @@ function renderEquityPlot(el, rows) {
   const dates = rows.map(r => r.date);
   const equity = rows.map(r => Number(r.equity || 1));
   Plotly.newPlot(el, [
-    { type: "scatter", mode: "lines", name: "Equity", x: dates, y: equity, line: { color: "#126b83", width: 2.5 }, fill: "tozeroy", fillcolor: "rgba(18,107,131,0.08)" },
+    { type: "scatter", mode: "lines", name: "누적 자산", x: dates, y: equity, line: { color: "#126b83", width: 2.5 }, fill: "tozeroy", fillcolor: "rgba(18,107,131,0.08)" },
   ], {
     ...plotBaseLayout,
     margin: { l: 55, r: 20, t: 10, b: 40 },
-    yaxis: { title: "Equity", gridcolor: "#e2e8ef" },
+    yaxis: { title: "자산 배율", gridcolor: "#e2e8ef" },
     xaxis: { gridcolor: "#edf1f5" },
     showlegend: false,
   }, plotConfig).then(() => Plotly.Plots.resize(el));
@@ -424,11 +434,11 @@ function renderDrawdownPlot(el, rows) {
     return v / peak - 1;
   });
   Plotly.newPlot(el, [
-    { type: "scatter", mode: "lines", name: "Drawdown", x: dates, y: drawdown, line: { color: "#b53b2d", width: 2 }, fill: "tozeroy", fillcolor: "rgba(181,59,45,0.10)" },
+    { type: "scatter", mode: "lines", name: "최대낙폭", x: dates, y: drawdown, line: { color: "#b53b2d", width: 2 }, fill: "tozeroy", fillcolor: "rgba(181,59,45,0.10)" },
   ], {
     ...plotBaseLayout,
     margin: { l: 55, r: 20, t: 10, b: 40 },
-    yaxis: { title: "Drawdown", tickformat: ".0%", gridcolor: "#e2e8ef" },
+    yaxis: { title: "낙폭", tickformat: ".0%", gridcolor: "#e2e8ef" },
     xaxis: { gridcolor: "#edf1f5" },
     showlegend: false,
   }, plotConfig).then(() => Plotly.Plots.resize(el));
@@ -437,12 +447,12 @@ function renderDrawdownPlot(el, rows) {
 function renderPoolTimelinePlot(el, rows) {
   if (!el || !window.Plotly || !rows.length) return;
   Plotly.newPlot(el, [
-    { type: "scatter", mode: "lines", name: "Candidate", x: rows.map(r => r.date), y: rows.map(r => Number(r.candidate_count || 0)), line: { color: "#126b83" } },
-    { type: "scatter", mode: "lines", name: "Execution", x: rows.map(r => r.date), y: rows.map(r => Number(r.execution_count || 0)), line: { color: "#d47a00" } },
+    { type: "scatter", mode: "lines", name: "후보군", x: rows.map(r => r.date), y: rows.map(r => Number(r.candidate_count || 0)), line: { color: "#126b83" } },
+    { type: "scatter", mode: "lines", name: "실제 보유", x: rows.map(r => r.date), y: rows.map(r => Number(r.execution_count || 0)), line: { color: "#d47a00" } },
   ], {
     ...plotBaseLayout,
     margin: { l: 55, r: 20, t: 10, b: 40 },
-    yaxis: { title: "Pool size", gridcolor: "#e2e8ef" },
+    yaxis: { title: "종목 수", gridcolor: "#e2e8ef" },
     legend: { orientation: "h" },
   }, plotConfig).then(() => Plotly.Plots.resize(el));
 }
@@ -495,12 +505,12 @@ function renderStrategyRiskMap(rows) {
     y: rows.map(r => Number(r.total_return || 0)),
     text: rows.map(r => `${r.strategy_name}<br>${r.entry_rule}<br>${r.weighting}<br>Return ${pct(r.total_return)}`),
     marker: { size: rows.map(r => 8 + Number(r.exposure_ratio || 0) * 18), color: rows.map(r => Number(r.sharpe || 0)), colorscale: "Viridis", showscale: true },
-    hovertemplate: "%{text}<br>MDD %{x:.1%}<br>Total return %{y:.1%}<extra></extra>",
+    hovertemplate: "%{text}<br>최대낙폭 %{x:.1%}<br>수익률 %{y:.1%}<extra></extra>",
   }], {
     ...plotBaseLayout,
     margin: { l: 55, r: 20, t: 10, b: 45 },
-    xaxis: { title: "Max drawdown", tickformat: ".0%", gridcolor: "#e2e8ef" },
-    yaxis: { title: "Total return", tickformat: ".0%", gridcolor: "#e2e8ef" },
+    xaxis: { title: "최대낙폭", tickformat: ".0%", gridcolor: "#e2e8ef" },
+    yaxis: { title: "수익률", tickformat: ".0%", gridcolor: "#e2e8ef" },
   }, plotConfig).then(() => Plotly.Plots.resize(el));
 }
 
@@ -548,17 +558,17 @@ function populateStrategyControls(rows, selectId) {
   }
   const weighting = document.getElementById("strategyWeightingFilter");
   if (weighting && !weighting.dataset.ready) {
-    weighting.innerHTML = `<option value="">All weighting</option>` + unique(rows.map(r => r.weighting)).map(v => `<option>${v}</option>`).join("");
+    weighting.innerHTML = `<option value="">전체 비중 방식</option>` + unique(rows.map(r => r.weighting)).map(v => `<option>${v}</option>`).join("");
     weighting.dataset.ready = "true";
   }
   const entry = document.getElementById("strategyEntryFilter");
   if (entry && !entry.dataset.ready) {
-    entry.innerHTML = `<option value="">All entry rules</option>` + unique(rows.map(r => r.entry_rule)).map(v => `<option>${v}</option>`).join("");
+    entry.innerHTML = `<option value="">전체 편입 조건</option>` + unique(rows.map(r => r.entry_rule)).map(v => `<option>${v}</option>`).join("");
     entry.dataset.ready = "true";
   }
   const lookback = document.getElementById("strategyLookbackFilter");
   if (lookback && !lookback.dataset.ready) {
-    lookback.innerHTML = `<option value="">All lookbacks</option>` + unique(rows.map(r => String(r.lookback_days))).map(v => `<option value="${v}">${lookbackLabel(v)}</option>`).join("");
+    lookback.innerHTML = `<option value="">전체 Lookback</option>` + unique(rows.map(r => String(r.lookback_days))).map(v => `<option value="${v}">${lookbackLabel(v)}</option>`).join("");
     lookback.dataset.ready = "true";
   }
 }
@@ -581,7 +591,7 @@ function renderPoolsPage(v3) {
     { key: "reason", label: "사유" },
     { key: "close", label: "가격", num: true },
     { key: "target_price", label: "목표가", num: true },
-  ], { close: priceNum, target_price: priceNum });
+  ], { event_type: candidateEventLabel, reason: reasonLabel, close: priceNum, target_price: priceNum });
 }
 
 function populateRunOnly(rows, selectId) {

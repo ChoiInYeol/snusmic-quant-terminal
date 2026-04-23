@@ -9,19 +9,19 @@ website:
   navbar:
     left:
       - href: index.qmd
-        text: Overview
+        text: 개요
       - href: portfolio.qmd
-        text: Strategies
+        text: 전략
       - href: strategy-guide.qmd
-        text: Strategy Guide
+        text: 전략 설명
       - href: pools.qmd
-        text: Pools
+        text: 포지션
       - href: signals.qmd
-        text: Signals
+        text: 시그널
       - href: reports.qmd
-        text: Reports
+        text: 리포트
       - href: methodology.qmd
-        text: Methodology
+        text: 방법론
 
 format:
   html:
