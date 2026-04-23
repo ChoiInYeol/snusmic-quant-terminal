@@ -7,6 +7,8 @@ subtitle: "PDF와 Markdown 리포트 원문 링크"
 Markdown 파일을 ChatGPT나 Claude에 입력하면 리포트별 인사이트를 더 깊게 뽑아볼 수 있습니다.
 :::
 
+이 탭은 원천 리포트 아카이브입니다. 목표가는 PDF에서 추출한 값이고, Report price는 발간일 기준 yfinance 종가로 계산한 가격입니다.
+
 ::: {.toolbar}
 <input id="reportSearch" placeholder="종목, 리포트 검색">
 :::

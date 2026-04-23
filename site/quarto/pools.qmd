@@ -3,6 +3,8 @@ title: "Pool Timeline"
 subtitle: "Candidate pool, execution pool, trade journal"
 ---
 
+이 탭은 전략이 “언제 무엇을 후보로 보고, 실제로 무엇을 사고팔았는지”를 확인하는 장부입니다. candidate event는 추적 대상의 편입/제외, trade journal은 실제 execution pool의 매수·매도·리밸런싱 이벤트입니다.
+
 ::: {.toolbar}
 <select id="poolRunSelect"></select>
 <input id="poolSearch" placeholder="종목, 사유, 이벤트 검색">
@@ -28,6 +30,8 @@ subtitle: "Candidate pool, execution pool, trade journal"
 
 ## Trade Journal
 
+실제 매수, 매도, 리밸런싱 이벤트입니다. `reason`은 편입/편출 사유이며, realized return은 편출 시 확정된 전략 기여 수익률입니다.
+
 ::: {.table-wrap}
 ```{=html}
 <table id="tradeJournalTable"></table>
@@ -36,6 +40,8 @@ subtitle: "Candidate pool, execution pool, trade journal"
 
 ## Position Ledger
 
+일별 보유 포지션 장부입니다. weight는 해당 날짜 전략 내 비중, model contribution은 해당 포지션이 전략 수익률에 기여한 누적 산술 수익률입니다.
+
 ::: {.table-wrap}
 ```{=html}
 <table id="positionLedgerTable"></table>
@@ -43,6 +49,8 @@ subtitle: "Candidate pool, execution pool, trade journal"
 :::
 
 ## Candidate Events
+
+리포트 발간, 목표가 도달, 추적 기간 만료 등 candidate pool 자체의 상태 변화입니다.
 
 ::: {.table-wrap}
 ```{=html}

@@ -131,6 +131,41 @@ function metricFormats() {
   };
 }
 
+function opportunityColumns() {
+  return [
+    { key: "publication_date", label: "Date" },
+    { key: "company", label: "Company" },
+    { key: "current_price", label: "Current", num: true },
+    { key: "publication_buy_price", label: "Pub price", num: true },
+    { key: "lowest_price_since_publication", label: "Low price", num: true },
+    { key: "q25_price_since_publication", label: "Q25 price", num: true },
+    { key: "q75_price_since_publication", label: "Q75 price", num: true },
+    { key: "buy_at_publication_return", label: "Pub ret", num: true },
+    { key: "lowest_price_current_return", label: "Low buy ret", num: true },
+    { key: "q25_price_current_return", label: "Q25 ret", num: true },
+    { key: "q75_price_current_return", label: "Q75 ret", num: true },
+    { key: "target_upside_remaining", label: "Target upside", num: true },
+    { key: "target_hit", label: "Target" },
+    { key: "first_target_hit_date", label: "Hit date" },
+  ];
+}
+
+function opportunityFormats() {
+  return {
+    current_price: num,
+    publication_buy_price: num,
+    lowest_price_since_publication: num,
+    q25_price_since_publication: num,
+    q75_price_since_publication: num,
+    buy_at_publication_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    lowest_price_current_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    q25_price_current_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    q75_price_current_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    target_upside_remaining: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    target_hit: v => v ? "hit" : "miss",
+  };
+}
+
 function reportColumns() {
   return [
     { key: "Report Date", label: "Date" },
@@ -495,17 +530,18 @@ function renderFrontier(portfolio) {
 
 function renderOverview(reports, metrics, portfolio) {
   const el = document.getElementById("overviewStats");
-  if (!el) return;
   const okPrices = metrics.filter(r => r.status === "ok");
   const targetHits = okPrices.filter(r => r.target_hit).length;
   const best = topPortfolios(portfolio, 1)[0];
   const avgRet = okPrices.reduce((s, r) => s + Number(r.buy_at_publication_return || 0), 0) / Math.max(1, okPrices.length);
-  el.innerHTML = [
-    ["Reports", reports.length],
-    ["Price coverage", `${okPrices.length}/${metrics.length}`],
-    ["Target hit ratio", pct(targetHits / Math.max(1, okPrices.length))],
-    ["Avg post-publication return", pct(avgRet)],
-  ].map(([k, v]) => `<div class="metric-card"><span>${k}</span><strong>${v}</strong></div>`).join("");
+  if (el) {
+    el.innerHTML = [
+      ["Reports", reports.length],
+      ["Price coverage", `${okPrices.length}/${metrics.length}`],
+      ["Target hit ratio", pct(targetHits / Math.max(1, okPrices.length))],
+      ["Avg post-publication return", pct(avgRet)],
+    ].map(([k, v]) => `<div class="metric-card"><span>${k}</span><strong>${v}</strong></div>`).join("");
+  }
   const bestEl = document.getElementById("bestPortfolio");
   if (bestEl) {
     bestEl.innerHTML = best ? `
@@ -519,7 +555,18 @@ function renderOverview(reports, metrics, portfolio) {
   renderFrontier(portfolio);
   renderOpportunityPlot(metrics);
   renderTable(document.getElementById("topPortfolioTable"), topPortfolios(portfolio), portfolioColumns(), portfolioFormats());
-  renderTable(document.getElementById("overviewMetricsTable"), [...metrics].filter(r => r.status === "ok").sort((a, b) => Number(b.low_to_high_return || 0) - Number(a.low_to_high_return || 0)).slice(0, 15), metricColumns(), metricFormats());
+  renderPriceOpportunitySnapshot(metrics);
+}
+
+function renderPriceOpportunitySnapshot(metrics) {
+  const q = document.getElementById("opportunitySearch")?.value.toLowerCase() || "";
+  const target = document.getElementById("opportunityTargetFilter")?.value || "";
+  const rows = [...metrics]
+    .filter(r => r.status === "ok")
+    .filter(r => !target || (target === "hit" ? r.target_hit : !r.target_hit))
+    .filter(r => !q || JSON.stringify(r).toLowerCase().includes(q))
+    .sort((a, b) => Number(b.target_upside_remaining || 0) - Number(a.target_upside_remaining || 0));
+  renderTable(document.getElementById("priceOpportunityTable"), rows, opportunityColumns(), opportunityFormats());
 }
 
 function renderOpportunityPlot(metrics) {
@@ -652,6 +699,11 @@ Promise.all([
     const el = document.getElementById(id);
     const eventName = id.endsWith("Search") ? "input" : "change";
     el?.addEventListener(eventName, () => renderSignalsPage(v3));
+  });
+  ["opportunitySearch", "opportunityTargetFilter"].forEach(id => {
+    const el = document.getElementById(id);
+    const eventName = id.endsWith("Search") ? "input" : "change";
+    el?.addEventListener(eventName, () => renderPriceOpportunitySnapshot(metrics));
   });
   document.getElementById("metricsSearch")?.addEventListener("input", () => renderMetrics(metrics));
   document.getElementById("targetFilter")?.addEventListener("change", () => renderMetrics(metrics));

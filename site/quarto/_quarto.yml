@@ -12,6 +12,8 @@ website:
         text: Overview
       - href: portfolio.qmd
         text: Strategies
+      - href: strategy-guide.qmd
+        text: Strategy Guide
       - href: pools.qmd
         text: Pools
       - href: signals.qmd

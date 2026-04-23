@@ -7,6 +7,8 @@ subtitle: "Candidate pool / execution pool 기반 walk-forward 전략 비교"
 각 전략은 리밸런싱일 이전 가격과 그 시점까지 발간된 리포트만 사용합니다. 비중 최적화는 execution pool 내부 배분에만 쓰입니다.
 :::
 
+이 탭은 “어떤 전략이 성과가 좋았나”를 보는 곳입니다. 위 그래프는 선택한 전략의 누적 자산과 drawdown을 보여주고, 아래 표는 전략별 수익률, MDD, Sharpe, Calmar, 거래 횟수를 비교합니다.
+
 ::: {.toolbar}
 <select id="strategyRunSelect"></select>
 <select id="strategyWeightingFilter"></select>
@@ -36,6 +38,8 @@ subtitle: "Candidate pool / execution pool 기반 walk-forward 전략 비교"
 :::
 
 ## Optuna Trial Search
+
+Optuna는 같은 walk-forward 엔진 위에서 RS 기준, pool 만료 기간, 손절폭, R:R, 리밸런싱 주기, weighting 방법을 바꿔가며 누적 산술 수익률을 최대화한 실험입니다.
 
 ::: {.table-wrap}
 ```{=html}
