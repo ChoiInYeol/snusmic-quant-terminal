@@ -2,6 +2,14 @@ const pct = v => v === null || v === undefined || v === "" || Number.isNaN(Numbe
 const num = v => v === null || v === undefined || v === "" || Number.isNaN(Number(v)) ? "" : Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 });
 const signClass = v => Number(v) > 0 ? "pos" : (Number(v) < 0 ? "neg" : "");
 const unique = arr => [...new Set(arr.filter(v => v !== null && v !== undefined && v !== ""))].sort();
+const plotConfig = { responsive: true, displayModeBar: false };
+const plotBaseLayout = {
+  autosize: true,
+  height: 420,
+  paper_bgcolor: "#fbfcfd",
+  plot_bgcolor: "#fbfcfd",
+  font: { color: "#18242e", family: "Inter, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif" },
+};
 
 async function loadJson(path) {
   const candidates = [`data/${path}`, `../data/${path}`];
@@ -158,11 +166,12 @@ function renderFrontier(portfolio) {
     };
   });
   Plotly.newPlot(el, traces, {
+    ...plotBaseLayout,
     margin: { l: 55, r: 20, t: 10, b: 50 },
-    xaxis: { title: "Expected volatility", tickformat: ".0%" },
-    yaxis: { title: "Expected return", tickformat: ".0%" },
+    xaxis: { title: "Expected volatility", tickformat: ".0%", gridcolor: "#e2e8ef", zerolinecolor: "#b8c4cf" },
+    yaxis: { title: "Expected return", tickformat: ".0%", gridcolor: "#e2e8ef", zerolinecolor: "#b8c4cf" },
     legend: { orientation: "h" },
-  }, { responsive: true, displayModeBar: false });
+  }, plotConfig).then(() => Plotly.Plots.resize(el));
 }
 
 function renderOverview(reports, metrics, portfolio) {
@@ -216,11 +225,13 @@ function renderOpportunityPlot(metrics) {
       hovertemplate: "%{y}<br>Target upside %{x:.1%}<extra></extra>",
     },
   ], {
+    ...plotBaseLayout,
     barmode: "group",
     margin: { l: 140, r: 20, t: 10, b: 40 },
-    xaxis: { tickformat: ".0%" },
+    xaxis: { tickformat: ".0%", gridcolor: "#e2e8ef", zerolinecolor: "#b8c4cf" },
+    yaxis: { automargin: true },
     legend: { orientation: "h" },
-  }, { responsive: true, displayModeBar: false });
+  }, plotConfig).then(() => Plotly.Plots.resize(el));
 }
 
 function renderPortfolio(portfolio) {
@@ -247,9 +258,11 @@ function renderPortfolioBarPlot(rows) {
     hovertemplate: "%{y}<br>Realized %{x:.1%}<br>%{text}<extra></extra>",
     marker: { color: top.map(r => Number(r.realized_return || 0) >= 0 ? "#126b83" : "#b53b2d") },
   }], {
+    ...plotBaseLayout,
     margin: { l: 190, r: 20, t: 10, b: 40 },
-    xaxis: { title: "Realized forward return", tickformat: ".0%" },
-  }, { responsive: true, displayModeBar: false });
+    xaxis: { title: "Realized forward return", tickformat: ".0%", gridcolor: "#e2e8ef", zerolinecolor: "#b8c4cf" },
+    yaxis: { automargin: true },
+  }, plotConfig).then(() => Plotly.Plots.resize(el));
 }
 
 function renderMetrics(metrics) {
@@ -295,4 +308,10 @@ Promise.all([loadJson("reports.json"), loadJson("price_metrics.json"), loadJson(
   document.getElementById("metricsSearch")?.addEventListener("input", () => renderMetrics(metrics));
   document.getElementById("targetFilter")?.addEventListener("change", () => renderMetrics(metrics));
   document.getElementById("reportSearch")?.addEventListener("input", () => renderReports(reports));
+  window.addEventListener("resize", () => {
+    ["frontierPlot", "opportunityPlot", "portfolioBarPlot"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el && window.Plotly) Plotly.Plots.resize(el);
+    });
+  });
 });

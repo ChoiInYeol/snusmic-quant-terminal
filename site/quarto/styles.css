@@ -166,7 +166,12 @@ svg {
 
 .plotly-panel {
   width: 100%;
-  min-height: 420px;
+  height: 440px;
+  min-height: 440px;
+  display: block;
+  background: #fbfcfd;
+  border: 1px solid var(--line);
+  border-radius: 8px;
 }
 
 .legend {
