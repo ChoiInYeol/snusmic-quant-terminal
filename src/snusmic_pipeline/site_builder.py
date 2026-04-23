@@ -28,12 +28,18 @@ def repo_pdf_url(filename: str, repo: str = "ChoiInYeol/snusmic-google-finance-s
     return f"https://github.com/{repo}/blob/{branch}/data/pdfs/{filename}"
 
 
+def repo_markdown_url(filename: str, repo: str = "ChoiInYeol/snusmic-google-finance-sheets", branch: str = "main") -> str:
+    return f"https://github.com/{repo}/blob/{branch}/data/markdown/{Path(filename).with_suffix('.md').name}"
+
+
 def build_reports_json(data_dir: Path, public_dir: Path) -> list[dict[str, Any]]:
     reports = read_csv_dicts(data_dir / "extracted_reports.csv")
     metrics = {item.get("title", ""): item for item in read_json(data_dir / "price_metrics.json")}
     for report in reports:
         filename = report.get("PDF 파일명", "")
         report["GitHub PDF"] = repo_pdf_url(filename) if filename else ""
+        report["Markdown"] = repo_markdown_url(filename) if filename else ""
+        report["Insight Prompt"] = "해당 .md 을 ChatGPT, Claude에게 입력하여 인사이트를 얻으세요."
         metric = metrics.get(report.get("리포트명", ""), {})
         report["Company"] = report.get("종목명", "")
         report["Report Date"] = format_kst_datetime(report.get("게시일", ""))
@@ -167,6 +173,11 @@ def render_index_html() -> str:
     const num = v => v === null || v === undefined || v === "" || Number.isNaN(Number(v)) ? "" : Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 });
     const signClass = v => Number(v) > 0 ? "pos" : (Number(v) < 0 ? "neg" : "");
     const unique = arr => [...new Set(arr.filter(v => v !== null && v !== undefined && v !== ""))].sort();
+    function holdings(row) {
+      const names = String(row.display_symbols || row.symbols || "").split(",");
+      const weights = String(row.weights || "").split(",");
+      return names.map((name, i) => `${name.trim()} ${(Number(weights[i] || 0) * 100).toFixed(1)}%`).join("<br>");
+    }
     async function loadJson(path) { const r = await fetch(path); return r.ok ? r.json() : []; }
     function renderTable(el, rows, columns, format = {}) {
       el.dataset.sortKey = el.dataset.sortKey || "";
@@ -214,7 +225,7 @@ def render_index_html() -> str:
         <div class="best-main">${best.cohort_month} · ${best.strategy} · RF ${pct(best.risk_free_rate)}</div>
         <p><span class="pill">Realized ${pct(best.realized_return)}</span><span class="pill">Sharpe ${num(best.expected_sharpe)}</span><span class="pill">Vol ${pct(best.expected_volatility)}</span></p>
         <h2>Weights</h2>
-        ${(best.display_symbols || best.symbols).split(",").map((s,i) => `<p><span class="bar" style="width:${Math.max(6, Number(best.weights.split(",")[i] || 0)*160)}px"></span>${s} ${(Number(best.weights.split(",")[i] || 0)*100).toFixed(1)}%</p>`).join("")}
+        ${(best.display_symbols || best.symbols).split(",").map((s,i) => `<p><span class="bar" style="width:${Math.max(6, Number(best.weights.split(",")[i] || 0)*160)}px"></span>${s.trim()} ${(Number(best.weights.split(",")[i] || 0)*100).toFixed(1)}%</p>`).join("")}
       ` : "<p>No portfolio data.</p>";
       renderFrontier(portfolio);
       renderTable(document.getElementById("topPortfolioTable"), topPortfolios(portfolio), portfolioColumns(), portfolioFormats());
@@ -239,11 +250,11 @@ def render_index_html() -> str:
         {key:"cohort_month", label:"Cohort"}, {key:"strategy", label:"Strategy"}, {key:"risk_free_rate", label:"RF", num:true},
         {key:"realized_return", label:"Realized", num:true}, {key:"expected_return", label:"Expected", num:true},
         {key:"expected_volatility", label:"Vol", num:true}, {key:"expected_sharpe", label:"Sharpe", num:true},
-        {key:"kospi_return", label:"KOSPI", num:true}, {key:"nasdaq_return", label:"NASDAQ", num:true}, {key:"display_symbols", label:"Names"}, {key:"weights", label:"Weights"}
+        {key:"kospi_return", label:"KOSPI", num:true}, {key:"nasdaq_return", label:"NASDAQ", num:true}, {key:"display_symbols", label:"Holdings"}
       ];
     }
     function portfolioFormats() {
-      return {risk_free_rate:pct, realized_return:v=>`<span class="${signClass(v)}">${pct(v)}</span>`, expected_return:pct, expected_volatility:pct, expected_sharpe:num, kospi_return:pct, nasdaq_return:pct};
+      return {risk_free_rate:pct, realized_return:v=>`<span class="${signClass(v)}">${pct(v)}</span>`, expected_return:pct, expected_volatility:pct, expected_sharpe:num, kospi_return:pct, nasdaq_return:pct, display_symbols:(v,row)=>holdings(row)};
     }
     function renderPortfolio(portfolio) {
       const cohort = document.getElementById("portfolioCohort").value;
@@ -279,7 +290,7 @@ def render_index_html() -> str:
       return [
         { key:"Report Date", label:"Date" }, { key:"Company", label:"Company" },
         { key:"Bear 목표가", label:"Bear target", num:true }, { key:"Base 목표가", label:"Base target", num:true }, { key:"Bull 목표가", label:"Bull target", num:true },
-        { key:"Report Price", label:"Report price", num:true }, { key:"투자포인트", label:"Investment points" }, { key:"GitHub PDF", label:"PDF" }
+        { key:"Report Price", label:"Report price", num:true }, { key:"Markdown", label:"Markdown" }, { key:"Insight Prompt", label:"Prompt" }, { key:"GitHub PDF", label:"PDF" }
       ];
     }
     function renderReports(all) {
@@ -290,6 +301,7 @@ def render_index_html() -> str:
       ].map(([k,v]) => `<div class="card stat"><span>${k}</span><strong>${v}</strong></div>`).join("");
       renderTable(document.getElementById("reportsTable"), rows, reportColumns(), {
         "GitHub PDF": v => v ? `<a href="${v}">PDF</a>` : "",
+        "Markdown": v => v ? `<a href="${v}">Markdown</a>` : "",
         "Report Price": num
       });
     }

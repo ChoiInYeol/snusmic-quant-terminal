@@ -103,12 +103,7 @@ jobs:
         uses: astral-sh/setup-uv@v6
 
       - name: Install dependencies
-        run: |
-          if [ "$ENABLE_HYBRID_OCR" = "true" ]; then
-            uv sync --group dev --extra ocr
-          else
-            uv sync --group dev
-          fi
+        run: uv sync --group dev --extra ocr
 
       - name: Run tests
         run: uv run pytest
@@ -140,7 +135,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/manifest.json data/extracted_reports.csv data/price_metrics.json data/portfolio_backtests.json data/pdfs
+          git add data/manifest.json data/extracted_reports.csv data/price_metrics.json data/portfolio_backtests.json data/pdfs data/markdown
           if git diff --cached --quiet; then
             echo "No data changes to commit"
           else

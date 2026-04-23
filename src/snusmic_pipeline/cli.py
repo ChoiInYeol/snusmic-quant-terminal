@@ -12,6 +12,7 @@ from .download_pdfs import download_all
 from .extract_pdf import extract_report
 from .fetch_index import fetch_reports, parse_pages
 from .models import DownloadedPdf, ExtractedReport, ReportMeta
+from .markdown_export import export_markdown
 from .opendataloader_fallback import OpenDataLoaderUnavailable, convert_pdfs_to_markdown
 from .quant import compute_portfolio_backtests, compute_price_metrics, dataclass_rows
 from .change_detection import new_report_urls
@@ -163,6 +164,8 @@ def run_sync(args: argparse.Namespace) -> int:
 
     write_manifest(downloads, data_dir / "manifest.json")
     write_csv(extracted, data_dir / "extracted_reports.csv")
+    if args.markdown:
+        logs.extend(export_markdown(extracted, data_dir / "markdown", use_opendataloader=args.markdown_opendataloader, hybrid=args.opendataloader_hybrid))
     if args.market_data:
         price_metrics = compute_price_metrics(extracted)
         portfolio_backtests = compute_portfolio_backtests(extracted, price_metrics)
@@ -224,6 +227,20 @@ def run_refresh_market(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_export_markdown(args: argparse.Namespace) -> int:
+    data_dir = Path(args.data_dir)
+    reports = read_extracted_reports_csv(data_dir / "extracted_reports.csv")
+    logs = export_markdown(
+        reports,
+        data_dir / "markdown",
+        use_opendataloader=args.markdown_opendataloader,
+        hybrid=args.opendataloader_hybrid,
+    )
+    for message in logs:
+        print(message)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Collect SNUSMIC PDFs and sync Google Sheets.")
     subparsers = parser.add_subparsers(dest="command")
@@ -239,6 +256,8 @@ def build_parser() -> argparse.ArgumentParser:
     sync.add_argument("--opendataloader-output-dir", default="data/opendataloader", help="OpenDataLoader markdown output directory.")
     sync.add_argument("--opendataloader-hybrid", default=os.environ.get("OPENDATALOADER_HYBRID", ""), help="Optional OpenDataLoader hybrid mode, for example docling-fast.")
     sync.add_argument("--market-data", action=argparse.BooleanOptionalAction, default=True, help="Fetch yfinance data and compute return/portfolio metrics.")
+    sync.add_argument("--markdown", action=argparse.BooleanOptionalAction, default=True, help="Export one markdown file per PDF.")
+    sync.add_argument("--markdown-opendataloader", action=argparse.BooleanOptionalAction, default=True, help="Try opendataloader-pdf before falling back to pypdf text.")
     sync.set_defaults(func=run_sync)
 
     check_new = subparsers.add_parser("check-new", help="Check page one for new reports before running a heavy sync.")
@@ -256,6 +275,12 @@ def build_parser() -> argparse.ArgumentParser:
     refresh_market.add_argument("--build-site", action=argparse.BooleanOptionalAction, default=True)
     refresh_market.add_argument("--public-dir", default="site/public")
     refresh_market.set_defaults(func=run_refresh_market)
+
+    export_md = subparsers.add_parser("export-markdown", help="Export one markdown file per committed PDF/report row.")
+    export_md.add_argument("--data-dir", default="data")
+    export_md.add_argument("--markdown-opendataloader", action=argparse.BooleanOptionalAction, default=True)
+    export_md.add_argument("--opendataloader-hybrid", default=os.environ.get("OPENDATALOADER_HYBRID", ""))
+    export_md.set_defaults(func=run_export_markdown)
     return parser
 
 
