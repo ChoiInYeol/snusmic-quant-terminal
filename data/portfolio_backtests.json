@@ -6,7 +6,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.2500,0.2500,0.2500,0.2500",
-    "realized_return": 1.9302472920025524,
+    "realized_return": 1.9302473380111915,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -18,7 +18,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.6848,0.3152,0.0000,0.0000",
-    "realized_return": 1.9863337093184208,
+    "realized_return": 1.9863339153150263,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -30,7 +30,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.8087,0.1913,0.0000,0.0000",
-    "realized_return": 1.796477348124179,
+    "realized_return": 1.7964778372431347,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -41,8 +41,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.03,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
-    "weights": "0.8231,0.1769,0.0000,0.0000",
-    "realized_return": 1.7744336421510165,
+    "weights": "0.8207,0.1793,0.0000,0.0000",
+    "realized_return": 1.777987102425879,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -66,7 +66,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.6004,0.0957,0.1332,0.1707",
-    "realized_return": 1.6439408421609287,
+    "realized_return": 1.6439414382509125,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -78,7 +78,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.9016,0.0984,0.0000,0.0000",
-    "realized_return": 1.6540718241386563,
+    "realized_return": 1.6540723484584334,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -90,7 +90,7 @@
     "risk_free_rate": 0.06,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.2500,0.2500,0.2500,0.2500",
-    "realized_return": 1.9302472920025524,
+    "realized_return": 1.9302473380111915,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -102,7 +102,7 @@
     "risk_free_rate": 0.06,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.6848,0.3152,0.0000,0.0000",
-    "realized_return": 1.9863337093184208,
+    "realized_return": 1.9863339153150263,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -114,7 +114,7 @@
     "risk_free_rate": 0.06,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.8046,0.1954,0.0000,0.0000",
-    "realized_return": 1.8027112938000416,
+    "realized_return": 1.8027117766615526,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -125,8 +125,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.06,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
-    "weights": "0.8177,0.1823,0.0000,0.0000",
-    "realized_return": 1.7826733716133685,
+    "weights": "0.8193,0.1807,0.0000,0.0000",
+    "realized_return": 1.780148337426676,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -150,7 +150,7 @@
     "risk_free_rate": 0.06,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.6004,0.0957,0.1332,0.1707",
-    "realized_return": 1.6439408421609287,
+    "realized_return": 1.6439414382509125,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -162,7 +162,7 @@
     "risk_free_rate": 0.06,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.9016,0.0984,0.0000,0.0000",
-    "realized_return": 1.6540711918403184,
+    "realized_return": 1.6540717339993491,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -174,7 +174,7 @@
     "risk_free_rate": 0.08,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.2500,0.2500,0.2500,0.2500",
-    "realized_return": 1.9302472920025524,
+    "realized_return": 1.9302473380111915,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -186,7 +186,7 @@
     "risk_free_rate": 0.08,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.6848,0.3152,0.0000,0.0000",
-    "realized_return": 1.9863337093184208,
+    "realized_return": 1.9863339153150263,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -198,7 +198,7 @@
     "risk_free_rate": 0.08,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.8018,0.1982,0.0000,0.0000",
-    "realized_return": 1.8069423555165247,
+    "realized_return": 1.8069428412505026,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -209,8 +209,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.08,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
-    "weights": "0.5005,0.4995,0.0000,0.0000",
-    "realized_return": 2.268866423984471,
+    "weights": "0.7298,0.2702,0.0000,0.0000",
+    "realized_return": 1.9173975158901368,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -234,7 +234,7 @@
     "risk_free_rate": 0.08,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.6004,0.0957,0.1332,0.1707",
-    "realized_return": 1.6439408421609287,
+    "realized_return": 1.6439414382509125,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -246,7 +246,7 @@
     "risk_free_rate": 0.08,
     "symbols": "005380.KS,042660.KS,052690.KS,237690.KS",
     "weights": "0.9016,0.0984,0.0000,0.0000",
-    "realized_return": 1.6540714866759956,
+    "realized_return": 1.6540720184541122,
     "kospi_return": 1.4578928070019535,
     "nasdaq_return": 0.5804615141172322,
     "status": "ok"
@@ -270,7 +270,7 @@
     "risk_free_rate": 0.03,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
     "weights": "0.0475,0.0000,0.0076,0.3684,0.0463,0.1661,0.0910,0.1036,0.1694",
-    "realized_return": 1.6918225100468505,
+    "realized_return": 1.691822482317104,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -282,7 +282,7 @@
     "risk_free_rate": 0.03,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
     "weights": "0.0756,0.0000,0.0358,0.2656,0.1011,0.0879,0.2552,0.0839,0.0950",
-    "realized_return": 1.1141581200579813,
+    "realized_return": 1.1141581065073218,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -293,8 +293,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.03,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
-    "weights": "0.0896,0.0000,0.0223,0.3427,0.1267,0.0871,0.0865,0.0770,0.1681",
-    "realized_return": 1.5905573455423823,
+    "weights": "0.0841,0.0000,0.0160,0.3459,0.1374,0.1005,0.0849,0.0747,0.1565",
+    "realized_return": 1.5116365518050872,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -318,7 +318,7 @@
     "risk_free_rate": 0.03,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
     "weights": "0.0976,0.1398,0.0949,0.0540,0.1194,0.0093,0.4572,0.0219,0.0058",
-    "realized_return": 0.31931087175871115,
+    "realized_return": 0.3193110217272845,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -329,8 +329,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.03,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
-    "weights": "0.2023,0.0000,0.0475,0.0873,0.2162,0.0725,0.0623,0.0965,0.2155",
-    "realized_return": 1.7064725957681435,
+    "weights": "0.1977,0.0000,0.0466,0.0888,0.2157,0.0739,0.0611,0.0980,0.2182",
+    "realized_return": 1.7306648192527532,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -354,7 +354,7 @@
     "risk_free_rate": 0.06,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
     "weights": "0.0475,0.0000,0.0076,0.3684,0.0463,0.1661,0.0910,0.1036,0.1694",
-    "realized_return": 1.6918225100468505,
+    "realized_return": 1.691822482317104,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -366,7 +366,7 @@
     "risk_free_rate": 0.06,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
     "weights": "0.0721,0.0000,0.0267,0.2846,0.0969,0.0953,0.2315,0.0893,0.1036",
-    "realized_return": 1.2009792096993726,
+    "realized_return": 1.2009793370705975,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -377,8 +377,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.06,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
-    "weights": "0.0937,0.0000,0.0278,0.3710,0.0813,0.1298,0.0460,0.0858,0.1646",
-    "realized_return": 1.5917060747552474,
+    "weights": "0.0937,0.0000,0.0277,0.3710,0.0813,0.1298,0.0461,0.0858,0.1646",
+    "realized_return": 1.5915736077615457,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -402,7 +402,7 @@
     "risk_free_rate": 0.06,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
     "weights": "0.0976,0.1398,0.0949,0.0540,0.1194,0.0093,0.4572,0.0219,0.0058",
-    "realized_return": 0.31931087175871115,
+    "realized_return": 0.3193110217272845,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -413,8 +413,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.06,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
-    "weights": "0.2343,0.0080,0.0452,0.0907,0.1995,0.0687,0.0581,0.0753,0.2202",
-    "realized_return": 1.6675053328241092,
+    "weights": "0.2343,0.0080,0.0452,0.0907,0.1996,0.0687,0.0581,0.0753,0.2202",
+    "realized_return": 1.6673545215041243,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -438,7 +438,7 @@
     "risk_free_rate": 0.08,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
     "weights": "0.0475,0.0000,0.0076,0.3684,0.0463,0.1661,0.0910,0.1036,0.1694",
-    "realized_return": 1.6918225100468505,
+    "realized_return": 1.691822482317104,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -450,7 +450,7 @@
     "risk_free_rate": 0.08,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
     "weights": "0.0690,0.0000,0.0201,0.2996,0.0937,0.1013,0.2133,0.0931,0.1100",
-    "realized_return": 1.2655611370162225,
+    "realized_return": 1.2655611975051944,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -461,8 +461,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.08,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
-    "weights": "0.0914,0.0000,0.0182,0.4008,0.0685,0.1434,0.0070,0.0988,0.1720",
-    "realized_return": 1.7014979853940029,
+    "weights": "0.0919,0.0000,0.0196,0.4024,0.0643,0.1477,0.0049,0.0981,0.1711",
+    "realized_return": 1.6913084141641912,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -486,7 +486,7 @@
     "risk_free_rate": 0.08,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
     "weights": "0.0976,0.1398,0.0949,0.0540,0.1194,0.0093,0.4572,0.0219,0.0058",
-    "realized_return": 0.31931087175871115,
+    "realized_return": 0.3193110217272845,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -497,8 +497,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.08,
     "symbols": "008730.KS,032350.KS,194480.KS,196170.KQ,5726.T,FLNC,ISRG,LEU,PLTR",
-    "weights": "0.2059,0.0000,0.0453,0.0893,0.2121,0.0713,0.0628,0.0961,0.2173",
-    "realized_return": 1.7190727260458756,
+    "weights": "0.2419,0.0021,0.0733,0.0950,0.1767,0.0931,0.0899,0.0552,0.1728",
+    "realized_return": 1.2757903798237265,
     "kospi_return": 1.378198260668729,
     "nasdaq_return": 0.4487510527383016,
     "status": "ok"
@@ -510,7 +510,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.2000,0.2000,0.2000,0.2000,0.2000",
-    "realized_return": 0.5024422814999722,
+    "realized_return": 0.5024423180033706,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -522,7 +522,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.2983,0.0000,0.0109,0.6734,0.0175",
-    "realized_return": 0.5113270737132494,
+    "realized_return": 0.5113270098621279,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -534,7 +534,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.3263,0.0000,0.0000,0.6353,0.0384",
-    "realized_return": 0.5134033643756687,
+    "realized_return": 0.5134033749063746,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -546,7 +546,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.2000,0.0000,0.0000,0.7998,0.0002",
-    "realized_return": 0.48885592830849833,
+    "realized_return": 0.4888559996229437,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -570,7 +570,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.4353,0.0110,0.0659,0.2567,0.2311",
-    "realized_return": 0.5749724157862512,
+    "realized_return": 0.5749724793075407,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -582,7 +582,7 @@
     "risk_free_rate": 0.03,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.4623,0.0000,0.0000,0.5377,0.0000",
-    "realized_return": 0.5313213405222086,
+    "realized_return": 0.531322042167834,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -594,7 +594,7 @@
     "risk_free_rate": 0.06,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.2000,0.2000,0.2000,0.2000,0.2000",
-    "realized_return": 0.5024422814999722,
+    "realized_return": 0.5024423180033706,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -606,7 +606,7 @@
     "risk_free_rate": 0.06,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.2983,0.0000,0.0109,0.6734,0.0175",
-    "realized_return": 0.5113270737132494,
+    "realized_return": 0.5113270098621279,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -618,7 +618,7 @@
     "risk_free_rate": 0.06,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.2455,0.0000,0.0000,0.7545,0.0000",
-    "realized_return": 0.4962175741911773,
+    "realized_return": 0.4962175933105742,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -629,8 +629,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.06,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
-    "weights": "0.1476,0.0000,0.0000,0.8524,0.0000",
-    "realized_return": 0.4803616739862394,
+    "weights": "0.1473,0.0000,0.0000,0.8517,0.0010",
+    "realized_return": 0.4804166956206906,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -654,7 +654,7 @@
     "risk_free_rate": 0.06,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.4353,0.0110,0.0659,0.2567,0.2311",
-    "realized_return": 0.5749724157862512,
+    "realized_return": 0.5749724793075407,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -666,7 +666,7 @@
     "risk_free_rate": 0.06,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.1738,0.0000,0.0000,0.8262,0.0000",
-    "realized_return": 0.4845992845470793,
+    "realized_return": 0.4845992815725877,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -678,7 +678,7 @@
     "risk_free_rate": 0.08,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.2000,0.2000,0.2000,0.2000,0.2000",
-    "realized_return": 0.5024422814999722,
+    "realized_return": 0.5024423180033706,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -690,7 +690,7 @@
     "risk_free_rate": 0.08,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.2983,0.0000,0.0109,0.6734,0.0175",
-    "realized_return": 0.5113270737132494,
+    "realized_return": 0.5113270098621279,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -702,7 +702,7 @@
     "risk_free_rate": 0.08,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.1408,0.0000,0.0000,0.8592,0.0000",
-    "realized_return": 0.47926200794298507,
+    "realized_return": 0.4792620455185676,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -713,8 +713,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.08,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
-    "weights": "0.1026,0.0000,0.0000,0.8974,0.0000",
-    "realized_return": 0.4730726235564422,
+    "weights": "0.1024,0.0000,0.0000,0.8974,0.0002",
+    "realized_return": 0.47305369460063285,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -738,7 +738,7 @@
     "risk_free_rate": 0.08,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.4353,0.0110,0.0659,0.2567,0.2311",
-    "realized_return": 0.5749724157862512,
+    "realized_return": 0.5749724793075407,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -750,7 +750,7 @@
     "risk_free_rate": 0.08,
     "symbols": "005720.KS,016380.KS,029460.KS,192400.KS,271560.KS",
     "weights": "0.1618,0.0000,0.0000,0.8382,0.0000",
-    "realized_return": 0.48265542291737806,
+    "realized_return": 0.48265533663588917,
     "kospi_return": 1.397409361828895,
     "nasdaq_return": 0.4342026054875987,
     "status": "ok"
@@ -762,7 +762,7 @@
     "risk_free_rate": 0.03,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.2000,0.2000,0.2000,0.2000,0.2000",
-    "realized_return": 0.21608776919811565,
+    "realized_return": 0.21608776919811568,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -774,7 +774,7 @@
     "risk_free_rate": 0.03,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.0330,0.0000,0.6521,0.1185,0.1964",
-    "realized_return": 0.7976229582459474,
+    "realized_return": 0.7976229817036895,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -786,7 +786,7 @@
     "risk_free_rate": 0.03,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.0284,0.0000,0.4417,0.1981,0.3318",
-    "realized_return": 0.5475539665478939,
+    "realized_return": 0.5475541039523788,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -797,8 +797,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.03,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
-    "weights": "0.0000,0.0000,1.0000,0.0000,0.0000",
-    "realized_return": 1.2265902815406136,
+    "weights": "0.1347,0.0000,0.8158,0.0495,0.0000",
+    "realized_return": 0.9455888474284528,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -822,7 +822,7 @@
     "risk_free_rate": 0.03,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.1096,0.1189,0.2010,0.2598,0.3107",
-    "realized_return": 0.23550547937389987,
+    "realized_return": 0.23550561597148667,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -833,8 +833,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.03,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
-    "weights": "0.2253,0.0000,0.4408,0.0000,0.3339",
-    "realized_return": 0.5233066117123663,
+    "weights": "0.2254,0.0000,0.4410,0.0000,0.3336",
+    "realized_return": 0.5234535833047872,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -846,7 +846,7 @@
     "risk_free_rate": 0.06,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.2000,0.2000,0.2000,0.2000,0.2000",
-    "realized_return": 0.21608776919811565,
+    "realized_return": 0.21608776919811568,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -858,7 +858,7 @@
     "risk_free_rate": 0.06,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.0330,0.0000,0.6521,0.1185,0.1964",
-    "realized_return": 0.7976229582459474,
+    "realized_return": 0.7976229817036895,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -870,7 +870,7 @@
     "risk_free_rate": 0.06,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.0226,0.0000,0.4549,0.1922,0.3303",
-    "realized_return": 0.5666941147941835,
+    "realized_return": 0.5666942467128278,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -881,8 +881,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.06,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
-    "weights": "0.1300,0.0000,0.7403,0.1298,0.0000",
-    "realized_return": 0.8375650147751738,
+    "weights": "0.0000,0.0000,0.6192,0.0223,0.3585",
+    "realized_return": 0.816315583502894,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -906,7 +906,7 @@
     "risk_free_rate": 0.06,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.1096,0.1189,0.2010,0.2598,0.3107",
-    "realized_return": 0.23550547937389987,
+    "realized_return": 0.23550561597148667,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -917,8 +917,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.06,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
-    "weights": "0.2103,0.0000,0.3909,0.0000,0.3988",
-    "realized_return": 0.4781897559869859,
+    "weights": "0.2253,0.0000,0.4409,0.0000,0.3338",
+    "realized_return": 0.5233739612554578,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -930,7 +930,7 @@
     "risk_free_rate": 0.08,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.2000,0.2000,0.2000,0.2000,0.2000",
-    "realized_return": 0.21608776919811565,
+    "realized_return": 0.21608776919811568,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -942,7 +942,7 @@
     "risk_free_rate": 0.08,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.0330,0.0000,0.6521,0.1185,0.1964",
-    "realized_return": 0.7976229582459474,
+    "realized_return": 0.7976229817036895,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -954,7 +954,7 @@
     "risk_free_rate": 0.08,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.0183,0.0000,0.4645,0.1879,0.3293",
-    "realized_return": 0.5806467085392704,
+    "realized_return": 0.5806468378628475,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -965,8 +965,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.08,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
-    "weights": "0.0000,0.0000,1.0000,0.0000,0.0000",
-    "realized_return": 1.226590281540616,
+    "weights": "0.1198,0.0000,0.7610,0.1192,0.0000",
+    "realized_return": 0.8685375712812868,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -990,7 +990,7 @@
     "risk_free_rate": 0.08,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.1096,0.1189,0.2010,0.2598,0.3107",
-    "realized_return": 0.23550547937389987,
+    "realized_return": 0.23550561597148667,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -1002,7 +1002,7 @@
     "risk_free_rate": 0.08,
     "symbols": "067160.KQ,112610.KS,211050.KQ,259960.KS,294870.KQ",
     "weights": "0.2254,0.0000,0.4410,0.0000,0.3336",
-    "realized_return": 0.5234523054022557,
+    "realized_return": 0.5234525371869846,
     "kospi_return": 1.496630409174752,
     "nasdaq_return": 0.33359488308958296,
     "status": "ok"
@@ -1014,7 +1014,7 @@
     "risk_free_rate": 0.03,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.1250,0.1250,0.1250,0.1250,0.1250,0.1250,0.1250,0.1250",
-    "realized_return": 0.8081574241650701,
+    "realized_return": 0.8081574130642508,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1026,7 +1026,7 @@
     "risk_free_rate": 0.03,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.0434,0.0330,0.8080,0.0000,0.0000,0.0198,0.0864,0.0094",
-    "realized_return": -0.31840227160713214,
+    "realized_return": -0.3184022481860712,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1038,7 +1038,7 @@
     "risk_free_rate": 0.03,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.2078,0.1329,0.3974,0.0000,0.0000,0.0289,0.2075,0.0254",
-    "realized_return": 0.0946574053716834,
+    "realized_return": 0.09465772183010371,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1049,8 +1049,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.03,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
-    "weights": "0.0931,0.0011,0.5414,0.0000,0.0000,0.0524,0.2505,0.0615",
-    "realized_return": -0.20140395826791907,
+    "weights": "0.1308,0.0000,0.8676,0.0000,0.0000,0.0000,0.0015,0.0000",
+    "realized_return": -0.2932250165416079,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1074,7 +1074,7 @@
     "risk_free_rate": 0.03,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.2961,0.2403,0.0643,0.0240,0.0287,0.0463,0.1085,0.1918",
-    "realized_return": 0.6588419214877714,
+    "realized_return": 0.6588416679824941,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1086,7 +1086,7 @@
     "risk_free_rate": 0.03,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.0000,0.0000,0.7700,0.0000,0.0000,0.0000,0.2300,0.0000",
-    "realized_return": -0.37799923895064536,
+    "realized_return": -0.3779992464854545,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1098,7 +1098,7 @@
     "risk_free_rate": 0.06,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.1250,0.1250,0.1250,0.1250,0.1250,0.1250,0.1250,0.1250",
-    "realized_return": 0.8081574241650701,
+    "realized_return": 0.8081574130642508,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1110,7 +1110,7 @@
     "risk_free_rate": 0.06,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.0434,0.0330,0.8080,0.0000,0.0000,0.0198,0.0864,0.0094",
-    "realized_return": -0.31840227160713214,
+    "realized_return": -0.3184022481860712,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1122,7 +1122,7 @@
     "risk_free_rate": 0.06,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.1872,0.1097,0.4557,0.0000,0.0000,0.0237,0.2236,0.0000",
-    "realized_return": 0.017051343246912175,
+    "realized_return": 0.017051363598701377,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1133,8 +1133,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.06,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
-    "weights": "0.0063,0.0000,0.6287,0.0000,0.0000,0.0000,0.2816,0.0834",
-    "realized_return": -0.2753605675500055,
+    "weights": "0.0954,0.0000,0.5720,0.0000,0.0000,0.0165,0.2585,0.0576",
+    "realized_return": -0.19647186487111548,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1158,7 +1158,7 @@
     "risk_free_rate": 0.06,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.2961,0.2403,0.0643,0.0240,0.0287,0.0463,0.1085,0.1918",
-    "realized_return": 0.6588419214877714,
+    "realized_return": 0.6588416679824941,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1170,7 +1170,7 @@
     "risk_free_rate": 0.06,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.0000,0.0000,0.7700,0.0000,0.0000,0.0000,0.2300,0.0000",
-    "realized_return": -0.3780062590402377,
+    "realized_return": -0.37800901847092394,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1182,7 +1182,7 @@
     "risk_free_rate": 0.08,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.1250,0.1250,0.1250,0.1250,0.1250,0.1250,0.1250,0.1250",
-    "realized_return": 0.8081574241650701,
+    "realized_return": 0.8081574130642508,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1194,7 +1194,7 @@
     "risk_free_rate": 0.08,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.0434,0.0330,0.8080,0.0000,0.0000,0.0198,0.0864,0.0094",
-    "realized_return": -0.31840227160713214,
+    "realized_return": -0.3184022481860712,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1206,7 +1206,7 @@
     "risk_free_rate": 0.08,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.1661,0.0866,0.4983,0.0000,0.0000,0.0156,0.2333,0.0000",
-    "realized_return": -0.03965603257832925,
+    "realized_return": -0.03965593988310582,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1217,8 +1217,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.08,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
-    "weights": "0.0000,0.0000,0.7602,0.0000,0.0000,0.0000,0.0200,0.2198",
-    "realized_return": -0.2506044084014937,
+    "weights": "0.0009,0.0000,0.6681,0.0000,0.0000,0.0167,0.2901,0.0242",
+    "realized_return": -0.33546402290081656,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1242,7 +1242,7 @@
     "risk_free_rate": 0.08,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.2961,0.2403,0.0643,0.0240,0.0287,0.0463,0.1085,0.1918",
-    "realized_return": 0.6588419214877714,
+    "realized_return": 0.6588416679824941,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1254,7 +1254,7 @@
     "risk_free_rate": 0.08,
     "symbols": "012330.KS,015760.KS,018290.KS,234300.KQ,356860.KQ,FNKO,GRND,LEVI",
     "weights": "0.0000,0.0000,0.7700,0.0000,0.0000,0.0000,0.2300,0.0000",
-    "realized_return": -0.37800444374149605,
+    "realized_return": -0.378000692869829,
     "kospi_return": 1.5890398697755281,
     "nasdaq_return": 0.2975175719220886,
     "status": "ok"
@@ -1266,7 +1266,7 @@
     "risk_free_rate": 0.03,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.2000,0.2000,0.2000,0.2000,0.2000",
-    "realized_return": 2.9285459859346568,
+    "realized_return": 2.928545985934657,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1278,7 +1278,7 @@
     "risk_free_rate": 0.03,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.0710,0.0352,0.2405,0.0000,0.6534",
-    "realized_return": 2.407818375913505,
+    "realized_return": 2.407818451637562,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1290,7 +1290,7 @@
     "risk_free_rate": 0.03,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.0000,0.0000,0.3233,0.0000,0.6767",
-    "realized_return": 2.6864929640105726,
+    "realized_return": 2.686493092286649,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1301,8 +1301,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.03,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
-    "weights": "0.0000,0.1084,0.0857,0.0000,0.8060",
-    "realized_return": 2.066737170352252,
+    "weights": "0.0000,0.0556,0.1716,0.0000,0.7728",
+    "realized_return": 2.321857805395724,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1326,7 +1326,7 @@
     "risk_free_rate": 0.03,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.4888,0.2210,0.0027,0.1570,0.1304",
-    "realized_return": 2.0591292653206503,
+    "realized_return": 2.0591301588366693,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1338,7 +1338,7 @@
     "risk_free_rate": 0.03,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.0000,0.0000,0.0000,0.0000,1.0000",
-    "realized_return": 2.1802470609018596,
+    "realized_return": 2.180247060901866,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1350,7 +1350,7 @@
     "risk_free_rate": 0.06,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.2000,0.2000,0.2000,0.2000,0.2000",
-    "realized_return": 2.9285459859346568,
+    "realized_return": 2.928545985934657,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1362,7 +1362,7 @@
     "risk_free_rate": 0.06,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.0710,0.0352,0.2405,0.0000,0.6534",
-    "realized_return": 2.407818375913505,
+    "realized_return": 2.407818451637562,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1374,7 +1374,7 @@
     "risk_free_rate": 0.06,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.0000,0.0000,0.3134,0.0000,0.6866",
-    "realized_return": 2.6709356869444685,
+    "realized_return": 2.6709357986112554,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1385,8 +1385,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.06,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
-    "weights": "0.0000,0.0000,0.0000,0.0000,1.0000",
-    "realized_return": 2.1802470609018783,
+    "weights": "0.0000,0.0004,0.2190,0.0000,0.7806",
+    "realized_return": 2.522115865015444,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1410,7 +1410,7 @@
     "risk_free_rate": 0.06,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.4888,0.2210,0.0027,0.1570,0.1304",
-    "realized_return": 2.0591292653206503,
+    "realized_return": 2.0591301588366693,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1422,7 +1422,7 @@
     "risk_free_rate": 0.06,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.0000,0.0000,0.0000,0.0000,1.0000",
-    "realized_return": 2.1802470609018685,
+    "realized_return": 2.1802470609018596,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1434,7 +1434,7 @@
     "risk_free_rate": 0.08,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.2000,0.2000,0.2000,0.2000,0.2000",
-    "realized_return": 2.9285459859346568,
+    "realized_return": 2.928545985934657,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1446,7 +1446,7 @@
     "risk_free_rate": 0.08,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.0710,0.0352,0.2405,0.0000,0.6534",
-    "realized_return": 2.407818375913505,
+    "realized_return": 2.407818451637562,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1458,7 +1458,7 @@
     "risk_free_rate": 0.08,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.0000,0.0000,0.3061,0.0000,0.6939",
-    "realized_return": 2.659577431381088,
+    "realized_return": 2.6595775443011354,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1469,8 +1469,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.08,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
-    "weights": "0.0000,0.0004,0.2188,0.0000,0.7808",
-    "realized_return": 2.5218490581343427,
+    "weights": "0.0000,0.0735,0.0579,0.0000,0.8686",
+    "realized_return": 2.1028555052817253,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1494,7 +1494,7 @@
     "risk_free_rate": 0.08,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.4888,0.2210,0.0027,0.1570,0.1304",
-    "realized_return": 2.0591292653206503,
+    "realized_return": 2.0591301588366693,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1506,7 +1506,7 @@
     "risk_free_rate": 0.08,
     "symbols": "033500.KQ,035900.KS,082740.KS,218410.KQ,6857.T",
     "weights": "0.0000,0.0000,0.0000,0.0000,1.0000",
-    "realized_return": 2.1802470609018663,
+    "realized_return": 2.1802470609018703,
     "kospi_return": 1.6669619353727518,
     "nasdaq_return": 0.24158391031177384,
     "status": "ok"
@@ -1518,7 +1518,7 @@
     "risk_free_rate": 0.03,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.3333,0.3333,0.3333",
-    "realized_return": 0.8157407045136235,
+    "realized_return": 0.8157407045136233,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1530,7 +1530,7 @@
     "risk_free_rate": 0.03,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.0160,0.5891,0.3949",
-    "realized_return": 0.7614603435452133,
+    "realized_return": 0.7614603448182488,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1542,7 +1542,7 @@
     "risk_free_rate": 0.03,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.0659,0.6190,0.3151",
-    "realized_return": 0.7650811858702433,
+    "realized_return": 0.7650811751591551,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1553,8 +1553,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.03,
     "symbols": "001040.KS,012450.KS,119850.KS",
-    "weights": "0.0000,0.5017,0.4983",
-    "realized_return": 0.7657700610572988,
+    "weights": "0.0000,0.5483,0.4517",
+    "realized_return": 0.7624926665110835,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1578,7 +1578,7 @@
     "risk_free_rate": 0.03,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.5175,0.3365,0.1461",
-    "realized_return": 0.8365992456735629,
+    "realized_return": 0.8365992437404238,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1590,7 +1590,7 @@
     "risk_free_rate": 0.03,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.0077,0.4312,0.5611",
-    "realized_return": 0.7715971410119457,
+    "realized_return": 0.7715971692056904,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1602,7 +1602,7 @@
     "risk_free_rate": 0.06,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.3333,0.3333,0.3333",
-    "realized_return": 0.8157407045136235,
+    "realized_return": 0.8157407045136233,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1614,7 +1614,7 @@
     "risk_free_rate": 0.06,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.0160,0.5891,0.3949",
-    "realized_return": 0.7614603435452133,
+    "realized_return": 0.7614603448182488,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1626,7 +1626,7 @@
     "risk_free_rate": 0.06,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.0442,0.6325,0.3232",
-    "realized_return": 0.7616464475636456,
+    "realized_return": 0.7616464376043306,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1637,8 +1637,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.06,
     "symbols": "001040.KS,012450.KS,119850.KS",
-    "weights": "0.0000,0.5205,0.4795",
-    "realized_return": 0.764444365767069,
+    "weights": "0.0000,0.5206,0.4794",
+    "realized_return": 0.7644433868675393,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1662,7 +1662,7 @@
     "risk_free_rate": 0.06,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.5175,0.3365,0.1461",
-    "realized_return": 0.8365992456735629,
+    "realized_return": 0.8365992437404238,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1674,7 +1674,7 @@
     "risk_free_rate": 0.06,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.0074,0.4312,0.5614",
-    "realized_return": 0.7715544857111906,
+    "realized_return": 0.7715545245074598,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1686,7 +1686,7 @@
     "risk_free_rate": 0.08,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.3333,0.3333,0.3333",
-    "realized_return": 0.8157407045136235,
+    "realized_return": 0.8157407045136233,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1698,7 +1698,7 @@
     "risk_free_rate": 0.08,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.0160,0.5891,0.3949",
-    "realized_return": 0.7614603435452133,
+    "realized_return": 0.7614603448182488,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1710,7 +1710,7 @@
     "risk_free_rate": 0.08,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.0285,0.6424,0.3291",
-    "realized_return": 0.7591515806038969,
+    "realized_return": 0.7591515681683267,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1721,8 +1721,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.08,
     "symbols": "001040.KS,012450.KS,119850.KS",
-    "weights": "0.0000,0.5445,0.4555",
-    "realized_return": 0.7627644609816696,
+    "weights": "0.0000,0.5077,0.4923",
+    "realized_return": 0.76534423699541,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1746,7 +1746,7 @@
     "risk_free_rate": 0.08,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.5175,0.3365,0.1461",
-    "realized_return": 0.8365992456735629,
+    "realized_return": 0.8365992437404238,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1758,7 +1758,7 @@
     "risk_free_rate": 0.08,
     "symbols": "001040.KS,012450.KS,119850.KS",
     "weights": "0.0073,0.4312,0.5614",
-    "realized_return": 0.7715510392376812,
+    "realized_return": 0.7715510669615098,
     "kospi_return": 1.602378321145368,
     "nasdaq_return": 0.5536339908645207,
     "status": "ok"
@@ -1770,7 +1770,7 @@
     "risk_free_rate": 0.03,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.1429,0.1429,0.1429,0.1429,0.1429,0.1429,0.1429",
-    "realized_return": 0.29754847411532764,
+    "realized_return": 0.2975484741153276,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1794,7 +1794,7 @@
     "risk_free_rate": 0.03,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.0000,0.3145,0.0000,0.0000,0.4293,0.0499,0.2062",
-    "realized_return": -0.1610726485297283,
+    "realized_return": -0.16107264675873045,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1805,8 +1805,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.03,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
-    "weights": "0.0000,0.2536,0.0257,0.0763,0.3857,0.0000,0.2587",
-    "realized_return": -0.06921950309306271,
+    "weights": "0.0000,0.2716,0.0000,0.0000,0.0000,0.0000,0.7284",
+    "realized_return": -0.2822210352276228,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1830,7 +1830,7 @@
     "risk_free_rate": 0.03,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.0886,0.1392,0.0981,0.2031,0.1981,0.0563,0.2166",
-    "realized_return": 0.20661949589341205,
+    "realized_return": 0.20661948309583023,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1842,7 +1842,7 @@
     "risk_free_rate": 0.03,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.0000,0.3431,0.0000,0.0000,0.5088,0.1481,0.0000",
-    "realized_return": -0.13185305622190963,
+    "realized_return": -0.13185304431537256,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1854,7 +1854,7 @@
     "risk_free_rate": 0.06,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.1429,0.1429,0.1429,0.1429,0.1429,0.1429,0.1429",
-    "realized_return": 0.29754847411532764,
+    "realized_return": 0.2975484741153276,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1878,7 +1878,7 @@
     "risk_free_rate": 0.06,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.0000,0.3143,0.0000,0.0000,0.4383,0.0485,0.1989",
-    "realized_return": -0.15906956812847048,
+    "realized_return": -0.1590695734223453,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1889,8 +1889,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.06,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
-    "weights": "0.0000,0.3813,0.0000,0.0000,0.4466,0.1716,0.0006",
-    "realized_return": -0.12347579519225899,
+    "weights": "0.0000,0.3798,0.0000,0.0000,0.3763,0.1065,0.1374",
+    "realized_return": -0.1357846970499901,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1914,7 +1914,7 @@
     "risk_free_rate": 0.06,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.0886,0.1392,0.0981,0.2031,0.1981,0.0563,0.2166",
-    "realized_return": 0.20661949589341205,
+    "realized_return": 0.20661948309583023,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1926,7 +1926,7 @@
     "risk_free_rate": 0.06,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.0000,0.3702,0.0000,0.0000,0.4908,0.1390,0.0000",
-    "realized_return": -0.11815886291764814,
+    "realized_return": -0.11815886595015662,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1938,7 +1938,7 @@
     "risk_free_rate": 0.08,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.1429,0.1429,0.1429,0.1429,0.1429,0.1429,0.1429",
-    "realized_return": 0.29754847411532764,
+    "realized_return": 0.2975484741153276,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1962,7 +1962,7 @@
     "risk_free_rate": 0.08,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.0000,0.3142,0.0000,0.0000,0.4449,0.0474,0.1934",
-    "realized_return": -0.15755226491534946,
+    "realized_return": -0.1575522682661156,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1973,8 +1973,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.08,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
-    "weights": "0.0000,0.0000,0.0000,0.0000,1.0000,0.0000,0.0000",
-    "realized_return": -0.22719343996162533,
+    "weights": "0.0000,0.3626,0.0000,0.0000,0.3737,0.1321,0.1317",
+    "realized_return": -0.1490483509927279,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -1998,7 +1998,7 @@
     "risk_free_rate": 0.08,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.0886,0.1392,0.0981,0.2031,0.1981,0.0563,0.2166",
-    "realized_return": 0.20661949589341205,
+    "realized_return": 0.20661948309583023,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -2010,7 +2010,7 @@
     "risk_free_rate": 0.08,
     "symbols": "009830.KS,010620.KQ,101490.KS,263750.KS,CLBT,DOCS,SRAD",
     "weights": "0.0000,0.3702,0.0000,0.0000,0.4908,0.1390,0.0000",
-    "realized_return": -0.11812825543150464,
+    "realized_return": -0.11812825450691117,
     "kospi_return": 1.4488769844735643,
     "nasdaq_return": 0.2843046316519786,
     "status": "ok"
@@ -2034,7 +2034,7 @@
     "risk_free_rate": 0.03,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.4841,0.0000,0.5159",
-    "realized_return": -0.15480065044035984,
+    "realized_return": -0.15480022107907754,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2046,7 +2046,7 @@
     "risk_free_rate": 0.03,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.4066,0.0000,0.5934",
-    "realized_return": -0.1827277957461131,
+    "realized_return": -0.1827268320684381,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2058,7 +2058,7 @@
     "risk_free_rate": 0.03,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.2102,0.0000,0.7898",
-    "realized_return": -0.25349238312286876,
+    "realized_return": -0.2534921981070716,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2082,7 +2082,7 @@
     "risk_free_rate": 0.03,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.7510,0.1498,0.0993",
-    "realized_return": 0.07851293376441605,
+    "realized_return": 0.0785129153192042,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2094,7 +2094,7 @@
     "risk_free_rate": 0.03,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.4946,0.0000,0.5054",
-    "realized_return": -0.1510143568092197,
+    "realized_return": -0.15101436689612385,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2118,7 +2118,7 @@
     "risk_free_rate": 0.06,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.4841,0.0000,0.5159",
-    "realized_return": -0.15480065044035984,
+    "realized_return": -0.15480022107907754,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2130,7 +2130,7 @@
     "risk_free_rate": 0.06,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.0000,0.0000,1.0000",
-    "realized_return": -0.3292224149211238,
+    "realized_return": -0.32922241492112375,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2142,7 +2142,7 @@
     "risk_free_rate": 0.06,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.0000,0.0000,1.0000",
-    "realized_return": -0.32922241492112375,
+    "realized_return": -0.32922241492112364,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2166,7 +2166,7 @@
     "risk_free_rate": 0.06,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.7510,0.1498,0.0993",
-    "realized_return": 0.07851293376441605,
+    "realized_return": 0.0785129153192042,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2202,7 +2202,7 @@
     "risk_free_rate": 0.08,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.4841,0.0000,0.5159",
-    "realized_return": -0.15480065044035984,
+    "realized_return": -0.15480022107907754,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2214,7 +2214,7 @@
     "risk_free_rate": 0.08,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.0000,0.0000,1.0000",
-    "realized_return": -0.3292224149211237,
+    "realized_return": -0.32922241492112375,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2226,7 +2226,7 @@
     "risk_free_rate": 0.08,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.0000,0.0000,1.0000",
-    "realized_return": -0.3292224149211238,
+    "realized_return": -0.32921100646729323,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2250,7 +2250,7 @@
     "risk_free_rate": 0.08,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.7510,0.1498,0.0993",
-    "realized_return": 0.07851293376441605,
+    "realized_return": 0.0785129153192042,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2262,7 +2262,7 @@
     "risk_free_rate": 0.08,
     "symbols": "049720.KQ,101160.KS,310200.KS",
     "weights": "0.0000,0.0000,1.0000",
-    "realized_return": -0.32922241492112375,
+    "realized_return": -0.3292224149211238,
     "kospi_return": 1.2276301569902537,
     "nasdaq_return": 0.2570208031578367,
     "status": "ok"
@@ -2286,7 +2286,7 @@
     "risk_free_rate": 0.03,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.1723,0.6198,0.0210,0.1869",
-    "realized_return": 0.49040668300606016,
+    "realized_return": 0.49040669776378815,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2298,7 +2298,7 @@
     "risk_free_rate": 0.03,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0775,0.1995,0.0622,0.6608",
-    "realized_return": 0.7215467453561082,
+    "realized_return": 0.7215464742947879,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2310,7 +2310,7 @@
     "risk_free_rate": 0.03,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0271,0.3760,0.0532,0.5436",
-    "realized_return": 0.6738113091777096,
+    "realized_return": 0.67381029098147,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2334,7 +2334,7 @@
     "risk_free_rate": 0.03,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0382,0.0508,0.3343,0.5767",
-    "realized_return": 0.5279611065698172,
+    "realized_return": 0.5279608801090087,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2346,7 +2346,7 @@
     "risk_free_rate": 0.03,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0081,0.5728,0.0000,0.4191",
-    "realized_return": 0.6434682742433769,
+    "realized_return": 0.6434667143279337,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2370,7 +2370,7 @@
     "risk_free_rate": 0.06,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.1723,0.6198,0.0210,0.1869",
-    "realized_return": 0.49040668300606016,
+    "realized_return": 0.49040669776378815,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2382,7 +2382,7 @@
     "risk_free_rate": 0.06,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0800,0.2088,0.0450,0.6662",
-    "realized_return": 0.7337930268244162,
+    "realized_return": 0.7337927603222033,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2394,7 +2394,7 @@
     "risk_free_rate": 0.06,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0233,0.3867,0.0459,0.5441",
-    "realized_return": 0.6787890718127603,
+    "realized_return": 0.6787889998393342,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2418,7 +2418,7 @@
     "risk_free_rate": 0.06,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0382,0.0508,0.3343,0.5767",
-    "realized_return": 0.5279611065698172,
+    "realized_return": 0.5279608801090087,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2430,7 +2430,7 @@
     "risk_free_rate": 0.06,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0000,0.5802,0.0000,0.4198",
-    "realized_return": 0.6449371508730612,
+    "realized_return": 0.6449371295393524,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2454,7 +2454,7 @@
     "risk_free_rate": 0.08,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.1723,0.6198,0.0210,0.1869",
-    "realized_return": 0.49040668300606016,
+    "realized_return": 0.49040669776378815,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2466,7 +2466,7 @@
     "risk_free_rate": 0.08,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0818,0.2159,0.0321,0.6702",
-    "realized_return": 0.7429781993588179,
+    "realized_return": 0.7429779405646918,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2478,7 +2478,7 @@
     "risk_free_rate": 0.08,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0231,0.3934,0.0388,0.5446",
-    "realized_return": 0.6831349924849206,
+    "realized_return": 0.6831349340808259,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2502,7 +2502,7 @@
     "risk_free_rate": 0.08,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0382,0.0508,0.3343,0.5767",
-    "realized_return": 0.5279611065698172,
+    "realized_return": 0.5279608801090087,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2514,7 +2514,7 @@
     "risk_free_rate": 0.08,
     "symbols": "098120.KS,108490.KS,352820.KS,GLW",
     "weights": "0.0000,0.5802,0.0000,0.4198",
-    "realized_return": 0.6449383922369198,
+    "realized_return": 0.6449372125407927,
     "kospi_return": 0.6429435619114148,
     "nasdaq_return": 0.06260329084690852,
     "status": "ok"
@@ -2538,7 +2538,7 @@
     "risk_free_rate": 0.03,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.5877,0.0884,0.0959,0.2279",
-    "realized_return": 0.5188024811669528,
+    "realized_return": 0.5188024796614279,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2550,7 +2550,7 @@
     "risk_free_rate": 0.03,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.3811,0.2683,0.1342,0.2164",
-    "realized_return": 0.5350323144001129,
+    "realized_return": 0.5350322461799579,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2562,7 +2562,7 @@
     "risk_free_rate": 0.03,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.4080,0.3203,0.0000,0.2716",
-    "realized_return": 0.6356969353619355,
+    "realized_return": 0.6356969357550644,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2586,7 +2586,7 @@
     "risk_free_rate": 0.03,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.1303,0.4979,0.2319,0.1399",
-    "realized_return": 0.5016594595743983,
+    "realized_return": 0.5016594468299207,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2597,8 +2597,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.03,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
-    "weights": "0.2517,0.5810,0.0000,0.1673",
-    "realized_return": 0.6387500814196313,
+    "weights": "0.2342,0.5739,0.0213,0.1706",
+    "realized_return": 0.6293056720715975,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2622,7 +2622,7 @@
     "risk_free_rate": 0.06,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.5877,0.0884,0.0959,0.2279",
-    "realized_return": 0.5188024811669528,
+    "realized_return": 0.5188024796614279,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2634,7 +2634,7 @@
     "risk_free_rate": 0.06,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.3904,0.2598,0.1306,0.2192",
-    "realized_return": 0.5362723926741666,
+    "realized_return": 0.53627232454735,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2646,7 +2646,7 @@
     "risk_free_rate": 0.06,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.4106,0.2717,0.0000,0.3177",
-    "realized_return": 0.6489221073844744,
+    "realized_return": 0.6489218496732825,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2670,7 +2670,7 @@
     "risk_free_rate": 0.06,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.1303,0.4979,0.2319,0.1399",
-    "realized_return": 0.5016594595743983,
+    "realized_return": 0.5016594468299207,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2682,7 +2682,7 @@
     "risk_free_rate": 0.06,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.2504,0.5805,0.0000,0.1690",
-    "realized_return": 0.6395556057941582,
+    "realized_return": 0.6395570466121661,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2706,7 +2706,7 @@
     "risk_free_rate": 0.08,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.5877,0.0884,0.0959,0.2279",
-    "realized_return": 0.5188024811669528,
+    "realized_return": 0.5188024796614279,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2718,7 +2718,7 @@
     "risk_free_rate": 0.08,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.3969,0.2538,0.1280,0.2213",
-    "realized_return": 0.5371537824074994,
+    "realized_return": 0.5371537161887945,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2730,7 +2730,7 @@
     "risk_free_rate": 0.08,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.4969,0.1487,0.0000,0.3543",
-    "realized_return": 0.6409463921189728,
+    "realized_return": 0.6409464069633994,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2754,7 +2754,7 @@
     "risk_free_rate": 0.08,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.1303,0.4979,0.2319,0.1399",
-    "realized_return": 0.5016594595743983,
+    "realized_return": 0.5016594468299207,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2766,7 +2766,7 @@
     "risk_free_rate": 0.08,
     "symbols": "000150.KS,017960.KS,103140.KS,950160.KS",
     "weights": "0.2517,0.5810,0.0000,0.1672",
-    "realized_return": 0.6387375501075011,
+    "realized_return": 0.6387375720437494,
     "kospi_return": 0.5602894776811149,
     "nasdaq_return": 0.05345145420919106,
     "status": "ok"
@@ -2778,7 +2778,7 @@
     "risk_free_rate": 0.03,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111",
-    "realized_return": 0.25053780693044375,
+    "realized_return": 0.25053779867081627,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2790,7 +2790,7 @@
     "risk_free_rate": 0.03,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.0204,0.0005,0.0521,0.1688,0.1454,0.1018,0.0851,0.3913,0.0346",
-    "realized_return": 0.6388296879472051,
+    "realized_return": 0.6388296681595571,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2802,7 +2802,7 @@
     "risk_free_rate": 0.03,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.1000,0.0042,0.1703,0.1625,0.0169,0.2268,0.1796,0.1397,0.0000",
-    "realized_return": 0.21484198688206993,
+    "realized_return": 0.21484198571325538,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2813,8 +2813,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.03,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
-    "weights": "0.1437,0.0000,0.0699,0.1593,0.0000,0.2535,0.2881,0.0854,0.0000",
-    "realized_return": 0.1469753061115192,
+    "weights": "0.1437,0.0000,0.0699,0.1594,0.0000,0.2535,0.2882,0.0853,0.0000",
+    "realized_return": 0.1467947996999055,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2838,7 +2838,7 @@
     "risk_free_rate": 0.03,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.1991,0.0270,0.2109,0.0497,0.0000,0.1705,0.1474,0.0083,0.1871",
-    "realized_return": 0.06364987685653674,
+    "realized_return": 0.06364988822745758,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2849,8 +2849,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.03,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
-    "weights": "0.0059,0.0000,0.1690,0.4196,0.0000,0.1400,0.1890,0.0765,0.0000",
-    "realized_return": 0.019049922895381752,
+    "weights": "0.0060,0.0000,0.1690,0.4197,0.0000,0.1401,0.1888,0.0765,0.0000",
+    "realized_return": 0.019050380960020805,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2862,7 +2862,7 @@
     "risk_free_rate": 0.06,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111",
-    "realized_return": 0.25053780693044375,
+    "realized_return": 0.25053779867081627,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2874,7 +2874,7 @@
     "risk_free_rate": 0.06,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.0204,0.0005,0.0521,0.1688,0.1454,0.1018,0.0851,0.3913,0.0346",
-    "realized_return": 0.6388296879472051,
+    "realized_return": 0.6388296681595571,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2886,7 +2886,7 @@
     "risk_free_rate": 0.06,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.0889,0.0015,0.1632,0.1718,0.0187,0.2288,0.1770,0.1501,0.0000",
-    "realized_return": 0.22623743794346096,
+    "realized_return": 0.22623742033061722,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2897,8 +2897,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.06,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
-    "weights": "0.1343,0.0000,0.0704,0.1585,0.0000,0.2370,0.3089,0.0909,0.0000",
-    "realized_return": 0.15179932395223528,
+    "weights": "0.1375,0.0000,0.0659,0.1688,0.0000,0.2315,0.2956,0.1008,0.0000",
+    "realized_return": 0.17066322163357836,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2922,7 +2922,7 @@
     "risk_free_rate": 0.06,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.1991,0.0270,0.2109,0.0497,0.0000,0.1705,0.1474,0.0083,0.1871",
-    "realized_return": 0.06364987685653674,
+    "realized_return": 0.06364988822745758,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2933,8 +2933,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.06,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
-    "weights": "0.0000,0.0000,0.1854,0.4565,0.0000,0.1442,0.0704,0.1435,0.0000",
-    "realized_return": 0.13284986805530433,
+    "weights": "0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111",
+    "realized_return": 0.25053779867081627,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2946,7 +2946,7 @@
     "risk_free_rate": 0.08,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111,0.1111",
-    "realized_return": 0.25053780693044375,
+    "realized_return": 0.25053779867081627,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2958,7 +2958,7 @@
     "risk_free_rate": 0.08,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.0204,0.0005,0.0521,0.1688,0.1454,0.1018,0.0851,0.3913,0.0346",
-    "realized_return": 0.6388296879472051,
+    "realized_return": 0.6388296681595571,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2970,7 +2970,7 @@
     "risk_free_rate": 0.08,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.0804,0.0000,0.1577,0.1787,0.0200,0.2301,0.1749,0.1582,0.0000",
-    "realized_return": 0.23552133878033094,
+    "realized_return": 0.23552132444071744,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -2982,7 +2982,7 @@
     "risk_free_rate": 0.08,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.1332,0.0000,0.0605,0.1700,0.0000,0.2567,0.2840,0.0957,0.0000",
-    "realized_return": 0.16013321084717186,
+    "realized_return": 0.16013331356399838,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -3006,7 +3006,7 @@
     "risk_free_rate": 0.08,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
     "weights": "0.1991,0.0270,0.2109,0.0497,0.0000,0.1705,0.1474,0.0083,0.1871",
-    "realized_return": 0.06364987685653674,
+    "realized_return": 0.06364988822745758,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -3017,8 +3017,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.08,
     "symbols": "010950.KS,122640.KS,2124.T,214450.KQ,ESTA,IMAX,IRMD,LITE,SXT",
-    "weights": "0.0003,0.0154,0.1493,0.5164,0.0204,0.1428,0.0318,0.1234,0.0003",
-    "realized_return": 0.1021236600917516,
+    "weights": "0.0155,0.0434,0.1121,0.4682,0.0155,0.1148,0.1248,0.0809,0.0248",
+    "realized_return": 0.060404816167183774,
     "kospi_return": 0.6193047608744968,
     "nasdaq_return": 0.06689795072588112,
     "status": "ok"
@@ -3042,7 +3042,7 @@
     "risk_free_rate": 0.03,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
     "weights": "0.6043,0.0990,0.0222,0.1358,0.1387",
-    "realized_return": 0.01010546272766209,
+    "realized_return": 0.010105462627432282,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3054,7 +3054,7 @@
     "risk_free_rate": 0.03,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
     "weights": "0.4466,0.0574,0.0000,0.1572,0.3388",
-    "realized_return": 0.013320166172703424,
+    "realized_return": 0.013320165997192539,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3065,8 +3065,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.03,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
-    "weights": "0.5948,0.0000,0.0000,0.4052,0.0000",
-    "realized_return": 0.016919145977980585,
+    "weights": "0.5404,0.0000,0.0170,0.1477,0.2949",
+    "realized_return": 0.012293022998919519,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3090,7 +3090,7 @@
     "risk_free_rate": 0.03,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
     "weights": "0.1251,0.0519,0.3603,0.1118,0.3510",
-    "realized_return": 0.004622029647263892,
+    "realized_return": 0.004622026297700536,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3101,8 +3101,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.03,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
-    "weights": "0.6409,0.0854,0.0868,0.0414,0.1455",
-    "realized_return": 0.006138508131312145,
+    "weights": "0.6414,0.0857,0.0863,0.0410,0.1456",
+    "realized_return": 0.006139038593374415,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3126,7 +3126,7 @@
     "risk_free_rate": 0.06,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
     "weights": "0.6043,0.0990,0.0222,0.1358,0.1387",
-    "realized_return": 0.01010546272766209,
+    "realized_return": 0.010105462627432282,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3138,7 +3138,7 @@
     "risk_free_rate": 0.06,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
     "weights": "0.4573,0.0541,0.0000,0.1579,0.3307",
-    "realized_return": 0.013258930255819269,
+    "realized_return": 0.01325893002450935,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3149,8 +3149,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.06,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
-    "weights": "0.5988,0.0000,0.0000,0.4012,0.0000",
-    "realized_return": 0.016805009927601807,
+    "weights": "0.5517,0.0000,0.0078,0.1522,0.2884",
+    "realized_return": 0.01254350119444999,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3174,7 +3174,7 @@
     "risk_free_rate": 0.06,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
     "weights": "0.1251,0.0519,0.3603,0.1118,0.3510",
-    "realized_return": 0.004622029647263892,
+    "realized_return": 0.004622026297700536,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3185,8 +3185,8 @@
     "strategy": "calmar",
     "risk_free_rate": 0.06,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
-    "weights": "0.6400,0.0871,0.0846,0.0397,0.1486",
-    "realized_return": 0.006166875356258266,
+    "weights": "0.6445,0.0872,0.0898,0.0385,0.1400",
+    "realized_return": 0.005933217048322122,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3210,7 +3210,7 @@
     "risk_free_rate": 0.08,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
     "weights": "0.6043,0.0990,0.0222,0.1358,0.1387",
-    "realized_return": 0.01010546272766209,
+    "realized_return": 0.010105462627432282,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3222,7 +3222,7 @@
     "risk_free_rate": 0.08,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
     "weights": "0.4650,0.0518,0.0000,0.1582,0.3250",
-    "realized_return": 0.013210786479089746,
+    "realized_return": 0.013210786336918086,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3233,8 +3233,8 @@
     "strategy": "sortino",
     "risk_free_rate": 0.08,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
-    "weights": "0.5609,0.0000,0.0059,0.1600,0.2732",
-    "realized_return": 0.012647306618037446,
+    "weights": "0.5432,0.0000,0.0000,0.1498,0.3070",
+    "realized_return": 0.012832226156770385,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3258,7 +3258,7 @@
     "risk_free_rate": 0.08,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
     "weights": "0.1251,0.0519,0.3603,0.1118,0.3510",
-    "realized_return": 0.004622029647263892,
+    "realized_return": 0.004622026297700536,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
@@ -3270,7 +3270,7 @@
     "risk_free_rate": 0.08,
     "symbols": "082920.KS,100090.KS,306200.KS,CAMT,GLNG",
     "weights": "0.6103,0.1233,0.0783,0.0308,0.1574",
-    "realized_return": 0.0061001804895665195,
+    "realized_return": 0.0061002253252605415,
     "kospi_return": 0.04584848323309454,
     "nasdaq_return": 0.007727894831536242,
     "status": "ok"
