@@ -16,28 +16,28 @@ def normalize_weights(weights: np.ndarray) -> np.ndarray:
     return weights / total
 
 
-def _annualized_mean(log_returns: pd.DataFrame) -> np.ndarray:
-    return log_returns.mean().to_numpy(dtype=float) * 252
+def _annualized_mean(returns: pd.DataFrame) -> np.ndarray:
+    return returns.mean().to_numpy(dtype=float) * 252
 
 
-def _annualized_cov(log_returns: pd.DataFrame) -> np.ndarray:
-    return log_returns.cov().to_numpy(dtype=float) * 252
+def _annualized_cov(returns: pd.DataFrame) -> np.ndarray:
+    return returns.cov().to_numpy(dtype=float) * 252
 
 
-def _portfolio_series(log_returns: pd.DataFrame, weights: np.ndarray) -> np.ndarray:
-    return log_returns.to_numpy(dtype=float) @ weights
+def _portfolio_series(returns: pd.DataFrame, weights: np.ndarray) -> np.ndarray:
+    return returns.to_numpy(dtype=float) @ weights
 
 
 def optimize_execution_weights(
-    log_returns: pd.DataFrame,
+    returns: pd.DataFrame,
     symbols: list[str],
     method: str,
     risk_free_rate: float = 0.03,
 ) -> dict[str, float]:
-    """Return no-short weights using only the supplied historical returns."""
+    """Return no-short weights using only the supplied historical simple returns."""
     if not symbols:
         return {}
-    frame = log_returns.reindex(columns=symbols).dropna(how="all")
+    frame = returns.reindex(columns=symbols).dropna(how="all")
     frame = frame.dropna(axis=1)
     usable_symbols = list(frame.columns)
     if not usable_symbols:
@@ -63,10 +63,10 @@ def optimize_execution_weights(
     return {symbol: weight / total for symbol, weight in result.items()}
 
 
-def _optimize(log_returns: pd.DataFrame, method: str, risk_free_rate: float) -> np.ndarray:
-    n = log_returns.shape[1]
-    mean = _annualized_mean(log_returns)
-    cov = _annualized_cov(log_returns)
+def _optimize(returns: pd.DataFrame, method: str, risk_free_rate: float) -> np.ndarray:
+    n = returns.shape[1]
+    mean = _annualized_mean(returns)
+    cov = _annualized_cov(returns)
     bounds = [(0.0, 1.0)] * n
     constraints = [{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}]
     init = np.ones(n) / n
@@ -79,20 +79,20 @@ def _optimize(log_returns: pd.DataFrame, method: str, risk_free_rate: float) -> 
         return -float((weights @ mean - risk_free_rate) / vol)
 
     def sortino_loss(weights: np.ndarray) -> float:
-        port = _portfolio_series(log_returns, weights)
+        port = _portfolio_series(returns, weights)
         downside = port[port < 0]
         downside_vol = float(np.std(downside) * math.sqrt(252)) if len(downside) else 1e-6
         return -float((weights @ mean - risk_free_rate) / max(downside_vol, 1e-6))
 
     def calmar_loss(weights: np.ndarray) -> float:
-        port = pd.Series(_portfolio_series(log_returns, weights), index=log_returns.index)
+        port = pd.Series(_portfolio_series(returns, weights), index=returns.index)
         equity = np.exp(port.cumsum())
         drawdown = equity / equity.cummax() - 1.0
         max_dd = abs(float(drawdown.min()))
         return -float((weights @ mean - risk_free_rate) / max(max_dd, 1e-6))
 
     def cvar_loss(weights: np.ndarray) -> float:
-        port = np.sort(_portfolio_series(log_returns, weights))
+        port = np.sort(_portfolio_series(returns, weights))
         tail_n = max(1, int(math.ceil(len(port) * 0.05)))
         cvar = abs(float(port[:tail_n].mean())) * math.sqrt(252)
         expected = float(weights @ mean)

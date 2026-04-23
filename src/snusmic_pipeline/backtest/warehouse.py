@@ -398,7 +398,7 @@ def _strategy_heatmap(strategy_runs: pd.DataFrame) -> list[dict[str, Any]]:
         return []
     rows = strategy_runs.copy()
     rows["bucket"] = rows["entry_rule"].astype(str) + " / " + rows["weighting"].astype(str)
-    return _records(rows[["run_id", "strategy_name", "bucket", "rebalance", "final_log_wealth", "total_return", "max_drawdown", "sharpe", "calmar"]])
+    return _records(rows[["run_id", "strategy_name", "bucket", "rebalance", "final_wealth", "total_return", "max_drawdown", "sharpe", "calmar"]])
 
 
 def _float_or_none(value: Any) -> float | None:

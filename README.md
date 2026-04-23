@@ -28,7 +28,7 @@ The local run writes:
 
 ## Quant Engine v3
 
-The v3 engine is event-driven rather than cohort-based. Reports accumulate into a candidate pool after publication, strategies select an execution pool from those candidates, and realized/live log returns are tracked separately.
+The v3 engine is event-driven rather than cohort-based. Reports accumulate into a candidate pool after publication, strategies select an execution pool from those candidates, and realized/live arithmetic return contributions are tracked separately.
 
 Key commands:
 
@@ -40,7 +40,7 @@ uv run python -m snusmic_pipeline optimize-strategies --trials 25
 uv run python -m snusmic_pipeline export-dashboard
 ```
 
-The default strategy set compares MTT/RS/target filters with `1/N`, Sharpe, Sortino, CVaR, Calmar, max-return, and min-variance weighting. Optuna maximizes cumulative log wealth. RS is computed inside the SNUSMIC candidate universe only, and future reports are excluded from earlier RS ranks.
+The default strategy set compares MTT/RS/target filters with `1/N`, Sharpe, Sortino, CVaR, Calmar, max-return, and min-variance weighting. Optuna maximizes cumulative arithmetic total return. RS is computed inside the SNUSMIC candidate universe only, and future reports are excluded from earlier RS ranks.
 
 ## Google Sheets Sync
 

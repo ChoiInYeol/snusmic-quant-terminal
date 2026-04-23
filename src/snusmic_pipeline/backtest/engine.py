@@ -22,7 +22,7 @@ class Position:
     entry_price: float
     weight: float
     target_price: float | None
-    contribution_log_return: float = 0.0
+    contribution_return: float = 0.0
 
 
 def run_walk_forward_backtest(
@@ -51,7 +51,7 @@ def run_walk_forward_backtest(
     closed_once: set[str] = set()
     last_rebalance: pd.Timestamp | None = None
     prev_date: pd.Timestamp | None = None
-    cumulative_log_wealth = 0.0
+    equity_value = 1.0
 
     candidate_events: list[dict[str, Any]] = []
     execution_events: list[dict[str, Any]] = []
@@ -60,16 +60,16 @@ def run_walk_forward_backtest(
 
     for date in trading_dates:
         close_row = wide.loc[date]
-        portfolio_log_return = 0.0
+        portfolio_return = 0.0
         realized_today = 0.0
         if prev_date is not None:
             prev_close = wide.loc[prev_date]
             for position in positions.values():
                 if _has_price(prev_close, position.symbol) and _has_price(close_row, position.symbol):
-                    asset_log_return = math.log(float(close_row[position.symbol]) / float(prev_close[position.symbol]))
-                    contribution = position.weight * asset_log_return
-                    position.contribution_log_return += contribution
-                    portfolio_log_return += contribution
+                    asset_return = float(close_row[position.symbol]) / float(prev_close[position.symbol]) - 1.0
+                    contribution = position.weight * asset_return
+                    position.contribution_return += contribution
+                    portfolio_return += contribution
 
         while pending_idx < len(report_rows) and pd.Timestamp(report_rows[pending_idx]["publication_date"]) < date:
             report = report_rows[pending_idx]
@@ -148,16 +148,16 @@ def run_walk_forward_backtest(
                         execution_events.append(_execution_event(run_id, date, positions[symbol], "rebalance", "weight_update", float(close_row[symbol])))
             last_rebalance = date
 
-        cumulative_log_wealth += portfolio_log_return
-        equity = math.exp(cumulative_log_wealth)
+        equity_value *= max(0.0, 1.0 + portfolio_return)
+        cumulative_return = equity_value - 1.0
         equity_rows.append(
             {
                 "run_id": run_id,
                 "date": date.date().isoformat(),
-                "portfolio_log_return": portfolio_log_return,
-                "realized_log_return": realized_today,
-                "cumulative_log_wealth": cumulative_log_wealth,
-                "equity": equity,
+                "portfolio_return": portfolio_return,
+                "realized_return": realized_today,
+                "cumulative_return": cumulative_return,
+                "equity": equity_value,
                 "candidate_count": len(candidates),
                 "execution_count": len(positions),
                 "cash_weight": max(0.0, 1.0 - sum(position.weight for position in positions.values())),
@@ -176,8 +176,8 @@ def run_walk_forward_backtest(
                     "weight": position.weight,
                     "close": close,
                     "target_price": position.target_price,
-                    "gross_log_return": math.log(close / position.entry_price) if close and close > 0 else None,
-                    "model_log_contribution": position.contribution_log_return,
+                    "gross_return": close / position.entry_price - 1.0 if close and close > 0 else None,
+                    "model_contribution": position.contribution_return,
                     "mtt_pass": bool(sig.get("mtt_pass", False)),
                     "rs_score": _float_or_none(sig.get("rs_score")),
                 }
@@ -214,7 +214,7 @@ def empty_result(run_id: str, config: BacktestConfig) -> dict[str, pd.DataFrame]
         reward_risk=config.reward_risk,
         max_pool_months=config.max_pool_months,
         target_hit_multiplier=config.target_hit_multiplier,
-        final_log_wealth=0.0,
+        final_wealth=1.0,
         total_return=0.0,
         cagr=None,
         annualized_volatility=None,
@@ -222,8 +222,8 @@ def empty_result(run_id: str, config: BacktestConfig) -> dict[str, pd.DataFrame]
         sortino=None,
         max_drawdown=0.0,
         calmar=None,
-        realized_log_return=0.0,
-        live_log_return=0.0,
+        realized_return=0.0,
+        live_return=0.0,
         exposure_ratio=0.0,
         average_positions=0.0,
         max_positions=0,
@@ -280,7 +280,7 @@ def _candidate_event(run_id: str, date: pd.Timestamp, report: dict[str, Any], ev
 
 
 def _execution_event(run_id: str, date: pd.Timestamp, position: Position, event_type: str, reason: str, price: float) -> dict[str, Any]:
-    gross = math.log(price / position.entry_price) if price > 0 and position.entry_price > 0 else None
+    gross = price / position.entry_price - 1.0 if price > 0 and position.entry_price > 0 else None
     return {
         "run_id": run_id,
         "date": date.date().isoformat(),
@@ -294,8 +294,8 @@ def _execution_event(run_id: str, date: pd.Timestamp, position: Position, event_
         "entry_date": position.entry_date.date().isoformat(),
         "entry_price": position.entry_price,
         "target_price": position.target_price,
-        "gross_log_return": gross,
-        "realized_log_return": position.contribution_log_return if event_type == "sell" else None,
+        "gross_return": gross,
+        "realized_return": position.contribution_return if event_type == "sell" else None,
         "holding_days": (date - position.entry_date).days,
     }
 
@@ -316,7 +316,7 @@ def _sell_position(
     price = float(close_row[symbol])
     execution_events.append(_execution_event(run_id, date, position, "sell", reason, price))
     closed_once.add(symbol)
-    return position.contribution_log_return
+    return position.contribution_return
 
 
 def _exit_positions_for_risk(
@@ -420,8 +420,8 @@ def _weights_for_symbols(wide: pd.DataFrame, date: pd.Timestamp, symbols: list[s
     if not symbols:
         return {}
     lookback = wide.loc[wide.index < date, symbols].tail(config.lookback_days + 1)
-    log_returns = np.log(lookback / lookback.shift(1)).replace([np.inf, -np.inf], np.nan).dropna(how="all")
-    return optimize_execution_weights(log_returns, symbols, config.weighting, config.risk_free_rate)
+    returns = lookback.pct_change().replace([np.inf, -np.inf], np.nan).dropna(how="all")
+    return optimize_execution_weights(returns, symbols, config.weighting, config.risk_free_rate)
 
 
 def _is_rebalance_date(date: pd.Timestamp, last_rebalance: pd.Timestamp | None, frequency: str) -> bool:
@@ -445,25 +445,25 @@ def _summarize(
 ) -> dict[str, Any]:
     if equity.empty:
         return empty_result(run_id, config)["strategy_runs"].iloc[0].to_dict()
-    returns = equity["portfolio_log_return"].astype(float)
-    final_log_wealth = float(equity["cumulative_log_wealth"].iloc[-1])
-    total_return = math.exp(final_log_wealth) - 1.0
+    returns = equity["portfolio_return"].astype(float)
+    final_wealth = float(equity["equity"].iloc[-1])
+    total_return = final_wealth - 1.0
     start = pd.to_datetime(equity["date"].iloc[0])
     end = pd.to_datetime(equity["date"].iloc[-1])
     years = max((end - start).days / 365.25, 1 / 365.25)
-    cagr = math.exp(final_log_wealth / years) - 1.0
+    cagr = final_wealth ** (1.0 / years) - 1.0 if final_wealth > 0 else -1.0
     vol = float(returns.std() * math.sqrt(252)) if len(returns) > 1 else None
     sharpe = None if not vol else float((returns.mean() * 252 - config.risk_free_rate) / vol)
     downside = returns[returns < 0]
     downside_vol = float(downside.std() * math.sqrt(252)) if len(downside) > 1 else None
     sortino = None if not downside_vol else float((returns.mean() * 252 - config.risk_free_rate) / downside_vol)
-    equity_curve = np.exp(equity["cumulative_log_wealth"].astype(float))
+    equity_curve = equity["equity"].astype(float)
     drawdown = equity_curve / equity_curve.cummax() - 1.0
     max_drawdown = abs(float(drawdown.min()))
     calmar = None if max_drawdown == 0 else cagr / max_drawdown
     sells = executions[executions["event_type"] == "sell"] if not executions.empty else pd.DataFrame()
-    wins = sells[sells["gross_log_return"].astype(float) > 0] if not sells.empty else pd.DataFrame()
-    realized = float(sells["realized_log_return"].dropna().astype(float).sum()) if not sells.empty else 0.0
+    wins = sells[sells["gross_return"].astype(float) > 0] if not sells.empty else pd.DataFrame()
+    realized = float(sells["realized_return"].dropna().astype(float).sum()) if not sells.empty else 0.0
     return {
         "run_id": run_id,
         "strategy_name": config.name,
@@ -475,7 +475,7 @@ def _summarize(
         "reward_risk": config.reward_risk,
         "max_pool_months": config.max_pool_months,
         "target_hit_multiplier": config.target_hit_multiplier,
-        "final_log_wealth": final_log_wealth,
+        "final_wealth": final_wealth,
         "total_return": total_return,
         "cagr": cagr,
         "annualized_volatility": vol,
@@ -483,8 +483,8 @@ def _summarize(
         "sortino": sortino,
         "max_drawdown": max_drawdown,
         "calmar": calmar,
-        "realized_log_return": realized,
-        "live_log_return": final_log_wealth - realized,
+        "realized_return": realized,
+        "live_return": total_return - realized,
         "exposure_ratio": float((equity["execution_count"].astype(int) > 0).mean()),
         "average_positions": float(equity["execution_count"].astype(int).mean()),
         "max_positions": int(equity["execution_count"].astype(int).max()),
@@ -494,7 +494,7 @@ def _summarize(
         "target_hit_rate": None if sells.empty else float(sells["reason"].astype(str).str.contains("target|take_profit").mean()),
         "stop_loss_hit_rate": None if sells.empty else float((sells["reason"] == "stop_loss").mean()),
         "average_holding_days": None if sells.empty else float(sells["holding_days"].astype(float).mean()),
-        "objective": final_log_wealth,
+        "objective": total_return,
         "open_position_count": len(open_positions),
         "status": "ok",
     }

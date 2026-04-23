@@ -71,7 +71,7 @@ def test_candidate_starts_after_publication_and_strategy_buys_from_pool():
     assert result["strategy_runs"].iloc[0]["status"] == "ok"
 
 
-def test_stop_loss_sell_event_realizes_log_return():
+def test_stop_loss_sell_event_realizes_arithmetic_return():
     reports = report_frame("2024-01-10", target_price=300.0)
     prices = price_frame(periods=280)
     after_publication = prices["date"] > "2024-01-15"
@@ -83,7 +83,7 @@ def test_stop_loss_sell_event_realizes_log_return():
     sells = result["execution_events"][result["execution_events"]["event_type"] == "sell"]
 
     assert "stop_loss" in set(sells["reason"])
-    assert sells["realized_log_return"].notna().any()
+    assert sells["realized_return"].notna().any()
 
 
 def test_cvar_optimizer_returns_no_short_normalized_weights():

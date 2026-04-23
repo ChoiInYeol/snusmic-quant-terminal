@@ -150,7 +150,7 @@ function strategyColumns() {
     { key: "weighting", label: "Weighting" },
     { key: "entry_rule", label: "Entry" },
     { key: "rebalance", label: "Rebalance" },
-    { key: "final_log_wealth", label: "Log wealth", num: true },
+    { key: "final_wealth", label: "Wealth", num: true },
     { key: "total_return", label: "Return", num: true },
     { key: "max_drawdown", label: "MDD", num: true },
     { key: "sharpe", label: "Sharpe", num: true },
@@ -163,7 +163,7 @@ function strategyColumns() {
 
 function strategyFormats() {
   return {
-    final_log_wealth: num,
+    final_wealth: num,
     total_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     max_drawdown: pct,
     sharpe: num,
@@ -181,8 +181,8 @@ function tradeColumns() {
     { key: "reason", label: "Reason" },
     { key: "price", label: "Price", num: true },
     { key: "weight", label: "Weight", num: true },
-    { key: "gross_log_return", label: "Gross log", num: true },
-    { key: "realized_log_return", label: "Realized log", num: true },
+    { key: "gross_return", label: "Gross ret", num: true },
+    { key: "realized_return", label: "Realized ret", num: true },
     { key: "holding_days", label: "Days", num: true },
   ];
 }
@@ -191,8 +191,8 @@ function tradeFormats() {
   return {
     price: num,
     weight: pct,
-    gross_log_return: v => `<span class="${signClass(v)}">${num(v)}</span>`,
-    realized_log_return: v => `<span class="${signClass(v)}">${num(v)}</span>`,
+    gross_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    realized_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
   };
 }
 
@@ -203,8 +203,8 @@ function positionColumns() {
     { key: "weight", label: "Weight", num: true },
     { key: "close", label: "Close", num: true },
     { key: "target_price", label: "Target", num: true },
-    { key: "gross_log_return", label: "Gross log", num: true },
-    { key: "model_log_contribution", label: "Model log", num: true },
+    { key: "gross_return", label: "Gross ret", num: true },
+    { key: "model_contribution", label: "Model contrib", num: true },
     { key: "rs_score", label: "RS", num: true },
     { key: "mtt_pass", label: "MTT" },
   ];
@@ -215,8 +215,8 @@ function positionFormats() {
     weight: pct,
     close: num,
     target_price: num,
-    gross_log_return: v => `<span class="${signClass(v)}">${num(v)}</span>`,
-    model_log_contribution: v => `<span class="${signClass(v)}">${num(v)}</span>`,
+    gross_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    model_contribution: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     rs_score: num,
     mtt_pass: v => v === true || v === "True" || v === "true" ? "pass" : "",
   };
@@ -252,7 +252,7 @@ function signalFormats() {
 
 function bestStrategy(strategies) {
   return [...strategies].filter(r => r.status === "ok")
-    .sort((a, b) => Number(b.final_log_wealth || 0) - Number(a.final_log_wealth || 0))[0];
+    .sort((a, b) => Number(b.total_return || 0) - Number(a.total_return || 0))[0];
 }
 
 function selectedRunId(defaultRows, selectId) {
@@ -272,7 +272,7 @@ function renderV3Overview(v3) {
     const runRows = v3.strategyRuns.filter(r => r.status === "ok");
     stats.innerHTML = [
       ["Strategies", runRows.length],
-      ["Best log wealth", best ? num(best.final_log_wealth) : ""],
+      ["Best return", best ? pct(best.total_return) : ""],
       ["Best total return", best ? pct(best.total_return) : ""],
       ["Execution events", v3.executions.length],
     ].map(([k, value]) => `<div class="metric-card"><span>${k}</span><strong>${value}</strong></div>`).join("");
@@ -282,7 +282,7 @@ function renderV3Overview(v3) {
     bestEl.innerHTML = best ? `
       <div class="best-title">Best walk-forward strategy</div>
       <div class="best-main">${best.strategy_name}</div>
-      <p><span class="pill">Log wealth ${num(best.final_log_wealth)}</span><span class="pill">Return ${pct(best.total_return)}</span><span class="pill">MDD ${pct(best.max_drawdown)}</span></p>
+      <p><span class="pill">Wealth ${num(best.final_wealth)}</span><span class="pill">Return ${pct(best.total_return)}</span><span class="pill">MDD ${pct(best.max_drawdown)}</span></p>
       <p><span class="pill">${best.entry_rule}</span><span class="pill">${best.weighting}</span><span class="pill">${best.rebalance}</span></p>
     ` : "<p>No v3 strategy data yet.</p>";
   }
@@ -337,7 +337,7 @@ function renderStrategyPage(v3) {
   renderTable(document.getElementById("strategyLeaderboardTable"), rows, strategyColumns(), strategyFormats());
   renderTable(document.getElementById("optunaTrialsTable"), [...v3.optunaTrials].sort((a, b) => Number(b.objective || 0) - Number(a.objective || 0)), [
     { key: "trial", label: "Trial", num: true },
-    { key: "objective", label: "Log wealth", num: true },
+    { key: "objective", label: "Objective ret", num: true },
     { key: "weighting", label: "Weighting" },
     { key: "entry_rule", label: "Entry" },
     { key: "rebalance", label: "Rebalance" },
@@ -348,7 +348,7 @@ function renderStrategyPage(v3) {
     { key: "total_return", label: "Return", num: true },
     { key: "max_drawdown", label: "MDD", num: true },
   ], {
-    objective: num,
+    objective: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     stop_loss_pct: pct,
     total_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     max_drawdown: pct,
@@ -362,15 +362,15 @@ function renderStrategyRiskMap(rows) {
     type: "scatter",
     mode: "markers",
     x: rows.map(r => Number(r.max_drawdown || 0)),
-    y: rows.map(r => Number(r.final_log_wealth || 0)),
+    y: rows.map(r => Number(r.total_return || 0)),
     text: rows.map(r => `${r.strategy_name}<br>${r.entry_rule}<br>${r.weighting}<br>Return ${pct(r.total_return)}`),
     marker: { size: rows.map(r => 8 + Number(r.exposure_ratio || 0) * 18), color: rows.map(r => Number(r.sharpe || 0)), colorscale: "Viridis", showscale: true },
-    hovertemplate: "%{text}<br>MDD %{x:.1%}<br>Log wealth %{y:.2f}<extra></extra>",
+    hovertemplate: "%{text}<br>MDD %{x:.1%}<br>Total return %{y:.1%}<extra></extra>",
   }], {
     ...plotBaseLayout,
     margin: { l: 55, r: 20, t: 10, b: 45 },
     xaxis: { title: "Max drawdown", tickformat: ".0%", gridcolor: "#e2e8ef" },
-    yaxis: { title: "Final log wealth", gridcolor: "#e2e8ef" },
+    yaxis: { title: "Total return", tickformat: ".0%", gridcolor: "#e2e8ef" },
   }, plotConfig).then(() => Plotly.Plots.resize(el));
 }
 

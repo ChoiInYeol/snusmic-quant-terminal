@@ -60,7 +60,7 @@ class StrategySummary:
     reward_risk: float
     max_pool_months: int
     target_hit_multiplier: float
-    final_log_wealth: float
+    final_wealth: float
     total_return: float
     cagr: float | None
     annualized_volatility: float | None
@@ -68,8 +68,8 @@ class StrategySummary:
     sortino: float | None
     max_drawdown: float
     calmar: float | None
-    realized_log_return: float
-    live_log_return: float
+    realized_return: float
+    live_return: float
     exposure_ratio: float
     average_positions: float
     max_positions: int
