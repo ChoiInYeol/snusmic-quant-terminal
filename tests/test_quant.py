@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from snusmic_pipeline.quant import optimize_weights, pct_return, portfolio_expected_stats, realized_forward_return, yfinance_candidates
+from snusmic_pipeline.quant import display_name_for_report, optimize_weights, pct_return, portfolio_expected_stats, realized_forward_return, yfinance_candidates
 from snusmic_pipeline.models import ExtractedReport, ReportMeta
 
 
@@ -16,6 +16,11 @@ def make_report(ticker="005930", exchange="KRX"):
 
 def test_yfinance_candidates_for_korean_ticker():
     assert yfinance_candidates(make_report()) == ["005930.KS", "005930.KQ"]
+
+
+def test_display_name_uses_company_for_numeric_tickers():
+    assert display_name_for_report(make_report()) == "Test"
+    assert display_name_for_report(make_report("IRMD", "NASDAQ")) == "IRMD"
 
 
 def test_return_helpers():

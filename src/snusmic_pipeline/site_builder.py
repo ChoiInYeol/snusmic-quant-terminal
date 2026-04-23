@@ -30,11 +30,23 @@ def repo_pdf_url(filename: str, repo: str = "ChoiInYeol/snusmic-google-finance-s
 
 def build_reports_json(data_dir: Path, public_dir: Path) -> list[dict[str, Any]]:
     reports = read_csv_dicts(data_dir / "extracted_reports.csv")
+    metrics = {item.get("title", ""): item for item in read_json(data_dir / "price_metrics.json")}
     for report in reports:
         filename = report.get("PDF 파일명", "")
         report["GitHub PDF"] = repo_pdf_url(filename) if filename else ""
+        metric = metrics.get(report.get("리포트명", ""), {})
+        report["Company"] = report.get("종목명", "")
+        report["Report Date"] = format_kst_datetime(report.get("게시일", ""))
+        report["Report Price"] = metric.get("publication_buy_price", "")
     write_json(public_dir / "data" / "reports.json", reports)
     return reports
+
+
+def format_kst_datetime(value: str) -> str:
+    if not value:
+        return ""
+    normalized = value.replace("T", " ")
+    return normalized[:16]
 
 
 def render_index_html() -> str:
@@ -145,7 +157,6 @@ def render_index_html() -> str:
     <section data-panel="reports">
       <div class="toolbar">
         <input id="reportSearch" placeholder="종목, 티커, 리포트 검색">
-        <select id="statusFilter"><option value="">All status</option><option value="ok">ok</option><option value="needs_review">needs_review</option></select>
       </div>
       <div id="reportStats" class="grid stats"></div>
       <div class="table-wrap"><table id="reportsTable"></table></div>
@@ -203,7 +214,7 @@ def render_index_html() -> str:
         <div class="best-main">${best.cohort_month} · ${best.strategy} · RF ${pct(best.risk_free_rate)}</div>
         <p><span class="pill">Realized ${pct(best.realized_return)}</span><span class="pill">Sharpe ${num(best.expected_sharpe)}</span><span class="pill">Vol ${pct(best.expected_volatility)}</span></p>
         <h2>Weights</h2>
-        ${best.symbols.split(",").map((s,i) => `<p><span class="bar" style="width:${Math.max(6, Number(best.weights.split(",")[i] || 0)*160)}px"></span>${s} ${(Number(best.weights.split(",")[i] || 0)*100).toFixed(1)}%</p>`).join("")}
+        ${(best.display_symbols || best.symbols).split(",").map((s,i) => `<p><span class="bar" style="width:${Math.max(6, Number(best.weights.split(",")[i] || 0)*160)}px"></span>${s} ${(Number(best.weights.split(",")[i] || 0)*100).toFixed(1)}%</p>`).join("")}
       ` : "<p>No portfolio data.</p>";
       renderFrontier(portfolio);
       renderTable(document.getElementById("topPortfolioTable"), topPortfolios(portfolio), portfolioColumns(), portfolioFormats());
@@ -228,7 +239,7 @@ def render_index_html() -> str:
         {key:"cohort_month", label:"Cohort"}, {key:"strategy", label:"Strategy"}, {key:"risk_free_rate", label:"RF", num:true},
         {key:"realized_return", label:"Realized", num:true}, {key:"expected_return", label:"Expected", num:true},
         {key:"expected_volatility", label:"Vol", num:true}, {key:"expected_sharpe", label:"Sharpe", num:true},
-        {key:"kospi_return", label:"KOSPI", num:true}, {key:"nasdaq_return", label:"NASDAQ", num:true}, {key:"symbols", label:"Symbols"}, {key:"weights", label:"Weights"}
+        {key:"kospi_return", label:"KOSPI", num:true}, {key:"nasdaq_return", label:"NASDAQ", num:true}, {key:"display_symbols", label:"Names"}, {key:"weights", label:"Weights"}
       ];
     }
     function portfolioFormats() {
@@ -245,7 +256,7 @@ def render_index_html() -> str:
     }
     function metricColumns() {
       return [
-        {key:"publication_date", label:"Date"}, {key:"title", label:"Report"}, {key:"yfinance_symbol", label:"YF"},
+        {key:"publication_date", label:"Date"}, {key:"company", label:"Company"},
         {key:"current_price", label:"Current", num:true}, {key:"publication_buy_price", label:"Pub price", num:true},
         {key:"q25_price_since_publication", label:"Q25 price", num:true}, {key:"q75_price_since_publication", label:"Q75 price", num:true},
         {key:"buy_at_publication_return", label:"Pub buy ret", num:true}, {key:"q25_price_current_return", label:"Q25 buy ret", num:true},
@@ -266,22 +277,20 @@ def render_index_html() -> str:
     }
     function reportColumns() {
       return [
-        { key:"게시일", label:"Date" }, { key:"종목명", label:"Name" }, { key:"티커", label:"Ticker" },
-        { key:"Base 목표가", label:"Base target", num:true }, { key:"리포트 현재주가", label:"Report price", num:true },
-        { key:"투자포인트", label:"Investment points" }, { key:"추출 상태", label:"Status" }, { key:"GitHub PDF", label:"PDF" }
+        { key:"Report Date", label:"Date" }, { key:"Company", label:"Company" },
+        { key:"Bear 목표가", label:"Bear target", num:true }, { key:"Base 목표가", label:"Base target", num:true }, { key:"Bull 목표가", label:"Bull target", num:true },
+        { key:"Report Price", label:"Report price", num:true }, { key:"투자포인트", label:"Investment points" }, { key:"GitHub PDF", label:"PDF" }
       ];
     }
     function renderReports(all) {
       const q = document.getElementById("reportSearch").value.toLowerCase();
-      const status = document.getElementById("statusFilter").value;
-      const rows = all.filter(r => (!status || r["추출 상태"] === status) && JSON.stringify(r).toLowerCase().includes(q));
-      const ok = rows.filter(r => r["추출 상태"] === "ok").length;
+      const rows = all.filter(r => JSON.stringify(r).toLowerCase().includes(q));
       document.getElementById("reportStats").innerHTML = [
-        ["Reports", rows.length], ["Extracted OK", ok], ["Needs review", rows.length - ok], ["With target", rows.filter(r => r["Base 목표가"]).length],
+        ["Reports", rows.length], ["With target", rows.filter(r => r["Base 목표가"]).length], ["Target hit", rows.filter(r => r["Base 대비 괴리율"]).length],
       ].map(([k,v]) => `<div class="card stat"><span>${k}</span><strong>${v}</strong></div>`).join("");
       renderTable(document.getElementById("reportsTable"), rows, reportColumns(), {
         "GitHub PDF": v => v ? `<a href="${v}">PDF</a>` : "",
-        "추출 상태": v => `<span class="${v === "ok" ? "ok" : "review"}">${v}</span>`
+        "Report Price": num
       });
     }
     Promise.all([loadJson("data/reports.json"), loadJson("data/price_metrics.json"), loadJson("data/portfolio_backtests.json")]).then(([reports, metrics, portfolio]) => {
@@ -299,7 +308,6 @@ def render_index_html() -> str:
       document.getElementById("metricsSearch").addEventListener("input", () => renderMetrics(metrics));
       document.getElementById("targetFilter").addEventListener("change", () => renderMetrics(metrics));
       document.getElementById("reportSearch").addEventListener("input", () => renderReports(reports));
-      document.getElementById("statusFilter").addEventListener("change", () => renderReports(reports));
       document.querySelectorAll("[data-tab]").forEach(btn => btn.addEventListener("click", () => {
         document.querySelectorAll("[data-tab]").forEach(b => b.classList.remove("active"));
         document.querySelectorAll("[data-panel]").forEach(p => p.classList.remove("active"));

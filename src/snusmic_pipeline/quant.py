@@ -21,6 +21,8 @@ RISK_FREE_RATES = [0.03, 0.06, 0.08]
 @dataclass(frozen=True)
 class PriceMetric:
     title: str
+    company: str
+    display_name: str
     ticker: str
     yfinance_symbol: str
     publication_date: str
@@ -51,6 +53,7 @@ class PortfolioResult:
     strategy: str
     risk_free_rate: float
     symbols: str
+    display_symbols: str
     weights: str
     expected_return: float | None
     expected_volatility: float | None
@@ -70,6 +73,16 @@ def yfinance_candidates(report: ExtractedReport) -> list[str]:
     if report.exchange == "TYO":
         return [f"{ticker}.T"]
     return [ticker]
+
+
+def clean_report_title(title: str) -> str:
+    return title.replace("Equity Research,", "").strip()
+
+
+def display_name_for_report(report: ExtractedReport) -> str:
+    if report.exchange in {"KRX", "TYO"}:
+        return report.meta.company or clean_report_title(report.meta.title)
+    return report.ticker or report.meta.company or clean_report_title(report.meta.title)
 
 
 def _download_history(symbol: str, start: datetime, end: datetime) -> pd.DataFrame:
@@ -142,13 +155,13 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
         symbol, history = resolve_yfinance_symbol(report, start, end)
         if not symbol or history.empty:
             metrics.append(
-                PriceMetric(report.meta.title, report.ticker, symbol, report.meta.date[:10], None, None, None, None, None, None, None, None, None, None, None, None, None, None, False, "", "no_price_history", "No yfinance history")
+                PriceMetric(report.meta.title, report.meta.company, display_name_for_report(report), report.ticker, symbol, report.meta.date[:10], None, None, None, None, None, None, None, None, None, None, None, None, None, None, False, "", "no_price_history", "No yfinance history")
             )
             continue
         post = history[history.index >= pd.to_datetime(report.meta.date[:10])].copy()
         if post.empty:
             metrics.append(
-                PriceMetric(report.meta.title, report.ticker, symbol, report.meta.date[:10], None, None, None, None, None, None, None, None, None, None, None, None, None, None, False, "", "no_post_publication_prices", "")
+                PriceMetric(report.meta.title, report.meta.company, display_name_for_report(report), report.ticker, symbol, report.meta.date[:10], None, None, None, None, None, None, None, None, None, None, None, None, None, None, False, "", "no_post_publication_prices", "")
             )
             continue
         close = post["Close"].dropna()
@@ -166,6 +179,8 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
         metrics.append(
             PriceMetric(
                 title=report.meta.title,
+                company=report.meta.company,
+                display_name=display_name_for_report(report),
                 ticker=report.ticker,
                 yfinance_symbol=symbol,
                 publication_date=report.meta.date[:10],
@@ -284,6 +299,7 @@ def portfolio_expected_stats(returns: pd.DataFrame, weights: np.ndarray, risk_fr
 def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: list[PriceMetric], now: datetime | None = None) -> list[PortfolioResult]:
     now = now or datetime.now(timezone.utc)
     by_title = {metric.title: metric for metric in price_metrics if metric.status == "ok" and metric.yfinance_symbol}
+    display_by_symbol = {metric.yfinance_symbol: metric.display_name for metric in price_metrics if metric.yfinance_symbol}
     rows: list[PortfolioResult] = []
     frame_rows = []
     for report in reports:
@@ -329,6 +345,7 @@ def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: l
                         strategy=strategy,
                         risk_free_rate=rf,
                         symbols=",".join(returns.columns),
+                        display_symbols=",".join(display_by_symbol.get(symbol, symbol) for symbol in returns.columns),
                         weights=",".join(f"{w:.4f}" for w in weights),
                         expected_return=expected_return,
                         expected_volatility=expected_volatility,
