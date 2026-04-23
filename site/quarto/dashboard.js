@@ -2,6 +2,9 @@ const pct = v => v === null || v === undefined || v === "" || Number.isNaN(Numbe
 const num = v => v === null || v === undefined || v === "" || Number.isNaN(Number(v)) ? "" : Number(v).toLocaleString(undefined, { maximumFractionDigits: 2 });
 const signClass = v => Number(v) > 0 ? "pos" : (Number(v) < 0 ? "neg" : "");
 const unique = arr => [...new Set(arr.filter(v => v !== null && v !== undefined && v !== ""))].sort();
+const lookbackLabel = days => ({ "63": "3M", "126": "6M", "252": "12M", "504": "24M" }[String(days)] || `${days}d`);
+const isNoDecimalMarket = row => String(row?.symbol || row?.yfinance_symbol || "").match(/\.(KS|KQ|T)$/);
+const priceNum = (v, row) => v === null || v === undefined || v === "" || Number.isNaN(Number(v)) ? "" : Number(v).toLocaleString(undefined, { maximumFractionDigits: isNoDecimalMarket(row) ? 0 : 2 });
 const plotConfig = { responsive: true, displayModeBar: false };
 const plotBaseLayout = {
   autosize: true,
@@ -114,11 +117,11 @@ function metricColumns() {
 
 function metricFormats() {
   return {
-    current_price: num,
-    publication_buy_price: num,
-    lowest_price_since_publication: num,
-    q25_price_since_publication: num,
-    q75_price_since_publication: num,
+    current_price: priceNum,
+    publication_buy_price: priceNum,
+    lowest_price_since_publication: priceNum,
+    q25_price_since_publication: priceNum,
+    q75_price_since_publication: priceNum,
     buy_at_publication_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     lowest_price_current_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     low_to_high_return: pct,
@@ -133,30 +136,30 @@ function metricFormats() {
 
 function opportunityColumns() {
   return [
-    { key: "publication_date", label: "Date" },
-    { key: "company", label: "Company" },
-    { key: "current_price", label: "Current", num: true },
-    { key: "publication_buy_price", label: "Pub price", num: true },
-    { key: "lowest_price_since_publication", label: "Low price", num: true },
-    { key: "q25_price_since_publication", label: "Q25 price", num: true },
-    { key: "q75_price_since_publication", label: "Q75 price", num: true },
-    { key: "buy_at_publication_return", label: "Pub ret", num: true },
-    { key: "lowest_price_current_return", label: "Low buy ret", num: true },
-    { key: "q25_price_current_return", label: "Q25 ret", num: true },
-    { key: "q75_price_current_return", label: "Q75 ret", num: true },
-    { key: "target_upside_remaining", label: "Target upside", num: true },
-    { key: "target_hit", label: "Target" },
-    { key: "first_target_hit_date", label: "Hit date" },
+    { key: "publication_date", label: "발간일" },
+    { key: "company", label: "종목" },
+    { key: "current_price", label: "현재가", num: true },
+    { key: "publication_buy_price", label: "발간일 가격", num: true },
+    { key: "lowest_price_since_publication", label: "발간 후 저가", num: true },
+    { key: "q25_price_since_publication", label: "Q25 가격", num: true },
+    { key: "q75_price_since_publication", label: "Q75 가격", num: true },
+    { key: "buy_at_publication_return", label: "발간일 매수", num: true },
+    { key: "lowest_price_current_return", label: "저가 매수", num: true },
+    { key: "q25_price_current_return", label: "Q25 매수", num: true },
+    { key: "q75_price_current_return", label: "Q75 매수", num: true },
+    { key: "target_upside_remaining", label: "목표가 여력", num: true },
+    { key: "target_hit", label: "목표 도달" },
+    { key: "first_target_hit_date", label: "도달일" },
   ];
 }
 
 function opportunityFormats() {
   return {
-    current_price: num,
-    publication_buy_price: num,
-    lowest_price_since_publication: num,
-    q25_price_since_publication: num,
-    q75_price_since_publication: num,
+    current_price: priceNum,
+    publication_buy_price: priceNum,
+    lowest_price_since_publication: priceNum,
+    q25_price_since_publication: priceNum,
+    q75_price_since_publication: priceNum,
     buy_at_publication_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     lowest_price_current_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     q25_price_current_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
@@ -181,24 +184,26 @@ function reportColumns() {
 
 function strategyColumns() {
   return [
-    { key: "strategy_name", label: "Strategy" },
-    { key: "weighting", label: "Weighting" },
-    { key: "entry_rule", label: "Entry" },
-    { key: "rebalance", label: "Rebalance" },
-    { key: "final_wealth", label: "Wealth", num: true },
-    { key: "total_return", label: "Return", num: true },
-    { key: "max_drawdown", label: "MDD", num: true },
+    { key: "strategy_name", label: "전략" },
+    { key: "weighting", label: "비중 방식" },
+    { key: "entry_rule", label: "편입 조건" },
+    { key: "lookback_days", label: "Lookback" },
+    { key: "rebalance", label: "리밸런싱" },
+    { key: "final_wealth", label: "자산배율", num: true },
+    { key: "total_return", label: "수익률", num: true },
+    { key: "max_drawdown", label: "최대낙폭", num: true },
     { key: "sharpe", label: "Sharpe", num: true },
     { key: "calmar", label: "Calmar", num: true },
-    { key: "exposure_ratio", label: "Exposure", num: true },
-    { key: "win_rate", label: "Win", num: true },
-    { key: "trade_count", label: "Trades", num: true },
+    { key: "exposure_ratio", label: "투자비중", num: true },
+    { key: "win_rate", label: "승률", num: true },
+    { key: "trade_count", label: "매매수", num: true },
   ];
 }
 
 function strategyFormats() {
   return {
     final_wealth: num,
+    lookback_days: lookbackLabel,
     total_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     max_drawdown: pct,
     sharpe: num,
@@ -224,7 +229,7 @@ function tradeColumns() {
 
 function tradeFormats() {
   return {
-    price: num,
+    price: priceNum,
     weight: pct,
     gross_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     realized_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
@@ -245,11 +250,77 @@ function positionColumns() {
   ];
 }
 
+function currentHoldingColumns() {
+  return [
+    { key: "company", label: "종목" },
+    { key: "weight", label: "비중", num: true },
+    { key: "close", label: "현재가", num: true },
+    { key: "gross_return", label: "진입 후 수익률", num: true },
+    { key: "model_contribution", label: "전략 기여", num: true },
+    { key: "target_price", label: "목표가", num: true },
+    { key: "rs_score", label: "RS", num: true },
+    { key: "mtt_pass", label: "MTT" },
+  ];
+}
+
+function currentHoldingFormats() {
+  return {
+    weight: pct,
+    close: priceNum,
+    gross_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    model_contribution: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    target_price: priceNum,
+    rs_score: num,
+    mtt_pass: v => v === true || v === "True" || v === "true" ? "pass" : "",
+  };
+}
+
+function recentTradeColumns() {
+  return [
+    { key: "date", label: "일자" },
+    { key: "event_type", label: "매매" },
+    { key: "company", label: "종목" },
+    { key: "reason", label: "사유" },
+    { key: "price", label: "가격", num: true },
+    { key: "weight", label: "비중", num: true },
+    { key: "gross_return", label: "포지션 수익률", num: true },
+    { key: "realized_return", label: "실현 기여", num: true },
+    { key: "holding_days", label: "보유일", num: true },
+  ];
+}
+
+function eventLabel(value) {
+  return value === "buy" ? "매수" : value === "sell" ? "매도" : value;
+}
+
+function reasonLabel(value) {
+  return {
+    rebalance_entry: "조건 충족",
+    signal_loss: "조건 이탈",
+    stop_loss: "손절",
+    take_profit_rr: "R:R 익절",
+    target_hit: "목표가 도달",
+    candidate_target_hit: "목표가 도달",
+    candidate_aging_out: "추적 만료",
+  }[value] || value;
+}
+
+function recentTradeFormats() {
+  return {
+    event_type: eventLabel,
+    reason: reasonLabel,
+    price: priceNum,
+    weight: pct,
+    gross_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    realized_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+  };
+}
+
 function positionFormats() {
   return {
     weight: pct,
-    close: num,
-    target_price: num,
+    close: priceNum,
+    target_price: priceNum,
     gross_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     model_contribution: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     rs_score: num,
@@ -274,7 +345,7 @@ function signalColumns() {
 
 function signalFormats() {
   return {
-    close: num,
+    close: priceNum,
     rs_score: num,
     mtt_pass: v => v === true || v === "True" || v === "true" ? "pass" : "",
     pct_above_52w_low: pct,
@@ -308,8 +379,8 @@ function renderV3Overview(v3) {
     stats.innerHTML = [
       ["Strategies", runRows.length],
       ["Best return", best ? pct(best.total_return) : ""],
-      ["Best total return", best ? pct(best.total_return) : ""],
-      ["Execution events", v3.executions.length],
+      ["Best MDD", best ? pct(best.max_drawdown) : ""],
+      ["Current holdings", best ? rowsForRun(v3.currentPositions, best.run_id).length : ""],
     ].map(([k, value]) => `<div class="metric-card"><span>${k}</span><strong>${value}</strong></div>`).join("");
   }
   const bestEl = document.getElementById("v3BestStrategy");
@@ -318,16 +389,32 @@ function renderV3Overview(v3) {
       <div class="best-title">Best walk-forward strategy</div>
       <div class="best-main">${best.strategy_name}</div>
       <p><span class="pill">Wealth ${num(best.final_wealth)}</span><span class="pill">Return ${pct(best.total_return)}</span><span class="pill">MDD ${pct(best.max_drawdown)}</span></p>
-      <p><span class="pill">${best.entry_rule}</span><span class="pill">${best.weighting}</span><span class="pill">${best.rebalance}</span></p>
+      <p><span class="pill">${best.entry_rule}</span><span class="pill">${best.weighting}</span><span class="pill">${lookbackLabel(best.lookback_days)}</span><span class="pill">${best.rebalance}</span></p>
     ` : "<p>No v3 strategy data yet.</p>";
   }
-  renderTable(document.getElementById("v3StrategyTable"), v3.strategyRuns, strategyColumns(), strategyFormats());
+  renderTable(document.getElementById("v3StrategyTable"), [...v3.strategyRuns].sort((a, b) => Number(b.total_return || 0) - Number(a.total_return || 0)), strategyColumns(), strategyFormats());
   const runId = best?.run_id || "";
   renderEquityPlot(document.getElementById("v3EquityPlot"), rowsForRun(v3.equity, runId));
+  renderDrawdownPlot(document.getElementById("v3DrawdownPlot"), rowsForRun(v3.equity, runId));
   renderPoolTimelinePlot(document.getElementById("v3PoolTimelinePlot"), rowsForRun(v3.poolTimeline, runId));
 }
 
 function renderEquityPlot(el, rows) {
+  if (!el || !window.Plotly || !rows.length) return;
+  const dates = rows.map(r => r.date);
+  const equity = rows.map(r => Number(r.equity || 1));
+  Plotly.newPlot(el, [
+    { type: "scatter", mode: "lines", name: "Equity", x: dates, y: equity, line: { color: "#126b83", width: 2.5 }, fill: "tozeroy", fillcolor: "rgba(18,107,131,0.08)" },
+  ], {
+    ...plotBaseLayout,
+    margin: { l: 55, r: 20, t: 10, b: 40 },
+    yaxis: { title: "Equity", gridcolor: "#e2e8ef" },
+    xaxis: { gridcolor: "#edf1f5" },
+    showlegend: false,
+  }, plotConfig).then(() => Plotly.Plots.resize(el));
+}
+
+function renderDrawdownPlot(el, rows) {
   if (!el || !window.Plotly || !rows.length) return;
   const dates = rows.map(r => r.date);
   const equity = rows.map(r => Number(r.equity || 1));
@@ -337,14 +424,13 @@ function renderEquityPlot(el, rows) {
     return v / peak - 1;
   });
   Plotly.newPlot(el, [
-    { type: "scatter", mode: "lines", name: "Equity", x: dates, y: equity, line: { color: "#126b83", width: 2 } },
-    { type: "scatter", mode: "lines", name: "Drawdown", x: dates, y: drawdown, yaxis: "y2", line: { color: "#b53b2d", width: 1.5 } },
+    { type: "scatter", mode: "lines", name: "Drawdown", x: dates, y: drawdown, line: { color: "#b53b2d", width: 2 }, fill: "tozeroy", fillcolor: "rgba(181,59,45,0.10)" },
   ], {
     ...plotBaseLayout,
-    margin: { l: 55, r: 55, t: 10, b: 40 },
-    yaxis: { title: "Equity", gridcolor: "#e2e8ef" },
-    yaxis2: { title: "Drawdown", overlaying: "y", side: "right", tickformat: ".0%" },
-    legend: { orientation: "h" },
+    margin: { l: 55, r: 20, t: 10, b: 40 },
+    yaxis: { title: "Drawdown", tickformat: ".0%", gridcolor: "#e2e8ef" },
+    xaxis: { gridcolor: "#edf1f5" },
+    showlegend: false,
   }, plotConfig).then(() => Plotly.Plots.resize(el));
 }
 
@@ -365,25 +451,34 @@ function renderStrategyPage(v3) {
   populateStrategyControls(v3.strategyRuns, "strategyRunSelect");
   const weighting = document.getElementById("strategyWeightingFilter")?.value || "";
   const entry = document.getElementById("strategyEntryFilter")?.value || "";
-  const rows = v3.strategyRuns.filter(r => (!weighting || r.weighting === weighting) && (!entry || r.entry_rule === entry));
+  const lookback = document.getElementById("strategyLookbackFilter")?.value || "";
+  const rows = v3.strategyRuns.filter(r => (!weighting || r.weighting === weighting) && (!entry || r.entry_rule === entry) && (!lookback || String(r.lookback_days) === lookback));
   const runId = selectedRunId(rows, "strategyRunSelect");
-  renderEquityPlot(document.getElementById("strategyEquityDrawdownPlot"), rowsForRun(v3.equity, runId));
+  const currentPositions = rowsForRun(v3.currentPositions, runId).sort((a, b) => Number(b.weight || 0) - Number(a.weight || 0));
+  const recentTrades = rowsForRun(v3.recentTrades, runId).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  renderEquityPlot(document.getElementById("strategyEquityPlot"), rowsForRun(v3.equity, runId));
+  renderDrawdownPlot(document.getElementById("strategyDrawdownPlot"), rowsForRun(v3.equity, runId));
+  renderCurrentAllocationPlot(document.getElementById("strategyAllocationPlot"), currentPositions);
+  renderTable(document.getElementById("strategyCurrentHoldingsTable"), currentPositions, currentHoldingColumns(), currentHoldingFormats());
+  renderTable(document.getElementById("strategyRecentTradesTable"), recentTrades.slice(0, 40), recentTradeColumns(), recentTradeFormats());
   renderStrategyRiskMap(v3.strategyRuns);
-  renderTable(document.getElementById("strategyLeaderboardTable"), rows, strategyColumns(), strategyFormats());
+  renderTable(document.getElementById("strategyLeaderboardTable"), [...rows].sort((a, b) => Number(b.total_return || 0) - Number(a.total_return || 0)), strategyColumns(), strategyFormats());
   renderTable(document.getElementById("optunaTrialsTable"), [...v3.optunaTrials].sort((a, b) => Number(b.objective || 0) - Number(a.objective || 0)), [
     { key: "trial", label: "Trial", num: true },
-    { key: "objective", label: "Objective ret", num: true },
-    { key: "weighting", label: "Weighting" },
-    { key: "entry_rule", label: "Entry" },
-    { key: "rebalance", label: "Rebalance" },
+    { key: "objective", label: "목적함수 수익률", num: true },
+    { key: "weighting", label: "비중 방식" },
+    { key: "entry_rule", label: "편입 조건" },
+    { key: "lookback_days", label: "Lookback" },
+    { key: "rebalance", label: "리밸런싱" },
     { key: "rs_threshold", label: "RS", num: true },
-    { key: "max_pool_months", label: "Pool M", num: true },
-    { key: "stop_loss_pct", label: "Stop", num: true },
+    { key: "max_pool_months", label: "추적 개월", num: true },
+    { key: "stop_loss_pct", label: "손절", num: true },
     { key: "reward_risk", label: "R:R", num: true },
-    { key: "total_return", label: "Return", num: true },
-    { key: "max_drawdown", label: "MDD", num: true },
+    { key: "total_return", label: "수익률", num: true },
+    { key: "max_drawdown", label: "최대낙폭", num: true },
   ], {
     objective: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    lookback_days: lookbackLabel,
     stop_loss_pct: pct,
     total_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
     max_drawdown: pct,
@@ -409,6 +504,41 @@ function renderStrategyRiskMap(rows) {
   }, plotConfig).then(() => Plotly.Plots.resize(el));
 }
 
+function renderCurrentAllocationPlot(el, rows) {
+  if (!el || !window.Plotly) return;
+  const holdings = [...rows].filter(r => Number(r.weight || 0) > 0).sort((a, b) => Number(b.weight || 0) - Number(a.weight || 0));
+  const cashWeight = Math.max(0, 1 - holdings.reduce((sum, row) => sum + Number(row.weight || 0), 0));
+  const traces = holdings.map(row => ({
+    type: "bar",
+    orientation: "h",
+    name: row.company || row.symbol,
+    x: [Number(row.weight || 0)],
+    y: ["현재 포트폴리오"],
+    text: [`${row.company || row.symbol}<br>비중 ${pct(row.weight)}<br>수익률 ${pct(row.gross_return)}`],
+    hovertemplate: "%{text}<extra></extra>",
+  }));
+  if (cashWeight > 0.001) {
+    traces.push({
+      type: "bar",
+      orientation: "h",
+      name: "현금",
+      x: [cashWeight],
+      y: ["현재 포트폴리오"],
+      text: [`현금<br>비중 ${pct(cashWeight)}`],
+      hovertemplate: "%{text}<extra></extra>",
+      marker: { color: "#b8c4cf" },
+    });
+  }
+  Plotly.newPlot(el, traces, {
+    ...plotBaseLayout,
+    barmode: "stack",
+    margin: { l: 120, r: 20, t: 10, b: 35 },
+    xaxis: { title: "비중", tickformat: ".0%", range: [0, 1], gridcolor: "#e2e8ef" },
+    yaxis: { fixedrange: true },
+    legend: { orientation: "h" },
+  }, plotConfig).then(() => Plotly.Plots.resize(el));
+}
+
 function populateStrategyControls(rows, selectId) {
   const runSelect = document.getElementById(selectId);
   if (runSelect && !runSelect.dataset.ready) {
@@ -426,6 +556,11 @@ function populateStrategyControls(rows, selectId) {
     entry.innerHTML = `<option value="">All entry rules</option>` + unique(rows.map(r => r.entry_rule)).map(v => `<option>${v}</option>`).join("");
     entry.dataset.ready = "true";
   }
+  const lookback = document.getElementById("strategyLookbackFilter");
+  if (lookback && !lookback.dataset.ready) {
+    lookback.innerHTML = `<option value="">All lookbacks</option>` + unique(rows.map(r => String(r.lookback_days))).map(v => `<option value="${v}">${lookbackLabel(v)}</option>`).join("");
+    lookback.dataset.ready = "true";
+  }
 }
 
 function renderPoolsPage(v3) {
@@ -434,32 +569,19 @@ function renderPoolsPage(v3) {
   const q = document.getElementById("poolSearch")?.value.toLowerCase() || "";
   const match = row => !q || JSON.stringify(row).toLowerCase().includes(q);
   renderPoolTimelinePlot(document.getElementById("poolTimelinePlot"), rowsForRun(v3.poolTimeline, runId));
-  renderHoldingsArea(document.getElementById("holdingsAreaPlot"), rowsForRun(v3.positions, runId));
-  renderTable(document.getElementById("tradeJournalTable"), rowsForRun(v3.executions, runId).filter(match), tradeColumns(), tradeFormats());
-  renderTable(document.getElementById("positionLedgerTable"), rowsForRun(v3.positions, runId).filter(match).slice(-250).reverse(), positionColumns(), positionFormats());
-  renderTable(document.getElementById("candidateEventsTable"), rowsForRun(v3.candidateEvents, runId).filter(match).slice(-250).reverse(), [
-    { key: "date", label: "Date" },
-    { key: "event_type", label: "Event" },
-    { key: "company", label: "Company" },
-    { key: "reason", label: "Reason" },
-    { key: "close", label: "Close", num: true },
-    { key: "target_price", label: "Target", num: true },
-  ], { close: num, target_price: num });
-}
-
-function renderHoldingsArea(el, rows) {
-  if (!el || !window.Plotly || !rows.length) return;
-  const symbols = unique(rows.map(r => r.company || r.symbol)).slice(0, 15);
-  const traces = symbols.map(name => {
-    const filtered = rows.filter(r => (r.company || r.symbol) === name);
-    return { type: "scatter", mode: "lines", stackgroup: "one", name, x: filtered.map(r => r.date), y: filtered.map(r => Number(r.weight || 0)), hovertemplate: `${name}<br>%{x}<br>Weight %{y:.1%}<extra></extra>` };
-  });
-  Plotly.newPlot(el, traces, {
-    ...plotBaseLayout,
-    margin: { l: 55, r: 20, t: 10, b: 40 },
-    yaxis: { title: "Weight", tickformat: ".0%", gridcolor: "#e2e8ef" },
-    legend: { orientation: "h" },
-  }, plotConfig).then(() => Plotly.Plots.resize(el));
+  const currentPositions = rowsForRun(v3.currentPositions, runId).filter(match).sort((a, b) => Number(b.weight || 0) - Number(a.weight || 0));
+  const recentTrades = rowsForRun(v3.recentTrades, runId).filter(match).sort((a, b) => String(b.date).localeCompare(String(a.date)));
+  renderCurrentAllocationPlot(document.getElementById("holdingsAreaPlot"), currentPositions);
+  renderTable(document.getElementById("tradeJournalTable"), recentTrades.slice(0, 80), recentTradeColumns(), recentTradeFormats());
+  renderTable(document.getElementById("positionLedgerTable"), currentPositions, currentHoldingColumns(), currentHoldingFormats());
+  renderTable(document.getElementById("candidateEventsTable"), rowsForRun(v3.candidateEvents, runId).filter(match).sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 80), [
+    { key: "date", label: "일자" },
+    { key: "event_type", label: "이벤트" },
+    { key: "company", label: "종목" },
+    { key: "reason", label: "사유" },
+    { key: "close", label: "가격", num: true },
+    { key: "target_price", label: "목표가", num: true },
+  ], { close: priceNum, target_price: priceNum });
 }
 
 function populateRunOnly(rows, selectId) {
@@ -565,7 +687,7 @@ function renderPriceOpportunitySnapshot(metrics) {
     .filter(r => r.status === "ok")
     .filter(r => !target || (target === "hit" ? r.target_hit : !r.target_hit))
     .filter(r => !q || JSON.stringify(r).toLowerCase().includes(q))
-    .sort((a, b) => Number(b.target_upside_remaining || 0) - Number(a.target_upside_remaining || 0));
+    .sort((a, b) => String(b.publication_date || "").localeCompare(String(a.publication_date || "")));
   renderTable(document.getElementById("priceOpportunityTable"), rows, opportunityColumns(), opportunityFormats());
 }
 
@@ -635,12 +757,13 @@ function renderMetrics(metrics) {
   const q = document.getElementById("metricsSearch")?.value.toLowerCase() || "";
   const target = document.getElementById("targetFilter")?.value || "";
   const rows = metrics.filter(r => (!target || (target === "hit" ? r.target_hit : !r.target_hit)) && JSON.stringify(r).toLowerCase().includes(q));
+  rows.sort((a, b) => String(b.publication_date || "").localeCompare(String(a.publication_date || "")));
   renderTable(document.getElementById("metricsTable"), rows, metricColumns(), metricFormats());
 }
 
 function renderReports(reports) {
   const q = document.getElementById("reportSearch")?.value.toLowerCase() || "";
-  const rows = reports.filter(r => JSON.stringify(r).toLowerCase().includes(q));
+  const rows = reports.filter(r => JSON.stringify(r).toLowerCase().includes(q)).sort((a, b) => String(b["Report Date"] || "").localeCompare(String(a["Report Date"] || "")));
   const stats = document.getElementById("reportStats");
   if (stats) {
     stats.innerHTML = [
@@ -664,13 +787,13 @@ Promise.all([
   loadJson("quant_v3/equity_daily.json"),
   loadJson("quant_v3/pool_timeline.json"),
   loadJson("quant_v3/candidate_pool_events.json"),
-  loadJson("quant_v3/execution_events.json"),
-  loadJson("quant_v3/positions_daily.json"),
+  loadJson("quant_v3/current_positions.json"),
+  loadJson("quant_v3/recent_trades.json"),
   loadJson("quant_v3/signals_daily.json"),
   loadJson("quant_v3/strategy_heatmap.json"),
   loadJson("quant_v3/optuna_trials.json"),
-]).then(([reports, metrics, portfolio, strategyRuns, equity, poolTimeline, candidateEvents, executions, positions, signals, heatmap, optunaTrials]) => {
-  const v3 = { strategyRuns, equity, poolTimeline, candidateEvents, executions, positions, signals, heatmap, optunaTrials };
+]).then(([reports, metrics, portfolio, strategyRuns, equity, poolTimeline, candidateEvents, currentPositions, recentTrades, signals, heatmap, optunaTrials]) => {
+  const v3 = { strategyRuns, equity, poolTimeline, candidateEvents, currentPositions, recentTrades, signals, heatmap, optunaTrials };
   renderV3Overview(v3);
   renderStrategyPage(v3);
   renderPoolsPage(v3);
@@ -689,7 +812,7 @@ Promise.all([
   if (rfEl) rfEl.innerHTML = `<option value="">All RF</option>` + rfs.map(v => `<option value="${v}">${pct(v)}</option>`).join("");
   if (strategyEl) strategyEl.innerHTML = `<option value="">All strategies</option>` + strategies.map(v => `<option>${v}</option>`).join("");
   ["portfolioCohort", "portfolioRf", "portfolioStrategy"].forEach(id => document.getElementById(id)?.addEventListener("change", () => renderPortfolio(portfolio)));
-  ["strategyRunSelect", "strategyWeightingFilter", "strategyEntryFilter"].forEach(id => document.getElementById(id)?.addEventListener("change", () => renderStrategyPage(v3)));
+  ["strategyRunSelect", "strategyWeightingFilter", "strategyEntryFilter", "strategyLookbackFilter"].forEach(id => document.getElementById(id)?.addEventListener("change", () => renderStrategyPage(v3)));
   ["poolRunSelect", "poolSearch"].forEach(id => {
     const el = document.getElementById(id);
     const eventName = id.endsWith("Search") ? "input" : "change";
@@ -709,7 +832,7 @@ Promise.all([
   document.getElementById("targetFilter")?.addEventListener("change", () => renderMetrics(metrics));
   document.getElementById("reportSearch")?.addEventListener("input", () => renderReports(reports));
   window.addEventListener("resize", () => {
-    ["frontierPlot", "opportunityPlot", "portfolioBarPlot", "v3EquityPlot", "v3PoolTimelinePlot", "strategyEquityDrawdownPlot", "strategyRiskMapPlot", "poolTimelinePlot", "holdingsAreaPlot", "signalScatterPlot"].forEach(id => {
+    ["frontierPlot", "opportunityPlot", "portfolioBarPlot", "v3EquityPlot", "v3DrawdownPlot", "v3PoolTimelinePlot", "strategyEquityPlot", "strategyDrawdownPlot", "strategyRiskMapPlot", "poolTimelinePlot", "holdingsAreaPlot", "signalScatterPlot"].forEach(id => {
       const el = document.getElementById(id);
       if (el && window.Plotly) Plotly.Plots.resize(el);
     });

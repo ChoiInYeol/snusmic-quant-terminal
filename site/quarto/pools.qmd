@@ -1,9 +1,9 @@
 ---
-title: "Pool Timeline"
-subtitle: "Candidate pool, execution pool, trade journal"
+title: "현재 포지션과 최근 매매"
+subtitle: "선택한 전략의 현재 보유, 비중, 최근 매수·매도"
 ---
 
-이 탭은 전략이 “언제 무엇을 후보로 보고, 실제로 무엇을 사고팔았는지”를 확인하는 장부입니다. candidate event는 추적 대상의 편입/제외, trade journal은 실제 execution pool의 매수·매도·리밸런싱 이벤트입니다.
+이 탭은 과거 전체 원장보다 현재 상태를 먼저 봅니다. 선택한 전략이 지금 무엇을 얼마나 들고 있고, 최근 언제 무엇을 사고팔았는지를 최신순으로 확인합니다.
 
 ::: {.toolbar}
 <select id="poolRunSelect"></select>
@@ -12,7 +12,7 @@ subtitle: "Candidate pool, execution pool, trade journal"
 
 ::: {.panel-grid}
 ::: {.panel}
-### Candidate vs Execution
+### 후보군 vs 실제 보유
 
 ```{=html}
 <div id="poolTimelinePlot" class="plotly-panel"></div>
@@ -20,7 +20,8 @@ subtitle: "Candidate pool, execution pool, trade journal"
 :::
 
 ::: {.panel}
-### Holdings Area
+### 현재 비중
+현재 보유 비중은 합이 100%가 되는 stacked bar로 표시합니다. 현금 비중이 남으면 회색으로 표시됩니다.
 
 ```{=html}
 <div id="holdingsAreaPlot" class="plotly-panel"></div>
@@ -28,9 +29,9 @@ subtitle: "Candidate pool, execution pool, trade journal"
 :::
 :::
 
-## Trade Journal
+## 최근 매매
 
-실제 매수, 매도, 리밸런싱 이벤트입니다. `reason`은 편입/편출 사유이며, realized return은 편출 시 확정된 전략 기여 수익률입니다.
+실제 매수·매도 이벤트입니다. 리밸런싱 weight update는 제외했습니다.
 
 ::: {.table-wrap}
 ```{=html}
@@ -38,9 +39,9 @@ subtitle: "Candidate pool, execution pool, trade journal"
 ```
 :::
 
-## Position Ledger
+## 현재 포지션
 
-일별 보유 포지션 장부입니다. weight는 해당 날짜 전략 내 비중, model contribution은 해당 포지션이 전략 수익률에 기여한 누적 산술 수익률입니다.
+현재 보유 중인 종목의 비중, 현재가, 진입 후 수익률, 전략 기여도입니다.
 
 ::: {.table-wrap}
 ```{=html}
@@ -48,9 +49,9 @@ subtitle: "Candidate pool, execution pool, trade journal"
 ```
 :::
 
-## Candidate Events
+## 최근 Candidate 변화
 
-리포트 발간, 목표가 도달, 추적 기간 만료 등 candidate pool 자체의 상태 변화입니다.
+리포트 발간, 목표가 도달, 추적 기간 만료 등 candidate pool 상태 변화 중 최근 이벤트만 봅니다.
 
 ::: {.table-wrap}
 ```{=html}

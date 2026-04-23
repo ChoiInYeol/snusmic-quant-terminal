@@ -6,7 +6,6 @@ import hashlib
 import io
 import json
 import math
-from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
@@ -15,7 +14,7 @@ import numpy as np
 import pandas as pd
 
 from .engine import run_walk_forward_backtest, stable_run_id
-from .schemas import BacktestConfig
+from .schemas import BacktestConfig, LOOKBACK_WINDOWS
 
 WAREHOUSE_TABLES = [
     "reports",
@@ -152,7 +151,7 @@ def optimize_strategies(
             stop_loss_pct=trial.suggest_categorical("stop_loss_pct", [0.06, 0.08, 0.10, 0.12]),
             reward_risk=trial.suggest_categorical("reward_risk", [2.0, 3.0, 4.0]),
             rebalance=trial.suggest_categorical("rebalance", ["daily", "weekly", "biweekly", "monthly"]),
-            lookback_days=504,
+            lookback_days=trial.suggest_categorical("lookback_days", list(LOOKBACK_WINDOWS.values())),
             min_target_upside=trial.suggest_categorical("min_target_upside", [0.0, 0.10, 0.20]),
         )
         result = run_walk_forward_backtest(reports, prices, config)
@@ -178,6 +177,8 @@ def export_dashboard_data(data_dir: Path, warehouse_dir: Path, output_dir: Path)
         "execution_events.json": _records(tables["execution_events"]),
         "positions_daily.json": _records(tables["positions_daily"]),
         "signals_daily.json": _signal_snapshot(tables["signals_daily"]),
+        "current_positions.json": _current_positions(tables["positions_daily"]),
+        "recent_trades.json": _recent_trades(tables["execution_events"]),
         "optuna_trials.json": _records(tables["optuna_trials"]),
         "pool_timeline.json": _pool_timeline(tables["equity_daily"], tables["candidate_pool_events"], tables["execution_events"]),
         "strategy_heatmap.json": _strategy_heatmap(tables["strategy_runs"]),
@@ -239,13 +240,13 @@ def read_or_build_reports(data_dir: Path, warehouse_dir: Path) -> pd.DataFrame:
 
 def default_configs() -> list[BacktestConfig]:
     return [
-        BacktestConfig(name="MTT or RS / 1N / weekly", weighting="1/N", entry_rule="mtt_or_rs", rebalance="weekly"),
-        BacktestConfig(name="MTT or RS / Sharpe / weekly", weighting="sharpe", entry_rule="mtt_or_rs", rebalance="weekly"),
-        BacktestConfig(name="MTT and RS / Sortino / weekly", weighting="sortino", entry_rule="mtt_and_rs", rebalance="weekly"),
-        BacktestConfig(name="Hybrid target / CVaR / biweekly", weighting="cvar", entry_rule="hybrid_score", rebalance="biweekly", min_target_upside=0.10),
-        BacktestConfig(name="Target only / Calmar / monthly", weighting="calmar", entry_rule="target_only", rebalance="monthly", min_target_upside=0.20),
-        BacktestConfig(name="MTT or RS / Max return / monthly", weighting="max_return", entry_rule="mtt_or_rs", rebalance="monthly"),
-        BacktestConfig(name="MTT or RS / Min var / weekly", weighting="min_var", entry_rule="mtt_or_rs", rebalance="weekly"),
+        BacktestConfig(name="MTT or RS / 1N / 24M", weighting="1/N", entry_rule="mtt_or_rs", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="MTT or RS / Sharpe / 24M", weighting="sharpe", entry_rule="mtt_or_rs", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="MTT and RS / Sortino / 24M", weighting="sortino", entry_rule="mtt_and_rs", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="Hybrid target / CVaR / 24M", weighting="cvar", entry_rule="hybrid_score", rebalance="biweekly", min_target_upside=0.10, lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="Target only / Calmar / 24M", weighting="calmar", entry_rule="target_only", rebalance="monthly", min_target_upside=0.20, lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="MTT or RS / Max return / 24M", weighting="max_return", entry_rule="mtt_or_rs", rebalance="monthly", lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="MTT or RS / Min var / 24M", weighting="min_var", entry_rule="mtt_or_rs", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
     ]
 
 
@@ -375,6 +376,29 @@ def _signal_snapshot(frame: pd.DataFrame) -> list[dict[str, Any]]:
         return []
     latest_by_run = frame.sort_values("date").groupby(["run_id", "symbol"], as_index=False).tail(1)
     return _records(latest_by_run)
+
+
+def _current_positions(positions: pd.DataFrame) -> list[dict[str, Any]]:
+    if positions.empty:
+        return []
+    rows = positions.copy()
+    rows["date"] = rows["date"].astype(str)
+    latest = rows.groupby("run_id")["date"].transform("max")
+    rows = rows[rows["date"] == latest].copy()
+    rows = rows.sort_values(["run_id", "weight"], ascending=[True, False])
+    return _records(rows)
+
+
+def _recent_trades(execution_events: pd.DataFrame) -> list[dict[str, Any]]:
+    if execution_events.empty:
+        return []
+    rows = execution_events[execution_events["event_type"].isin(["buy", "sell"])].copy()
+    if rows.empty:
+        return []
+    rows["date"] = rows["date"].astype(str)
+    rows = rows.sort_values(["run_id", "date"], ascending=[True, False])
+    rows = rows.groupby("run_id", as_index=False).head(80)
+    return _records(rows)
 
 
 def _pool_timeline(equity: pd.DataFrame, candidate_events: pd.DataFrame, execution_events: pd.DataFrame) -> list[dict[str, Any]]:

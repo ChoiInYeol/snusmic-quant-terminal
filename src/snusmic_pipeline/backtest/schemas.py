@@ -7,6 +7,12 @@ from typing import Any
 WEIGHTING_METHODS = ["1/N", "max_return", "min_var", "sharpe", "sortino", "cvar", "calmar"]
 ENTRY_RULES = ["mtt_or_rs", "mtt_and_rs", "target_only", "hybrid_score"]
 REBALANCE_FREQUENCIES = ["daily", "weekly", "biweekly", "monthly"]
+LOOKBACK_WINDOWS = {
+    "3M": 63,
+    "6M": 126,
+    "12M": 252,
+    "24M": 504,
+}
 
 
 @dataclass(frozen=True)
@@ -60,6 +66,7 @@ class StrategySummary:
     reward_risk: float
     max_pool_months: int
     target_hit_multiplier: float
+    lookback_days: int
     final_wealth: float
     total_return: float
     cagr: float | None
