@@ -1,0 +1,20 @@
+---
+title: "Portfolio Ranking"
+subtitle: "월별 리포트 cohort 기준 전략별 실현성과 비교"
+---
+
+::: {.callout-tip}
+포트폴리오 최적화는 각 cohort 리밸런싱일 이전 2년 데이터만 사용합니다. 이후 수익률은 사후 평가용 forward return입니다.
+:::
+
+::: {.toolbar}
+<select id="portfolioCohort"></select>
+<select id="portfolioRf"></select>
+<select id="portfolioStrategy"></select>
+:::
+
+::: {.table-wrap}
+```{=html}
+<table id="portfolioTable"></table>
+```
+:::

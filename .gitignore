@@ -11,3 +11,5 @@ venv/
 .DS_Store
 data/opendataloader/
 site/public/
+site/quarto/_site/
+site/quarto/data/

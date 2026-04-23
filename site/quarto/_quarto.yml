@@ -1,0 +1,29 @@
+project:
+  type: website
+  output-dir: _site
+  resources:
+    - data/**
+
+website:
+  title: "SNUSMIC Quant"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Overview
+      - href: portfolio.qmd
+        text: Portfolio
+      - href: reports.qmd
+        text: Reports
+      - href: methodology.qmd
+        text: Methodology
+
+format:
+  html:
+    theme:
+      - cosmo
+    css: styles.css
+    toc: false
+    page-layout: full
+    include-after-body:
+      - text: |
+          <script src="dashboard.js"></script>

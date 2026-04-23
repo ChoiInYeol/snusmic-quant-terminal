@@ -1,0 +1,21 @@
+---
+title: "Report Archive"
+subtitle: "PDF와 Markdown 리포트 원문 링크"
+---
+
+::: {.callout-note}
+Markdown 파일을 ChatGPT나 Claude에 입력하면 리포트별 인사이트를 더 깊게 뽑아볼 수 있습니다.
+:::
+
+::: {.toolbar}
+<input id="reportSearch" placeholder="종목, 리포트 검색">
+:::
+
+::: {#reportStats .metric-grid}
+:::
+
+::: {.table-wrap}
+```{=html}
+<table id="reportsTable"></table>
+```
+:::

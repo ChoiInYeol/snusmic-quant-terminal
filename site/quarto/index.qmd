@@ -1,0 +1,45 @@
+---
+title: "SNUSMIC Quant Dashboard"
+subtitle: "리포트 아카이브, 발간 이후 가격 경로, 포트폴리오 전략 랭킹"
+---
+
+::: {.hero}
+SNUSMIC 리포트 PDF와 발간 이후 시장 데이터를 결합해 목표가 도달 여부, 저점 매수 기회, 포트폴리오 전략별 실현 성과를 추적합니다.
+:::
+
+::: {.tabs-lite}
+[Overview](index.qmd) · [Portfolio](portfolio.qmd) · [Reports](reports.qmd) · [Methodology](methodology.qmd)
+:::
+
+## Executive Snapshot
+
+::: {#overviewStats .metric-grid}
+:::
+
+::: {.panel-grid}
+::: {#bestPortfolio .panel}
+:::
+
+::: {.panel}
+### Risk / Return Map
+
+<svg id="frontierSvg" viewBox="0 0 760 390" role="img" aria-label="portfolio risk return map"></svg>
+<div id="frontierLegend" class="legend"></div>
+:::
+:::
+
+## Top Portfolio Candidates
+
+::: {.table-wrap}
+```{=html}
+<table id="topPortfolioTable"></table>
+```
+:::
+
+## Price Opportunity Highlights
+
+::: {.table-wrap}
+```{=html}
+<table id="overviewMetricsTable"></table>
+```
+:::

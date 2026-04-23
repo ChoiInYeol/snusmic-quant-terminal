@@ -1,0 +1,32 @@
+---
+title: "Methodology"
+subtitle: "수집, 가격 데이터, 포트폴리오 평가 기준"
+---
+
+## Data Pipeline
+
+- SNUSMIC `research/`의 WordPress REST API에서 리포트 메타데이터와 PDF URL을 수집합니다.
+- 첫 7페이지 PDF는 저장소에 보관하고, 이후 정기 실행은 1페이지 신규 리포트 여부만 확인합니다.
+- PDF 텍스트는 `pypdf`로 우선 추출하고, OCR이 필요한 경우 OpenDataLoader PDF 경로를 사용합니다.
+- 리포트별 Markdown 파일은 `data/markdown/`에 저장합니다.
+
+## Price Metrics
+
+- yfinance에서 발간일 이후 가격 히스토리를 가져옵니다.
+- 한국 종목은 `.KS`, `.KQ` 후보를 순서대로 시도하고 유효한 히스토리를 선택합니다.
+- 일본 종목은 `.T`, 미국 종목은 원 ticker를 사용합니다.
+- 현재가, 발간일 매수가, Q25/Q75 가격, 저점 매수 현재 수익률, 저점 이후 최고가 매도 수익률, 목표가 도달 여부를 계산합니다.
+
+## Portfolio Backtests
+
+- 리포트 발간 월별 cohort를 구성하고, 해당 월 마지막 리포트 다음 거래일을 리밸런싱일로 봅니다.
+- 최적화 입력은 리밸런싱 전 2년 일별 수익률만 사용합니다.
+- 실현수익률은 리밸런싱 이후 현재까지의 forward return입니다.
+- 전략은 `1/N`, momentum, max Sharpe, Sortino, max return, min variance, Calmar를 비교합니다.
+- Risk-free rate는 3%, 6%, 8% 시나리오를 사용합니다.
+
+## Caveats
+
+- 이 대시보드는 연구/검증용이며 투자 자문이 아닙니다.
+- yfinance 데이터는 거래소/상장 상태/조정주가 정책에 따라 달라질 수 있습니다.
+- PDF 파싱은 레이아웃 변화에 민감하므로 Markdown 원문 링크를 함께 제공합니다.

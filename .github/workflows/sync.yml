@@ -151,7 +151,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: site/public
+          path: site/quarto/_site
 
       - name: Deploy Pages
         id: deployment
@@ -168,8 +168,14 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Build GitHub Pages site from committed data
-        run: PYTHONPATH=src python -c 'from pathlib import Path; from snusmic_pipeline.site_builder import build_site; build_site(Path("data"), Path("site/public"))'
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Build Quarto site from committed data
+        run: |
+          PYTHONPATH=src python -c 'from pathlib import Path; from snusmic_pipeline.site_builder import build_site; build_site(Path("data"), Path("site/public"))'
+          python scripts/prepare_quarto_site.py
+          quarto render site/quarto
 
       - name: Configure Pages
         uses: actions/configure-pages@v5
@@ -179,7 +185,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: site/public
+          path: site/quarto/_site
 
       - name: Deploy Pages
         id: deployment
