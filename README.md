@@ -7,7 +7,12 @@ This project collects the first seven pages of SNUSMIC equity research reports, 
 ```bash
 uv sync --group dev
 uv run python -m snusmic_pipeline sync --pages 1-7 --skip-sheet
+uv run python -m snusmic_pipeline build-warehouse
+uv run python -m snusmic_pipeline refresh-prices
+uv run python -m snusmic_pipeline run-backtest
 uv run python -m snusmic_pipeline build-site
+python scripts/prepare_quarto_site.py
+quarto render site/quarto
 ```
 
 The local run writes:
@@ -17,7 +22,25 @@ The local run writes:
 - `data/extracted_reports.csv` for extracted rows
 - `data/price_metrics.json` for yfinance post-publication metrics
 - `data/portfolio_backtests.json` for cohort backtests
+- `data/warehouse/` for Quant Engine v3 normalized CSV tables
+- `data/quant_v3/` for Quarto-ready walk-forward strategy artifacts
 - `site/public/` for the generated dashboard artifact
+
+## Quant Engine v3
+
+The v3 engine is event-driven rather than cohort-based. Reports accumulate into a candidate pool after publication, strategies select an execution pool from those candidates, and realized/live log returns are tracked separately.
+
+Key commands:
+
+```bash
+uv run python -m snusmic_pipeline build-warehouse
+uv run python -m snusmic_pipeline refresh-prices
+uv run python -m snusmic_pipeline run-backtest
+uv run python -m snusmic_pipeline optimize-strategies --trials 25
+uv run python -m snusmic_pipeline export-dashboard
+```
+
+The default strategy set compares MTT/RS/target filters with `1/N`, Sharpe, Sortino, CVaR, Calmar, max-return, and min-variance weighting. Optuna maximizes cumulative log wealth. RS is computed inside the SNUSMIC candidate universe only, and future reports are excluded from earlier RS ranks.
 
 ## Google Sheets Sync
 

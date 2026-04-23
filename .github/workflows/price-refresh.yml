@@ -35,10 +35,15 @@ jobs:
         run: uv sync --group dev
 
       - name: Refresh yfinance metrics
-        run: uv run python -m snusmic_pipeline refresh-market --no-build-site
+        run: |
+          uv run python -m snusmic_pipeline refresh-market --no-build-site
+          uv run python -m snusmic_pipeline build-warehouse
+          uv run python -m snusmic_pipeline refresh-prices
+          uv run python -m snusmic_pipeline run-backtest
 
       - name: Build Quarto site
         run: |
+          uv run python -m snusmic_pipeline build-site
           python scripts/prepare_quarto_site.py
           quarto render site/quarto
 
@@ -46,7 +51,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/price_metrics.json data/portfolio_backtests.json
+          git add data/price_metrics.json data/portfolio_backtests.json data/warehouse data/quant_v3
           if git diff --cached --quiet; then
             echo "No market data changes to commit"
           else

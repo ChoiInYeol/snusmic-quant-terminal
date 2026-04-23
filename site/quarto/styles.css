@@ -165,6 +165,11 @@ td.num {
   border-radius: 8px;
 }
 
+.tall-plot {
+  height: 560px;
+  min-height: 560px;
+}
+
 .legend {
   display: flex;
   gap: 10px;

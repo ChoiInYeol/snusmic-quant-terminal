@@ -102,6 +102,9 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v6
 
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
       - name: Install dependencies
         run: uv sync --group dev --extra ocr
 
@@ -129,13 +132,19 @@ jobs:
           fi
 
       - name: Build GitHub Pages site
-        run: uv run python -m snusmic_pipeline build-site
+        run: |
+          uv run python -m snusmic_pipeline build-site
+          uv run python -m snusmic_pipeline build-warehouse
+          uv run python -m snusmic_pipeline refresh-prices
+          uv run python -m snusmic_pipeline run-backtest
+          python scripts/prepare_quarto_site.py
+          quarto render site/quarto
 
       - name: Commit data updates
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/manifest.json data/extracted_reports.csv data/price_metrics.json data/portfolio_backtests.json data/pdfs data/markdown
+          git add data/manifest.json data/extracted_reports.csv data/price_metrics.json data/portfolio_backtests.json data/pdfs data/markdown data/warehouse data/quant_v3
           if git diff --cached --quiet; then
             echo "No data changes to commit"
           else

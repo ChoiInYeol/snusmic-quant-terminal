@@ -10,6 +10,8 @@ venv/
 *.tmp
 .DS_Store
 data/opendataloader/
+data/warehouse/*.duckdb
+data/warehouse/*.duckdb.wal
 site/public/
 site/quarto/_site/
 site/quarto/data/

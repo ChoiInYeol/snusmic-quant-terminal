@@ -1,0 +1,23 @@
+---
+title: "Signal Explorer"
+subtitle: "MTT, RS, 52주 고저점 거리와 목표가 여력"
+---
+
+::: {.toolbar}
+<select id="signalRunSelect"></select>
+<input id="signalSearch" placeholder="종목 검색">
+:::
+
+::: {.panel}
+### MTT / RS Map
+
+```{=html}
+<div id="signalScatterPlot" class="plotly-panel"></div>
+```
+:::
+
+::: {.table-wrap}
+```{=html}
+<table id="signalTable"></table>
+```
+:::

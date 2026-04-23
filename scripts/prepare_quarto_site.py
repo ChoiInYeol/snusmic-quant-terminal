@@ -18,6 +18,12 @@ def main() -> int:
         if not source.exists():
             raise FileNotFoundError(f"Missing source for Quarto data copy: {source}")
         shutil.copy2(source, QUARTO_DATA / name)
+    quant_v3 = SOURCE_DATA / "quant_v3"
+    if quant_v3.exists():
+        target = QUARTO_DATA / "quant_v3"
+        if target.exists():
+            shutil.rmtree(target)
+        shutil.copytree(quant_v3, target)
     return 0
 
 

@@ -1,6 +1,6 @@
 ---
 title: "Methodology"
-subtitle: "수집, 가격 데이터, 포트폴리오 평가 기준"
+subtitle: "수집, warehouse, walk-forward 전략 평가 기준"
 ---
 
 ## Data Pipeline
@@ -17,13 +17,25 @@ subtitle: "수집, 가격 데이터, 포트폴리오 평가 기준"
 - 일본 종목은 `.T`, 미국 종목은 원 ticker를 사용합니다.
 - 현재가, 발간일 매수가, Q25/Q75 가격, 저점 매수 현재 수익률, 저점 이후 최고가 매도 수익률, 목표가 도달 여부를 계산합니다.
 
-## Portfolio Backtests
+## Quant Engine v3
 
-- 리포트 발간 월별 cohort를 구성하고, 해당 월 마지막 리포트 다음 거래일을 리밸런싱일로 봅니다.
-- 최적화 입력은 리밸런싱 전 2년 일별 수익률만 사용합니다.
-- 실현수익률은 리밸런싱 이후 현재까지의 forward return입니다.
-- 전략은 `1/N`, momentum, max Sharpe, Sortino, max return, min variance, Calmar를 비교합니다.
-- Risk-free rate는 3%, 6%, 8% 시나리오를 사용합니다.
+- `data/warehouse/`의 정규화 CSV와 DuckDB를 SSOT로 사용합니다.
+- 리포트 발간 다음 거래일부터 해당 종목이 candidate pool에 편입됩니다.
+- 전략은 candidate pool에서 MTT, RS, 목표가 여력, 손절/익절 조건으로 execution pool을 구성합니다.
+- 실제 모델 수익은 execution pool에 보유된 종목의 비중 가중 로그수익으로 계산합니다.
+- 비중 최적화는 execution pool 내부 배분에만 사용하며, lookback window는 리밸런싱일 이전 가격만 사용합니다.
+- 편출 시 realized log return이 확정되고, 아직 보유 중인 포지션은 live return으로 분리됩니다.
+
+## Signals
+
+- MTT는 50/150/200일 이동평균, 200일선 상승, 52주 저점 대비 거리, 52주 고점 근접도를 사용합니다.
+- RS는 SNUSMIC candidate universe 안에서 12M, 6M, 3M, 1M 수익률 가중합을 백분위화합니다.
+- 미래 리포트 종목은 해당 발간일 전 RS universe에 포함하지 않습니다.
+
+## Legacy Portfolio Backtests
+
+- 기존 월별 cohort backtest는 비교용 legacy 산출물로 유지합니다.
+- v3 전략 평가는 candidate pool / execution pool walk-forward 결과를 우선합니다.
 
 ## Caveats
 

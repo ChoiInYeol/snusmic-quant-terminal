@@ -1,28 +1,44 @@
 ---
-title: "Portfolio Ranking"
-subtitle: "월별 리포트 cohort 기준 전략별 실현성과 비교"
+title: "Strategy Leaderboard"
+subtitle: "Candidate pool / execution pool 기반 walk-forward 전략 비교"
 ---
 
 ::: {.callout-tip}
-포트폴리오 최적화는 각 cohort 리밸런싱일 이전 2년 데이터만 사용합니다. 이후 수익률은 사후 평가용 forward return입니다.
+각 전략은 리밸런싱일 이전 가격과 그 시점까지 발간된 리포트만 사용합니다. 비중 최적화는 execution pool 내부 배분에만 쓰입니다.
 :::
 
 ::: {.toolbar}
-<select id="portfolioCohort"></select>
-<select id="portfolioRf"></select>
-<select id="portfolioStrategy"></select>
+<select id="strategyRunSelect"></select>
+<select id="strategyWeightingFilter"></select>
+<select id="strategyEntryFilter"></select>
 :::
 
 ::: {.panel}
-### Strategy Ranking by Cohort
+### Equity and Drawdown
 
 ```{=html}
-<div id="portfolioBarPlot" class="plotly-panel"></div>
+<div id="strategyEquityDrawdownPlot" class="plotly-panel tall-plot"></div>
+```
+:::
+
+::: {.panel}
+### Return / Drawdown Map
+
+```{=html}
+<div id="strategyRiskMapPlot" class="plotly-panel"></div>
 ```
 :::
 
 ::: {.table-wrap}
 ```{=html}
-<table id="portfolioTable"></table>
+<table id="strategyLeaderboardTable"></table>
+```
+:::
+
+## Optuna Trial Search
+
+::: {.table-wrap}
+```{=html}
+<table id="optunaTrialsTable"></table>
 ```
 :::

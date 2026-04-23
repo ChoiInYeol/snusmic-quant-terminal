@@ -17,6 +17,8 @@ dependencies = [
   "pandas",
   "numpy",
   "scipy",
+  "duckdb",
+  "optuna",
 ]
 
 [project.optional-dependencies]

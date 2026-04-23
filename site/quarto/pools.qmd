@@ -1,0 +1,51 @@
+---
+title: "Pool Timeline"
+subtitle: "Candidate pool, execution pool, trade journal"
+---
+
+::: {.toolbar}
+<select id="poolRunSelect"></select>
+<input id="poolSearch" placeholder="종목, 사유, 이벤트 검색">
+:::
+
+::: {.panel-grid}
+::: {.panel}
+### Candidate vs Execution
+
+```{=html}
+<div id="poolTimelinePlot" class="plotly-panel"></div>
+```
+:::
+
+::: {.panel}
+### Holdings Area
+
+```{=html}
+<div id="holdingsAreaPlot" class="plotly-panel"></div>
+```
+:::
+:::
+
+## Trade Journal
+
+::: {.table-wrap}
+```{=html}
+<table id="tradeJournalTable"></table>
+```
+:::
+
+## Position Ledger
+
+::: {.table-wrap}
+```{=html}
+<table id="positionLedgerTable"></table>
+```
+:::
+
+## Candidate Events
+
+::: {.table-wrap}
+```{=html}
+<table id="candidateEventsTable"></table>
+```
+:::

@@ -144,6 +144,325 @@ function reportColumns() {
   ];
 }
 
+function strategyColumns() {
+  return [
+    { key: "strategy_name", label: "Strategy" },
+    { key: "weighting", label: "Weighting" },
+    { key: "entry_rule", label: "Entry" },
+    { key: "rebalance", label: "Rebalance" },
+    { key: "final_log_wealth", label: "Log wealth", num: true },
+    { key: "total_return", label: "Return", num: true },
+    { key: "max_drawdown", label: "MDD", num: true },
+    { key: "sharpe", label: "Sharpe", num: true },
+    { key: "calmar", label: "Calmar", num: true },
+    { key: "exposure_ratio", label: "Exposure", num: true },
+    { key: "win_rate", label: "Win", num: true },
+    { key: "trade_count", label: "Trades", num: true },
+  ];
+}
+
+function strategyFormats() {
+  return {
+    final_log_wealth: num,
+    total_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    max_drawdown: pct,
+    sharpe: num,
+    calmar: num,
+    exposure_ratio: pct,
+    win_rate: pct,
+  };
+}
+
+function tradeColumns() {
+  return [
+    { key: "date", label: "Date" },
+    { key: "event_type", label: "Event" },
+    { key: "company", label: "Company" },
+    { key: "reason", label: "Reason" },
+    { key: "price", label: "Price", num: true },
+    { key: "weight", label: "Weight", num: true },
+    { key: "gross_log_return", label: "Gross log", num: true },
+    { key: "realized_log_return", label: "Realized log", num: true },
+    { key: "holding_days", label: "Days", num: true },
+  ];
+}
+
+function tradeFormats() {
+  return {
+    price: num,
+    weight: pct,
+    gross_log_return: v => `<span class="${signClass(v)}">${num(v)}</span>`,
+    realized_log_return: v => `<span class="${signClass(v)}">${num(v)}</span>`,
+  };
+}
+
+function positionColumns() {
+  return [
+    { key: "date", label: "Date" },
+    { key: "company", label: "Company" },
+    { key: "weight", label: "Weight", num: true },
+    { key: "close", label: "Close", num: true },
+    { key: "target_price", label: "Target", num: true },
+    { key: "gross_log_return", label: "Gross log", num: true },
+    { key: "model_log_contribution", label: "Model log", num: true },
+    { key: "rs_score", label: "RS", num: true },
+    { key: "mtt_pass", label: "MTT" },
+  ];
+}
+
+function positionFormats() {
+  return {
+    weight: pct,
+    close: num,
+    target_price: num,
+    gross_log_return: v => `<span class="${signClass(v)}">${num(v)}</span>`,
+    model_log_contribution: v => `<span class="${signClass(v)}">${num(v)}</span>`,
+    rs_score: num,
+    mtt_pass: v => v === true || v === "True" || v === "true" ? "pass" : "",
+  };
+}
+
+function signalColumns() {
+  return [
+    { key: "date", label: "Date" },
+    { key: "symbol", label: "Symbol" },
+    { key: "close", label: "Close", num: true },
+    { key: "rs_score", label: "RS", num: true },
+    { key: "mtt_pass", label: "MTT" },
+    { key: "pct_above_52w_low", label: "52w low +", num: true },
+    { key: "pct_below_52w_high", label: "52w high gap", num: true },
+    { key: "ma50", label: "MA50", num: true },
+    { key: "ma150", label: "MA150", num: true },
+    { key: "ma200", label: "MA200", num: true },
+  ];
+}
+
+function signalFormats() {
+  return {
+    close: num,
+    rs_score: num,
+    mtt_pass: v => v === true || v === "True" || v === "true" ? "pass" : "",
+    pct_above_52w_low: pct,
+    pct_below_52w_high: pct,
+    ma50: num,
+    ma150: num,
+    ma200: num,
+  };
+}
+
+function bestStrategy(strategies) {
+  return [...strategies].filter(r => r.status === "ok")
+    .sort((a, b) => Number(b.final_log_wealth || 0) - Number(a.final_log_wealth || 0))[0];
+}
+
+function selectedRunId(defaultRows, selectId) {
+  const selected = document.getElementById(selectId)?.value;
+  if (selected) return selected;
+  return bestStrategy(defaultRows)?.run_id || defaultRows[0]?.run_id || "";
+}
+
+function rowsForRun(rows, runId) {
+  return rows.filter(r => !runId || r.run_id === runId);
+}
+
+function renderV3Overview(v3) {
+  const best = bestStrategy(v3.strategyRuns);
+  const stats = document.getElementById("v3OverviewStats");
+  if (stats) {
+    const runRows = v3.strategyRuns.filter(r => r.status === "ok");
+    stats.innerHTML = [
+      ["Strategies", runRows.length],
+      ["Best log wealth", best ? num(best.final_log_wealth) : ""],
+      ["Best total return", best ? pct(best.total_return) : ""],
+      ["Execution events", v3.executions.length],
+    ].map(([k, value]) => `<div class="metric-card"><span>${k}</span><strong>${value}</strong></div>`).join("");
+  }
+  const bestEl = document.getElementById("v3BestStrategy");
+  if (bestEl) {
+    bestEl.innerHTML = best ? `
+      <div class="best-title">Best walk-forward strategy</div>
+      <div class="best-main">${best.strategy_name}</div>
+      <p><span class="pill">Log wealth ${num(best.final_log_wealth)}</span><span class="pill">Return ${pct(best.total_return)}</span><span class="pill">MDD ${pct(best.max_drawdown)}</span></p>
+      <p><span class="pill">${best.entry_rule}</span><span class="pill">${best.weighting}</span><span class="pill">${best.rebalance}</span></p>
+    ` : "<p>No v3 strategy data yet.</p>";
+  }
+  renderTable(document.getElementById("v3StrategyTable"), v3.strategyRuns, strategyColumns(), strategyFormats());
+  const runId = best?.run_id || "";
+  renderEquityPlot(document.getElementById("v3EquityPlot"), rowsForRun(v3.equity, runId));
+  renderPoolTimelinePlot(document.getElementById("v3PoolTimelinePlot"), rowsForRun(v3.poolTimeline, runId));
+}
+
+function renderEquityPlot(el, rows) {
+  if (!el || !window.Plotly || !rows.length) return;
+  const dates = rows.map(r => r.date);
+  const equity = rows.map(r => Number(r.equity || 1));
+  let peak = 1;
+  const drawdown = equity.map(v => {
+    peak = Math.max(peak, v);
+    return v / peak - 1;
+  });
+  Plotly.newPlot(el, [
+    { type: "scatter", mode: "lines", name: "Equity", x: dates, y: equity, line: { color: "#126b83", width: 2 } },
+    { type: "scatter", mode: "lines", name: "Drawdown", x: dates, y: drawdown, yaxis: "y2", line: { color: "#b53b2d", width: 1.5 } },
+  ], {
+    ...plotBaseLayout,
+    margin: { l: 55, r: 55, t: 10, b: 40 },
+    yaxis: { title: "Equity", gridcolor: "#e2e8ef" },
+    yaxis2: { title: "Drawdown", overlaying: "y", side: "right", tickformat: ".0%" },
+    legend: { orientation: "h" },
+  }, plotConfig).then(() => Plotly.Plots.resize(el));
+}
+
+function renderPoolTimelinePlot(el, rows) {
+  if (!el || !window.Plotly || !rows.length) return;
+  Plotly.newPlot(el, [
+    { type: "scatter", mode: "lines", name: "Candidate", x: rows.map(r => r.date), y: rows.map(r => Number(r.candidate_count || 0)), line: { color: "#126b83" } },
+    { type: "scatter", mode: "lines", name: "Execution", x: rows.map(r => r.date), y: rows.map(r => Number(r.execution_count || 0)), line: { color: "#d47a00" } },
+  ], {
+    ...plotBaseLayout,
+    margin: { l: 55, r: 20, t: 10, b: 40 },
+    yaxis: { title: "Pool size", gridcolor: "#e2e8ef" },
+    legend: { orientation: "h" },
+  }, plotConfig).then(() => Plotly.Plots.resize(el));
+}
+
+function renderStrategyPage(v3) {
+  populateStrategyControls(v3.strategyRuns, "strategyRunSelect");
+  const weighting = document.getElementById("strategyWeightingFilter")?.value || "";
+  const entry = document.getElementById("strategyEntryFilter")?.value || "";
+  const rows = v3.strategyRuns.filter(r => (!weighting || r.weighting === weighting) && (!entry || r.entry_rule === entry));
+  const runId = selectedRunId(rows, "strategyRunSelect");
+  renderEquityPlot(document.getElementById("strategyEquityDrawdownPlot"), rowsForRun(v3.equity, runId));
+  renderStrategyRiskMap(v3.strategyRuns);
+  renderTable(document.getElementById("strategyLeaderboardTable"), rows, strategyColumns(), strategyFormats());
+  renderTable(document.getElementById("optunaTrialsTable"), [...v3.optunaTrials].sort((a, b) => Number(b.objective || 0) - Number(a.objective || 0)), [
+    { key: "trial", label: "Trial", num: true },
+    { key: "objective", label: "Log wealth", num: true },
+    { key: "weighting", label: "Weighting" },
+    { key: "entry_rule", label: "Entry" },
+    { key: "rebalance", label: "Rebalance" },
+    { key: "rs_threshold", label: "RS", num: true },
+    { key: "max_pool_months", label: "Pool M", num: true },
+    { key: "stop_loss_pct", label: "Stop", num: true },
+    { key: "reward_risk", label: "R:R", num: true },
+    { key: "total_return", label: "Return", num: true },
+    { key: "max_drawdown", label: "MDD", num: true },
+  ], {
+    objective: num,
+    stop_loss_pct: pct,
+    total_return: v => `<span class="${signClass(v)}">${pct(v)}</span>`,
+    max_drawdown: pct,
+  });
+}
+
+function renderStrategyRiskMap(rows) {
+  const el = document.getElementById("strategyRiskMapPlot");
+  if (!el || !window.Plotly || !rows.length) return;
+  Plotly.newPlot(el, [{
+    type: "scatter",
+    mode: "markers",
+    x: rows.map(r => Number(r.max_drawdown || 0)),
+    y: rows.map(r => Number(r.final_log_wealth || 0)),
+    text: rows.map(r => `${r.strategy_name}<br>${r.entry_rule}<br>${r.weighting}<br>Return ${pct(r.total_return)}`),
+    marker: { size: rows.map(r => 8 + Number(r.exposure_ratio || 0) * 18), color: rows.map(r => Number(r.sharpe || 0)), colorscale: "Viridis", showscale: true },
+    hovertemplate: "%{text}<br>MDD %{x:.1%}<br>Log wealth %{y:.2f}<extra></extra>",
+  }], {
+    ...plotBaseLayout,
+    margin: { l: 55, r: 20, t: 10, b: 45 },
+    xaxis: { title: "Max drawdown", tickformat: ".0%", gridcolor: "#e2e8ef" },
+    yaxis: { title: "Final log wealth", gridcolor: "#e2e8ef" },
+  }, plotConfig).then(() => Plotly.Plots.resize(el));
+}
+
+function populateStrategyControls(rows, selectId) {
+  const runSelect = document.getElementById(selectId);
+  if (runSelect && !runSelect.dataset.ready) {
+    const best = bestStrategy(rows);
+    runSelect.innerHTML = rows.map(r => `<option value="${r.run_id}" ${best && r.run_id === best.run_id ? "selected" : ""}>${r.strategy_name}</option>`).join("");
+    runSelect.dataset.ready = "true";
+  }
+  const weighting = document.getElementById("strategyWeightingFilter");
+  if (weighting && !weighting.dataset.ready) {
+    weighting.innerHTML = `<option value="">All weighting</option>` + unique(rows.map(r => r.weighting)).map(v => `<option>${v}</option>`).join("");
+    weighting.dataset.ready = "true";
+  }
+  const entry = document.getElementById("strategyEntryFilter");
+  if (entry && !entry.dataset.ready) {
+    entry.innerHTML = `<option value="">All entry rules</option>` + unique(rows.map(r => r.entry_rule)).map(v => `<option>${v}</option>`).join("");
+    entry.dataset.ready = "true";
+  }
+}
+
+function renderPoolsPage(v3) {
+  populateRunOnly(v3.strategyRuns, "poolRunSelect");
+  const runId = selectedRunId(v3.strategyRuns, "poolRunSelect");
+  const q = document.getElementById("poolSearch")?.value.toLowerCase() || "";
+  const match = row => !q || JSON.stringify(row).toLowerCase().includes(q);
+  renderPoolTimelinePlot(document.getElementById("poolTimelinePlot"), rowsForRun(v3.poolTimeline, runId));
+  renderHoldingsArea(document.getElementById("holdingsAreaPlot"), rowsForRun(v3.positions, runId));
+  renderTable(document.getElementById("tradeJournalTable"), rowsForRun(v3.executions, runId).filter(match), tradeColumns(), tradeFormats());
+  renderTable(document.getElementById("positionLedgerTable"), rowsForRun(v3.positions, runId).filter(match).slice(-250).reverse(), positionColumns(), positionFormats());
+  renderTable(document.getElementById("candidateEventsTable"), rowsForRun(v3.candidateEvents, runId).filter(match).slice(-250).reverse(), [
+    { key: "date", label: "Date" },
+    { key: "event_type", label: "Event" },
+    { key: "company", label: "Company" },
+    { key: "reason", label: "Reason" },
+    { key: "close", label: "Close", num: true },
+    { key: "target_price", label: "Target", num: true },
+  ], { close: num, target_price: num });
+}
+
+function renderHoldingsArea(el, rows) {
+  if (!el || !window.Plotly || !rows.length) return;
+  const symbols = unique(rows.map(r => r.company || r.symbol)).slice(0, 15);
+  const traces = symbols.map(name => {
+    const filtered = rows.filter(r => (r.company || r.symbol) === name);
+    return { type: "scatter", mode: "lines", stackgroup: "one", name, x: filtered.map(r => r.date), y: filtered.map(r => Number(r.weight || 0)), hovertemplate: `${name}<br>%{x}<br>Weight %{y:.1%}<extra></extra>` };
+  });
+  Plotly.newPlot(el, traces, {
+    ...plotBaseLayout,
+    margin: { l: 55, r: 20, t: 10, b: 40 },
+    yaxis: { title: "Weight", tickformat: ".0%", gridcolor: "#e2e8ef" },
+    legend: { orientation: "h" },
+  }, plotConfig).then(() => Plotly.Plots.resize(el));
+}
+
+function populateRunOnly(rows, selectId) {
+  const el = document.getElementById(selectId);
+  if (el && !el.dataset.ready) {
+    const best = bestStrategy(rows);
+    el.innerHTML = rows.map(r => `<option value="${r.run_id}" ${best && r.run_id === best.run_id ? "selected" : ""}>${r.strategy_name}</option>`).join("");
+    el.dataset.ready = "true";
+  }
+}
+
+function renderSignalsPage(v3) {
+  populateRunOnly(v3.strategyRuns, "signalRunSelect");
+  const runId = selectedRunId(v3.strategyRuns, "signalRunSelect");
+  const q = document.getElementById("signalSearch")?.value.toLowerCase() || "";
+  const rows = rowsForRun(v3.signals, runId).filter(r => !q || JSON.stringify(r).toLowerCase().includes(q));
+  renderSignalScatter(document.getElementById("signalScatterPlot"), rows);
+  renderTable(document.getElementById("signalTable"), rows, signalColumns(), signalFormats());
+}
+
+function renderSignalScatter(el, rows) {
+  if (!el || !window.Plotly || !rows.length) return;
+  Plotly.newPlot(el, [{
+    type: "scatter",
+    mode: "markers",
+    x: rows.map(r => Number(r.rs_score || 0)),
+    y: rows.map(r => Number(r.pct_above_52w_low || 0)),
+    text: rows.map(r => `${r.symbol}<br>${r.date}<br>MTT ${r.mtt_pass}<br>52w high gap ${pct(r.pct_below_52w_high)}`),
+    marker: { size: rows.map(r => (r.mtt_pass === true || r.mtt_pass === "True" || r.mtt_pass === "true") ? 13 : 8), color: rows.map(r => Number(r.pct_below_52w_high || 0)), colorscale: "RdYlGn", showscale: true },
+    hovertemplate: "%{text}<br>RS %{x:.1f}<br>52w low +%{y:.1%}<extra></extra>",
+  }], {
+    ...plotBaseLayout,
+    margin: { l: 55, r: 20, t: 10, b: 45 },
+    xaxis: { title: "RS score", gridcolor: "#e2e8ef" },
+    yaxis: { title: "Above 52w low", tickformat: ".0%", gridcolor: "#e2e8ef" },
+  }, plotConfig).then(() => Plotly.Plots.resize(el));
+}
+
 function renderFrontier(portfolio) {
   const rows = portfolio.filter(r => r.expected_volatility !== null && r.expected_return !== null);
   const el = document.getElementById("frontierPlot");
@@ -290,7 +609,25 @@ function renderReports(reports) {
   });
 }
 
-Promise.all([loadJson("reports.json"), loadJson("price_metrics.json"), loadJson("portfolio_backtests.json")]).then(([reports, metrics, portfolio]) => {
+Promise.all([
+  loadJson("reports.json"),
+  loadJson("price_metrics.json"),
+  loadJson("portfolio_backtests.json"),
+  loadJson("quant_v3/strategy_runs.json"),
+  loadJson("quant_v3/equity_daily.json"),
+  loadJson("quant_v3/pool_timeline.json"),
+  loadJson("quant_v3/candidate_pool_events.json"),
+  loadJson("quant_v3/execution_events.json"),
+  loadJson("quant_v3/positions_daily.json"),
+  loadJson("quant_v3/signals_daily.json"),
+  loadJson("quant_v3/strategy_heatmap.json"),
+  loadJson("quant_v3/optuna_trials.json"),
+]).then(([reports, metrics, portfolio, strategyRuns, equity, poolTimeline, candidateEvents, executions, positions, signals, heatmap, optunaTrials]) => {
+  const v3 = { strategyRuns, equity, poolTimeline, candidateEvents, executions, positions, signals, heatmap, optunaTrials };
+  renderV3Overview(v3);
+  renderStrategyPage(v3);
+  renderPoolsPage(v3);
+  renderSignalsPage(v3);
   renderOverview(reports, metrics, portfolio);
   renderPortfolio(portfolio);
   renderMetrics(metrics);
@@ -305,11 +642,22 @@ Promise.all([loadJson("reports.json"), loadJson("price_metrics.json"), loadJson(
   if (rfEl) rfEl.innerHTML = `<option value="">All RF</option>` + rfs.map(v => `<option value="${v}">${pct(v)}</option>`).join("");
   if (strategyEl) strategyEl.innerHTML = `<option value="">All strategies</option>` + strategies.map(v => `<option>${v}</option>`).join("");
   ["portfolioCohort", "portfolioRf", "portfolioStrategy"].forEach(id => document.getElementById(id)?.addEventListener("change", () => renderPortfolio(portfolio)));
+  ["strategyRunSelect", "strategyWeightingFilter", "strategyEntryFilter"].forEach(id => document.getElementById(id)?.addEventListener("change", () => renderStrategyPage(v3)));
+  ["poolRunSelect", "poolSearch"].forEach(id => {
+    const el = document.getElementById(id);
+    const eventName = id.endsWith("Search") ? "input" : "change";
+    el?.addEventListener(eventName, () => renderPoolsPage(v3));
+  });
+  ["signalRunSelect", "signalSearch"].forEach(id => {
+    const el = document.getElementById(id);
+    const eventName = id.endsWith("Search") ? "input" : "change";
+    el?.addEventListener(eventName, () => renderSignalsPage(v3));
+  });
   document.getElementById("metricsSearch")?.addEventListener("input", () => renderMetrics(metrics));
   document.getElementById("targetFilter")?.addEventListener("change", () => renderMetrics(metrics));
   document.getElementById("reportSearch")?.addEventListener("input", () => renderReports(reports));
   window.addEventListener("resize", () => {
-    ["frontierPlot", "opportunityPlot", "portfolioBarPlot"].forEach(id => {
+    ["frontierPlot", "opportunityPlot", "portfolioBarPlot", "v3EquityPlot", "v3PoolTimelinePlot", "strategyEquityDrawdownPlot", "strategyRiskMapPlot", "poolTimelinePlot", "holdingsAreaPlot", "signalScatterPlot"].forEach(id => {
       const el = document.getElementById(id);
       if (el && window.Plotly) Plotly.Plots.resize(el);
     });

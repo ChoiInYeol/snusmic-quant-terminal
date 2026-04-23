@@ -1,52 +1,53 @@
 ---
 title: "SNUSMIC Quant Dashboard"
-subtitle: "리포트 아카이브, 발간 이후 가격 경로, 포트폴리오 전략 랭킹"
+subtitle: "Candidate pool 기반 walk-forward 전략 분석"
 ---
 
 ::: {.hero}
-SNUSMIC 리포트 PDF와 발간 이후 시장 데이터를 결합해 목표가 도달 여부, 저점 매수 기회, 포트폴리오 전략별 실현 성과를 추적합니다.
+SNUSMIC 리포트 발간 시점마다 투자 후보군을 누적하고, MTT·RS·목표가·리스크 리워드 조건으로 실제 execution pool을 운용한 결과를 추적합니다.
 :::
 
 ::: {.tabs-lite}
-[Overview](index.qmd) · [Portfolio](portfolio.qmd) · [Reports](reports.qmd) · [Methodology](methodology.qmd)
+[Overview](index.qmd) · [Strategies](portfolio.qmd) · [Pools](pools.qmd) · [Signals](signals.qmd) · [Reports](reports.qmd) · [Methodology](methodology.qmd)
 :::
 
 ## Executive Snapshot
 
-::: {#overviewStats .metric-grid}
+::: {#v3OverviewStats .metric-grid}
 :::
 
 ::: {.panel-grid}
-::: {#bestPortfolio .panel}
+::: {#v3BestStrategy .panel}
 :::
 
 ::: {.panel}
-### Risk / Return Map
+### Equity Curve
 
 ```{=html}
-<div id="frontierPlot" class="plotly-panel"></div>
+<div id="v3EquityPlot" class="plotly-panel"></div>
 ```
-<div id="frontierLegend" class="legend"></div>
 :::
 :::
 
-## Top Portfolio Candidates
+## Strategy Leaderboard
 
 ::: {.table-wrap}
 ```{=html}
-<table id="topPortfolioTable"></table>
+<table id="v3StrategyTable"></table>
 ```
 :::
 
-## Price Opportunity Highlights
+## Pool Timeline
 
 ::: {.panel}
-### Low Entry vs Target Upside
+### Candidate vs Execution Pool
 
 ```{=html}
-<div id="opportunityPlot" class="plotly-panel"></div>
+<div id="v3PoolTimelinePlot" class="plotly-panel"></div>
 ```
 :::
+
+## Legacy Price Opportunity Snapshot
 
 ::: {.table-wrap}
 ```{=html}

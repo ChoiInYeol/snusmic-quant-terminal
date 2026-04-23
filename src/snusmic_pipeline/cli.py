@@ -18,6 +18,8 @@ from .quant import compute_portfolio_backtests, compute_price_metrics, dataclass
 from .change_detection import new_report_urls
 from .site_builder import build_site
 from .sheet_sync import build_payload, sync_google_sheet
+from .backtest import build_warehouse, export_dashboard_data, refresh_price_history, run_default_backtests
+from .backtest.warehouse import optimize_strategies
 
 
 def _json_default(value: Any) -> Any:
@@ -241,6 +243,49 @@ def run_export_markdown(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_build_warehouse(args: argparse.Namespace) -> int:
+    counts = build_warehouse(Path(args.data_dir), Path(args.warehouse_dir))
+    for table, count in sorted(counts.items()):
+        print(f"{table}: {count}")
+    return 0
+
+
+def run_refresh_prices(args: argparse.Namespace) -> int:
+    symbols = [item.strip() for item in args.symbols.split(",") if item.strip()] if args.symbols else None
+    prices = refresh_price_history(Path(args.data_dir), Path(args.warehouse_dir), symbols=symbols)
+    print(f"Daily price rows: {len(prices)}")
+    print(f"Symbols: {prices['symbol'].nunique() if not prices.empty else 0}")
+    return 0
+
+
+def run_backtest(args: argparse.Namespace) -> int:
+    counts = run_default_backtests(Path(args.data_dir), Path(args.warehouse_dir), dry_run=args.dry_run)
+    for table, count in sorted(counts.items()):
+        print(f"{table}: {count}")
+    if args.export_dashboard:
+        exports = export_dashboard_data(Path(args.data_dir), Path(args.warehouse_dir), Path(args.output_dir))
+        for name, count in sorted(exports.items()):
+            print(f"{name}: {count}")
+    return 0
+
+
+def run_optimize(args: argparse.Namespace) -> int:
+    trials = optimize_strategies(Path(args.data_dir), Path(args.warehouse_dir), trials=args.trials, seed=args.seed, dry_run=args.dry_run)
+    print(f"Optuna trials: {len(trials)}")
+    if not trials.empty and "objective" in trials:
+        best = trials.sort_values("objective", ascending=False).iloc[0]
+        print(f"Best objective: {best['objective']}")
+        print(f"Best strategy: {best.get('strategy_name', best.get('name', ''))}")
+    return 0
+
+
+def run_export_dashboard(args: argparse.Namespace) -> int:
+    exports = export_dashboard_data(Path(args.data_dir), Path(args.warehouse_dir), Path(args.output_dir))
+    for name, count in sorted(exports.items()):
+        print(f"{name}: {count}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Collect SNUSMIC PDFs and sync Google Sheets.")
     subparsers = parser.add_subparsers(dest="command")
@@ -281,6 +326,39 @@ def build_parser() -> argparse.ArgumentParser:
     export_md.add_argument("--markdown-opendataloader", action=argparse.BooleanOptionalAction, default=True)
     export_md.add_argument("--opendataloader-hybrid", default=os.environ.get("OPENDATALOADER_HYBRID", ""))
     export_md.set_defaults(func=run_export_markdown)
+
+    warehouse = subparsers.add_parser("build-warehouse", help="Normalize report metadata into the v3 warehouse.")
+    warehouse.add_argument("--data-dir", default="data")
+    warehouse.add_argument("--warehouse-dir", default="data/warehouse")
+    warehouse.set_defaults(func=run_build_warehouse)
+
+    refresh_prices = subparsers.add_parser("refresh-prices", help="Download yfinance OHLCV history into the v3 warehouse.")
+    refresh_prices.add_argument("--data-dir", default="data")
+    refresh_prices.add_argument("--warehouse-dir", default="data/warehouse")
+    refresh_prices.add_argument("--symbols", default="", help="Optional comma-separated yfinance symbols for a partial refresh.")
+    refresh_prices.set_defaults(func=run_refresh_prices)
+
+    backtest = subparsers.add_parser("run-backtest", help="Run event-driven walk-forward v3 strategy backtests.")
+    backtest.add_argument("--data-dir", default="data")
+    backtest.add_argument("--warehouse-dir", default="data/warehouse")
+    backtest.add_argument("--output-dir", default="data/quant_v3")
+    backtest.add_argument("--dry-run", action="store_true", help="Use deterministic synthetic prices when real OHLCV is missing.")
+    backtest.add_argument("--export-dashboard", action=argparse.BooleanOptionalAction, default=True)
+    backtest.set_defaults(func=run_backtest)
+
+    optimize = subparsers.add_parser("optimize-strategies", help="Search v3 trading parameters with Optuna.")
+    optimize.add_argument("--data-dir", default="data")
+    optimize.add_argument("--warehouse-dir", default="data/warehouse")
+    optimize.add_argument("--trials", type=int, default=25)
+    optimize.add_argument("--seed", type=int, default=42)
+    optimize.add_argument("--dry-run", action="store_true")
+    optimize.set_defaults(func=run_optimize)
+
+    dashboard = subparsers.add_parser("export-dashboard", help="Export v3 warehouse tables into Quarto JSON artifacts.")
+    dashboard.add_argument("--data-dir", default="data")
+    dashboard.add_argument("--warehouse-dir", default="data/warehouse")
+    dashboard.add_argument("--output-dir", default="data/quant_v3")
+    dashboard.set_defaults(func=run_export_dashboard)
     return parser
 
 
