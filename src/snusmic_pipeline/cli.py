@@ -11,7 +11,7 @@ from typing import Any
 from .download_pdfs import download_all
 from .extract_pdf import extract_report
 from .fetch_index import fetch_reports, parse_pages
-from .models import DownloadedPdf, ExtractedReport
+from .models import DownloadedPdf, ExtractedReport, ReportMeta
 from .opendataloader_fallback import OpenDataLoaderUnavailable, convert_pdfs_to_markdown
 from .quant import compute_portfolio_backtests, compute_price_metrics, dataclass_rows
 from .change_detection import new_report_urls
@@ -48,6 +48,51 @@ def write_csv(reports: list[ExtractedReport], path: Path) -> None:
     with path.open("w", encoding="utf-8", newline="") as handle:
         writer = csv.writer(handle)
         writer.writerows(rows)
+
+
+def read_extracted_reports_csv(path: Path) -> list[ExtractedReport]:
+    if not path.exists():
+        raise FileNotFoundError(f"Missing extracted reports CSV: {path}")
+    reports: list[ExtractedReport] = []
+    with path.open(encoding="utf-8", newline="") as handle:
+        for row in csv.DictReader(handle):
+            meta = ReportMeta(
+                page=int(row.get("페이지") or 0),
+                ordinal=int(row.get("순번") or 0),
+                date=row.get("게시일", ""),
+                title=row.get("리포트명", ""),
+                company=row.get("종목명", ""),
+                slug="",
+                post_url="",
+                pdf_url=row.get("PDF URL", ""),
+            )
+            pdf_name = row.get("PDF 파일명", "")
+            report = ExtractedReport(
+                meta=meta,
+                pdf_path=Path("data/pdfs") / pdf_name if pdf_name else None,
+                report_current_price=_float_or_none(row.get("리포트 현재주가")),
+                ticker=row.get("티커", ""),
+                exchange=row.get("거래소", ""),
+                googlefinance_symbol=row.get("GoogleFinance 심볼", ""),
+                bear_target=_float_or_none(row.get("Bear 목표가")),
+                base_target=_float_or_none(row.get("Base 목표가")),
+                bull_target=_float_or_none(row.get("Bull 목표가")),
+                target_currency=row.get("목표가 통화", ""),
+                investment_points=row.get("투자포인트", ""),
+                extraction_status=row.get("추출 상태", ""),
+                note=row.get("비고", ""),
+            )
+            reports.append(report)
+    return reports
+
+
+def _float_or_none(value: str | None) -> float | None:
+    if value in (None, ""):
+        return None
+    try:
+        return float(value)
+    except ValueError:
+        return None
 
 
 def page_counts(reports: list[ExtractedReport]) -> dict[int, int]:
@@ -164,6 +209,21 @@ def run_build_site(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_refresh_market(args: argparse.Namespace) -> int:
+    data_dir = Path(args.data_dir)
+    reports = read_extracted_reports_csv(data_dir / "extracted_reports.csv")
+    price_metrics = compute_price_metrics(reports)
+    portfolio_backtests = compute_portfolio_backtests(reports, price_metrics)
+    write_json(data_dir / "price_metrics.json", dataclass_rows(price_metrics))
+    write_json(data_dir / "portfolio_backtests.json", dataclass_rows(portfolio_backtests))
+    if args.build_site:
+        build_site(data_dir, Path(args.public_dir))
+    print(f"Reports loaded: {len(reports)}")
+    print(f"Price metrics OK: {sum(1 for item in price_metrics if item.status == 'ok')}")
+    print(f"Portfolio backtests: {len(portfolio_backtests)}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Collect SNUSMIC PDFs and sync Google Sheets.")
     subparsers = parser.add_subparsers(dest="command")
@@ -190,6 +250,12 @@ def build_parser() -> argparse.ArgumentParser:
     build_site_parser.add_argument("--data-dir", default="data")
     build_site_parser.add_argument("--public-dir", default="site/public")
     build_site_parser.set_defaults(func=run_build_site)
+
+    refresh_market = subparsers.add_parser("refresh-market", help="Refresh yfinance price metrics and portfolio backtests from committed report CSV.")
+    refresh_market.add_argument("--data-dir", default="data")
+    refresh_market.add_argument("--build-site", action=argparse.BooleanOptionalAction, default=True)
+    refresh_market.add_argument("--public-dir", default="site/public")
+    refresh_market.set_defaults(func=run_refresh_market)
     return parser
 
 

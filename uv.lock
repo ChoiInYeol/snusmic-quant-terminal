@@ -2996,12 +2996,16 @@ dependencies = [
     { name = "google-api-python-client" },
     { name = "google-auth" },
     { name = "numpy" },
-    { name = "opendataloader-pdf", extra = ["hybrid"] },
     { name = "pandas" },
     { name = "pypdf" },
     { name = "requests" },
     { name = "scipy" },
     { name = "yfinance" },
+]
+
+[package.optional-dependencies]
+ocr = [
+    { name = "opendataloader-pdf", extra = ["hybrid"] },
 ]
 
 [package.dev-dependencies]
@@ -3014,13 +3018,14 @@ requires-dist = [
     { name = "google-api-python-client" },
     { name = "google-auth" },
     { name = "numpy" },
-    { name = "opendataloader-pdf", extras = ["hybrid"] },
+    { name = "opendataloader-pdf", extras = ["hybrid"], marker = "extra == 'ocr'" },
     { name = "pandas" },
     { name = "pypdf" },
     { name = "requests" },
     { name = "scipy" },
     { name = "yfinance" },
 ]
+provides-extras = ["ocr"]
 
 [package.metadata.requires-dev]
 dev = [{ name = "pytest" }]

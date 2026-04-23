@@ -11,7 +11,6 @@ requires-python = ">=3.11"
 dependencies = [
   "requests",
   "pypdf",
-  "opendataloader-pdf[hybrid]",
   "google-auth",
   "google-api-python-client",
   "yfinance",
@@ -19,6 +18,9 @@ dependencies = [
   "numpy",
   "scipy",
 ]
+
+[project.optional-dependencies]
+ocr = ["opendataloader-pdf[hybrid]"]
 
 [project.scripts]
 snusmic-sync = "snusmic_pipeline.cli:main"
