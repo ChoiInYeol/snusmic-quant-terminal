@@ -13,6 +13,14 @@ subtitle: "월별 리포트 cohort 기준 전략별 실현성과 비교"
 <select id="portfolioStrategy"></select>
 :::
 
+::: {.panel}
+### Strategy Ranking by Cohort
+
+```{=html}
+<div id="portfolioBarPlot" class="plotly-panel"></div>
+```
+:::
+
 ::: {.table-wrap}
 ```{=html}
 <table id="portfolioTable"></table>

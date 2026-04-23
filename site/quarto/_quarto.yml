@@ -24,6 +24,9 @@ format:
     css: styles.css
     toc: false
     page-layout: full
+    include-in-header:
+      - text: |
+          <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
     include-after-body:
       - text: |
           <script src="dashboard.js"></script>

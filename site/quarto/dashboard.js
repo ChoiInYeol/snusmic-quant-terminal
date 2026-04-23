@@ -138,19 +138,31 @@ function reportColumns() {
 
 function renderFrontier(portfolio) {
   const rows = portfolio.filter(r => r.expected_volatility !== null && r.expected_return !== null);
-  const svg = document.getElementById("frontierSvg");
-  if (!svg || !rows.length) return;
-  const w = 760, h = 390, pad = 48;
-  const xs = rows.map(r => Number(r.expected_volatility)), ys = rows.map(r => Number(r.expected_return));
-  const xmin = Math.min(...xs), xmax = Math.max(...xs), ymin = Math.min(...ys), ymax = Math.max(...ys);
-  const sx = x => pad + (x - xmin) / Math.max(1e-9, xmax - xmin) * (w - pad * 1.6);
-  const sy = y => h - pad - (y - ymin) / Math.max(1e-9, ymax - ymin) * (h - pad * 1.6);
-  const colors = { "1/N": "#607d8b", momentum: "#126b83", max_sharpe: "#087443", sortino: "#8e44ad", max_return: "#c0392b", min_var: "#f39c12", calmar: "#2c3e50" };
-  const axis = `<line x1="${pad}" y1="${h - pad}" x2="${w - pad / 2}" y2="${h - pad}" stroke="#9aa8b4"/><line x1="${pad}" y1="${pad / 2}" x2="${pad}" y2="${h - pad}" stroke="#9aa8b4"/><text x="${w / 2}" y="${h - 10}" text-anchor="middle" font-size="12" fill="#5d6975">Expected volatility</text><text x="14" y="${h / 2}" transform="rotate(-90 14 ${h / 2})" text-anchor="middle" font-size="12" fill="#5d6975">Expected return</text>`;
-  const dots = rows.map(r => `<circle cx="${sx(Number(r.expected_volatility))}" cy="${sy(Number(r.expected_return))}" r="${4 + Math.max(0, Number(r.realized_return || 0)) * 3}" fill="${colors[r.strategy] || "#126b83"}" opacity="0.72"><title>${r.cohort_month} ${r.strategy} RF ${pct(r.risk_free_rate)} | exp ${pct(r.expected_return)} vol ${pct(r.expected_volatility)} realized ${pct(r.realized_return)}</title></circle>`).join("");
-  svg.innerHTML = axis + dots;
-  const legend = document.getElementById("frontierLegend");
-  if (legend) legend.innerHTML = Object.entries(colors).map(([k, c]) => `<span><span class="bar" style="width:18px;background:${c}"></span>${k}</span>`).join("");
+  const el = document.getElementById("frontierPlot");
+  if (!el || !rows.length || !window.Plotly) return;
+  const strategies = unique(rows.map(r => r.strategy));
+  const traces = strategies.map(strategy => {
+    const subset = rows.filter(r => r.strategy === strategy);
+    return {
+      type: "scatter",
+      mode: "markers",
+      name: strategy,
+      x: subset.map(r => Number(r.expected_volatility)),
+      y: subset.map(r => Number(r.expected_return)),
+      marker: {
+        size: subset.map(r => 8 + Math.max(0, Number(r.realized_return || 0)) * 5),
+        opacity: 0.72,
+      },
+      text: subset.map(r => `${r.cohort_month}<br>${r.strategy}<br>RF ${pct(r.risk_free_rate)}<br>Realized ${pct(r.realized_return)}<br>${holdings(r)}`),
+      hovertemplate: "%{text}<br>Expected vol %{x:.1%}<br>Expected return %{y:.1%}<extra></extra>",
+    };
+  });
+  Plotly.newPlot(el, traces, {
+    margin: { l: 55, r: 20, t: 10, b: 50 },
+    xaxis: { title: "Expected volatility", tickformat: ".0%" },
+    yaxis: { title: "Expected return", tickformat: ".0%" },
+    legend: { orientation: "h" },
+  }, { responsive: true, displayModeBar: false });
 }
 
 function renderOverview(reports, metrics, portfolio) {
@@ -177,8 +189,38 @@ function renderOverview(reports, metrics, portfolio) {
     ` : "<p>No portfolio data.</p>";
   }
   renderFrontier(portfolio);
+  renderOpportunityPlot(metrics);
   renderTable(document.getElementById("topPortfolioTable"), topPortfolios(portfolio), portfolioColumns(), portfolioFormats());
   renderTable(document.getElementById("overviewMetricsTable"), [...metrics].filter(r => r.status === "ok").sort((a, b) => Number(b.low_to_high_return || 0) - Number(a.low_to_high_return || 0)).slice(0, 15), metricColumns(), metricFormats());
+}
+
+function renderOpportunityPlot(metrics) {
+  const el = document.getElementById("opportunityPlot");
+  if (!el || !window.Plotly) return;
+  const rows = [...metrics].filter(r => r.status === "ok").sort((a, b) => Number(b.low_to_high_return || 0) - Number(a.low_to_high_return || 0)).slice(0, 18).reverse();
+  Plotly.newPlot(el, [
+    {
+      type: "bar",
+      orientation: "h",
+      name: "Low→High return",
+      y: rows.map(r => r.company),
+      x: rows.map(r => Number(r.low_to_high_return || 0)),
+      hovertemplate: "%{y}<br>Low→High %{x:.1%}<extra></extra>",
+    },
+    {
+      type: "bar",
+      orientation: "h",
+      name: "Target upside",
+      y: rows.map(r => r.company),
+      x: rows.map(r => Number(r.target_upside_remaining || 0)),
+      hovertemplate: "%{y}<br>Target upside %{x:.1%}<extra></extra>",
+    },
+  ], {
+    barmode: "group",
+    margin: { l: 140, r: 20, t: 10, b: 40 },
+    xaxis: { tickformat: ".0%" },
+    legend: { orientation: "h" },
+  }, { responsive: true, displayModeBar: false });
 }
 
 function renderPortfolio(portfolio) {
@@ -189,6 +231,25 @@ function renderPortfolio(portfolio) {
   const table = document.getElementById("portfolioTable");
   if (table) table.dataset.sortKey = table.dataset.sortKey || "realized_return";
   renderTable(table, rows, portfolioColumns(), portfolioFormats());
+  renderPortfolioBarPlot(rows);
+}
+
+function renderPortfolioBarPlot(rows) {
+  const el = document.getElementById("portfolioBarPlot");
+  if (!el || !window.Plotly) return;
+  const top = [...rows].filter(r => r.realized_return !== null).sort((a, b) => Number(b.realized_return) - Number(a.realized_return)).slice(0, 20).reverse();
+  Plotly.newPlot(el, [{
+    type: "bar",
+    orientation: "h",
+    y: top.map(r => `${r.cohort_month} · ${r.strategy} · ${pct(r.risk_free_rate)}`),
+    x: top.map(r => Number(r.realized_return || 0)),
+    text: top.map(r => holdings(r).replaceAll("<br>", "<br>")),
+    hovertemplate: "%{y}<br>Realized %{x:.1%}<br>%{text}<extra></extra>",
+    marker: { color: top.map(r => Number(r.realized_return || 0) >= 0 ? "#126b83" : "#b53b2d") },
+  }], {
+    margin: { l: 190, r: 20, t: 10, b: 40 },
+    xaxis: { title: "Realized forward return", tickformat: ".0%" },
+  }, { responsive: true, displayModeBar: false });
 }
 
 function renderMetrics(metrics) {
