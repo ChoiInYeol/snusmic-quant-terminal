@@ -31,12 +31,17 @@ class PriceMetric:
     buy_at_publication_return: float | None
     lowest_price_since_publication: float | None
     lowest_price_current_return: float | None
+    low_to_high_return: float | None
+    low_to_high_holding_days: int | None
     q25_price_since_publication: float | None
     q25_price_current_return: float | None
     highest_price_since_publication: float | None
     highest_price_realized_return: float | None
     q75_price_since_publication: float | None
     q75_price_realized_return: float | None
+    q75_price_current_return: float | None
+    current_price_percentile: float | None
+    target_upside_remaining: float | None
     optimal_buy_lag_days: int | None
     optimal_holding_days_net_10pct: int | None
     optimal_net_return_10pct: float | None
@@ -155,13 +160,13 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
         symbol, history = resolve_yfinance_symbol(report, start, end)
         if not symbol or history.empty:
             metrics.append(
-                PriceMetric(report.meta.title, report.meta.company, display_name_for_report(report), report.ticker, symbol, report.meta.date[:10], None, None, None, None, None, None, None, None, None, None, None, None, None, None, False, "", "no_price_history", "No yfinance history")
+                PriceMetric(report.meta.title, report.meta.company, display_name_for_report(report), report.ticker, symbol, report.meta.date[:10], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, False, "", "no_price_history", "No yfinance history")
             )
             continue
         post = history[history.index >= pd.to_datetime(report.meta.date[:10])].copy()
         if post.empty:
             metrics.append(
-                PriceMetric(report.meta.title, report.meta.company, display_name_for_report(report), report.ticker, symbol, report.meta.date[:10], None, None, None, None, None, None, None, None, None, None, None, None, None, None, False, "", "no_post_publication_prices", "")
+                PriceMetric(report.meta.title, report.meta.company, display_name_for_report(report), report.ticker, symbol, report.meta.date[:10], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, False, "", "no_post_publication_prices", "")
             )
             continue
         close = post["Close"].dropna()
@@ -171,11 +176,16 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
         high_idx = close.idxmax()
         low = float(close.loc[low_idx])
         high = float(close.loc[high_idx])
+        post_low = close[close.index >= low_idx]
+        best_after_low_idx = post_low.idxmax()
+        best_after_low = float(post_low.loc[best_after_low_idx])
         q25 = float(close.quantile(0.25))
         q75 = float(close.quantile(0.75))
         target = report.base_target
         hit_series = close[close >= target] if target else pd.Series(dtype=float)
         holding_days, net_return = optimal_net_holding(close)
+        low_to_high_holding_days = (best_after_low_idx - low_idx).days
+        current_percentile = float((close <= current).mean())
         metrics.append(
             PriceMetric(
                 title=report.meta.title,
@@ -189,12 +199,17 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
                 buy_at_publication_return=pct_return(current, pub_price),
                 lowest_price_since_publication=low,
                 lowest_price_current_return=pct_return(current, low),
+                low_to_high_return=pct_return(best_after_low, low),
+                low_to_high_holding_days=low_to_high_holding_days,
                 q25_price_since_publication=q25,
                 q25_price_current_return=pct_return(current, q25),
                 highest_price_since_publication=high,
                 highest_price_realized_return=pct_return(high, pub_price),
                 q75_price_since_publication=q75,
                 q75_price_realized_return=pct_return(q75, pub_price),
+                q75_price_current_return=pct_return(current, q75),
+                current_price_percentile=current_percentile,
+                target_upside_remaining=pct_return(target, current) if target else None,
                 optimal_buy_lag_days=(low_idx - pd.to_datetime(report.meta.date[:10])).days,
                 optimal_holding_days_net_10pct=holding_days,
                 optimal_net_return_10pct=net_return,

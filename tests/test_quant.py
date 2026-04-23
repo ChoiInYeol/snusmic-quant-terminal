@@ -44,3 +44,14 @@ def test_portfolio_expected_stats_has_return_risk_and_sharpe():
     assert expected_return is not None
     assert expected_volatility is not None
     assert expected_sharpe is not None
+
+
+def test_price_metric_dataclass_exposes_low_high_fields():
+    from snusmic_pipeline.quant import PriceMetric
+
+    fields = PriceMetric.__dataclass_fields__
+    assert "low_to_high_return" in fields
+    assert "low_to_high_holding_days" in fields
+    assert "q75_price_current_return" in fields
+    assert "current_price_percentile" in fields
+    assert "target_upside_remaining" in fields

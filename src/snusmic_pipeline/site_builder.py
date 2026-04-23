@@ -269,8 +269,12 @@ def render_index_html() -> str:
       return [
         {key:"publication_date", label:"Date"}, {key:"company", label:"Company"},
         {key:"current_price", label:"Current", num:true}, {key:"publication_buy_price", label:"Pub price", num:true},
+        {key:"lowest_price_since_publication", label:"Low price", num:true},
         {key:"q25_price_since_publication", label:"Q25 price", num:true}, {key:"q75_price_since_publication", label:"Q75 price", num:true},
-        {key:"buy_at_publication_return", label:"Pub buy ret", num:true}, {key:"q25_price_current_return", label:"Q25 buy ret", num:true},
+        {key:"buy_at_publication_return", label:"Pub buy ret", num:true}, {key:"lowest_price_current_return", label:"Low buy ret", num:true},
+        {key:"low_to_high_return", label:"Low→High ret", num:true}, {key:"optimal_buy_lag_days", label:"Best lag days", num:true}, {key:"low_to_high_holding_days", label:"Best hold days", num:true},
+        {key:"q25_price_current_return", label:"Q25 buy ret", num:true}, {key:"q75_price_current_return", label:"Q75 buy ret", num:true},
+        {key:"current_price_percentile", label:"Current pctile", num:true}, {key:"target_upside_remaining", label:"Target upside", num:true},
         {key:"highest_price_realized_return", label:"Best sell ret", num:true}, {key:"target_hit", label:"Target"}, {key:"first_target_hit_date", label:"Hit date"}
       ];
     }
@@ -279,9 +283,14 @@ def render_index_html() -> str:
       const target = document.getElementById("targetFilter").value;
       const rows = metrics.filter(r => (!target || (target === "hit" ? r.target_hit : !r.target_hit)) && JSON.stringify(r).toLowerCase().includes(q));
       renderTable(document.getElementById("metricsTable"), rows, metricColumns(), {
-        current_price:num, publication_buy_price:num, q25_price_since_publication:num, q75_price_since_publication:num,
+        current_price:num, publication_buy_price:num, lowest_price_since_publication:num, q25_price_since_publication:num, q75_price_since_publication:num,
         buy_at_publication_return:v=>`<span class="${signClass(v)}">${pct(v)}</span>`,
+        lowest_price_current_return:v=>`<span class="${signClass(v)}">${pct(v)}</span>`,
+        low_to_high_return:pct,
         q25_price_current_return:v=>`<span class="${signClass(v)}">${pct(v)}</span>`,
+        q75_price_current_return:v=>`<span class="${signClass(v)}">${pct(v)}</span>`,
+        current_price_percentile:pct,
+        target_upside_remaining:v=>`<span class="${signClass(v)}">${pct(v)}</span>`,
         highest_price_realized_return:pct,
         target_hit:v=>v ? "hit" : "miss"
       });
