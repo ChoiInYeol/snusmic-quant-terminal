@@ -52,6 +52,9 @@ class PortfolioResult:
     risk_free_rate: float
     symbols: str
     weights: str
+    expected_return: float | None
+    expected_volatility: float | None
+    expected_sharpe: float | None
     realized_return: float | None
     kospi_return: float | None
     nasdaq_return: float | None
@@ -267,6 +270,17 @@ def realized_forward_return(price_frame: pd.DataFrame, weights: np.ndarray) -> f
     return float(w @ returns)
 
 
+def portfolio_expected_stats(returns: pd.DataFrame, weights: np.ndarray, risk_free_rate: float) -> tuple[float | None, float | None, float | None]:
+    if returns.empty or len(weights) == 0:
+        return None, None, None
+    mean = _annualized_returns(returns).to_numpy(dtype=float)
+    cov = _annualized_cov(returns).to_numpy(dtype=float)
+    expected_return = float(weights @ mean)
+    expected_volatility = math.sqrt(max(float(weights @ cov @ weights), 0.0))
+    expected_sharpe = None if expected_volatility == 0 else (expected_return - risk_free_rate) / expected_volatility
+    return expected_return, expected_volatility, expected_sharpe
+
+
 def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: list[PriceMetric], now: datetime | None = None) -> list[PortfolioResult]:
     now = now or datetime.now(timezone.utc)
     by_title = {metric.title: metric for metric in price_metrics if metric.status == "ok" and metric.yfinance_symbol}
@@ -307,6 +321,7 @@ def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: l
         for rf in RISK_FREE_RATES:
             for strategy in ["1/N", "momentum", "max_sharpe", "sortino", "max_return", "min_var", "calmar"]:
                 weights = optimize_weights(returns, strategy, rf)
+                expected_return, expected_volatility, expected_sharpe = portfolio_expected_stats(returns, weights, rf)
                 rows.append(
                     PortfolioResult(
                         cohort_month=str(month),
@@ -315,6 +330,9 @@ def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: l
                         risk_free_rate=rf,
                         symbols=",".join(returns.columns),
                         weights=",".join(f"{w:.4f}" for w in weights),
+                        expected_return=expected_return,
+                        expected_volatility=expected_volatility,
+                        expected_sharpe=expected_sharpe,
                         realized_return=realized_forward_return(forward[returns.columns], weights),
                         kospi_return=benchmark_returns.get("KOSPI"),
                         nasdaq_return=benchmark_returns.get("NASDAQ"),

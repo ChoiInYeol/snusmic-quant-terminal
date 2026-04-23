@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from snusmic_pipeline.quant import optimize_weights, pct_return, realized_forward_return, yfinance_candidates
+from snusmic_pipeline.quant import optimize_weights, pct_return, portfolio_expected_stats, realized_forward_return, yfinance_candidates
 from snusmic_pipeline.models import ExtractedReport, ReportMeta
 
 
@@ -30,3 +30,12 @@ def test_optimizer_returns_normalized_weights():
 
     assert abs(weights.sum() - 1) < 1e-9
     assert (weights >= 0).all()
+
+
+def test_portfolio_expected_stats_has_return_risk_and_sharpe():
+    returns = pd.DataFrame({"A": [0.01, 0.02, -0.01], "B": [0.0, 0.01, 0.01]})
+    expected_return, expected_volatility, expected_sharpe = portfolio_expected_stats(returns, np.array([0.5, 0.5]), 0.03)
+
+    assert expected_return is not None
+    assert expected_volatility is not None
+    assert expected_sharpe is not None
