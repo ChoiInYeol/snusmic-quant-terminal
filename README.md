@@ -2,6 +2,12 @@
 
 SNUSMIC 리서치 PDF를 장기 보관하고, 목표가/티커/메타데이터를 추출하고, 가격 데이터를 붙여서 candidate pool 기반의 walk-forward 백테스트와 Quant Terminal 대시보드까지 만드는 저장소입니다.
 
+주요 링크:
+
+- GitHub repo: <https://github.com/ChoiInYeol/snusmic-quant-terminal>
+- Vercel primary: <https://snusmic-quant-terminal.vercel.app>
+- GitHub Pages mirror: <https://choiinyeol.github.io/snusmic-quant-terminal/>
+
 이 문서는 “로컬에서 맛보기로 돌리는 방법”이 아니라, 이 저장소를 **서버로 옮겨 실제로 archive를 키우고 백테스트를 돌릴 사람**을 위한 운영 문서입니다. 데이터 구조, 실행 순서, 자동화, 주의점까지 한 번에 담았습니다.
 
 ## 1. 현재 상태 요약
