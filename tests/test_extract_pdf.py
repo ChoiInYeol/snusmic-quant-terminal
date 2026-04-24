@@ -90,6 +90,21 @@ def test_current_price_before_target_label_does_not_become_target():
     assert parsed["base_target"] == 41600
 
 
+def test_target_price_label_with_preferred_stock_market_cap_noise():
+    text = """
+    S-Oil (010950)
+    Buy
+    0 7 B (원) 86,067 Target PBR Multiple 1.5x ROE(%) 20.8%
+    (-) 우선주 시가총액(십억 원) 190 목표주가(원) 128,400 현재주가(원) 80,500 상승여력(%) 59.5%
+    """
+
+    parsed = parse_report_text(text)
+
+    assert parsed["report_current_price"] == 80500
+    assert parsed["base_target"] == 128400
+    assert parsed["base_target"] != 190
+
+
 def test_equal_current_and_target_candidate_uses_next_target_candidate():
     text = "현재주가 : 238.30 위안 목표주가 238.30\n현재주가 : 238.30 위안 목표주가 : 331.70 위안 상승여력: 39%"
 

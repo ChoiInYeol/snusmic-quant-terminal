@@ -9,8 +9,14 @@ from .models import DownloadedPdf, ExtractedReport
 
 _TICKER_RE = re.compile(r"\(([A-Z0-9]{1,10})\)")
 _TITLE_TICKER_RE = re.compile(r"([A-Z]{1,6})\s*(?:US\s*)?(?:Equity|NASDAQ|NYSE|TSE|TYO)", re.IGNORECASE)
-_CURRENT_PRICE_RE = re.compile(r"현재\s*주가\s*[:：]?\s*([$₩]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)", re.IGNORECASE)
-_TARGET_PRICE_RE = re.compile(r"목표\s*주가\s*[:：]?\s*([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)", re.IGNORECASE)
+_CURRENT_PRICE_RE = re.compile(
+    r"현재\s*주가\s*(?:\([^)]{0,20}\))?\s*[:：]?\s*([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)",
+    re.IGNORECASE,
+)
+_TARGET_PRICE_RE = re.compile(
+    r"목표\s*주가\s*(?:\([^)]{0,20}\))?\s*[:：]?\s*([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)",
+    re.IGNORECASE,
+)
 _PRE_TARGET_PRICE_RE = re.compile(
     r"([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)[ \t]*원?[을를]?[ \t]*(?:[A-Za-z]+[ \t]+case[ \t]+)?목표[ \t]*주가",
     re.IGNORECASE,
@@ -206,10 +212,22 @@ def extract_text_from_pdf(path: Path, max_pages: int | None = None) -> str:
 
 def target_price_candidates(text: str) -> list[tuple[float, str]]:
     candidates: list[tuple[float, str]] = []
-    for pattern in [_PRE_TARGET_PRICE_RE, _TARGET_PRICE_RE, _EN_TARGET_PRICE_RE]:
+    for pattern in [_TARGET_PRICE_RE, _EN_TARGET_PRICE_RE, _PRE_TARGET_PRICE_RE]:
         for match in pattern.finditer(text):
-            if pattern is _PRE_TARGET_PRICE_RE and "현재" in text[max(0, match.start() - 30) : match.start()]:
-                continue
+            if pattern is _PRE_TARGET_PRICE_RE:
+                before = text[max(0, match.start() - 50) : match.start()]
+                after = text[match.end() : match.end() + 30]
+                if "현재" in before:
+                    continue
+                if any(noise in before for noise in ["시가총액", "매출", "영업이익", "순이익", "ROE", "PBR", "PER"]):
+                    continue
+                if re.match(r"\s*(?:\([^)]{0,20}\))?\s*[:：]?\s*[$₩¥]?\s*[0-9]", after):
+                    continue
+            if pattern is _EN_TARGET_PRICE_RE:
+                raw = match.group(0)
+                lowered = raw.lower()
+                if re.search(r"목표\s*주가\s*[로를]", raw) and not re.search(r"[$₩¥]|[0-9]\s*(?:원|엔|위안|달러|usd|jpy|krw)", lowered):
+                    continue
             value = parse_money(match.group(1))
             if value is not None:
                 candidates.append((value, match.group(0)))

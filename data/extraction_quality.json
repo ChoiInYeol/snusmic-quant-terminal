@@ -49,8 +49,8 @@
       "title": "Equity Research, IMAX Corp",
       "ticker": "IMAX",
       "rating": "",
-      "base_target": 54.59,
-      "target_detail": "base=54.59",
+      "base_target": 54.6,
+      "target_detail": "base=54.6",
       "status": "ok",
       "note": "markdown reextract",
       "reasons": [
@@ -81,8 +81,8 @@
       "title": "Equity Research, Doximity",
       "ticker": "DOCS",
       "rating": "Buy",
-      "base_target": 1.0,
-      "target_detail": "rating=Buy; base=1; case_1=75.4; case_2=131.16",
+      "base_target": 103.28,
+      "target_detail": "rating=Buy; base=103.28; case_1=75.4; case_2=131.16",
       "status": "ok",
       "note": "markdown reextract; Case target prices parsed; base target uses median case value; review scenario semantics",
       "reasons": [
@@ -129,8 +129,8 @@
       "title": "Equity Research, Grindr Inc.",
       "ticker": "GRND",
       "rating": "",
-      "base_target": 175378.0,
-      "target_detail": "base=175378",
+      "base_target": 24.34,
+      "target_detail": "base=24.34",
       "status": "ok",
       "note": "markdown reextract",
       "reasons": [
@@ -193,10 +193,10 @@
       "title": "Equity Research, LX인터내셔널",
       "ticker": "001120",
       "rating": "Strong Buy",
-      "base_target": 9607.0,
-      "target_detail": "rating=Strong Buy; base=9607; case_1=2014",
+      "base_target": 26300.0,
+      "target_detail": "rating=Strong Buy; base=26300; case_1=2014",
       "status": "ok",
-      "note": "markdown reextract; Initial target candidate equaled current price; selected next target candidate; Korean numeric ticker; exchange prefix inferred as KRX; Case target prices parsed; base target uses median case value; review scenario semantics",
+      "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Case target prices parsed; base target uses median case value; review scenario semantics",
       "reasons": [
         "note_case_target_ambiguous"
       ]
@@ -260,7 +260,7 @@
       "base_target": 174900.0,
       "target_detail": "base=174900",
       "status": "ok",
-      "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Target price not found; OpenDataLoader target missing; preserved previous target fields",
+      "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX",
       "reasons": [
         "missing_rating"
       ]
@@ -276,7 +276,7 @@
       "base_target": 372000.0,
       "target_detail": "rating=Sell; base=372000",
       "status": "ok",
-      "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Target price not found; Non-buy rating: Sell; OpenDataLoader target missing; preserved previous target fields",
+      "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Non-buy rating: Sell",
       "reasons": [
         "non_buy_rating:Sell"
       ]
@@ -340,7 +340,7 @@
       "base_target": 146000.0,
       "target_detail": "base=146000",
       "status": "ok",
-      "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Target price not found; OpenDataLoader target missing; preserved previous target fields",
+      "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX",
       "reasons": [
         "missing_rating"
       ]

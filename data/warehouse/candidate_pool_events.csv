@@ -36,11 +36,11 @@ cd1a4729208d,2024-10-18,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_add
 cd1a4729208d,2024-10-18,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_add,report_publication,337632.625,600500.0,17
 cd1a4729208d,2024-10-18,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_add,report_publication,89767.4609375,182500.0,18
 cd1a4729208d,2024-10-21,352820.KS,하이브,007a977da09217d7,candidate_exit,aging_out,193858.625,334500.0,17
-cd1a4729208d,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,106000.0,18
+cd1a4729208d,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,26000.0,18
 cd1a4729208d,2024-11-08,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_add,report_publication,3959.28466796875,6900.0,19
 cd1a4729208d,2024-11-08,018290.KS,브이티,e7e945528184d467,candidate_add,report_publication,34850.0,55700.0,20
 cd1a4729208d,2024-11-08,015760.KS,한국전력,f0682832c1a4efa9,candidate_add,report_publication,21269.75390625,37630.0,21
-cd1a4729208d,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,245111799.5036621,22
+cd1a4729208d,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,34018.07068115234,22
 cd1a4729208d,2024-11-22,FNKO,Funko Inc.,0f1974511fee0cab,candidate_add,report_publication,14849.75526045228,22501.68192138672,23
 cd1a4729208d,2024-11-22,5253.T,Cover Corp,29d2311de33c54e0,candidate_add,report_publication,24075.62504196167,61198.86512756348,24
 cd1a4729208d,2024-11-22,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_add,report_publication,21909.844287918415,36799.33447143555,25
@@ -59,78 +59,78 @@ cd1a4729208d,2025-04-18,005380.KS,현대차,eab6d16b4801cbab,candidate_exit,agin
 cd1a4729208d,2025-04-21,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_add,report_publication,19156.25,39610.0,24
 cd1a4729208d,2025-04-21,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_add,report_publication,823321.8125,1205000.0,25
 cd1a4729208d,2025-04-21,473980.KQ,노머스,5b43313285dbd7e2,candidate_add,report_publication,25400.0,37950.0,26
-cd1a4729208d,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,50488390.0,27
+cd1a4729208d,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,111600.0,27
 cd1a4729208d,2025-04-21,001040.KS,CJ,a17ff197b15c9749,candidate_add,report_publication,112245.171875,143696.0,28
 cd1a4729208d,2025-04-29,211050.KQ,인카금융서비스,64af01b19e495d8c,candidate_exit,target_hit,8186.1455078125,8100.0,27
-cd1a4729208d,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,28
-cd1a4729208d,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,29
-cd1a4729208d,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,30
-cd1a4729208d,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,31
-cd1a4729208d,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,32
-cd1a4729208d,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,31
-cd1a4729208d,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,30
-cd1a4729208d,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,29
-cd1a4729208d,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,28
-cd1a4729208d,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,27
-cd1a4729208d,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,26
-cd1a4729208d,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,25
-cd1a4729208d,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,24
-cd1a4729208d,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,23
-cd1a4729208d,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,22
-cd1a4729208d,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,21
-cd1a4729208d,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,22
-cd1a4729208d,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,23
-cd1a4729208d,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,24
-cd1a4729208d,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,25
-cd1a4729208d,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,24
-cd1a4729208d,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,23
-cd1a4729208d,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,22
-cd1a4729208d,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,21
-cd1a4729208d,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,20
-cd1a4729208d,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,19
-cd1a4729208d,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,18
-cd1a4729208d,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,17
-cd1a4729208d,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,18
-cd1a4729208d,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,851837544.1391602,19
-cd1a4729208d,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,20
-cd1a4729208d,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,21
-cd1a4729208d,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,22
-cd1a4729208d,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,21
-cd1a4729208d,2025-11-10,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,aging_out,64780.40625,106000.0,20
-cd1a4729208d,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,19
-cd1a4729208d,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,18
-cd1a4729208d,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,16258566.0,19
-cd1a4729208d,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,20
-cd1a4729208d,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,21
-cd1a4729208d,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,22
-cd1a4729208d,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,23
-cd1a4729208d,2025-11-24,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,aging_out,17847.59633854218,245111799.5036621,22
+cd1a4729208d,2025-05-08,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,target_hit,34163.74252112582,34018.07068115234,26
+cd1a4729208d,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,27
+cd1a4729208d,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,28
+cd1a4729208d,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,29
+cd1a4729208d,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,30
+cd1a4729208d,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,31
+cd1a4729208d,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,30
+cd1a4729208d,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,29
+cd1a4729208d,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,28
+cd1a4729208d,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,27
+cd1a4729208d,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,26
+cd1a4729208d,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,25
+cd1a4729208d,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,24
+cd1a4729208d,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,23
+cd1a4729208d,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,22
+cd1a4729208d,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,21
+cd1a4729208d,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,20
+cd1a4729208d,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,21
+cd1a4729208d,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,22
+cd1a4729208d,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,23
+cd1a4729208d,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,24
+cd1a4729208d,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,23
+cd1a4729208d,2025-07-23,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,target_hit,26134.169921875,26000.0,22
+cd1a4729208d,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,21
+cd1a4729208d,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,20
+cd1a4729208d,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,19
+cd1a4729208d,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,18
+cd1a4729208d,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,17
+cd1a4729208d,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,16
+cd1a4729208d,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,15
+cd1a4729208d,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,16
+cd1a4729208d,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,344726.40588378906,17
+cd1a4729208d,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,18
+cd1a4729208d,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,19
+cd1a4729208d,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,20
+cd1a4729208d,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,19
+cd1a4729208d,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,18
+cd1a4729208d,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,17
+cd1a4729208d,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,319800.0,18
+cd1a4729208d,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,19
+cd1a4729208d,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,20
+cd1a4729208d,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,21
+cd1a4729208d,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,22
 cd1a4729208d,2025-11-24,FNKO,Funko Inc.,0f1974511fee0cab,candidate_exit,aging_out,4212.384875976946,22501.68192138672,21
 cd1a4729208d,2025-11-24,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_exit,aging_out,30074.176090583205,36799.33447143555,20
 cd1a4729208d,2025-11-25,5253.T,Cover Corp,29d2311de33c54e0,candidate_exit,aging_out,15140.856694221491,61198.86512756348,19
 cd1a4729208d,2025-12-02,2124.T,JAC recruitment Co. Ltd,07b7a9efb855d1c3,candidate_add,report_publication,10036.586477279665,15847.84302520752,20
 cd1a4729208d,2025-12-02,IRMD,Iradimed Corporation,1f2a8ed4179351b4,candidate_add,report_publication,134385.23186050265,213980.51928710935,21
-cd1a4729208d,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80008.19553344727,22
+cd1a4729208d,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80022.85173339843,22
 cd1a4729208d,2025-12-02,SXT,Sensient Technologies Corp,72621dfbf2b97f64,candidate_add,report_publication,138785.1311764391,348817.5588378906,23
 cd1a4729208d,2025-12-02,ESTA,Establishment Labs Holdings,9c4bd99f971cbedd,candidate_add,report_publication,99207.0795006929,174057.0306201172,24
 cd1a4729208d,2025-12-16,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_add,report_publication,463943.7868684083,734437.1303430175,25
 cd1a4729208d,2025-12-16,122640.KS,예스티,aa141895f6c0df12,candidate_add,report_publication,17100.0,40500.0,26
-cd1a4729208d,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,190.0,27
-cd1a4729208d,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,83540.3359375,190.0,26
-cd1a4729208d,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,25
-cd1a4729208d,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,24
-cd1a4729208d,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,23
-cd1a4729208d,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,22
-cd1a4729208d,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,21
-cd1a4729208d,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,20
-cd1a4729208d,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,19
+cd1a4729208d,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,128400.0,27
+cd1a4729208d,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,26
+cd1a4729208d,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,25
+cd1a4729208d,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,24
+cd1a4729208d,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,23
+cd1a4729208d,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,22
+cd1a4729208d,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,21
+cd1a4729208d,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,20
+cd1a4729208d,2026-03-03,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,140862.171875,128400.0,19
 cd1a4729208d,2026-04-17,082920.KS,비츠로셀,066412c877ec56f4,candidate_add,report_publication,56300.0,78450.0,20
 cd1a4729208d,2026-04-17,100090.KS,SK오션플랜트,136630000ff00d6a,candidate_add,report_publication,23100.0,41600.0,21
 cd1a4729208d,2026-04-17,306200.KS,세아제강,28a7d7cc083f93ac,candidate_add,report_publication,147600.0,286700.0,22
 cd1a4729208d,2026-04-17,CAMT,Camtek,29179371d1d1f847,candidate_add,report_publication,265700.46369638667,351813.9141845703,23
 cd1a4729208d,2026-04-17,GLNG,Golar LNG,767c2e90a710a1d1,candidate_add,report_publication,76615.3753036377,144163.07373046875,24
 cd1a4729208d,2026-04-20,473980.KQ,노머스,5b43313285dbd7e2,candidate_exit,aging_out,18050.0,37950.0,23
-cd1a4729208d,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,50488390.0,22
+cd1a4729208d,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,111600.0,22
 a97e15a29ddb,2022-01-18,194480.KS,데브시스터즈,35462e77a5d6dc29,candidate_add,report_publication,84800.0,198000.0,1
 a97e15a29ddb,2022-01-18,GLW,Corning,f0e7db4e2e4702b9,candidate_add,report_publication,38862.17243343592,63432.44860839844,2
 a97e15a29ddb,2022-01-18,122640.KS,예스티,7fb10432611f0a5c,candidate_add,report_publication,13250.0,25300.0,3
@@ -168,11 +168,11 @@ a97e15a29ddb,2024-10-18,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_add
 a97e15a29ddb,2024-10-18,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_add,report_publication,337632.625,600500.0,17
 a97e15a29ddb,2024-10-18,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_add,report_publication,89767.4609375,182500.0,18
 a97e15a29ddb,2024-10-21,352820.KS,하이브,007a977da09217d7,candidate_exit,aging_out,193858.625,334500.0,17
-a97e15a29ddb,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,106000.0,18
+a97e15a29ddb,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,26000.0,18
 a97e15a29ddb,2024-11-08,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_add,report_publication,3959.28466796875,6900.0,19
 a97e15a29ddb,2024-11-08,018290.KS,브이티,e7e945528184d467,candidate_add,report_publication,34850.0,55700.0,20
 a97e15a29ddb,2024-11-08,015760.KS,한국전력,f0682832c1a4efa9,candidate_add,report_publication,21269.75390625,37630.0,21
-a97e15a29ddb,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,245111799.5036621,22
+a97e15a29ddb,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,34018.07068115234,22
 a97e15a29ddb,2024-11-22,FNKO,Funko Inc.,0f1974511fee0cab,candidate_add,report_publication,14849.75526045228,22501.68192138672,23
 a97e15a29ddb,2024-11-22,5253.T,Cover Corp,29d2311de33c54e0,candidate_add,report_publication,24075.62504196167,61198.86512756348,24
 a97e15a29ddb,2024-11-22,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_add,report_publication,21909.844287918415,36799.33447143555,25
@@ -191,78 +191,78 @@ a97e15a29ddb,2025-04-18,005380.KS,현대차,eab6d16b4801cbab,candidate_exit,agin
 a97e15a29ddb,2025-04-21,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_add,report_publication,19156.25,39610.0,24
 a97e15a29ddb,2025-04-21,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_add,report_publication,823321.8125,1205000.0,25
 a97e15a29ddb,2025-04-21,473980.KQ,노머스,5b43313285dbd7e2,candidate_add,report_publication,25400.0,37950.0,26
-a97e15a29ddb,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,50488390.0,27
+a97e15a29ddb,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,111600.0,27
 a97e15a29ddb,2025-04-21,001040.KS,CJ,a17ff197b15c9749,candidate_add,report_publication,112245.171875,143696.0,28
 a97e15a29ddb,2025-04-29,211050.KQ,인카금융서비스,64af01b19e495d8c,candidate_exit,target_hit,8186.1455078125,8100.0,27
-a97e15a29ddb,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,28
-a97e15a29ddb,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,29
-a97e15a29ddb,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,30
-a97e15a29ddb,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,31
-a97e15a29ddb,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,32
-a97e15a29ddb,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,31
-a97e15a29ddb,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,30
-a97e15a29ddb,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,29
-a97e15a29ddb,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,28
-a97e15a29ddb,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,27
-a97e15a29ddb,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,26
-a97e15a29ddb,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,25
-a97e15a29ddb,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,24
-a97e15a29ddb,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,23
-a97e15a29ddb,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,22
-a97e15a29ddb,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,21
-a97e15a29ddb,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,22
-a97e15a29ddb,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,23
-a97e15a29ddb,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,24
-a97e15a29ddb,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,25
-a97e15a29ddb,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,24
-a97e15a29ddb,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,23
-a97e15a29ddb,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,22
-a97e15a29ddb,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,21
-a97e15a29ddb,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,20
-a97e15a29ddb,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,19
-a97e15a29ddb,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,18
-a97e15a29ddb,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,17
-a97e15a29ddb,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,18
-a97e15a29ddb,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,851837544.1391602,19
-a97e15a29ddb,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,20
-a97e15a29ddb,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,21
-a97e15a29ddb,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,22
-a97e15a29ddb,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,21
-a97e15a29ddb,2025-11-10,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,aging_out,64780.40625,106000.0,20
-a97e15a29ddb,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,19
-a97e15a29ddb,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,18
-a97e15a29ddb,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,16258566.0,19
-a97e15a29ddb,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,20
-a97e15a29ddb,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,21
-a97e15a29ddb,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,22
-a97e15a29ddb,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,23
-a97e15a29ddb,2025-11-24,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,aging_out,17847.59633854218,245111799.5036621,22
+a97e15a29ddb,2025-05-08,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,target_hit,34163.74252112582,34018.07068115234,26
+a97e15a29ddb,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,27
+a97e15a29ddb,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,28
+a97e15a29ddb,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,29
+a97e15a29ddb,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,30
+a97e15a29ddb,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,31
+a97e15a29ddb,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,30
+a97e15a29ddb,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,29
+a97e15a29ddb,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,28
+a97e15a29ddb,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,27
+a97e15a29ddb,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,26
+a97e15a29ddb,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,25
+a97e15a29ddb,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,24
+a97e15a29ddb,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,23
+a97e15a29ddb,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,22
+a97e15a29ddb,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,21
+a97e15a29ddb,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,20
+a97e15a29ddb,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,21
+a97e15a29ddb,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,22
+a97e15a29ddb,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,23
+a97e15a29ddb,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,24
+a97e15a29ddb,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,23
+a97e15a29ddb,2025-07-23,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,target_hit,26134.169921875,26000.0,22
+a97e15a29ddb,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,21
+a97e15a29ddb,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,20
+a97e15a29ddb,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,19
+a97e15a29ddb,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,18
+a97e15a29ddb,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,17
+a97e15a29ddb,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,16
+a97e15a29ddb,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,15
+a97e15a29ddb,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,16
+a97e15a29ddb,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,344726.40588378906,17
+a97e15a29ddb,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,18
+a97e15a29ddb,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,19
+a97e15a29ddb,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,20
+a97e15a29ddb,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,19
+a97e15a29ddb,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,18
+a97e15a29ddb,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,17
+a97e15a29ddb,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,319800.0,18
+a97e15a29ddb,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,19
+a97e15a29ddb,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,20
+a97e15a29ddb,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,21
+a97e15a29ddb,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,22
 a97e15a29ddb,2025-11-24,FNKO,Funko Inc.,0f1974511fee0cab,candidate_exit,aging_out,4212.384875976946,22501.68192138672,21
 a97e15a29ddb,2025-11-24,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_exit,aging_out,30074.176090583205,36799.33447143555,20
 a97e15a29ddb,2025-11-25,5253.T,Cover Corp,29d2311de33c54e0,candidate_exit,aging_out,15140.856694221491,61198.86512756348,19
 a97e15a29ddb,2025-12-02,2124.T,JAC recruitment Co. Ltd,07b7a9efb855d1c3,candidate_add,report_publication,10036.586477279665,15847.84302520752,20
 a97e15a29ddb,2025-12-02,IRMD,Iradimed Corporation,1f2a8ed4179351b4,candidate_add,report_publication,134385.23186050265,213980.51928710935,21
-a97e15a29ddb,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80008.19553344727,22
+a97e15a29ddb,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80022.85173339843,22
 a97e15a29ddb,2025-12-02,SXT,Sensient Technologies Corp,72621dfbf2b97f64,candidate_add,report_publication,138785.1311764391,348817.5588378906,23
 a97e15a29ddb,2025-12-02,ESTA,Establishment Labs Holdings,9c4bd99f971cbedd,candidate_add,report_publication,99207.0795006929,174057.0306201172,24
 a97e15a29ddb,2025-12-16,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_add,report_publication,463943.7868684083,734437.1303430175,25
 a97e15a29ddb,2025-12-16,122640.KS,예스티,aa141895f6c0df12,candidate_add,report_publication,17100.0,40500.0,26
-a97e15a29ddb,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,190.0,27
-a97e15a29ddb,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,83540.3359375,190.0,26
-a97e15a29ddb,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,25
-a97e15a29ddb,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,24
-a97e15a29ddb,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,23
-a97e15a29ddb,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,22
-a97e15a29ddb,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,21
-a97e15a29ddb,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,20
-a97e15a29ddb,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,19
+a97e15a29ddb,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,128400.0,27
+a97e15a29ddb,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,26
+a97e15a29ddb,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,25
+a97e15a29ddb,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,24
+a97e15a29ddb,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,23
+a97e15a29ddb,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,22
+a97e15a29ddb,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,21
+a97e15a29ddb,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,20
+a97e15a29ddb,2026-03-03,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,140862.171875,128400.0,19
 a97e15a29ddb,2026-04-17,082920.KS,비츠로셀,066412c877ec56f4,candidate_add,report_publication,56300.0,78450.0,20
 a97e15a29ddb,2026-04-17,100090.KS,SK오션플랜트,136630000ff00d6a,candidate_add,report_publication,23100.0,41600.0,21
 a97e15a29ddb,2026-04-17,306200.KS,세아제강,28a7d7cc083f93ac,candidate_add,report_publication,147600.0,286700.0,22
 a97e15a29ddb,2026-04-17,CAMT,Camtek,29179371d1d1f847,candidate_add,report_publication,265700.46369638667,351813.9141845703,23
 a97e15a29ddb,2026-04-17,GLNG,Golar LNG,767c2e90a710a1d1,candidate_add,report_publication,76615.3753036377,144163.07373046875,24
 a97e15a29ddb,2026-04-20,473980.KQ,노머스,5b43313285dbd7e2,candidate_exit,aging_out,18050.0,37950.0,23
-a97e15a29ddb,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,50488390.0,22
+a97e15a29ddb,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,111600.0,22
 d78b22698ae3,2022-01-18,194480.KS,데브시스터즈,35462e77a5d6dc29,candidate_add,report_publication,84800.0,198000.0,1
 d78b22698ae3,2022-01-18,GLW,Corning,f0e7db4e2e4702b9,candidate_add,report_publication,38862.17243343592,63432.44860839844,2
 d78b22698ae3,2022-01-18,122640.KS,예스티,7fb10432611f0a5c,candidate_add,report_publication,13250.0,25300.0,3
@@ -300,11 +300,11 @@ d78b22698ae3,2024-10-18,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_add
 d78b22698ae3,2024-10-18,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_add,report_publication,337632.625,600500.0,17
 d78b22698ae3,2024-10-18,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_add,report_publication,89767.4609375,182500.0,18
 d78b22698ae3,2024-10-21,352820.KS,하이브,007a977da09217d7,candidate_exit,aging_out,193858.625,334500.0,17
-d78b22698ae3,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,106000.0,18
+d78b22698ae3,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,26000.0,18
 d78b22698ae3,2024-11-08,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_add,report_publication,3959.28466796875,6900.0,19
 d78b22698ae3,2024-11-08,018290.KS,브이티,e7e945528184d467,candidate_add,report_publication,34850.0,55700.0,20
 d78b22698ae3,2024-11-08,015760.KS,한국전력,f0682832c1a4efa9,candidate_add,report_publication,21269.75390625,37630.0,21
-d78b22698ae3,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,245111799.5036621,22
+d78b22698ae3,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,34018.07068115234,22
 d78b22698ae3,2024-11-22,FNKO,Funko Inc.,0f1974511fee0cab,candidate_add,report_publication,14849.75526045228,22501.68192138672,23
 d78b22698ae3,2024-11-22,5253.T,Cover Corp,29d2311de33c54e0,candidate_add,report_publication,24075.62504196167,61198.86512756348,24
 d78b22698ae3,2024-11-22,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_add,report_publication,21909.844287918415,36799.33447143555,25
@@ -323,78 +323,78 @@ d78b22698ae3,2025-04-18,005380.KS,현대차,eab6d16b4801cbab,candidate_exit,agin
 d78b22698ae3,2025-04-21,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_add,report_publication,19156.25,39610.0,24
 d78b22698ae3,2025-04-21,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_add,report_publication,823321.8125,1205000.0,25
 d78b22698ae3,2025-04-21,473980.KQ,노머스,5b43313285dbd7e2,candidate_add,report_publication,25400.0,37950.0,26
-d78b22698ae3,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,50488390.0,27
+d78b22698ae3,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,111600.0,27
 d78b22698ae3,2025-04-21,001040.KS,CJ,a17ff197b15c9749,candidate_add,report_publication,112245.171875,143696.0,28
 d78b22698ae3,2025-04-29,211050.KQ,인카금융서비스,64af01b19e495d8c,candidate_exit,target_hit,8186.1455078125,8100.0,27
-d78b22698ae3,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,28
-d78b22698ae3,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,29
-d78b22698ae3,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,30
-d78b22698ae3,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,31
-d78b22698ae3,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,32
-d78b22698ae3,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,31
-d78b22698ae3,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,30
-d78b22698ae3,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,29
-d78b22698ae3,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,28
-d78b22698ae3,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,27
-d78b22698ae3,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,26
-d78b22698ae3,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,25
-d78b22698ae3,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,24
-d78b22698ae3,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,23
-d78b22698ae3,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,22
-d78b22698ae3,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,21
-d78b22698ae3,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,22
-d78b22698ae3,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,23
-d78b22698ae3,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,24
-d78b22698ae3,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,25
-d78b22698ae3,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,24
-d78b22698ae3,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,23
-d78b22698ae3,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,22
-d78b22698ae3,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,21
-d78b22698ae3,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,20
-d78b22698ae3,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,19
-d78b22698ae3,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,18
-d78b22698ae3,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,17
-d78b22698ae3,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,18
-d78b22698ae3,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,851837544.1391602,19
-d78b22698ae3,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,20
-d78b22698ae3,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,21
-d78b22698ae3,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,22
-d78b22698ae3,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,21
-d78b22698ae3,2025-11-10,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,aging_out,64780.40625,106000.0,20
-d78b22698ae3,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,19
-d78b22698ae3,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,18
-d78b22698ae3,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,16258566.0,19
-d78b22698ae3,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,20
-d78b22698ae3,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,21
-d78b22698ae3,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,22
-d78b22698ae3,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,23
-d78b22698ae3,2025-11-24,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,aging_out,17847.59633854218,245111799.5036621,22
+d78b22698ae3,2025-05-08,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,target_hit,34163.74252112582,34018.07068115234,26
+d78b22698ae3,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,27
+d78b22698ae3,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,28
+d78b22698ae3,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,29
+d78b22698ae3,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,30
+d78b22698ae3,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,31
+d78b22698ae3,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,30
+d78b22698ae3,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,29
+d78b22698ae3,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,28
+d78b22698ae3,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,27
+d78b22698ae3,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,26
+d78b22698ae3,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,25
+d78b22698ae3,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,24
+d78b22698ae3,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,23
+d78b22698ae3,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,22
+d78b22698ae3,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,21
+d78b22698ae3,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,20
+d78b22698ae3,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,21
+d78b22698ae3,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,22
+d78b22698ae3,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,23
+d78b22698ae3,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,24
+d78b22698ae3,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,23
+d78b22698ae3,2025-07-23,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,target_hit,26134.169921875,26000.0,22
+d78b22698ae3,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,21
+d78b22698ae3,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,20
+d78b22698ae3,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,19
+d78b22698ae3,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,18
+d78b22698ae3,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,17
+d78b22698ae3,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,16
+d78b22698ae3,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,15
+d78b22698ae3,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,16
+d78b22698ae3,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,344726.40588378906,17
+d78b22698ae3,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,18
+d78b22698ae3,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,19
+d78b22698ae3,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,20
+d78b22698ae3,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,19
+d78b22698ae3,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,18
+d78b22698ae3,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,17
+d78b22698ae3,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,319800.0,18
+d78b22698ae3,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,19
+d78b22698ae3,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,20
+d78b22698ae3,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,21
+d78b22698ae3,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,22
 d78b22698ae3,2025-11-24,FNKO,Funko Inc.,0f1974511fee0cab,candidate_exit,aging_out,4212.384875976946,22501.68192138672,21
 d78b22698ae3,2025-11-24,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_exit,aging_out,30074.176090583205,36799.33447143555,20
 d78b22698ae3,2025-11-25,5253.T,Cover Corp,29d2311de33c54e0,candidate_exit,aging_out,15140.856694221491,61198.86512756348,19
 d78b22698ae3,2025-12-02,2124.T,JAC recruitment Co. Ltd,07b7a9efb855d1c3,candidate_add,report_publication,10036.586477279665,15847.84302520752,20
 d78b22698ae3,2025-12-02,IRMD,Iradimed Corporation,1f2a8ed4179351b4,candidate_add,report_publication,134385.23186050265,213980.51928710935,21
-d78b22698ae3,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80008.19553344727,22
+d78b22698ae3,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80022.85173339843,22
 d78b22698ae3,2025-12-02,SXT,Sensient Technologies Corp,72621dfbf2b97f64,candidate_add,report_publication,138785.1311764391,348817.5588378906,23
 d78b22698ae3,2025-12-02,ESTA,Establishment Labs Holdings,9c4bd99f971cbedd,candidate_add,report_publication,99207.0795006929,174057.0306201172,24
 d78b22698ae3,2025-12-16,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_add,report_publication,463943.7868684083,734437.1303430175,25
 d78b22698ae3,2025-12-16,122640.KS,예스티,aa141895f6c0df12,candidate_add,report_publication,17100.0,40500.0,26
-d78b22698ae3,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,190.0,27
-d78b22698ae3,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,83540.3359375,190.0,26
-d78b22698ae3,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,25
-d78b22698ae3,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,24
-d78b22698ae3,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,23
-d78b22698ae3,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,22
-d78b22698ae3,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,21
-d78b22698ae3,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,20
-d78b22698ae3,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,19
+d78b22698ae3,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,128400.0,27
+d78b22698ae3,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,26
+d78b22698ae3,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,25
+d78b22698ae3,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,24
+d78b22698ae3,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,23
+d78b22698ae3,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,22
+d78b22698ae3,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,21
+d78b22698ae3,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,20
+d78b22698ae3,2026-03-03,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,140862.171875,128400.0,19
 d78b22698ae3,2026-04-17,082920.KS,비츠로셀,066412c877ec56f4,candidate_add,report_publication,56300.0,78450.0,20
 d78b22698ae3,2026-04-17,100090.KS,SK오션플랜트,136630000ff00d6a,candidate_add,report_publication,23100.0,41600.0,21
 d78b22698ae3,2026-04-17,306200.KS,세아제강,28a7d7cc083f93ac,candidate_add,report_publication,147600.0,286700.0,22
 d78b22698ae3,2026-04-17,CAMT,Camtek,29179371d1d1f847,candidate_add,report_publication,265700.46369638667,351813.9141845703,23
 d78b22698ae3,2026-04-17,GLNG,Golar LNG,767c2e90a710a1d1,candidate_add,report_publication,76615.3753036377,144163.07373046875,24
 d78b22698ae3,2026-04-20,473980.KQ,노머스,5b43313285dbd7e2,candidate_exit,aging_out,18050.0,37950.0,23
-d78b22698ae3,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,50488390.0,22
+d78b22698ae3,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,111600.0,22
 fe0b485124b1,2022-01-18,194480.KS,데브시스터즈,35462e77a5d6dc29,candidate_add,report_publication,84800.0,198000.0,1
 fe0b485124b1,2022-01-18,GLW,Corning,f0e7db4e2e4702b9,candidate_add,report_publication,38862.17243343592,63432.44860839844,2
 fe0b485124b1,2022-01-18,122640.KS,예스티,7fb10432611f0a5c,candidate_add,report_publication,13250.0,25300.0,3
@@ -432,11 +432,11 @@ fe0b485124b1,2024-10-18,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_add
 fe0b485124b1,2024-10-18,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_add,report_publication,337632.625,600500.0,17
 fe0b485124b1,2024-10-18,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_add,report_publication,89767.4609375,182500.0,18
 fe0b485124b1,2024-10-21,352820.KS,하이브,007a977da09217d7,candidate_exit,aging_out,193858.625,334500.0,17
-fe0b485124b1,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,106000.0,18
+fe0b485124b1,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,26000.0,18
 fe0b485124b1,2024-11-08,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_add,report_publication,3959.28466796875,6900.0,19
 fe0b485124b1,2024-11-08,018290.KS,브이티,e7e945528184d467,candidate_add,report_publication,34850.0,55700.0,20
 fe0b485124b1,2024-11-08,015760.KS,한국전력,f0682832c1a4efa9,candidate_add,report_publication,21269.75390625,37630.0,21
-fe0b485124b1,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,245111799.5036621,22
+fe0b485124b1,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,34018.07068115234,22
 fe0b485124b1,2024-11-22,FNKO,Funko Inc.,0f1974511fee0cab,candidate_add,report_publication,14849.75526045228,22501.68192138672,23
 fe0b485124b1,2024-11-22,5253.T,Cover Corp,29d2311de33c54e0,candidate_add,report_publication,24075.62504196167,61198.86512756348,24
 fe0b485124b1,2024-11-22,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_add,report_publication,21909.844287918415,36799.33447143555,25
@@ -455,78 +455,78 @@ fe0b485124b1,2025-04-18,005380.KS,현대차,eab6d16b4801cbab,candidate_exit,agin
 fe0b485124b1,2025-04-21,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_add,report_publication,19156.25,39610.0,24
 fe0b485124b1,2025-04-21,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_add,report_publication,823321.8125,1205000.0,25
 fe0b485124b1,2025-04-21,473980.KQ,노머스,5b43313285dbd7e2,candidate_add,report_publication,25400.0,37950.0,26
-fe0b485124b1,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,50488390.0,27
+fe0b485124b1,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,111600.0,27
 fe0b485124b1,2025-04-21,001040.KS,CJ,a17ff197b15c9749,candidate_add,report_publication,112245.171875,143696.0,28
 fe0b485124b1,2025-04-29,211050.KQ,인카금융서비스,64af01b19e495d8c,candidate_exit,target_hit,8186.1455078125,8100.0,27
-fe0b485124b1,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,28
-fe0b485124b1,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,29
-fe0b485124b1,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,30
-fe0b485124b1,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,31
-fe0b485124b1,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,32
-fe0b485124b1,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,31
-fe0b485124b1,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,30
-fe0b485124b1,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,29
-fe0b485124b1,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,28
-fe0b485124b1,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,27
-fe0b485124b1,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,26
-fe0b485124b1,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,25
-fe0b485124b1,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,24
-fe0b485124b1,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,23
-fe0b485124b1,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,22
-fe0b485124b1,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,21
-fe0b485124b1,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,22
-fe0b485124b1,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,23
-fe0b485124b1,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,24
-fe0b485124b1,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,25
-fe0b485124b1,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,24
-fe0b485124b1,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,23
-fe0b485124b1,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,22
-fe0b485124b1,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,21
-fe0b485124b1,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,20
-fe0b485124b1,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,19
-fe0b485124b1,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,18
-fe0b485124b1,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,17
-fe0b485124b1,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,18
-fe0b485124b1,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,851837544.1391602,19
-fe0b485124b1,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,20
-fe0b485124b1,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,21
-fe0b485124b1,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,22
-fe0b485124b1,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,21
-fe0b485124b1,2025-11-10,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,aging_out,64780.40625,106000.0,20
-fe0b485124b1,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,19
-fe0b485124b1,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,18
-fe0b485124b1,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,16258566.0,19
-fe0b485124b1,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,20
-fe0b485124b1,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,21
-fe0b485124b1,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,22
-fe0b485124b1,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,23
-fe0b485124b1,2025-11-24,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,aging_out,17847.59633854218,245111799.5036621,22
+fe0b485124b1,2025-05-08,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,target_hit,34163.74252112582,34018.07068115234,26
+fe0b485124b1,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,27
+fe0b485124b1,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,28
+fe0b485124b1,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,29
+fe0b485124b1,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,30
+fe0b485124b1,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,31
+fe0b485124b1,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,30
+fe0b485124b1,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,29
+fe0b485124b1,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,28
+fe0b485124b1,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,27
+fe0b485124b1,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,26
+fe0b485124b1,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,25
+fe0b485124b1,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,24
+fe0b485124b1,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,23
+fe0b485124b1,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,22
+fe0b485124b1,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,21
+fe0b485124b1,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,20
+fe0b485124b1,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,21
+fe0b485124b1,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,22
+fe0b485124b1,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,23
+fe0b485124b1,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,24
+fe0b485124b1,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,23
+fe0b485124b1,2025-07-23,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,target_hit,26134.169921875,26000.0,22
+fe0b485124b1,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,21
+fe0b485124b1,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,20
+fe0b485124b1,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,19
+fe0b485124b1,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,18
+fe0b485124b1,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,17
+fe0b485124b1,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,16
+fe0b485124b1,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,15
+fe0b485124b1,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,16
+fe0b485124b1,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,344726.40588378906,17
+fe0b485124b1,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,18
+fe0b485124b1,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,19
+fe0b485124b1,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,20
+fe0b485124b1,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,19
+fe0b485124b1,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,18
+fe0b485124b1,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,17
+fe0b485124b1,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,319800.0,18
+fe0b485124b1,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,19
+fe0b485124b1,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,20
+fe0b485124b1,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,21
+fe0b485124b1,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,22
 fe0b485124b1,2025-11-24,FNKO,Funko Inc.,0f1974511fee0cab,candidate_exit,aging_out,4212.384875976946,22501.68192138672,21
 fe0b485124b1,2025-11-24,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_exit,aging_out,30074.176090583205,36799.33447143555,20
 fe0b485124b1,2025-11-25,5253.T,Cover Corp,29d2311de33c54e0,candidate_exit,aging_out,15140.856694221491,61198.86512756348,19
 fe0b485124b1,2025-12-02,2124.T,JAC recruitment Co. Ltd,07b7a9efb855d1c3,candidate_add,report_publication,10036.586477279665,15847.84302520752,20
 fe0b485124b1,2025-12-02,IRMD,Iradimed Corporation,1f2a8ed4179351b4,candidate_add,report_publication,134385.23186050265,213980.51928710935,21
-fe0b485124b1,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80008.19553344727,22
+fe0b485124b1,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80022.85173339843,22
 fe0b485124b1,2025-12-02,SXT,Sensient Technologies Corp,72621dfbf2b97f64,candidate_add,report_publication,138785.1311764391,348817.5588378906,23
 fe0b485124b1,2025-12-02,ESTA,Establishment Labs Holdings,9c4bd99f971cbedd,candidate_add,report_publication,99207.0795006929,174057.0306201172,24
 fe0b485124b1,2025-12-16,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_add,report_publication,463943.7868684083,734437.1303430175,25
 fe0b485124b1,2025-12-16,122640.KS,예스티,aa141895f6c0df12,candidate_add,report_publication,17100.0,40500.0,26
-fe0b485124b1,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,190.0,27
-fe0b485124b1,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,83540.3359375,190.0,26
-fe0b485124b1,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,25
-fe0b485124b1,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,24
-fe0b485124b1,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,23
-fe0b485124b1,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,22
-fe0b485124b1,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,21
-fe0b485124b1,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,20
-fe0b485124b1,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,19
+fe0b485124b1,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,128400.0,27
+fe0b485124b1,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,26
+fe0b485124b1,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,25
+fe0b485124b1,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,24
+fe0b485124b1,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,23
+fe0b485124b1,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,22
+fe0b485124b1,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,21
+fe0b485124b1,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,20
+fe0b485124b1,2026-03-03,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,140862.171875,128400.0,19
 fe0b485124b1,2026-04-17,082920.KS,비츠로셀,066412c877ec56f4,candidate_add,report_publication,56300.0,78450.0,20
 fe0b485124b1,2026-04-17,100090.KS,SK오션플랜트,136630000ff00d6a,candidate_add,report_publication,23100.0,41600.0,21
 fe0b485124b1,2026-04-17,306200.KS,세아제강,28a7d7cc083f93ac,candidate_add,report_publication,147600.0,286700.0,22
 fe0b485124b1,2026-04-17,CAMT,Camtek,29179371d1d1f847,candidate_add,report_publication,265700.46369638667,351813.9141845703,23
 fe0b485124b1,2026-04-17,GLNG,Golar LNG,767c2e90a710a1d1,candidate_add,report_publication,76615.3753036377,144163.07373046875,24
 fe0b485124b1,2026-04-20,473980.KQ,노머스,5b43313285dbd7e2,candidate_exit,aging_out,18050.0,37950.0,23
-fe0b485124b1,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,50488390.0,22
+fe0b485124b1,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,111600.0,22
 624f6e207f0c,2022-01-18,194480.KS,데브시스터즈,35462e77a5d6dc29,candidate_add,report_publication,84800.0,198000.0,1
 624f6e207f0c,2022-01-18,GLW,Corning,f0e7db4e2e4702b9,candidate_add,report_publication,38862.17243343592,63432.44860839844,2
 624f6e207f0c,2022-01-18,122640.KS,예스티,7fb10432611f0a5c,candidate_add,report_publication,13250.0,25300.0,3
@@ -564,11 +564,11 @@ fe0b485124b1,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,a
 624f6e207f0c,2024-10-18,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_add,report_publication,337632.625,600500.0,17
 624f6e207f0c,2024-10-18,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_add,report_publication,89767.4609375,182500.0,18
 624f6e207f0c,2024-10-21,352820.KS,하이브,007a977da09217d7,candidate_exit,aging_out,193858.625,334500.0,17
-624f6e207f0c,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,106000.0,18
+624f6e207f0c,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,26000.0,18
 624f6e207f0c,2024-11-08,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_add,report_publication,3959.28466796875,6900.0,19
 624f6e207f0c,2024-11-08,018290.KS,브이티,e7e945528184d467,candidate_add,report_publication,34850.0,55700.0,20
 624f6e207f0c,2024-11-08,015760.KS,한국전력,f0682832c1a4efa9,candidate_add,report_publication,21269.75390625,37630.0,21
-624f6e207f0c,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,245111799.5036621,22
+624f6e207f0c,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,34018.07068115234,22
 624f6e207f0c,2024-11-22,FNKO,Funko Inc.,0f1974511fee0cab,candidate_add,report_publication,14849.75526045228,22501.68192138672,23
 624f6e207f0c,2024-11-22,5253.T,Cover Corp,29d2311de33c54e0,candidate_add,report_publication,24075.62504196167,61198.86512756348,24
 624f6e207f0c,2024-11-22,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_add,report_publication,21909.844287918415,36799.33447143555,25
@@ -587,78 +587,78 @@ fe0b485124b1,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,a
 624f6e207f0c,2025-04-21,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_add,report_publication,19156.25,39610.0,24
 624f6e207f0c,2025-04-21,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_add,report_publication,823321.8125,1205000.0,25
 624f6e207f0c,2025-04-21,473980.KQ,노머스,5b43313285dbd7e2,candidate_add,report_publication,25400.0,37950.0,26
-624f6e207f0c,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,50488390.0,27
+624f6e207f0c,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,111600.0,27
 624f6e207f0c,2025-04-21,001040.KS,CJ,a17ff197b15c9749,candidate_add,report_publication,112245.171875,143696.0,28
 624f6e207f0c,2025-04-29,211050.KQ,인카금융서비스,64af01b19e495d8c,candidate_exit,target_hit,8186.1455078125,8100.0,27
-624f6e207f0c,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,28
-624f6e207f0c,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,29
-624f6e207f0c,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,30
-624f6e207f0c,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,31
-624f6e207f0c,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,32
-624f6e207f0c,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,31
-624f6e207f0c,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,30
-624f6e207f0c,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,29
-624f6e207f0c,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,28
-624f6e207f0c,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,27
-624f6e207f0c,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,26
-624f6e207f0c,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,25
-624f6e207f0c,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,24
-624f6e207f0c,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,23
-624f6e207f0c,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,22
-624f6e207f0c,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,21
-624f6e207f0c,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,22
-624f6e207f0c,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,23
-624f6e207f0c,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,24
-624f6e207f0c,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,25
-624f6e207f0c,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,24
-624f6e207f0c,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,23
-624f6e207f0c,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,22
-624f6e207f0c,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,21
-624f6e207f0c,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,20
-624f6e207f0c,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,19
-624f6e207f0c,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,18
-624f6e207f0c,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,17
-624f6e207f0c,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,18
-624f6e207f0c,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,851837544.1391602,19
-624f6e207f0c,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,20
-624f6e207f0c,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,21
-624f6e207f0c,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,22
-624f6e207f0c,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,21
-624f6e207f0c,2025-11-10,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,aging_out,64780.40625,106000.0,20
-624f6e207f0c,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,19
-624f6e207f0c,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,18
-624f6e207f0c,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,16258566.0,19
-624f6e207f0c,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,20
-624f6e207f0c,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,21
-624f6e207f0c,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,22
-624f6e207f0c,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,23
-624f6e207f0c,2025-11-24,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,aging_out,17847.59633854218,245111799.5036621,22
+624f6e207f0c,2025-05-08,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,target_hit,34163.74252112582,34018.07068115234,26
+624f6e207f0c,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,27
+624f6e207f0c,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,28
+624f6e207f0c,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,29
+624f6e207f0c,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,30
+624f6e207f0c,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,31
+624f6e207f0c,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,30
+624f6e207f0c,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,29
+624f6e207f0c,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,28
+624f6e207f0c,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,27
+624f6e207f0c,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,26
+624f6e207f0c,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,25
+624f6e207f0c,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,24
+624f6e207f0c,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,23
+624f6e207f0c,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,22
+624f6e207f0c,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,21
+624f6e207f0c,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,20
+624f6e207f0c,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,21
+624f6e207f0c,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,22
+624f6e207f0c,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,23
+624f6e207f0c,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,24
+624f6e207f0c,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,23
+624f6e207f0c,2025-07-23,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,target_hit,26134.169921875,26000.0,22
+624f6e207f0c,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,21
+624f6e207f0c,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,20
+624f6e207f0c,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,19
+624f6e207f0c,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,18
+624f6e207f0c,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,17
+624f6e207f0c,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,16
+624f6e207f0c,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,15
+624f6e207f0c,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,16
+624f6e207f0c,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,344726.40588378906,17
+624f6e207f0c,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,18
+624f6e207f0c,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,19
+624f6e207f0c,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,20
+624f6e207f0c,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,19
+624f6e207f0c,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,18
+624f6e207f0c,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,17
+624f6e207f0c,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,319800.0,18
+624f6e207f0c,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,19
+624f6e207f0c,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,20
+624f6e207f0c,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,21
+624f6e207f0c,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,22
 624f6e207f0c,2025-11-24,FNKO,Funko Inc.,0f1974511fee0cab,candidate_exit,aging_out,4212.384875976946,22501.68192138672,21
 624f6e207f0c,2025-11-24,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_exit,aging_out,30074.176090583205,36799.33447143555,20
 624f6e207f0c,2025-11-25,5253.T,Cover Corp,29d2311de33c54e0,candidate_exit,aging_out,15140.856694221491,61198.86512756348,19
 624f6e207f0c,2025-12-02,2124.T,JAC recruitment Co. Ltd,07b7a9efb855d1c3,candidate_add,report_publication,10036.586477279665,15847.84302520752,20
 624f6e207f0c,2025-12-02,IRMD,Iradimed Corporation,1f2a8ed4179351b4,candidate_add,report_publication,134385.23186050265,213980.51928710935,21
-624f6e207f0c,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80008.19553344727,22
+624f6e207f0c,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80022.85173339843,22
 624f6e207f0c,2025-12-02,SXT,Sensient Technologies Corp,72621dfbf2b97f64,candidate_add,report_publication,138785.1311764391,348817.5588378906,23
 624f6e207f0c,2025-12-02,ESTA,Establishment Labs Holdings,9c4bd99f971cbedd,candidate_add,report_publication,99207.0795006929,174057.0306201172,24
 624f6e207f0c,2025-12-16,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_add,report_publication,463943.7868684083,734437.1303430175,25
 624f6e207f0c,2025-12-16,122640.KS,예스티,aa141895f6c0df12,candidate_add,report_publication,17100.0,40500.0,26
-624f6e207f0c,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,190.0,27
-624f6e207f0c,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,83540.3359375,190.0,26
-624f6e207f0c,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,25
-624f6e207f0c,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,24
-624f6e207f0c,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,23
-624f6e207f0c,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,22
-624f6e207f0c,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,21
-624f6e207f0c,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,20
-624f6e207f0c,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,19
+624f6e207f0c,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,128400.0,27
+624f6e207f0c,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,26
+624f6e207f0c,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,25
+624f6e207f0c,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,24
+624f6e207f0c,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,23
+624f6e207f0c,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,22
+624f6e207f0c,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,21
+624f6e207f0c,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,20
+624f6e207f0c,2026-03-03,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,140862.171875,128400.0,19
 624f6e207f0c,2026-04-17,082920.KS,비츠로셀,066412c877ec56f4,candidate_add,report_publication,56300.0,78450.0,20
 624f6e207f0c,2026-04-17,100090.KS,SK오션플랜트,136630000ff00d6a,candidate_add,report_publication,23100.0,41600.0,21
 624f6e207f0c,2026-04-17,306200.KS,세아제강,28a7d7cc083f93ac,candidate_add,report_publication,147600.0,286700.0,22
 624f6e207f0c,2026-04-17,CAMT,Camtek,29179371d1d1f847,candidate_add,report_publication,265700.46369638667,351813.9141845703,23
 624f6e207f0c,2026-04-17,GLNG,Golar LNG,767c2e90a710a1d1,candidate_add,report_publication,76615.3753036377,144163.07373046875,24
 624f6e207f0c,2026-04-20,473980.KQ,노머스,5b43313285dbd7e2,candidate_exit,aging_out,18050.0,37950.0,23
-624f6e207f0c,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,50488390.0,22
+624f6e207f0c,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,111600.0,22
 a6c27b92acb7,2022-01-18,194480.KS,데브시스터즈,35462e77a5d6dc29,candidate_add,report_publication,84800.0,198000.0,1
 a6c27b92acb7,2022-01-18,GLW,Corning,f0e7db4e2e4702b9,candidate_add,report_publication,38862.17243343592,63432.44860839844,2
 a6c27b92acb7,2022-01-18,122640.KS,예스티,7fb10432611f0a5c,candidate_add,report_publication,13250.0,25300.0,3
@@ -696,11 +696,11 @@ a6c27b92acb7,2024-10-18,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_add
 a6c27b92acb7,2024-10-18,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_add,report_publication,337632.625,600500.0,17
 a6c27b92acb7,2024-10-18,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_add,report_publication,89767.4609375,182500.0,18
 a6c27b92acb7,2024-10-21,352820.KS,하이브,007a977da09217d7,candidate_exit,aging_out,193858.625,334500.0,17
-a6c27b92acb7,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,106000.0,18
+a6c27b92acb7,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,26000.0,18
 a6c27b92acb7,2024-11-08,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_add,report_publication,3959.28466796875,6900.0,19
 a6c27b92acb7,2024-11-08,018290.KS,브이티,e7e945528184d467,candidate_add,report_publication,34850.0,55700.0,20
 a6c27b92acb7,2024-11-08,015760.KS,한국전력,f0682832c1a4efa9,candidate_add,report_publication,21269.75390625,37630.0,21
-a6c27b92acb7,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,245111799.5036621,22
+a6c27b92acb7,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,34018.07068115234,22
 a6c27b92acb7,2024-11-22,FNKO,Funko Inc.,0f1974511fee0cab,candidate_add,report_publication,14849.75526045228,22501.68192138672,23
 a6c27b92acb7,2024-11-22,5253.T,Cover Corp,29d2311de33c54e0,candidate_add,report_publication,24075.62504196167,61198.86512756348,24
 a6c27b92acb7,2024-11-22,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_add,report_publication,21909.844287918415,36799.33447143555,25
@@ -719,78 +719,78 @@ a6c27b92acb7,2025-04-18,005380.KS,현대차,eab6d16b4801cbab,candidate_exit,agin
 a6c27b92acb7,2025-04-21,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_add,report_publication,19156.25,39610.0,24
 a6c27b92acb7,2025-04-21,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_add,report_publication,823321.8125,1205000.0,25
 a6c27b92acb7,2025-04-21,473980.KQ,노머스,5b43313285dbd7e2,candidate_add,report_publication,25400.0,37950.0,26
-a6c27b92acb7,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,50488390.0,27
+a6c27b92acb7,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,111600.0,27
 a6c27b92acb7,2025-04-21,001040.KS,CJ,a17ff197b15c9749,candidate_add,report_publication,112245.171875,143696.0,28
 a6c27b92acb7,2025-04-29,211050.KQ,인카금융서비스,64af01b19e495d8c,candidate_exit,target_hit,8186.1455078125,8100.0,27
-a6c27b92acb7,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,28
-a6c27b92acb7,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,29
-a6c27b92acb7,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,30
-a6c27b92acb7,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,31
-a6c27b92acb7,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,32
-a6c27b92acb7,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,31
-a6c27b92acb7,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,30
-a6c27b92acb7,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,29
-a6c27b92acb7,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,28
-a6c27b92acb7,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,27
-a6c27b92acb7,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,26
-a6c27b92acb7,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,25
-a6c27b92acb7,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,24
-a6c27b92acb7,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,23
-a6c27b92acb7,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,22
-a6c27b92acb7,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,21
-a6c27b92acb7,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,22
-a6c27b92acb7,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,23
-a6c27b92acb7,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,24
-a6c27b92acb7,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,25
-a6c27b92acb7,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,24
-a6c27b92acb7,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,23
-a6c27b92acb7,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,22
-a6c27b92acb7,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,21
-a6c27b92acb7,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,20
-a6c27b92acb7,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,19
-a6c27b92acb7,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,18
-a6c27b92acb7,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,17
-a6c27b92acb7,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,18
-a6c27b92acb7,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,851837544.1391602,19
-a6c27b92acb7,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,20
-a6c27b92acb7,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,21
-a6c27b92acb7,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,22
-a6c27b92acb7,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,21
-a6c27b92acb7,2025-11-10,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,aging_out,64780.40625,106000.0,20
-a6c27b92acb7,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,19
-a6c27b92acb7,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,18
-a6c27b92acb7,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,16258566.0,19
-a6c27b92acb7,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,20
-a6c27b92acb7,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,21
-a6c27b92acb7,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,22
-a6c27b92acb7,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,23
-a6c27b92acb7,2025-11-24,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,aging_out,17847.59633854218,245111799.5036621,22
+a6c27b92acb7,2025-05-08,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,target_hit,34163.74252112582,34018.07068115234,26
+a6c27b92acb7,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,27
+a6c27b92acb7,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,28
+a6c27b92acb7,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,29
+a6c27b92acb7,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,30
+a6c27b92acb7,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,31
+a6c27b92acb7,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,30
+a6c27b92acb7,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,29
+a6c27b92acb7,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,28
+a6c27b92acb7,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,27
+a6c27b92acb7,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,26
+a6c27b92acb7,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,25
+a6c27b92acb7,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,24
+a6c27b92acb7,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,23
+a6c27b92acb7,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,22
+a6c27b92acb7,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,21
+a6c27b92acb7,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,20
+a6c27b92acb7,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,21
+a6c27b92acb7,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,22
+a6c27b92acb7,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,23
+a6c27b92acb7,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,24
+a6c27b92acb7,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,23
+a6c27b92acb7,2025-07-23,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,target_hit,26134.169921875,26000.0,22
+a6c27b92acb7,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,21
+a6c27b92acb7,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,20
+a6c27b92acb7,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,19
+a6c27b92acb7,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,18
+a6c27b92acb7,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,17
+a6c27b92acb7,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,16
+a6c27b92acb7,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,15
+a6c27b92acb7,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,16
+a6c27b92acb7,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,344726.40588378906,17
+a6c27b92acb7,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,18
+a6c27b92acb7,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,19
+a6c27b92acb7,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,20
+a6c27b92acb7,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,19
+a6c27b92acb7,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,18
+a6c27b92acb7,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,17
+a6c27b92acb7,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,319800.0,18
+a6c27b92acb7,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,19
+a6c27b92acb7,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,20
+a6c27b92acb7,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,21
+a6c27b92acb7,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,22
 a6c27b92acb7,2025-11-24,FNKO,Funko Inc.,0f1974511fee0cab,candidate_exit,aging_out,4212.384875976946,22501.68192138672,21
 a6c27b92acb7,2025-11-24,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_exit,aging_out,30074.176090583205,36799.33447143555,20
 a6c27b92acb7,2025-11-25,5253.T,Cover Corp,29d2311de33c54e0,candidate_exit,aging_out,15140.856694221491,61198.86512756348,19
 a6c27b92acb7,2025-12-02,2124.T,JAC recruitment Co. Ltd,07b7a9efb855d1c3,candidate_add,report_publication,10036.586477279665,15847.84302520752,20
 a6c27b92acb7,2025-12-02,IRMD,Iradimed Corporation,1f2a8ed4179351b4,candidate_add,report_publication,134385.23186050265,213980.51928710935,21
-a6c27b92acb7,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80008.19553344727,22
+a6c27b92acb7,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80022.85173339843,22
 a6c27b92acb7,2025-12-02,SXT,Sensient Technologies Corp,72621dfbf2b97f64,candidate_add,report_publication,138785.1311764391,348817.5588378906,23
 a6c27b92acb7,2025-12-02,ESTA,Establishment Labs Holdings,9c4bd99f971cbedd,candidate_add,report_publication,99207.0795006929,174057.0306201172,24
 a6c27b92acb7,2025-12-16,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_add,report_publication,463943.7868684083,734437.1303430175,25
 a6c27b92acb7,2025-12-16,122640.KS,예스티,aa141895f6c0df12,candidate_add,report_publication,17100.0,40500.0,26
-a6c27b92acb7,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,190.0,27
-a6c27b92acb7,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,83540.3359375,190.0,26
-a6c27b92acb7,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,25
-a6c27b92acb7,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,24
-a6c27b92acb7,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,23
-a6c27b92acb7,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,22
-a6c27b92acb7,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,21
-a6c27b92acb7,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,20
-a6c27b92acb7,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,19
+a6c27b92acb7,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,128400.0,27
+a6c27b92acb7,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,26
+a6c27b92acb7,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,25
+a6c27b92acb7,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,24
+a6c27b92acb7,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,23
+a6c27b92acb7,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,22
+a6c27b92acb7,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,21
+a6c27b92acb7,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,20
+a6c27b92acb7,2026-03-03,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,140862.171875,128400.0,19
 a6c27b92acb7,2026-04-17,082920.KS,비츠로셀,066412c877ec56f4,candidate_add,report_publication,56300.0,78450.0,20
 a6c27b92acb7,2026-04-17,100090.KS,SK오션플랜트,136630000ff00d6a,candidate_add,report_publication,23100.0,41600.0,21
 a6c27b92acb7,2026-04-17,306200.KS,세아제강,28a7d7cc083f93ac,candidate_add,report_publication,147600.0,286700.0,22
 a6c27b92acb7,2026-04-17,CAMT,Camtek,29179371d1d1f847,candidate_add,report_publication,265700.46369638667,351813.9141845703,23
 a6c27b92acb7,2026-04-17,GLNG,Golar LNG,767c2e90a710a1d1,candidate_add,report_publication,76615.3753036377,144163.07373046875,24
 a6c27b92acb7,2026-04-20,473980.KQ,노머스,5b43313285dbd7e2,candidate_exit,aging_out,18050.0,37950.0,23
-a6c27b92acb7,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,50488390.0,22
+a6c27b92acb7,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,111600.0,22
 f68bfd79cb84,2022-01-18,194480.KS,데브시스터즈,35462e77a5d6dc29,candidate_add,report_publication,84800.0,198000.0,1
 f68bfd79cb84,2022-01-18,GLW,Corning,f0e7db4e2e4702b9,candidate_add,report_publication,38862.17243343592,63432.44860839844,2
 f68bfd79cb84,2022-01-18,122640.KS,예스티,7fb10432611f0a5c,candidate_add,report_publication,13250.0,25300.0,3
@@ -828,11 +828,11 @@ f68bfd79cb84,2024-10-18,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_add
 f68bfd79cb84,2024-10-18,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_add,report_publication,337632.625,600500.0,17
 f68bfd79cb84,2024-10-18,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_add,report_publication,89767.4609375,182500.0,18
 f68bfd79cb84,2024-10-21,352820.KS,하이브,007a977da09217d7,candidate_exit,aging_out,193858.625,334500.0,17
-f68bfd79cb84,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,106000.0,18
+f68bfd79cb84,2024-11-08,356860.KQ,티엘비,cdfd5290685d5a56,candidate_add,report_publication,13771.232421875,26000.0,18
 f68bfd79cb84,2024-11-08,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_add,report_publication,3959.28466796875,6900.0,19
 f68bfd79cb84,2024-11-08,018290.KS,브이티,e7e945528184d467,candidate_add,report_publication,34850.0,55700.0,20
 f68bfd79cb84,2024-11-08,015760.KS,한국전력,f0682832c1a4efa9,candidate_add,report_publication,21269.75390625,37630.0,21
-f68bfd79cb84,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,245111799.5036621,22
+f68bfd79cb84,2024-11-22,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_add,report_publication,21063.97989952087,34018.07068115234,22
 f68bfd79cb84,2024-11-22,FNKO,Funko Inc.,0f1974511fee0cab,candidate_add,report_publication,14849.75526045228,22501.68192138672,23
 f68bfd79cb84,2024-11-22,5253.T,Cover Corp,29d2311de33c54e0,candidate_add,report_publication,24075.62504196167,61198.86512756348,24
 f68bfd79cb84,2024-11-22,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_add,report_publication,21909.844287918415,36799.33447143555,25
@@ -851,75 +851,75 @@ f68bfd79cb84,2025-04-18,005380.KS,현대차,eab6d16b4801cbab,candidate_exit,agin
 f68bfd79cb84,2025-04-21,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_add,report_publication,19156.25,39610.0,24
 f68bfd79cb84,2025-04-21,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_add,report_publication,823321.8125,1205000.0,25
 f68bfd79cb84,2025-04-21,473980.KQ,노머스,5b43313285dbd7e2,candidate_add,report_publication,25400.0,37950.0,26
-f68bfd79cb84,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,50488390.0,27
+f68bfd79cb84,2025-04-21,489790.KS,한화비전,9badc8b9279db934,candidate_add,report_publication,55900.0,111600.0,27
 f68bfd79cb84,2025-04-21,001040.KS,CJ,a17ff197b15c9749,candidate_add,report_publication,112245.171875,143696.0,28
 f68bfd79cb84,2025-04-29,211050.KQ,인카금융서비스,64af01b19e495d8c,candidate_exit,target_hit,8186.1455078125,8100.0,27
-f68bfd79cb84,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,28
-f68bfd79cb84,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,29
-f68bfd79cb84,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,30
-f68bfd79cb84,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,31
-f68bfd79cb84,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,32
-f68bfd79cb84,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,31
-f68bfd79cb84,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,30
-f68bfd79cb84,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,29
-f68bfd79cb84,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,28
-f68bfd79cb84,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,27
-f68bfd79cb84,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,26
-f68bfd79cb84,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,25
-f68bfd79cb84,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,24
-f68bfd79cb84,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,23
-f68bfd79cb84,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,22
-f68bfd79cb84,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,21
-f68bfd79cb84,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,22
-f68bfd79cb84,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,23
-f68bfd79cb84,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,24
-f68bfd79cb84,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,25
-f68bfd79cb84,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,24
-f68bfd79cb84,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,23
-f68bfd79cb84,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,22
-f68bfd79cb84,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,21
-f68bfd79cb84,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,20
-f68bfd79cb84,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,19
-f68bfd79cb84,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,18
-f68bfd79cb84,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,17
-f68bfd79cb84,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,18
-f68bfd79cb84,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,851837544.1391602,19
-f68bfd79cb84,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,20
-f68bfd79cb84,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,21
-f68bfd79cb84,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,22
-f68bfd79cb84,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,21
-f68bfd79cb84,2025-11-10,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,aging_out,64780.40625,106000.0,20
-f68bfd79cb84,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,19
-f68bfd79cb84,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,18
-f68bfd79cb84,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,16258566.0,19
-f68bfd79cb84,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,20
-f68bfd79cb84,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,21
-f68bfd79cb84,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,22
-f68bfd79cb84,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,23
-f68bfd79cb84,2025-11-24,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,aging_out,17847.59633854218,245111799.5036621,22
+f68bfd79cb84,2025-05-08,GRND,Grindr Inc.,0c273a1c1982a80f,candidate_exit,target_hit,34163.74252112582,34018.07068115234,26
+f68bfd79cb84,2025-05-12,475960.KQ,토모큐브,01faac1935db0397,candidate_add,report_publication,21000.0,64550.0,27
+f68bfd79cb84,2025-05-12,010620.KQ,HD현대미포,0f05c05b4b1f2a8a,candidate_add,report_publication,166395.640625,250000.0,28
+f68bfd79cb84,2025-05-12,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_add,report_publication,35953.55078125,54700.0,29
+f68bfd79cb84,2025-05-12,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_add,report_publication,32800.0,53000.0,30
+f68bfd79cb84,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_add,report_publication,35150.0,12300.0,31
+f68bfd79cb84,2025-05-12,008730.KS,율촌화학,1123a2dc2dbb8d41,candidate_exit,aging_out,26549.064453125,69000.0,30
+f68bfd79cb84,2025-05-12,032350.KS,롯데관광개발,1aacabe219c6c77f,candidate_exit,aging_out,10750.0,19220.0,29
+f68bfd79cb84,2025-05-12,194480.KS,데브시스터즈,8a481207b076b246,candidate_exit,aging_out,37850.0,87700.0,28
+f68bfd79cb84,2025-05-12,278470.KS,에이피알,eb44cf3ac8eafd19,candidate_exit,aging_out,99923.5078125,414000.0,27
+f68bfd79cb84,2025-05-12,263750.KS,펄어비스,e353809ab7f95a5a,candidate_exit,target_hit,35150.0,12300.0,26
+f68bfd79cb84,2025-05-26,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",e005eed4860624ce,candidate_exit,aging_out,14113.78312584618,37464.265060424805,25
+f68bfd79cb84,2025-05-29,192400.KS,쿠쿠홀딩스,e78e1aa0d3a810bb,candidate_exit,target_hit,29406.302734375,28900.0,24
+f68bfd79cb84,2025-06-04,001040.KS,CJ,a17ff197b15c9749,candidate_exit,target_hit,149430.6875,143696.0,23
+f68bfd79cb84,2025-06-09,016380.KS,KG스틸,72f61df290d85603,candidate_exit,aging_out,6052.5,9600.0,22
+f68bfd79cb84,2025-06-09,005720.KS,넥센,a39e3474311d1e20,candidate_exit,aging_out,5998.13818359375,6080.0,21
+f68bfd79cb84,2025-06-09,029460.KS,케이씨,bbf2acd5bfc1e565,candidate_exit,aging_out,22895.388671875,28100.0,20
+f68bfd79cb84,2025-06-11,101160.KS,월덱스,2910aa572b92adb8,candidate_add,report_publication,20801.87890625,26250.0,21
+f68bfd79cb84,2025-06-11,472850.KQ,폰드그룹,4f300b7b1015144a,candidate_add,report_publication,5471.3720703125,16057.0,22
+f68bfd79cb84,2025-06-11,461300.KQ,아이스크림미디어,a70e9858440a38cb,candidate_add,report_publication,18466.166015625,25700.0,23
+f68bfd79cb84,2025-06-11,049720.KQ,고려신용정보,c982973fa066bddb,candidate_add,report_publication,9901.9345703125,18600.0,24
+f68bfd79cb84,2025-06-26,015760.KS,한국전력,f0682832c1a4efa9,candidate_exit,target_hit,39309.171875,37630.0,23
+f68bfd79cb84,2025-07-23,356860.KQ,티엘비,cdfd5290685d5a56,candidate_exit,target_hit,26134.169921875,26000.0,22
+f68bfd79cb84,2025-08-26,101490.KS,에스앤에스텍,1bb9b6e58855a0e0,candidate_exit,target_hit,55175.25390625,54700.0,21
+f68bfd79cb84,2025-09-18,6857.T,Advantest Corporation,70b006aabc1043ef,candidate_exit,target_hit,136107.03788955044,135499.5360832214,20
+f68bfd79cb84,2025-10-15,119850.KS,지엔씨에너지,1a63ceaba390dbd7,candidate_exit,target_hit,41148.62109375,39610.0,19
+f68bfd79cb84,2025-10-20,294870.KS,HDC현대산업개발,5dec5d6a3ed53fc1,candidate_exit,aging_out,18557.21484375,35600.0,18
+f68bfd79cb84,2025-10-20,112610.KS,씨에스윈드,e15d8e6c89b48211,candidate_exit,aging_out,42039.4375,134400.0,17
+f68bfd79cb84,2025-10-20,259960.KS,크래프톤,f56ee5c378ea1d6c,candidate_exit,aging_out,285574.71875,600500.0,16
+f68bfd79cb84,2025-10-20,067160.KQ,SOOP,f9c403630b5fcf1e,candidate_exit,aging_out,73100.0,182500.0,15
+f68bfd79cb84,2025-10-24,108490.KS,로보티즈,060bd0dbb9e09381,candidate_add,report_publication,192900.0,355800.0,16
+f68bfd79cb84,2025-10-24,CRWV,Coreweave,6c4fc8de3477290c,candidate_add,report_publication,190320.59185131823,344726.40588378906,17
+f68bfd79cb84,2025-10-24,GLW,Corning,84be5b02e614c108,candidate_add,report_publication,124847.06937669031,205977.603515625,18
+f68bfd79cb84,2025-10-24,098120.KS,마이크로컨텍솔,8bdb15bd98395436,candidate_add,report_publication,26945.408203125,58200.0,19
+f68bfd79cb84,2025-10-24,352820.KS,하이브,aac52e33534372f2,candidate_add,report_publication,287592.65625,393000.0,20
+f68bfd79cb84,2025-10-27,101160.KS,월덱스,2910aa572b92adb8,candidate_exit,target_hit,26276.056640625,26250.0,19
+f68bfd79cb84,2025-11-10,234300.KQ,에스트래픽,ce4156bd2b62ede3,candidate_exit,aging_out,3519.98681640625,6900.0,18
+f68bfd79cb84,2025-11-10,018290.KS,브이티,e7e945528184d467,candidate_exit,aging_out,23850.0,55700.0,17
+f68bfd79cb84,2025-11-12,456160.KQ,지투지바이오,20f3ebccf07a4ac8,candidate_add,report_publication,89500.0,319800.0,18
+f68bfd79cb84,2025-11-12,017960.KS,한국카본,6fef59cb4e872d14,candidate_add,report_publication,31327.453125,64000.0,19
+f68bfd79cb84,2025-11-12,103140.KS,풍산,9d11d1c860eccb92,candidate_add,report_publication,102458.203125,120700.0,20
+f68bfd79cb84,2025-11-12,000150.KS,두산,db4185ed8b0fe53f,candidate_add,report_publication,1012348.625,1874000.0,21
+f68bfd79cb84,2025-11-12,950160.KS,코오롱티슈진,f44b6986379020e2,candidate_add,report_publication,51200.0,121000.0,22
 f68bfd79cb84,2025-11-24,FNKO,Funko Inc.,0f1974511fee0cab,candidate_exit,aging_out,4212.384875976946,22501.68192138672,21
 f68bfd79cb84,2025-11-24,LEVI,Levi Strauss & Co,5786f6c601e2a668,candidate_exit,aging_out,30074.176090583205,36799.33447143555,20
 f68bfd79cb84,2025-11-25,5253.T,Cover Corp,29d2311de33c54e0,candidate_exit,aging_out,15140.856694221491,61198.86512756348,19
 f68bfd79cb84,2025-12-02,2124.T,JAC recruitment Co. Ltd,07b7a9efb855d1c3,candidate_add,report_publication,10036.586477279665,15847.84302520752,20
 f68bfd79cb84,2025-12-02,IRMD,Iradimed Corporation,1f2a8ed4179351b4,candidate_add,report_publication,134385.23186050265,213980.51928710935,21
-f68bfd79cb84,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80008.19553344727,22
+f68bfd79cb84,2025-12-02,IMAX,IMAX Corp,4596d0ea178ca4cc,candidate_add,report_publication,52367.45539502101,80022.85173339843,22
 f68bfd79cb84,2025-12-02,SXT,Sensient Technologies Corp,72621dfbf2b97f64,candidate_add,report_publication,138785.1311764391,348817.5588378906,23
 f68bfd79cb84,2025-12-02,ESTA,Establishment Labs Holdings,9c4bd99f971cbedd,candidate_add,report_publication,99207.0795006929,174057.0306201172,24
 f68bfd79cb84,2025-12-16,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_add,report_publication,463943.7868684083,734437.1303430175,25
 f68bfd79cb84,2025-12-16,122640.KS,예스티,aa141895f6c0df12,candidate_add,report_publication,17100.0,40500.0,26
-f68bfd79cb84,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,190.0,27
-f68bfd79cb84,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,83540.3359375,190.0,26
-f68bfd79cb84,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,25
-f68bfd79cb84,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,24
-f68bfd79cb84,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,23
-f68bfd79cb84,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,22
-f68bfd79cb84,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,21
-f68bfd79cb84,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,20
-f68bfd79cb84,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,19
+f68bfd79cb84,2025-12-16,010950.KS,S-oil,b08243b6f71f6c84,candidate_add,report_publication,83540.3359375,128400.0,27
+f68bfd79cb84,2026-01-09,012450.KS,한화에어로스페이스,3fce5d02a8d87de7,candidate_exit,target_hit,1214000.0,1205000.0,26
+f68bfd79cb84,2026-01-12,103140.KS,풍산,9d11d1c860eccb92,candidate_exit,target_hit,121693.65625,120700.0,25
+f68bfd79cb84,2026-02-05,LITE,Lumentum Holdings Inc,50e30989614ca4df,candidate_exit,target_hit,736508.6984170042,734437.1303430175,24
+f68bfd79cb84,2026-02-19,352820.KS,하이브,aac52e33534372f2,candidate_exit,target_hit,403927.875,393000.0,23
+f68bfd79cb84,2026-02-19,009830.KS,한화솔루션,84d1ea29843ddf86,candidate_exit,target_hit,58500.0,53000.0,22
+f68bfd79cb84,2026-02-23,GLW,Corning,84be5b02e614c108,candidate_exit,target_hit,209269.05755735937,205977.603515625,21
+f68bfd79cb84,2026-02-23,475960.KQ,토모큐브,01faac1935db0397,candidate_exit,target_hit,66300.0,64550.0,20
+f68bfd79cb84,2026-03-03,010950.KS,S-oil,b08243b6f71f6c84,candidate_exit,target_hit,140862.171875,128400.0,19
 f68bfd79cb84,2026-04-17,082920.KS,비츠로셀,066412c877ec56f4,candidate_add,report_publication,56300.0,78450.0,20
 f68bfd79cb84,2026-04-17,100090.KS,SK오션플랜트,136630000ff00d6a,candidate_add,report_publication,23100.0,41600.0,21
 f68bfd79cb84,2026-04-17,306200.KS,세아제강,28a7d7cc083f93ac,candidate_add,report_publication,147600.0,286700.0,22
 f68bfd79cb84,2026-04-17,CAMT,Camtek,29179371d1d1f847,candidate_add,report_publication,265700.46369638667,351813.9141845703,23
 f68bfd79cb84,2026-04-17,GLNG,Golar LNG,767c2e90a710a1d1,candidate_add,report_publication,76615.3753036377,144163.07373046875,24
 f68bfd79cb84,2026-04-20,473980.KQ,노머스,5b43313285dbd7e2,candidate_exit,aging_out,18050.0,37950.0,23
-f68bfd79cb84,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,50488390.0,22
+f68bfd79cb84,2026-04-20,489790.KS,한화비전,9badc8b9279db934,candidate_exit,aging_out,84900.0,111600.0,22
