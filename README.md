@@ -416,7 +416,7 @@ Vercel은 `vercel.json`을 기준으로 Next.js 정적 산출물인 `apps/web/ou
 ```json
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
+  "framework": null,
   "installCommand": "cd apps/web && npm ci",
   "buildCommand": "PYTHONPATH=src python -c 'from pathlib import Path; from snusmic_pipeline.site_builder import build_site; build_site(Path(\"data\"), Path(\"site/public\"))' && npm --prefix apps/web run prepare-data && npm --prefix apps/web run build",
   "outputDirectory": "apps/web/out"
