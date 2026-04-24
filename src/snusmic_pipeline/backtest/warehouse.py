@@ -34,6 +34,9 @@ WAREHOUSE_TABLES = [
 def build_warehouse(data_dir: Path, warehouse_dir: Path) -> dict[str, int]:
     warehouse_dir.mkdir(parents=True, exist_ok=True)
     reports = read_reports(data_dir)
+    existing_fx = read_table(warehouse_dir, "fx_rates")
+    if not existing_fx.empty:
+        reports = apply_report_krw_targets(reports, existing_fx)
     write_table(warehouse_dir, "reports", reports)
     counts = {"reports": len(reports)}
     for table in WAREHOUSE_TABLES:

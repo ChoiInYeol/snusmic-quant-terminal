@@ -120,6 +120,37 @@ def _download_history(symbol: str, start: datetime, end: datetime) -> pd.DataFra
     return data
 
 
+def _download_histories(symbols: Iterable[str], start: datetime, end: datetime, chunk_size: int = 80) -> dict[str, pd.DataFrame]:
+    import yfinance as yf
+
+    unique_symbols = [symbol for symbol in dict.fromkeys(str(item) for item in symbols if item)]
+    histories: dict[str, pd.DataFrame] = {symbol: pd.DataFrame() for symbol in unique_symbols}
+    for offset in range(0, len(unique_symbols), chunk_size):
+        chunk = unique_symbols[offset : offset + chunk_size]
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            data = yf.download(chunk, start=start.date().isoformat(), end=end.date().isoformat(), progress=False, auto_adjust=True, threads=True, group_by="ticker", timeout=15)
+        if data.empty:
+            continue
+        for symbol in chunk:
+            frame = _extract_symbol_frame(data, symbol)
+            if frame.empty or "Close" not in frame:
+                continue
+            frame = frame.dropna(subset=["Close"]).copy()
+            frame.index = pd.to_datetime(frame.index).tz_localize(None)
+            histories[symbol] = frame
+    return histories
+
+
+def _extract_symbol_frame(data: pd.DataFrame, symbol: str) -> pd.DataFrame:
+    if not isinstance(data.columns, pd.MultiIndex):
+        return data.copy()
+    if symbol in data.columns.get_level_values(0):
+        return data[symbol].copy()
+    if symbol in data.columns.get_level_values(1):
+        return data.xs(symbol, axis=1, level=1).copy()
+    return pd.DataFrame()
+
+
 def _history_to_ohlcv(history: pd.DataFrame) -> pd.DataFrame:
     return pd.DataFrame(
         {
@@ -190,17 +221,13 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
     target_currencies = {normalize_currency(report.target_currency) for report in reports if report.target_currency}
     price_currencies = {currency_for_symbol(yfinance_candidates(report)[0], report.exchange) for report in reports if yfinance_candidates(report)}
     fx_rates = download_fx_rates(target_currencies | price_currencies, fx_start, fx_end, lambda fx_symbol, fx_start_arg, fx_end_arg: _history_to_ohlcv(_download_history(fx_symbol, fx_start_arg, fx_end_arg)))
-    history_cache: dict[str, pd.DataFrame] = {}
-
-    def cached_history(symbol: str) -> pd.DataFrame:
-        if symbol not in history_cache:
-            history_cache[symbol] = _download_history(symbol, fx_start, fx_end)
-        return history_cache[symbol]
+    candidate_symbols = [symbol for report in reports for symbol in yfinance_candidates(report)]
+    history_cache = _download_histories(candidate_symbols, fx_start, fx_end)
 
     metrics: list[PriceMetric] = []
     for report in reports:
         publication = datetime.fromisoformat(report.meta.date[:10])
-        symbol, history = resolve_yfinance_symbol_cached(report, cached_history)
+        symbol, history = resolve_yfinance_symbol_cached(report, lambda symbol: history_cache.get(symbol, pd.DataFrame()))
         price_currency = currency_for_symbol(symbol, report.exchange)
         target_currency = normalize_currency(report.target_currency) or price_currency
         if not symbol or history.empty:
@@ -430,6 +457,11 @@ def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: l
             frame_rows.append({"month": report.meta.date[:7], "date": report.meta.date[:10], "symbol": metric.yfinance_symbol})
     if not frame_rows:
         return rows
+    all_symbols = sorted({row["symbol"] for row in frame_rows}) + list(BENCHMARKS.values())
+    earliest_rebalance = pd.to_datetime(min(row["date"] for row in frame_rows)) + pd.Timedelta(days=1)
+    cache_start = (earliest_rebalance - pd.Timedelta(days=730)).to_pydatetime()
+    cache_end = (pd.Timestamp(now.date()) + pd.Timedelta(days=1)).to_pydatetime()
+    history_cache = _download_histories(all_symbols, cache_start, cache_end)
     cohorts = pd.DataFrame(frame_rows).groupby("month")
     for month, cohort in cohorts:
         symbols = sorted(set(cohort["symbol"]))
@@ -441,7 +473,9 @@ def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: l
         end = pd.Timestamp(now.date()) + pd.Timedelta(days=1)
         prices = {}
         for symbol in symbols:
-            hist = _download_history(symbol, lookback_start.to_pydatetime(), end.to_pydatetime())
+            hist = history_cache.get(symbol, pd.DataFrame())
+            if not hist.empty:
+                hist = hist[(hist.index >= lookback_start) & (hist.index < end)]
             if not hist.empty:
                 prices[symbol] = hist["Close"]
         if not prices:
@@ -453,7 +487,9 @@ def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: l
             continue
         benchmark_returns = {}
         for name, symbol in BENCHMARKS.items():
-            benchmark_history = _download_history(symbol, forward.index[0].to_pydatetime(), end.to_pydatetime())
+            benchmark_history = history_cache.get(symbol, pd.DataFrame())
+            if not benchmark_history.empty:
+                benchmark_history = benchmark_history[(benchmark_history.index >= forward.index[0]) & (benchmark_history.index < end)]
             benchmark_returns[name] = None if benchmark_history.empty else pct_return(float(benchmark_history["Close"].iloc[-1]), float(benchmark_history["Close"].iloc[0]))
         returns = lookback.pct_change().dropna()
         for rf in RISK_FREE_RATES:
