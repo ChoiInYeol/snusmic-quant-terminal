@@ -65,16 +65,16 @@ function topPortfolios(portfolio, n = 12) {
 
 function portfolioColumns() {
   return [
-    { key: "cohort_month", label: "Cohort" },
-    { key: "strategy", label: "Strategy" },
-    { key: "risk_free_rate", label: "RF", num: true },
-    { key: "realized_return", label: "Realized", num: true },
-    { key: "expected_return", label: "Expected", num: true },
-    { key: "expected_volatility", label: "Vol", num: true },
+    { key: "cohort_month", label: "코호트" },
+    { key: "strategy", label: "전략" },
+    { key: "risk_free_rate", label: "무위험" , num: true },
+    { key: "realized_return", label: "실현수익", num: true },
+    { key: "expected_return", label: "기대수익", num: true },
+    { key: "expected_volatility", label: "변동성", num: true },
     { key: "expected_sharpe", label: "Sharpe", num: true },
     { key: "kospi_return", label: "KOSPI", num: true },
     { key: "nasdaq_return", label: "NASDAQ", num: true },
-    { key: "display_symbols", label: "Holdings" },
+    { key: "display_symbols", label: "보유 종목" },
   ];
 }
 
@@ -93,25 +93,25 @@ function portfolioFormats() {
 
 function metricColumns() {
   return [
-    { key: "publication_date", label: "Date" },
-    { key: "company", label: "Company" },
-    { key: "current_price", label: "Current", num: true },
-    { key: "publication_buy_price", label: "Pub price", num: true },
-    { key: "lowest_price_since_publication", label: "Low price", num: true },
-    { key: "q25_price_since_publication", label: "Q25 price", num: true },
-    { key: "q75_price_since_publication", label: "Q75 price", num: true },
-    { key: "buy_at_publication_return", label: "Pub buy ret", num: true },
-    { key: "lowest_price_current_return", label: "Low buy ret", num: true },
-    { key: "low_to_high_return", label: "Low→High ret", num: true },
-    { key: "optimal_buy_lag_days", label: "Best lag days", num: true },
-    { key: "low_to_high_holding_days", label: "Best hold days", num: true },
-    { key: "q25_price_current_return", label: "Q25 buy ret", num: true },
-    { key: "q75_price_current_return", label: "Q75 buy ret", num: true },
-    { key: "current_price_percentile", label: "Current pctile", num: true },
-    { key: "target_upside_remaining", label: "Target upside", num: true },
-    { key: "highest_price_realized_return", label: "Best sell ret", num: true },
-    { key: "target_hit", label: "Target" },
-    { key: "first_target_hit_date", label: "Hit date" },
+    { key: "publication_date", label: "발간일" },
+    { key: "company", label: "종목" },
+    { key: "current_price", label: "현재가", num: true },
+    { key: "publication_buy_price", label: "발간가", num: true },
+    { key: "lowest_price_since_publication", label: "저가", num: true },
+    { key: "q25_price_since_publication", label: "Q25", num: true },
+    { key: "q75_price_since_publication", label: "Q75", num: true },
+    { key: "buy_at_publication_return", label: "발간 매수", num: true },
+    { key: "lowest_price_current_return", label: "저가 매수", num: true },
+    { key: "low_to_high_return", label: "저가→고가", num: true },
+    { key: "optimal_buy_lag_days", label: "최적 매수 지연", num: true },
+    { key: "low_to_high_holding_days", label: "최적 보유일", num: true },
+    { key: "q25_price_current_return", label: "Q25 매수", num: true },
+    { key: "q75_price_current_return", label: "Q75 매수", num: true },
+    { key: "current_price_percentile", label: "현재 위치", num: true },
+    { key: "target_upside_remaining", label: "목표 여력", num: true },
+    { key: "highest_price_realized_return", label: "최고가 매도", num: true },
+    { key: "target_hit", label: "목표" },
+    { key: "first_target_hit_date", label: "도달일" },
   ];
 }
 
@@ -171,12 +171,12 @@ function opportunityFormats() {
 
 function reportColumns() {
   return [
-    { key: "Report Date", label: "Date" },
-    { key: "Company", label: "Company" },
-    { key: "Bear 목표가", label: "Bear target", num: true },
-    { key: "Base 목표가", label: "Base target", num: true },
-    { key: "Bull 목표가", label: "Bull target", num: true },
-    { key: "Report Price", label: "Report price", num: true },
+    { key: "Report Date", label: "발간일" },
+    { key: "Company", label: "종목" },
+    { key: "Bear 목표가", label: "Bear 목표가", num: true },
+    { key: "Base 목표가", label: "Base 목표가", num: true },
+    { key: "Bull 목표가", label: "Bull 목표가", num: true },
+    { key: "Report Price", label: "발간가", num: true },
     { key: "Markdown", label: "Markdown" },
     { key: "GitHub PDF", label: "PDF" },
   ];
@@ -340,13 +340,13 @@ function positionFormats() {
 
 function signalColumns() {
   return [
-    { key: "date", label: "Date" },
-    { key: "symbol", label: "Symbol" },
-    { key: "close", label: "Close", num: true },
+    { key: "date", label: "일자" },
+    { key: "symbol", label: "종목" },
+    { key: "close", label: "종가", num: true },
     { key: "rs_score", label: "RS", num: true },
     { key: "mtt_pass", label: "MTT" },
-    { key: "pct_above_52w_low", label: "52w low +", num: true },
-    { key: "pct_below_52w_high", label: "52w high gap", num: true },
+    { key: "pct_above_52w_low", label: "52주 저점 대비", num: true },
+    { key: "pct_below_52w_high", label: "52주 고점 갭", num: true },
     { key: "ma50", label: "MA50", num: true },
     { key: "ma150", label: "MA150", num: true },
     { key: "ma200", label: "MA200", num: true },
@@ -386,21 +386,24 @@ function renderV3Overview(v3) {
   const stats = document.getElementById("v3OverviewStats");
   if (stats) {
     const runRows = v3.strategyRuns.filter(r => r.status === "ok");
+    const currentRows = best ? rowsForRun(v3.currentPositions, best.run_id) : [];
+    const invested = currentRows.reduce((sum, row) => sum + Number(row.weight || 0), 0);
     stats.innerHTML = [
-      ["Strategies", runRows.length],
-      ["Best return", best ? pct(best.total_return) : ""],
-      ["Best MDD", best ? pct(best.max_drawdown) : ""],
-      ["Current holdings", best ? rowsForRun(v3.currentPositions, best.run_id).length : ""],
+      ["전략 수", runRows.length],
+      ["최고 누적수익", best ? pct(best.total_return) : ""],
+      ["최고 전략 MDD", best ? pct(best.max_drawdown) : ""],
+      ["현재 보유", currentRows.length],
+      ["투자 비중", pct(invested)],
     ].map(([k, value]) => `<div class="metric-card"><span>${k}</span><strong>${value}</strong></div>`).join("");
   }
   const bestEl = document.getElementById("v3BestStrategy");
   if (bestEl) {
     bestEl.innerHTML = best ? `
-      <div class="best-title">Best walk-forward strategy</div>
+      <div class="best-title">현재 기준 대표 전략</div>
       <div class="best-main">${best.strategy_name}</div>
-      <p><span class="pill">Wealth ${num(best.final_wealth)}</span><span class="pill">Return ${pct(best.total_return)}</span><span class="pill">MDD ${pct(best.max_drawdown)}</span></p>
+      <p><span class="pill">자산배율 ${num(best.final_wealth)}</span><span class="pill">수익률 ${pct(best.total_return)}</span><span class="pill">MDD ${pct(best.max_drawdown)}</span></p>
       <p><span class="pill">${best.entry_rule}</span><span class="pill">${best.weighting}</span><span class="pill">${lookbackLabel(best.lookback_days)}</span><span class="pill">${best.rebalance}</span></p>
-    ` : "<p>No v3 strategy data yet.</p>";
+    ` : "<p>전략 데이터가 아직 없습니다.</p>";
   }
   renderTable(document.getElementById("v3StrategyTable"), [...v3.strategyRuns].sort((a, b) => Number(b.total_return || 0) - Number(a.total_return || 0)), strategyColumns(), strategyFormats());
   const runId = best?.run_id || "";
@@ -648,14 +651,14 @@ function renderFrontier(portfolio) {
         opacity: 0.72,
       },
       text: subset.map(r => `${r.cohort_month}<br>${r.strategy}<br>RF ${pct(r.risk_free_rate)}<br>Realized ${pct(r.realized_return)}<br>${holdings(r)}`),
-      hovertemplate: "%{text}<br>Expected vol %{x:.1%}<br>Expected return %{y:.1%}<extra></extra>",
+      hovertemplate: "%{text}<br>예상 변동성 %{x:.1%}<br>예상 수익 %{y:.1%}<extra></extra>",
     };
   });
   Plotly.newPlot(el, traces, {
     ...plotBaseLayout,
     margin: { l: 55, r: 20, t: 10, b: 50 },
-    xaxis: { title: "Expected volatility", tickformat: ".0%", gridcolor: "#e2e8ef", zerolinecolor: "#b8c4cf" },
-    yaxis: { title: "Expected return", tickformat: ".0%", gridcolor: "#e2e8ef", zerolinecolor: "#b8c4cf" },
+    xaxis: { title: "예상 변동성", tickformat: ".0%", gridcolor: "#e2e8ef", zerolinecolor: "#b8c4cf" },
+    yaxis: { title: "예상 수익", tickformat: ".0%", gridcolor: "#e2e8ef", zerolinecolor: "#b8c4cf" },
     legend: { orientation: "h" },
   }, plotConfig).then(() => Plotly.Plots.resize(el));
 }
@@ -668,21 +671,21 @@ function renderOverview(reports, metrics, portfolio) {
   const avgRet = okPrices.reduce((s, r) => s + Number(r.buy_at_publication_return || 0), 0) / Math.max(1, okPrices.length);
   if (el) {
     el.innerHTML = [
-      ["Reports", reports.length],
-      ["Price coverage", `${okPrices.length}/${metrics.length}`],
-      ["Target hit ratio", pct(targetHits / Math.max(1, okPrices.length))],
-      ["Avg post-publication return", pct(avgRet)],
+      ["리포트", reports.length],
+      ["가격 커버리지", `${okPrices.length}/${metrics.length}`],
+      ["목표 도달률", pct(targetHits / Math.max(1, okPrices.length))],
+      ["평균 발간 후 수익", pct(avgRet)],
     ].map(([k, v]) => `<div class="metric-card"><span>${k}</span><strong>${v}</strong></div>`).join("");
   }
   const bestEl = document.getElementById("bestPortfolio");
   if (bestEl) {
     bestEl.innerHTML = best ? `
-      <div class="best-title">Best realized portfolio so far</div>
+      <div class="best-title">참고용 최고 코호트</div>
       <div class="best-main">${best.cohort_month} · ${best.strategy} · RF ${pct(best.risk_free_rate)}</div>
-      <p><span class="pill">Realized ${pct(best.realized_return)}</span><span class="pill">Sharpe ${num(best.expected_sharpe)}</span><span class="pill">Vol ${pct(best.expected_volatility)}</span></p>
-      <h2>Weights</h2>
+      <p><span class="pill">실현수익 ${pct(best.realized_return)}</span><span class="pill">Sharpe ${num(best.expected_sharpe)}</span><span class="pill">변동성 ${pct(best.expected_volatility)}</span></p>
+      <h2>비중</h2>
       ${(best.display_symbols || best.symbols).split(",").map((s, i) => `<p><span class="bar" style="width:${Math.max(6, Number(best.weights.split(",")[i] || 0) * 160)}px"></span>${s.trim()} ${(Number(best.weights.split(",")[i] || 0) * 100).toFixed(1)}%</p>`).join("")}
-    ` : "<p>No portfolio data.</p>";
+    ` : "<p>포트폴리오 데이터가 없습니다.</p>";
   }
   renderFrontier(portfolio);
   renderOpportunityPlot(metrics);
@@ -818,9 +821,9 @@ Promise.all([
   const cohortEl = document.getElementById("portfolioCohort");
   const rfEl = document.getElementById("portfolioRf");
   const strategyEl = document.getElementById("portfolioStrategy");
-  if (cohortEl) cohortEl.innerHTML = `<option value="">All cohorts</option>` + cohorts.map(v => `<option>${v}</option>`).join("");
-  if (rfEl) rfEl.innerHTML = `<option value="">All RF</option>` + rfs.map(v => `<option value="${v}">${pct(v)}</option>`).join("");
-  if (strategyEl) strategyEl.innerHTML = `<option value="">All strategies</option>` + strategies.map(v => `<option>${v}</option>`).join("");
+  if (cohortEl) cohortEl.innerHTML = `<option value="">전체 코호트</option>` + cohorts.map(v => `<option>${v}</option>`).join("");
+  if (rfEl) rfEl.innerHTML = `<option value="">전체 무위험</option>` + rfs.map(v => `<option value="${v}">${pct(v)}</option>`).join("");
+  if (strategyEl) strategyEl.innerHTML = `<option value="">전체 전략</option>` + strategies.map(v => `<option>${v}</option>`).join("");
   ["portfolioCohort", "portfolioRf", "portfolioStrategy"].forEach(id => document.getElementById(id)?.addEventListener("change", () => renderPortfolio(portfolio)));
   ["strategyRunSelect", "strategyWeightingFilter", "strategyEntryFilter", "strategyLookbackFilter"].forEach(id => document.getElementById(id)?.addEventListener("change", () => renderStrategyPage(v3)));
   ["poolRunSelect", "poolSearch"].forEach(id => {

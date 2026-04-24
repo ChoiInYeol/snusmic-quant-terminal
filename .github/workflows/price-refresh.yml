@@ -7,19 +7,14 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
-  group: snusmic-data-pages-${{ github.ref }}
+  group: snusmic-data-vercel-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -32,9 +27,6 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v6
 
-      - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
-
       - name: Install dependencies
         run: uv sync --group dev
 
@@ -45,11 +37,9 @@ jobs:
           uv run python -m snusmic_pipeline refresh-prices
           uv run python -m snusmic_pipeline run-backtest
 
-      - name: Build Quarto site
+      - name: Build Vercel dashboard artifact
         run: |
           uv run python -m snusmic_pipeline build-site
-          python scripts/prepare_quarto_site.py
-          quarto render site/quarto
 
       - name: Commit market data updates
         run: |
@@ -62,17 +52,3 @@ jobs:
             git commit -m "Refresh market data"
             git push
           fi
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: site/quarto/_site
-
-      - name: Deploy Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

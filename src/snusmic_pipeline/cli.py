@@ -338,7 +338,7 @@ def build_parser() -> argparse.ArgumentParser:
     check_new.add_argument("--github-output", default="")
     check_new.set_defaults(func=run_check_new)
 
-    build_site_parser = subparsers.add_parser("build-site", help="Build the GitHub Pages static dashboard.")
+    build_site_parser = subparsers.add_parser("build-site", help="Build the Vercel-ready static dashboard artifact.")
     build_site_parser.add_argument("--data-dir", default="data")
     build_site_parser.add_argument("--public-dir", default="site/public")
     build_site_parser.set_defaults(func=run_build_site)
@@ -382,7 +382,7 @@ def build_parser() -> argparse.ArgumentParser:
     optimize.add_argument("--dry-run", action="store_true")
     optimize.set_defaults(func=run_optimize)
 
-    dashboard = subparsers.add_parser("export-dashboard", help="Export v3 warehouse tables into Quarto JSON artifacts.")
+    dashboard = subparsers.add_parser("export-dashboard", help="Export v3 warehouse tables into dashboard JSON artifacts.")
     dashboard.add_argument("--data-dir", default="data")
     dashboard.add_argument("--warehouse-dir", default="data/warehouse")
     dashboard.add_argument("--output-dir", default="data/quant_v3")

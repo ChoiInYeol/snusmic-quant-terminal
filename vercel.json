@@ -1,0 +1,4 @@
+{
+  "buildCommand": "PYTHONPATH=src python -c 'from pathlib import Path; from snusmic_pipeline.site_builder import build_site; build_site(Path(\"data\"), Path(\"site/public\"))'",
+  "outputDirectory": "site/public"
+}

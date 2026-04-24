@@ -22,11 +22,9 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
-  group: snusmic-data-pages-${{ github.ref }}
+  group: snusmic-data-vercel-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -80,9 +78,6 @@ jobs:
     needs: check
     if: needs.check.outputs.should_sync == 'true'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     env:
       PAGES: ${{ github.event.inputs.pages || '1-7' }}
       ENABLE_HYBRID_OCR: ${{ github.event.inputs.enable_hybrid_ocr || 'false' }}
@@ -103,9 +98,6 @@ jobs:
 
       - name: Set up uv
         uses: astral-sh/setup-uv@v6
-
-      - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Install dependencies
         run: uv sync --group dev --extra ocr
@@ -133,14 +125,12 @@ jobs:
             uv run python -m snusmic_pipeline sync --pages "$PAGES"
           fi
 
-      - name: Build GitHub Pages site
+      - name: Build data and Vercel dashboard artifact
         run: |
-          uv run python -m snusmic_pipeline build-site
           uv run python -m snusmic_pipeline build-warehouse
           uv run python -m snusmic_pipeline refresh-prices
           uv run python -m snusmic_pipeline run-backtest
-          python scripts/prepare_quarto_site.py
-          quarto render site/quarto
+          uv run python -m snusmic_pipeline build-site
 
       - name: Commit data updates
         run: |
@@ -154,50 +144,14 @@ jobs:
             git push
           fi
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: site/quarto/_site
-
-      - name: Deploy Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
-
   deploy:
     needs: check
     if: needs.check.outputs.should_sync != 'true' && needs.check.outputs.should_deploy == 'true'
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Quarto
-        uses: quarto-dev/quarto-actions/setup@v2
-
-      - name: Build Quarto site from committed data
+      - name: Build Vercel dashboard artifact from committed data
         run: |
           PYTHONPATH=src python -c 'from pathlib import Path; from snusmic_pipeline.site_builder import build_site; build_site(Path("data"), Path("site/public"))'
-          python scripts/prepare_quarto_site.py
-          quarto render site/quarto
-
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: site/quarto/_site
-
-      - name: Deploy Pages
-        id: deployment
-        uses: actions/deploy-pages@v4

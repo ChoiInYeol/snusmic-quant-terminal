@@ -1,20 +1,175 @@
 :root {
-  --ink: #18242e;
-  --muted: #5d6975;
-  --line: #d8e0e8;
+  --ink: #17212b;
+  --muted: #5e6d7a;
+  --line: #d7e0e8;
   --panel: #ffffff;
-  --bg: #f5f7fa;
+  --bg: #f4f6f8;
   --accent: #126b83;
   --accent-soft: #e5f3f6;
-  --warm: #b97818;
+  --warm: #c57315;
   --warm-soft: #fff4df;
   --good: #087443;
   --bad: #b53b2d;
+  --nav: #111b24;
+  --nav-soft: #1d2b36;
 }
 
 body {
   color: var(--ink);
   background: var(--bg);
+}
+
+.vercel-app {
+  min-height: 100vh;
+}
+
+.app-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: 254px;
+  box-sizing: border-box;
+  padding: 26px 20px;
+  color: #ecf3f7;
+  background: linear-gradient(180deg, var(--nav), var(--nav-soft));
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  z-index: 10;
+}
+
+.brand-block {
+  display: grid;
+  gap: 6px;
+}
+
+.brand-block strong {
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+.brand-block small,
+.sidebar-note {
+  color: #b6c6d1;
+  line-height: 1.5;
+}
+
+.brand-kicker,
+.eyebrow {
+  color: var(--warm);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.side-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.side-nav a {
+  color: #eaf1f5;
+  text-decoration: none;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 11px 12px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.side-nav a:hover {
+  background: rgba(255, 255, 255, 0.10);
+}
+
+.sidebar-note {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding-top: 18px;
+  font-size: 13px;
+}
+
+.app-main {
+  margin-left: 254px;
+  padding: 24px;
+}
+
+.app-hero {
+  min-height: 330px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background:
+    linear-gradient(135deg, rgba(18, 107, 131, 0.12), rgba(197, 115, 21, 0.10)),
+    var(--panel);
+  padding: 38px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+  gap: 28px;
+  align-items: end;
+}
+
+.app-hero h1 {
+  max-width: 780px;
+  margin: 8px 0 14px;
+  font-size: clamp(34px, 5vw, 64px);
+  line-height: 1.02;
+}
+
+.app-hero p {
+  max-width: 720px;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.section-band {
+  margin-top: 22px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  padding: 28px;
+}
+
+.section-head {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(280px, 0.7fr);
+  gap: 20px;
+  align-items: end;
+  margin-bottom: 20px;
+}
+
+.section-head h2 {
+  margin: 6px 0 0;
+  font-size: 30px;
+}
+
+.section-head p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.dashboard-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.dashboard-grid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.now-grid {
+  grid-template-columns: minmax(330px, 0.75fr) minmax(420px, 1fr);
+}
+
+.sticky-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.90);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
 }
 
 .quarto-title-block .quarto-title-banner {
@@ -42,6 +197,11 @@ body {
   margin-bottom: 18px;
 }
 
+.hero-stats {
+  align-self: end;
+  margin: 0;
+}
+
 .guide-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(180px, 1fr));
@@ -54,6 +214,13 @@ body {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.guide-card span {
+  color: var(--muted);
+  line-height: 1.55;
 }
 
 .guide-card h3 {
@@ -73,6 +240,17 @@ body {
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 16px;
+  box-sizing: border-box;
+}
+
+.app-hero .metric-card {
+  background: rgba(255, 255, 255, 0.76);
+}
+
+.lead-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .metric-card span {
@@ -143,6 +321,7 @@ select {
   border-radius: 6px;
   background: #fff;
   font-size: 14px;
+  min-height: 42px;
 }
 
 input {
@@ -155,6 +334,15 @@ input {
   border: 1px solid var(--line);
   border-radius: 8px;
   max-height: 680px;
+}
+
+.table-wrap.embedded {
+  margin-top: 8px;
+  max-height: 440px;
+}
+
+.focus-table {
+  max-height: 500px;
 }
 
 table {
@@ -204,6 +392,7 @@ td.num {
   background: #fbfcfd;
   border: 1px solid var(--line);
   border-radius: 8px;
+  overflow: hidden;
 }
 
 .compact-plot {
@@ -234,11 +423,34 @@ td.num {
   margin-right: 6px;
 }
 
+.modebar-container {
+  display: none;
+}
+
 @media (max-width: 980px) {
+  .app-sidebar {
+    position: static;
+    width: auto;
+  }
+
+  .app-main {
+    margin-left: 0;
+    padding: 14px;
+  }
+
+  .app-hero,
+  .section-head,
+  .dashboard-grid.two,
+  .now-grid,
   .panel-grid,
   .snapshot-grid,
   .chart-grid,
   .guide-grid {
     grid-template-columns: 1fr;
+  }
+
+  .section-band,
+  .app-hero {
+    padding: 20px;
   }
 }
