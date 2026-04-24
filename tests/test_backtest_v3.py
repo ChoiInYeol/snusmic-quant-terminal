@@ -110,6 +110,8 @@ def test_dashboard_export_from_warehouse_tables(tmp_path):
     assert counts["strategy_runs"] > 0
     assert exports["strategy_runs.json"] > 0
     assert (data_dir / "quant_v3" / "pool_timeline.json").exists()
+    assert exports["chart_series/index.json"] > 0
+    assert (data_dir / "quant_v3" / "chart_series" / "index.json").exists()
 
 
 def test_report_targets_are_converted_to_krw_for_backtest_comparison():

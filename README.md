@@ -390,7 +390,9 @@ sequenceDiagram
     participant CLI as snusmic_pipeline CLI
     participant DATA as data/*
     participant BUILDER as site_builder.py
+    participant NEXT as apps/web Next.js
     participant PUBLIC as site/public
+    participant OUT as apps/web/out
     participant VERCEL as Vercel
     participant PAGES as GitHub Pages
 
@@ -398,29 +400,32 @@ sequenceDiagram
     CLI->>DATA: refresh-prices
     CLI->>DATA: run-backtest
     CLI->>DATA: export-dashboard
+    CLI->>DATA: chart_series/*.json
     CLI->>BUILDER: build-site
-    BUILDER->>PUBLIC: index.html + data/*.json
-    VERCEL->>PUBLIC: vercel.json buildCommand
+    BUILDER->>PUBLIC: legacy reports/site_summary JSON
+    NEXT->>NEXT: prepare-data
+    NEXT->>OUT: next build static export
+    VERCEL->>OUT: vercel.json buildCommand
     VERCEL->>VERCEL: deploy outputDirectory
-    PAGES->>PUBLIC: pages.yml upload artifact
+    PAGES->>OUT: pages.yml upload artifact
     PAGES->>PAGES: deploy same UI mirror
 ```
 
-Vercel은 `vercel.json`을 기준으로 같은 `site/public`을 빌드합니다.
+Vercel은 `vercel.json`을 기준으로 Next.js 정적 산출물인 `apps/web/out`을 빌드합니다.
 
 ```json
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "installCommand": "",
-  "buildCommand": "PYTHONPATH=src python -c 'from pathlib import Path; from snusmic_pipeline.site_builder import build_site; build_site(Path(\"data\"), Path(\"site/public\"))'",
-  "outputDirectory": "site/public"
+  "framework": "nextjs",
+  "installCommand": "cd apps/web && npm ci",
+  "buildCommand": "PYTHONPATH=src python -c 'from pathlib import Path; from snusmic_pipeline.site_builder import build_site; build_site(Path(\"data\"), Path(\"site/public\"))' && npm --prefix apps/web run prepare-data && npm --prefix apps/web run build",
+  "outputDirectory": "apps/web/out"
 }
 ```
 
-이 빌드 경로는 Quarto나 무거운 Python 패키지를 요구하지 않습니다. 이미 커밋된 `data/` 산출물을 읽어서 즉시 배포 가능한 앱 셸을 만듭니다.
+이 빌드 경로는 Vercel에서 무거운 Python 계산을 다시 돌리지 않습니다. 이미 커밋된 `data/` 산출물을 Next.js `public/data`로 복사한 뒤, TradingView Lightweight Charts 기반 정적 Quant Terminal을 생성합니다.
 
-GitHub Pages도 같은 UI를 적용할 수 있습니다. 차이는 빌드 결과를 어디에 올리느냐뿐입니다. `.github/workflows/pages.yml`은 `site/public`을 만들어 Pages artifact로 올립니다. 따라서 Vercel에서 보는 Quant Terminal UI와 Pages mirror의 UI는 같은 `site_builder.py`, `site/quarto/dashboard.js`, `site/quarto/styles.css`를 공유합니다.
+GitHub Pages도 같은 UI를 적용합니다. `.github/workflows/pages.yml`은 `GITHUB_PAGES=true`와 `NEXT_PUBLIC_BASE_PATH=/snusmic-quant-terminal`로 Next.js static export를 만든 뒤 `apps/web/out`을 Pages artifact로 올립니다. FastAPI/SSR/API routes 없이 정적 JSON만 읽기 때문에 Vercel primary와 Pages mirror가 같은 화면을 공유할 수 있습니다.
 
 ## 21. GitHub, Vercel, Pages의 역할
 
@@ -457,7 +462,8 @@ GitHub Pages도 같은 UI를 적용할 수 있습니다. 차이는 빌드 결과
 
 역할:
 
-- `site/public` 재생성
+- `site/public`의 legacy data shell 재생성
+- Next.js static export 생성
 - GitHub Pages artifact 업로드
 - Vercel과 동일한 Quant Terminal UI를 Pages mirror로 배포
 
@@ -466,8 +472,8 @@ GitHub Pages도 같은 UI를 적용할 수 있습니다. 차이는 빌드 결과
 운영 모델은 단순합니다.
 
 - **GitHub**: 원본 PDF, CSV/JSON 산출물, Actions 기반 데이터 갱신, 코드 리뷰의 SSOT
-- **Vercel**: `site/public`을 빠르게 빌드하고 사용자-facing Quant UI를 배포
-- **GitHub Pages**: 같은 `site/public`을 배포하는 정적 mirror. Vercel 장애, 도메인 변경, 외부 공유용 백업 경로로 사용
+- **Vercel**: `apps/web/out`을 빠르게 빌드하고 사용자-facing Next.js Quant UI를 배포
+- **GitHub Pages**: 같은 Next.js static export를 배포하는 정적 mirror. Vercel 장애, 도메인 변경, 외부 공유용 백업 경로로 사용
 - **Quarto**: 연구 문서/방법론 페이지를 별도로 정리하고 싶을 때 쓸 수 있는 보조 경로
 
 Vercel 프로젝트를 GitHub 저장소에 연결하면 Actions가 data artifact를 커밋한 뒤 push 이벤트로 Vercel 배포가 이어집니다. Pages는 repository Settings > Pages에서 Source를 `GitHub Actions`로 두면 `pages.yml`이 같은 UI를 배포합니다. 수동 검증이나 즉시 배포가 필요할 때는 Vercel CLI 또는 Codex Vercel connector로 현재 커밋을 배포하면 됩니다.
@@ -512,17 +518,17 @@ uv run python -m snusmic_pipeline build-site
 
 ## 24. 외부 출력은 Vercel 중심, Pages는 미러
 
-현재 운영 출력은 Vercel이 배포하는 `site/public` 대시보드입니다. GitHub Pages는 같은 `site/public`을 올리는 mirror입니다.
+현재 운영 출력은 Vercel이 배포하는 `apps/web/out` Next.js 정적 대시보드입니다. GitHub Pages는 같은 Next.js static export를 올리는 mirror입니다.
 
-정형 데이터는 `data/warehouse/`와 `data/quant_v3/`에 남기고, 공유용 화면은 `site/public/index.html`과 `site/public/data/*.json`에서 생성합니다. 서버에서는 계산을 끝낸 뒤 `uv run python -m snusmic_pipeline build-site`만 실행하면 Vercel과 GitHub Pages가 같은 산출물을 재현할 수 있습니다.
+정형 데이터는 `data/warehouse/`와 `data/quant_v3/`에 남기고, 공유용 화면은 `apps/web`이 `public/data`로 복사해서 렌더합니다. 서버에서는 계산을 끝낸 뒤 `uv run python -m snusmic_pipeline export-dashboard`, `uv run python -m snusmic_pipeline build-site`, `npm --prefix apps/web run prepare-data`, `npm --prefix apps/web run build` 순서로 Vercel과 GitHub Pages가 같은 산출물을 재현할 수 있습니다.
 
 Quant Terminal UI의 우선순위:
 
 1. 현재 선택 전략의 보유 종목, 비중, 수익률
 2. 최근 매수/매도와 편출 사유
-3. 누적 자산과 최대낙폭
-4. 리포트별 가격 기회
-5. 과거 후보군 이벤트와 legacy cohort 참고표
+3. Lightweight Charts 기반 종목 OHLCV, 이동평균선, 목표가, 매매 marker
+4. 누적 자산과 최대낙폭
+5. 리포트별 가격 기회
 
 ## 25. 파일이 큰 이유
 

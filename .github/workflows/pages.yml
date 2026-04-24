@@ -7,7 +7,9 @@ on:
     paths:
       - "data/**/*.json"
       - "data/**/*.csv"
+      - "apps/web/**"
       - "src/snusmic_pipeline/site_builder.py"
+      - "src/snusmic_pipeline/backtest/warehouse.py"
       - "site/quarto/dashboard.js"
       - "site/quarto/styles.css"
       - "vercel.json"
@@ -33,13 +35,30 @@ jobs:
         run: |
           PYTHONPATH=src python -c 'from pathlib import Path; from snusmic_pipeline.site_builder import build_site; build_site(Path("data"), Path("site/public"))'
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: apps/web
+
+      - name: Build Next.js static mirror
+        run: |
+          npm run prepare-data
+          GITHUB_PAGES=true NEXT_PUBLIC_BASE_PATH=/snusmic-quant-terminal npm run build
+        working-directory: apps/web
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: site/public
+          path: apps/web/out
 
   deploy:
     needs: build

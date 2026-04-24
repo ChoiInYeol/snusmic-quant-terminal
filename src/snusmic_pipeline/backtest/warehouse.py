@@ -13,7 +13,7 @@ from typing import Any, Callable
 import numpy as np
 import pandas as pd
 
-from ..currency import convert_ohlcv_to_krw, convert_value_to_krw, currency_for_symbol, download_fx_rates, normalize_currency
+from ..currency import attach_krw_rate, convert_value_to_krw, currency_for_symbol, download_fx_rates, normalize_currency
 from .engine import run_walk_forward_backtest, stable_run_id
 from .schemas import BacktestConfig, LOOKBACK_WINDOWS
 
@@ -38,6 +38,9 @@ def build_warehouse(data_dir: Path, warehouse_dir: Path) -> dict[str, int]:
     if not existing_fx.empty:
         reports = apply_report_krw_targets(reports, existing_fx)
     write_table(warehouse_dir, "reports", reports)
+    existing_prices = read_table(warehouse_dir, "daily_prices")
+    if not existing_prices.empty and not existing_fx.empty:
+        write_table(warehouse_dir, "daily_prices", apply_daily_price_krw_conversion(existing_prices, reports, existing_fx))
     counts = {"reports": len(reports)}
     for table in WAREHOUSE_TABLES:
         path = warehouse_dir / f"{table}.csv"
@@ -74,7 +77,6 @@ def refresh_price_history(
         history = downloader(symbol, start, end)
         if history.empty:
             continue
-        history = convert_ohlcv_to_krw(history, symbol_currencies.get(symbol, currency_for_symbol(symbol)), fx_rates)
         history = history.copy()
         history["symbol"] = symbol
         frames.append(history)
@@ -86,12 +88,54 @@ def refresh_price_history(
             prices = pd.concat([existing, prices], ignore_index=True) if not prices.empty else existing
     if not prices.empty:
         prices["date"] = pd.to_datetime(prices["date"]).dt.date.astype(str)
-        prices = prices[["date", "symbol", "open", "high", "low", "close", "volume"]].drop_duplicates(["date", "symbol"], keep="last").sort_values(["date", "symbol"])
+        prices = apply_daily_price_krw_conversion(prices, reports, fx_rates)
+        columns = ["date", "symbol", "open", "high", "low", "close", "volume", "source_currency", "display_currency", "krw_per_unit"]
+        prices = prices[[column for column in columns if column in prices]].drop_duplicates(["date", "symbol"], keep="last").sort_values(["date", "symbol"])
     write_table(warehouse_dir, "daily_prices", prices)
     reports = apply_report_krw_targets(reports, fx_rates)
     write_table(warehouse_dir, "reports", reports)
     sync_duckdb(warehouse_dir)
     return prices
+
+
+def apply_daily_price_krw_conversion(prices: pd.DataFrame, reports: pd.DataFrame, fx_rates: pd.DataFrame) -> pd.DataFrame:
+    if prices.empty:
+        return prices
+    if "display_currency" in prices.columns and prices["display_currency"].astype(str).str.upper().eq("KRW").all():
+        return prices
+    symbol_meta = (
+        reports[["symbol", "exchange"]]
+        .dropna(subset=["symbol"])
+        .drop_duplicates("symbol", keep="last")
+        .set_index("symbol")
+        .to_dict("index")
+        if not reports.empty and "symbol" in reports
+        else {}
+    )
+    frames = []
+    for symbol, group in prices.copy().groupby(prices["symbol"].astype(str), sort=False):
+        group = group.copy()
+        exchange = str(symbol_meta.get(symbol, {}).get("exchange", ""))
+        source_currency = currency_for_symbol(symbol, exchange)
+        group["source_currency"] = source_currency
+        group["display_currency"] = "KRW" if source_currency else ""
+        if normalize_currency(source_currency) == "KRW":
+            group["krw_per_unit"] = 1.0
+            frames.append(group)
+            continue
+        rates = attach_krw_rate(group[["date"]].copy(), source_currency, fx_rates)
+        if rates["krw_per_unit"].isna().all():
+            group["display_currency"] = source_currency
+            group["krw_per_unit"] = pd.NA
+            frames.append(group)
+            continue
+        rate = pd.to_numeric(rates["krw_per_unit"], errors="coerce").to_numpy(dtype=float)
+        for column in ["open", "high", "low", "close"]:
+            if column in group:
+                group[column] = pd.to_numeric(group[column], errors="coerce") * rate
+        group["krw_per_unit"] = rate
+        frames.append(group)
+    return pd.concat(frames, ignore_index=True) if frames else prices
 
 
 def run_default_backtests(
@@ -183,6 +227,7 @@ def export_dashboard_data(data_dir: Path, warehouse_dir: Path, output_dir: Path)
     output_dir.mkdir(parents=True, exist_ok=True)
     tables = {table: read_table(warehouse_dir, table) for table in WAREHOUSE_TABLES}
     exports: dict[str, Any] = {
+        "reports.json": _records(tables["reports"]),
         "strategy_runs.json": _records(tables["strategy_runs"]),
         "equity_daily.json": _records(tables["equity_daily"]),
         "candidate_pool_events.json": _records(tables["candidate_pool_events"]),
@@ -199,7 +244,181 @@ def export_dashboard_data(data_dir: Path, warehouse_dir: Path, output_dir: Path)
     for filename, data in exports.items():
         (output_dir / filename).write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":"), default=_json_default) + "\n", encoding="utf-8")
         counts[filename] = len(data) if isinstance(data, list) else 1
+    counts.update(_export_chart_series(tables, output_dir / "chart_series"))
     return counts
+
+
+def _export_chart_series(tables: dict[str, pd.DataFrame], chart_dir: Path) -> dict[str, int]:
+    prices = tables["daily_prices"]
+    reports = tables["reports"]
+    if prices.empty or reports.empty:
+        return {}
+    chart_dir.mkdir(parents=True, exist_ok=True)
+    for old_file in chart_dir.glob("*.json"):
+        old_file.unlink()
+
+    prices = prices.copy()
+    prices["date"] = pd.to_datetime(prices["date"]).dt.date.astype(str)
+    reports = reports.copy()
+    reports["publication_date"] = pd.to_datetime(reports["publication_date"]).dt.date.astype(str)
+    executions = tables["execution_events"].copy()
+    if not executions.empty:
+        executions["date"] = pd.to_datetime(executions["date"]).dt.date.astype(str)
+    signals = tables["signals_daily"].copy()
+    if not signals.empty:
+        signals["date"] = pd.to_datetime(signals["date"]).dt.date.astype(str)
+
+    index_rows: list[dict[str, Any]] = []
+    report_symbols = sorted(set(reports["symbol"].dropna().astype(str)))
+    for symbol in report_symbols:
+        symbol_prices = prices[prices["symbol"].astype(str) == symbol].copy().sort_values("date")
+        if symbol_prices.empty:
+            continue
+        symbol_reports = reports[reports["symbol"].astype(str) == symbol].copy().sort_values("publication_date")
+        symbol_executions = executions[executions["symbol"].astype(str) == symbol].copy() if not executions.empty else pd.DataFrame()
+        symbol_signals = signals[signals["symbol"].astype(str) == symbol].copy() if not signals.empty else pd.DataFrame()
+        payload = _chart_payload_for_symbol(symbol, symbol_prices, symbol_reports, symbol_executions, symbol_signals)
+        filename = f"{_safe_symbol_filename(symbol)}.json"
+        (chart_dir / filename).write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":"), default=_json_default) + "\n", encoding="utf-8")
+        index_rows.append(
+            {
+                "symbol": symbol,
+                "company": payload["meta"]["company"],
+                "file": filename,
+                "last_date": payload["meta"]["last_date"],
+                "last_close": payload["meta"]["last_close"],
+                "report_count": len(payload["report_markers"]),
+                "trade_count": len(payload["trade_markers"]),
+            }
+        )
+    (chart_dir / "index.json").write_text(json.dumps(index_rows, ensure_ascii=False, separators=(",", ":"), default=_json_default) + "\n", encoding="utf-8")
+    return {"chart_series/index.json": len(index_rows), "chart_series/*.json": len(index_rows)}
+
+
+def _chart_payload_for_symbol(
+    symbol: str,
+    prices: pd.DataFrame,
+    reports: pd.DataFrame,
+    executions: pd.DataFrame,
+    signals: pd.DataFrame,
+) -> dict[str, Any]:
+    prices = prices.copy()
+    for column in ["open", "high", "low", "close", "volume"]:
+        prices[column] = pd.to_numeric(prices[column], errors="coerce")
+    prices = prices.dropna(subset=["close"])
+    close = prices["close"]
+    ohlc = [
+        {
+            "time": row["date"],
+            "open": _finite_float(row["open"]) or _finite_float(row["close"]),
+            "high": _finite_float(row["high"]) or _finite_float(row["close"]),
+            "low": _finite_float(row["low"]) or _finite_float(row["close"]),
+            "close": _finite_float(row["close"]),
+        }
+        for row in prices.to_dict("records")
+    ]
+    ma = {
+        f"ma{window}": [
+            {"time": str(date), "value": _finite_float(value)}
+            for date, value in zip(prices["date"], close.rolling(window).mean(), strict=True)
+            if _finite_float(value) is not None
+        ]
+        for window in [50, 150, 200]
+    }
+    latest_report = reports.iloc[-1].to_dict() if not reports.empty else {}
+    company = str(latest_report.get("company") or symbol)
+    price_lines = _price_lines_for_report(latest_report)
+    report_markers = [
+        {
+            "time": row["publication_date"],
+            "position": "belowBar",
+            "shape": "circle",
+            "color": "#334155",
+            "text": "리포트",
+            "report_id": row.get("report_id", ""),
+            "title": row.get("title", ""),
+            "target_price": _finite_float(row.get("target_price")),
+        }
+        for row in reports.to_dict("records")
+    ]
+    trade_markers = []
+    if not executions.empty:
+        for row in executions.sort_values("date").to_dict("records"):
+            event_type = str(row.get("event_type", ""))
+            is_sell = event_type == "sell"
+            trade_markers.append(
+                {
+                    "run_id": row.get("run_id", ""),
+                    "time": row.get("date", ""),
+                    "position": "aboveBar" if is_sell else "belowBar",
+                    "shape": "arrowDown" if is_sell else "arrowUp",
+                    "color": "#dc2626" if is_sell else "#059669",
+                    "text": _trade_marker_text(row),
+                    "event_type": event_type,
+                    "reason": row.get("reason", ""),
+                    "price": _finite_float(row.get("price")),
+                    "weight": _finite_float(row.get("weight")),
+                    "gross_return": _finite_float(row.get("gross_return")),
+                    "realized_return": _finite_float(row.get("realized_return")),
+                }
+            )
+    signal_snapshot = []
+    if not signals.empty:
+        latest = signals.sort_values("date").groupby("run_id", as_index=False).tail(1)
+        signal_snapshot = _records(latest)
+    last_row = prices.iloc[-1].to_dict()
+    return {
+        "meta": {
+            "symbol": symbol,
+            "company": company,
+            "last_date": last_row.get("date", ""),
+            "last_close": _finite_float(last_row.get("close")),
+            "display_currency": str(latest_report.get("display_currency") or latest_report.get("price_currency") or ""),
+            "report_count": len(reports),
+        },
+        "ohlc": ohlc,
+        **ma,
+        "report_markers": report_markers,
+        "trade_markers": trade_markers,
+        "price_lines": price_lines,
+        "signals": signal_snapshot,
+    }
+
+
+def _price_lines_for_report(report: dict[str, Any]) -> list[dict[str, Any]]:
+    specs = [
+        ("report_current_price_krw", "발간가", "#64748b"),
+        ("bear_target_krw", "Bear", "#ea580c"),
+        ("base_target_krw", "Base", "#2563eb"),
+        ("bull_target_krw", "Bull", "#16a34a"),
+    ]
+    lines = []
+    for column, title, color in specs:
+        price = _finite_float(report.get(column))
+        if price is None and column == "report_current_price_krw":
+            price = _finite_float(report.get("report_current_price"))
+        if price is None:
+            continue
+        lines.append({"title": title, "price": price, "color": color})
+    return lines
+
+
+def _trade_marker_text(row: dict[str, Any]) -> str:
+    event = str(row.get("event_type", ""))
+    reason = str(row.get("reason", ""))
+    label = {"buy": "매수", "sell": "매도", "rebalance": "조정"}.get(event, event)
+    return f"{label} · {reason}" if reason else label
+
+
+def _safe_symbol_filename(symbol: str) -> str:
+    return "".join(char if char.isalnum() or char in "._-" else "_" for char in symbol)
+
+
+def _finite_float(value: Any) -> float | None:
+    parsed = _float_or_none(value)
+    if parsed is None or not math.isfinite(parsed):
+        return None
+    return float(parsed)
 
 
 def read_reports(data_dir: Path) -> pd.DataFrame:
