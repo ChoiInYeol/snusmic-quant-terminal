@@ -307,15 +307,15 @@ def infer_exchange(ticker: str) -> tuple[str, str]:
 def infer_currency(text: str, ticker: str) -> str:
     if ticker.isdigit() and len(ticker) == 6:
         return "KRW"
-    first_page = text[:3000]
-    if "$" in first_page or "USD" in first_page.upper():
-        return "USD"
     if ticker in {"6857", "4680", "5253", "2124", "5726"}:
         return "JPY"
     if ticker in {"1211", "1833"}:
         return "HKD"
     if ticker in {"002340", "002714"}:
         return "CNY"
+    first_page = text[:3000]
+    if "$" in first_page or "USD" in first_page.upper():
+        return "USD"
     return "USD"
 
 

@@ -12,10 +12,10 @@
     "missing": 12
   },
   "currency_counts": {
-    "HKD": 1,
+    "HKD": 2,
     "JPY": 5,
     "KRW": 160,
-    "USD": 50
+    "USD": 49
   },
   "reason_counts": {
     "missing_rating": 12,

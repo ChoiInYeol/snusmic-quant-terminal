@@ -3,7 +3,7 @@ const num = v => v === null || v === undefined || v === "" || Number.isNaN(Numbe
 const signClass = v => Number(v) > 0 ? "pos" : (Number(v) < 0 ? "neg" : "");
 const unique = arr => [...new Set(arr.filter(v => v !== null && v !== undefined && v !== ""))].sort();
 const lookbackLabel = days => ({ "63": "3M", "126": "6M", "252": "12M", "504": "24M" }[String(days)] || `${days}d`);
-const isNoDecimalMarket = row => String(row?.symbol || row?.yfinance_symbol || "").match(/\.(KS|KQ|T)$/);
+const isNoDecimalMarket = row => String(row?.display_currency || row?.price_currency || "").toUpperCase() === "KRW" || String(row?.symbol || row?.yfinance_symbol || "").match(/\.(KS|KQ|T)$/);
 const priceNum = (v, row) => v === null || v === undefined || v === "" || Number.isNaN(Number(v)) ? "" : Number(v).toLocaleString(undefined, { maximumFractionDigits: isNoDecimalMarket(row) ? 0 : 2 });
 const plotConfig = { responsive: true, displayModeBar: false };
 const plotBaseLayout = {
@@ -95,11 +95,11 @@ function metricColumns() {
   return [
     { key: "publication_date", label: "발간일" },
     { key: "company", label: "종목" },
-    { key: "current_price", label: "현재가", num: true },
-    { key: "publication_buy_price", label: "발간가", num: true },
-    { key: "lowest_price_since_publication", label: "저가", num: true },
-    { key: "q25_price_since_publication", label: "Q25", num: true },
-    { key: "q75_price_since_publication", label: "Q75", num: true },
+    { key: "current_price", label: "현재가(원)", num: true },
+    { key: "publication_buy_price", label: "발간가(원)", num: true },
+    { key: "lowest_price_since_publication", label: "저가(원)", num: true },
+    { key: "q25_price_since_publication", label: "Q25(원)", num: true },
+    { key: "q75_price_since_publication", label: "Q75(원)", num: true },
     { key: "buy_at_publication_return", label: "발간 매수", num: true },
     { key: "lowest_price_current_return", label: "저가 매수", num: true },
     { key: "low_to_high_return", label: "저가→고가", num: true },
@@ -138,11 +138,11 @@ function opportunityColumns() {
   return [
     { key: "publication_date", label: "발간일" },
     { key: "company", label: "종목" },
-    { key: "current_price", label: "현재가", num: true },
-    { key: "publication_buy_price", label: "발간일 가격", num: true },
-    { key: "lowest_price_since_publication", label: "발간 후 저가", num: true },
-    { key: "q25_price_since_publication", label: "Q25 가격", num: true },
-    { key: "q75_price_since_publication", label: "Q75 가격", num: true },
+    { key: "current_price", label: "현재가(원)", num: true },
+    { key: "publication_buy_price", label: "발간일 가격(원)", num: true },
+    { key: "lowest_price_since_publication", label: "발간 후 저가(원)", num: true },
+    { key: "q25_price_since_publication", label: "Q25 가격(원)", num: true },
+    { key: "q75_price_since_publication", label: "Q75 가격(원)", num: true },
     { key: "buy_at_publication_return", label: "발간일 매수", num: true },
     { key: "lowest_price_current_return", label: "저가 매수", num: true },
     { key: "q25_price_current_return", label: "Q25 매수", num: true },
@@ -173,10 +173,10 @@ function reportColumns() {
   return [
     { key: "Report Date", label: "발간일" },
     { key: "Company", label: "종목" },
-    { key: "Bear 목표가", label: "Bear 목표가", num: true },
-    { key: "Base 목표가", label: "Base 목표가", num: true },
-    { key: "Bull 목표가", label: "Bull 목표가", num: true },
-    { key: "Report Price", label: "발간가", num: true },
+    { key: "Bear 목표가", label: "Bear 목표가(원)", num: true },
+    { key: "Base 목표가", label: "Base 목표가(원)", num: true },
+    { key: "Bull 목표가", label: "Bull 목표가(원)", num: true },
+    { key: "Report Price", label: "발간가(원)", num: true },
     { key: "Markdown", label: "Markdown" },
     { key: "GitHub PDF", label: "PDF" },
   ];
@@ -254,10 +254,10 @@ function currentHoldingColumns() {
   return [
     { key: "company", label: "종목" },
     { key: "weight", label: "비중", num: true },
-    { key: "close", label: "현재가", num: true },
+    { key: "close", label: "현재가(원)", num: true },
     { key: "gross_return", label: "진입 후 수익률", num: true },
     { key: "model_contribution", label: "전략 기여", num: true },
-    { key: "target_price", label: "목표가", num: true },
+    { key: "target_price", label: "목표가(원)", num: true },
     { key: "rs_score", label: "RS", num: true },
     { key: "mtt_pass", label: "MTT" },
   ];

@@ -6,7 +6,7 @@ from snusmic_pipeline.backtest.engine import run_walk_forward_backtest
 from snusmic_pipeline.backtest.optimizers import optimize_execution_weights
 from snusmic_pipeline.backtest.schemas import BacktestConfig
 from snusmic_pipeline.backtest.signals import compute_signals_daily
-from snusmic_pipeline.backtest.warehouse import export_dashboard_data, run_default_backtests, write_table
+from snusmic_pipeline.backtest.warehouse import apply_report_krw_targets, export_dashboard_data, run_default_backtests, write_table
 
 
 def report_frame(publication_date="2024-01-10", target_price=140.0):
@@ -110,3 +110,18 @@ def test_dashboard_export_from_warehouse_tables(tmp_path):
     assert counts["strategy_runs"] > 0
     assert exports["strategy_runs.json"] > 0
     assert (data_dir / "quant_v3" / "pool_timeline.json").exists()
+
+
+def test_report_targets_are_converted_to_krw_for_backtest_comparison():
+    reports = report_frame("2024-01-10", target_price=100.0)
+    reports["exchange"] = "NASDAQ"
+    reports["symbol"] = "IRMD"
+    reports["target_currency"] = "USD"
+    reports["target_price_local"] = 100.0
+    fx = pd.DataFrame({"date": ["2024-01-10"], "currency": ["USD"], "fx_symbol": ["KRW=X"], "krw_per_unit": [1300.0]})
+
+    converted = apply_report_krw_targets(reports, fx)
+
+    assert converted.iloc[0]["target_price"] == 130000.0
+    assert converted.iloc[0]["target_price_krw"] == 130000.0
+    assert converted.iloc[0]["display_currency"] == "KRW"

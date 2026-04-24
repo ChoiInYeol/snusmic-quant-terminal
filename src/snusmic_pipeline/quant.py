@@ -6,12 +6,13 @@ import io
 from dataclasses import asdict, dataclass
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Iterable
+from typing import Callable, Iterable
 
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
+from .currency import convert_ohlcv_to_krw, convert_value_to_krw, currency_for_symbol, download_fx_rates, normalize_currency
 from .models import ExtractedReport
 
 BENCHMARKS = {"KOSPI": "^KS11", "NASDAQ": "^IXIC"}
@@ -25,6 +26,9 @@ class PriceMetric:
     display_name: str
     ticker: str
     yfinance_symbol: str
+    price_currency: str
+    target_currency: str
+    display_currency: str
     publication_date: str
     publication_buy_price: float | None
     current_price: float | None
@@ -77,6 +81,18 @@ def yfinance_candidates(report: ExtractedReport) -> list[str]:
         return [f"{ticker}.KS", f"{ticker}.KQ"]
     if report.exchange == "TYO":
         return [f"{ticker}.T"]
+    if report.exchange in {"HKG", "HKEX"}:
+        return [f"{ticker}.HK"]
+    if report.exchange == "SZSE":
+        return [f"{ticker}.SZ"]
+    if report.exchange == "SSE":
+        return [f"{ticker}.SS"]
+    if report.exchange == "EPA":
+        return [f"{ticker}.PA"]
+    if report.exchange == "AMS":
+        return [f"{ticker}.AS"]
+    if report.exchange == "SIX":
+        return [f"{ticker}.SW"]
     return [ticker]
 
 
@@ -94,7 +110,7 @@ def _download_history(symbol: str, start: datetime, end: datetime) -> pd.DataFra
     import yfinance as yf
 
     with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-        data = yf.download(symbol, start=start.date().isoformat(), end=end.date().isoformat(), progress=False, auto_adjust=True, threads=False)
+        data = yf.download(symbol, start=start.date().isoformat(), end=end.date().isoformat(), progress=False, auto_adjust=True, threads=False, timeout=10)
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
     if "Close" not in data:
@@ -102,6 +118,20 @@ def _download_history(symbol: str, start: datetime, end: datetime) -> pd.DataFra
     data = data.dropna(subset=["Close"]).copy()
     data.index = pd.to_datetime(data.index).tz_localize(None)
     return data
+
+
+def _history_to_ohlcv(history: pd.DataFrame) -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "date": history.index.date.astype(str),
+            "open": pd.to_numeric(history.get("Open", history["Close"]), errors="coerce"),
+            "high": pd.to_numeric(history.get("High", history["Close"]), errors="coerce"),
+            "low": pd.to_numeric(history.get("Low", history["Close"]), errors="coerce"),
+            "close": pd.to_numeric(history["Close"], errors="coerce"),
+            "volume": pd.to_numeric(history.get("Volume", 0), errors="coerce").fillna(0),
+        },
+        index=history.index,
+    ).dropna(subset=["close"])
 
 
 def resolve_yfinance_symbol(report: ExtractedReport, start: datetime, end: datetime) -> tuple[str, pd.DataFrame]:
@@ -152,24 +182,41 @@ def optimal_net_holding(close: pd.Series, annual_cost: float = 0.10) -> tuple[in
 
 def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None = None) -> list[PriceMetric]:
     now = now or datetime.now(timezone.utc)
+    if not reports:
+        return []
+    publication_dates = [datetime.fromisoformat(report.meta.date[:10]) for report in reports if report.meta.date]
+    fx_start = (min(publication_dates) if publication_dates else now.replace(tzinfo=None)) - timedelta(days=10)
+    fx_end = now + timedelta(days=1)
+    target_currencies = {normalize_currency(report.target_currency) for report in reports if report.target_currency}
+    price_currencies = {currency_for_symbol(yfinance_candidates(report)[0], report.exchange) for report in reports if yfinance_candidates(report)}
+    fx_rates = download_fx_rates(target_currencies | price_currencies, fx_start, fx_end, lambda fx_symbol, fx_start_arg, fx_end_arg: _history_to_ohlcv(_download_history(fx_symbol, fx_start_arg, fx_end_arg)))
+    history_cache: dict[str, pd.DataFrame] = {}
+
+    def cached_history(symbol: str) -> pd.DataFrame:
+        if symbol not in history_cache:
+            history_cache[symbol] = _download_history(symbol, fx_start, fx_end)
+        return history_cache[symbol]
+
     metrics: list[PriceMetric] = []
     for report in reports:
         publication = datetime.fromisoformat(report.meta.date[:10])
-        start = publication - timedelta(days=10)
-        end = now + timedelta(days=1)
-        symbol, history = resolve_yfinance_symbol(report, start, end)
+        symbol, history = resolve_yfinance_symbol_cached(report, cached_history)
+        price_currency = currency_for_symbol(symbol, report.exchange)
+        target_currency = normalize_currency(report.target_currency) or price_currency
         if not symbol or history.empty:
             metrics.append(
-                PriceMetric(report.meta.title, report.meta.company, display_name_for_report(report), report.ticker, symbol, report.meta.date[:10], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, False, "", "no_price_history", "No yfinance history")
+                empty_price_metric(report, symbol, price_currency, target_currency, "no_price_history", "No yfinance history")
             )
             continue
-        post = history[history.index >= pd.to_datetime(report.meta.date[:10])].copy()
+        history_krw = convert_ohlcv_to_krw(_history_to_ohlcv(history), price_currency, fx_rates)
+        history_krw.index = pd.to_datetime(history_krw["date"])
+        post = history_krw[history_krw.index >= pd.to_datetime(report.meta.date[:10])].copy()
         if post.empty:
             metrics.append(
-                PriceMetric(report.meta.title, report.meta.company, display_name_for_report(report), report.ticker, symbol, report.meta.date[:10], None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, False, "", "no_post_publication_prices", "")
+                empty_price_metric(report, symbol, price_currency, target_currency, "no_post_publication_prices", "")
             )
             continue
-        close = post["Close"].dropna()
+        close = post["close"].dropna()
         pub_price = float(close.iloc[0])
         current = float(close.iloc[-1])
         low_idx = close.idxmin()
@@ -181,7 +228,7 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
         best_after_low = float(post_low.loc[best_after_low_idx])
         q25 = float(close.quantile(0.25))
         q75 = float(close.quantile(0.75))
-        target = report.base_target
+        target = convert_value_to_krw(report.base_target, target_currency, report.meta.date[:10], fx_rates)
         hit_series = close[close >= target] if target else pd.Series(dtype=float)
         holding_days, net_return = optimal_net_holding(close)
         low_to_high_holding_days = (best_after_low_idx - low_idx).days
@@ -193,6 +240,9 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
                 display_name=display_name_for_report(report),
                 ticker=report.ticker,
                 yfinance_symbol=symbol,
+                price_currency=price_currency,
+                target_currency=target_currency,
+                display_currency="KRW",
                 publication_date=report.meta.date[:10],
                 publication_buy_price=pub_price,
                 current_price=current,
@@ -220,6 +270,63 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
             )
         )
     return metrics
+
+
+def resolve_yfinance_symbol_cached(report: ExtractedReport, get_history: Callable[[str], pd.DataFrame]) -> tuple[str, pd.DataFrame]:
+    best_symbol = ""
+    best_data = pd.DataFrame()
+    best_score = math.inf
+    for symbol in yfinance_candidates(report):
+        data = get_history(symbol)
+        if data.empty:
+            continue
+        score = 0.0
+        if report.report_current_price:
+            around = data[data.index >= pd.to_datetime(report.meta.date[:10])]
+            if not around.empty:
+                score = abs(float(around["Close"].iloc[0]) - report.report_current_price)
+        if score < best_score:
+            best_score = score
+            best_symbol = symbol
+            best_data = data
+    return best_symbol, best_data
+
+
+def empty_price_metric(report: ExtractedReport, symbol: str, price_currency: str, target_currency: str, status: str, note: str) -> PriceMetric:
+    return PriceMetric(
+        title=report.meta.title,
+        company=report.meta.company,
+        display_name=display_name_for_report(report),
+        ticker=report.ticker,
+        yfinance_symbol=symbol,
+        price_currency=price_currency,
+        target_currency=target_currency,
+        display_currency="KRW",
+        publication_date=report.meta.date[:10],
+        publication_buy_price=None,
+        current_price=None,
+        buy_at_publication_return=None,
+        lowest_price_since_publication=None,
+        lowest_price_current_return=None,
+        low_to_high_return=None,
+        low_to_high_holding_days=None,
+        q25_price_since_publication=None,
+        q25_price_current_return=None,
+        highest_price_since_publication=None,
+        highest_price_realized_return=None,
+        q75_price_since_publication=None,
+        q75_price_realized_return=None,
+        q75_price_current_return=None,
+        current_price_percentile=None,
+        target_upside_remaining=None,
+        optimal_buy_lag_days=None,
+        optimal_holding_days_net_10pct=None,
+        optimal_net_return_10pct=None,
+        target_hit=False,
+        first_target_hit_date="",
+        status=status,
+        note=note,
+    )
 
 
 def _annualized_returns(returns: pd.DataFrame) -> pd.Series:

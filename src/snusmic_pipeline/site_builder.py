@@ -36,14 +36,24 @@ def repo_markdown_url(filename: str, repo: str = "ChoiInYeol/snusmic-quant-termi
 def build_reports_json(data_dir: Path, public_dir: Path) -> list[dict[str, Any]]:
     reports = read_csv_dicts(data_dir / "extracted_reports.csv")
     metrics = {item.get("title", ""): item for item in read_json(data_dir / "price_metrics.json")}
+    warehouse_reports = {item.get("pdf_filename", ""): item for item in read_csv_dicts(data_dir / "warehouse" / "reports.csv")}
     for report in reports:
         filename = report.get("PDF 파일명", "")
         report["GitHub PDF"] = repo_pdf_url(filename) if filename else ""
         report["Markdown"] = repo_markdown_url(filename) if filename else ""
         metric = metrics.get(report.get("리포트명", ""), {})
+        warehouse_report = warehouse_reports.get(filename, {})
         report["Company"] = report.get("종목명", "")
         report["Report Date"] = format_kst_datetime(report.get("게시일", ""))
         report["Report Price"] = metric.get("publication_buy_price", "")
+        report["Display Currency"] = metric.get("display_currency") or warehouse_report.get("display_currency") or ""
+        for source, target in [
+            ("bear_target_krw", "Bear 목표가"),
+            ("base_target_krw", "Base 목표가"),
+            ("bull_target_krw", "Bull 목표가"),
+        ]:
+            if warehouse_report.get(source):
+                report[target] = warehouse_report[source]
     write_json(public_dir / "data" / "reports.json", reports)
     return reports
 

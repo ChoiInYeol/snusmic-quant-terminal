@@ -13,11 +13,13 @@ from typing import Any, Callable
 import numpy as np
 import pandas as pd
 
+from ..currency import convert_ohlcv_to_krw, convert_value_to_krw, currency_for_symbol, download_fx_rates, normalize_currency
 from .engine import run_walk_forward_backtest, stable_run_id
 from .schemas import BacktestConfig, LOOKBACK_WINDOWS
 
 WAREHOUSE_TABLES = [
     "reports",
+    "fx_rates",
     "daily_prices",
     "signals_daily",
     "candidate_pool_events",
@@ -60,11 +62,16 @@ def refresh_price_history(
     end = now + timedelta(days=1)
     selected_symbols = symbols or sorted(set(reports["symbol"].dropna().astype(str)))
     downloader = downloader or download_history
+    symbol_currencies = {str(row["symbol"]): currency_for_symbol(str(row["symbol"]), str(row.get("exchange", ""))) for row in reports.to_dict("records")}
+    target_currencies = {normalize_currency(str(value)) for value in reports.get("target_currency", pd.Series(dtype=str)).dropna().astype(str)}
+    fx_rates = download_fx_rates(set(symbol_currencies.values()) | target_currencies, start, end, downloader)
+    write_table(warehouse_dir, "fx_rates", fx_rates)
     frames = []
     for symbol in selected_symbols:
         history = downloader(symbol, start, end)
         if history.empty:
             continue
+        history = convert_ohlcv_to_krw(history, symbol_currencies.get(symbol, currency_for_symbol(symbol)), fx_rates)
         history = history.copy()
         history["symbol"] = symbol
         frames.append(history)
@@ -78,6 +85,8 @@ def refresh_price_history(
         prices["date"] = pd.to_datetime(prices["date"]).dt.date.astype(str)
         prices = prices[["date", "symbol", "open", "high", "low", "close", "volume"]].drop_duplicates(["date", "symbol"], keep="last").sort_values(["date", "symbol"])
     write_table(warehouse_dir, "daily_prices", prices)
+    reports = apply_report_krw_targets(reports, fx_rates)
+    write_table(warehouse_dir, "reports", reports)
     sync_duckdb(warehouse_dir)
     return prices
 
@@ -222,12 +231,46 @@ def read_reports(data_dir: Path) -> pd.DataFrame:
                     "bear_target": _float_or_none(row.get("Bear 목표가")),
                     "base_target": _float_or_none(row.get("Base 목표가")),
                     "bull_target": _float_or_none(row.get("Bull 목표가")),
+                    "target_price_local": target,
                     "target_price": target,
                     "target_currency": row.get("목표가 통화", ""),
+                    "price_currency": "",
+                    "display_currency": "",
                     "markdown_filename": Path(row.get("PDF 파일명", "")).with_suffix(".md").name if row.get("PDF 파일명", "") else "",
                 }
             )
     return pd.DataFrame(rows).sort_values(["publication_date", "symbol"])
+
+
+def apply_report_krw_targets(reports: pd.DataFrame, fx_rates: pd.DataFrame) -> pd.DataFrame:
+    if reports.empty:
+        return reports
+    frame = reports.copy()
+    for column in ["report_current_price", "bear_target", "base_target", "bull_target", "target_price_local"]:
+        if column not in frame:
+            frame[column] = pd.NA
+    converted_rows = []
+    for row in frame.to_dict("records"):
+        target_currency = normalize_currency(str(row.get("target_currency", ""))) or currency_for_symbol(str(row.get("symbol", "")), str(row.get("exchange", "")))
+        price_currency = currency_for_symbol(str(row.get("symbol", "")), str(row.get("exchange", "")))
+        date = str(row.get("publication_date", ""))
+        converted_rows.append(
+            {
+                "report_current_price_krw": convert_value_to_krw(_float_or_none(row.get("report_current_price")), price_currency, date, fx_rates),
+                "bear_target_krw": convert_value_to_krw(_float_or_none(row.get("bear_target")), target_currency, date, fx_rates),
+                "base_target_krw": convert_value_to_krw(_float_or_none(row.get("base_target")), target_currency, date, fx_rates),
+                "bull_target_krw": convert_value_to_krw(_float_or_none(row.get("bull_target")), target_currency, date, fx_rates),
+                "target_price_krw": convert_value_to_krw(_float_or_none(row.get("target_price_local") or row.get("target_price")), target_currency, date, fx_rates),
+                "price_currency": price_currency,
+                "target_currency": target_currency,
+                "display_currency": "KRW",
+            }
+        )
+    converted = pd.DataFrame(converted_rows)
+    for column in converted.columns:
+        frame[column] = converted[column].to_numpy()
+    frame["target_price"] = frame["target_price_krw"].combine_first(frame.get("target_price"))
+    return frame
 
 
 def read_or_build_reports(data_dir: Path, warehouse_dir: Path) -> pd.DataFrame:
@@ -254,7 +297,7 @@ def download_history(symbol: str, start: datetime, end: datetime) -> pd.DataFram
     import yfinance as yf
 
     with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-        data = yf.download(symbol, start=start.date().isoformat(), end=end.date().isoformat(), progress=False, auto_adjust=True, threads=False)
+        data = yf.download(symbol, start=start.date().isoformat(), end=end.date().isoformat(), progress=False, auto_adjust=True, threads=False, timeout=10)
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
     if data.empty or "Close" not in data:
@@ -345,6 +388,18 @@ def infer_yfinance_symbol(ticker: str, exchange: str) -> str:
         return f"{ticker}.KQ"
     if exchange == "TYO":
         return f"{ticker}.T"
+    if exchange in {"HKG", "HKEX"}:
+        return f"{ticker}.HK"
+    if exchange == "SZSE":
+        return f"{ticker}.SZ"
+    if exchange == "SSE":
+        return f"{ticker}.SS"
+    if exchange == "EPA":
+        return f"{ticker}.PA"
+    if exchange == "AMS":
+        return f"{ticker}.AS"
+    if exchange == "SIX":
+        return f"{ticker}.SW"
     return ticker
 
 
