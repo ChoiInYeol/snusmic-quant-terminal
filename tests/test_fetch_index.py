@@ -29,7 +29,7 @@ def test_parse_pages_range_and_list():
 
 def test_sync_default_pages_is_one_to_seven():
     parser = build_parser()
-    args = parser.parse_args(["sync", "--skip-sheet", "--no-market-data"])
+    args = parser.parse_args(["sync", "--no-market-data"])
 
     assert args.pages == "1-7"
 

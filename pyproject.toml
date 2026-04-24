@@ -5,14 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "snusmic-google-finance-sheets"
 version = "0.1.0"
-description = "Collect SNUSMIC research PDFs, extract target prices, and sync a Google Sheet."
+description = "Collect SNUSMIC research PDFs, extract target prices, and build quant dashboard data."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
   "requests",
   "pypdf",
-  "google-auth",
-  "google-api-python-client",
   "yfinance",
   "pandas",
   "numpy",

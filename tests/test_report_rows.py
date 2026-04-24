@@ -1,10 +1,10 @@
 from pathlib import Path
 
+from snusmic_pipeline.cli import build_report_rows
 from snusmic_pipeline.models import ExtractedReport, ReportMeta
-from snusmic_pipeline.sheet_sync import build_payload, build_report_rows
 
 
-def sample_report():
+def sample_report() -> ExtractedReport:
     return ExtractedReport(
         meta=ReportMeta(
             page=1,
@@ -19,23 +19,32 @@ def sample_report():
         pdf_path=Path("data/pdfs/sample.pdf"),
         ticker="100090",
         exchange="KRX",
-        googlefinance_symbol="KRX:100090",
         base_target=41600,
         target_currency="KRW",
         extraction_status="ok",
     )
 
 
-def test_build_report_rows_includes_googlefinance_formulas():
+def test_report_rows_are_local_archive_rows_without_sheet_formulas():
     rows = build_report_rows([sample_report()])
 
-    assert rows[1][16] == '=IFERROR(GOOGLEFINANCE($H2,"price"),"")'
-    assert rows[1][17] == '=IF(OR($M2="",$Q2=""),"",$M2/$Q2-1)'
-
-
-def test_build_payload_has_three_tabs():
-    payload = build_payload([sample_report()], {1: 1}, [])
-
-    assert payload.report_values
-    assert payload.summary_values
-    assert payload.log_values
+    assert rows[0] == [
+        "페이지",
+        "순번",
+        "게시일",
+        "리포트명",
+        "종목명",
+        "티커",
+        "거래소",
+        "PDF URL",
+        "PDF 파일명",
+        "리포트 현재주가",
+        "Bear 목표가",
+        "Base 목표가",
+        "Bull 목표가",
+        "목표가 통화",
+        "투자포인트",
+        "추출 상태",
+        "비고",
+    ]
+    assert all(not str(cell).startswith("=") for row in rows for cell in row)

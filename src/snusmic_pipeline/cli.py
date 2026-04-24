@@ -17,9 +17,28 @@ from .opendataloader_fallback import OpenDataLoaderUnavailable, convert_pdfs_to_
 from .quant import compute_portfolio_backtests, compute_price_metrics, dataclass_rows
 from .change_detection import new_report_urls
 from .site_builder import build_site
-from .sheet_sync import build_payload, sync_google_sheet
 from .backtest import build_warehouse, export_dashboard_data, refresh_price_history, run_default_backtests
 from .backtest.warehouse import optimize_strategies
+
+REPORT_HEADERS = [
+    "페이지",
+    "순번",
+    "게시일",
+    "리포트명",
+    "종목명",
+    "티커",
+    "거래소",
+    "PDF URL",
+    "PDF 파일명",
+    "리포트 현재주가",
+    "Bear 목표가",
+    "Base 목표가",
+    "Bull 목표가",
+    "목표가 통화",
+    "투자포인트",
+    "추출 상태",
+    "비고",
+]
 
 
 def _json_default(value: Any) -> Any:
@@ -43,9 +62,38 @@ def write_json(path: Path, data: Any) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=_json_default) + "\n", encoding="utf-8")
 
 
-def write_csv(reports: list[ExtractedReport], path: Path) -> None:
-    from .sheet_sync import build_report_rows
+def _number_or_blank(value: float | None) -> float | str:
+    return "" if value is None else value
 
+
+def build_report_rows(reports: list[ExtractedReport]) -> list[list[Any]]:
+    rows: list[list[Any]] = [REPORT_HEADERS]
+    for report in reports:
+        rows.append(
+            [
+                report.meta.page,
+                report.meta.ordinal,
+                report.meta.date,
+                report.meta.title,
+                report.meta.company,
+                report.ticker,
+                report.exchange,
+                report.meta.pdf_url,
+                report.pdf_filename,
+                _number_or_blank(report.report_current_price),
+                _number_or_blank(report.bear_target),
+                _number_or_blank(report.base_target),
+                _number_or_blank(report.bull_target),
+                report.target_currency,
+                report.investment_points,
+                report.extraction_status,
+                report.note,
+            ]
+        )
+    return rows
+
+
+def write_csv(reports: list[ExtractedReport], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     rows = build_report_rows(reports)
     with path.open("w", encoding="utf-8", newline="") as handle:
@@ -76,7 +124,6 @@ def read_extracted_reports_csv(path: Path) -> list[ExtractedReport]:
                 report_current_price=_float_or_none(row.get("리포트 현재주가")),
                 ticker=row.get("티커", ""),
                 exchange=row.get("거래소", ""),
-                googlefinance_symbol=row.get("GoogleFinance 심볼", ""),
                 bear_target=_float_or_none(row.get("Bear 목표가")),
                 base_target=_float_or_none(row.get("Base 목표가")),
                 bull_target=_float_or_none(row.get("Bull 목표가")),
@@ -96,13 +143,6 @@ def _float_or_none(value: str | None) -> float | None:
         return float(value)
     except ValueError:
         return None
-
-
-def page_counts(reports: list[ExtractedReport]) -> dict[int, int]:
-    counts: dict[int, int] = {}
-    for report in reports:
-        counts[report.meta.page] = counts.get(report.meta.page, 0) + 1
-    return counts
 
 
 def apply_opendataloader_fallback(
@@ -132,7 +172,6 @@ def apply_opendataloader_fallback(
         if parsed["status"] == "ok" or (not report.ticker and parsed["ticker"]):
             report.ticker = str(parsed["ticker"])
             report.exchange = str(parsed["exchange"])
-            report.googlefinance_symbol = str(parsed["googlefinance_symbol"])
             report.report_current_price = parsed["report_current_price"]  # type: ignore[assignment]
             report.bear_target = parsed["bear_target"]  # type: ignore[assignment]
             report.base_target = parsed["base_target"]  # type: ignore[assignment]
@@ -177,15 +216,6 @@ def run_sync(args: argparse.Namespace) -> int:
         logs.append("Market data skipped by --no-market-data")
     write_json(data_dir / "price_metrics.json", dataclass_rows(price_metrics))
     write_json(data_dir / "portfolio_backtests.json", dataclass_rows(portfolio_backtests))
-
-    payload = build_payload(extracted, page_counts(extracted), logs)
-    sheet_id = args.sheet_id or os.environ.get("GOOGLE_SHEET_ID", "")
-    if args.skip_sheet:
-        logs.append("Sheet sync skipped by --skip-sheet")
-    elif sheet_id:
-        sync_google_sheet(sheet_id, payload)
-    else:
-        logs.append("Sheet sync skipped because no --sheet-id or GOOGLE_SHEET_ID was provided")
 
     print(f"Reports fetched: {len(metas)}")
     print(f"PDFs available: {sum(1 for item in downloads if item.path)}")
@@ -287,14 +317,12 @@ def run_export_dashboard(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Collect SNUSMIC PDFs and sync Google Sheets.")
+    parser = argparse.ArgumentParser(description="Collect SNUSMIC PDFs, extract target prices, and build dashboard data.")
     subparsers = parser.add_subparsers(dest="command")
 
-    sync = subparsers.add_parser("sync", help="Fetch reports, download PDFs, extract rows, and optionally sync Sheets.")
+    sync = subparsers.add_parser("sync", help="Fetch reports, download PDFs, and extract local archive rows.")
     sync.add_argument("--pages", default="1-7", help="Page range/list, for example 1-7 or 1,3,5.")
     sync.add_argument("--data-dir", default="data", help="Output data directory.")
-    sync.add_argument("--sheet-id", default="", help="Google Sheets spreadsheet id. Defaults to GOOGLE_SHEET_ID.")
-    sync.add_argument("--skip-sheet", action="store_true", help="Only write local PDF/CSV/manifest outputs.")
     sync.add_argument("--force", action="store_true", help="Re-download PDFs even when a local copy exists.")
     sync.add_argument("--max-pages", type=int, default=4, help="Maximum PDF pages to parse for target-price extraction.")
     sync.add_argument("--opendataloader-fallback", action=argparse.BooleanOptionalAction, default=True, help="Use opendataloader-pdf for reports that pypdf cannot parse cleanly.")

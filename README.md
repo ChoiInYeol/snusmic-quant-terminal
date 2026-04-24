@@ -223,7 +223,6 @@ uv run python -m snusmic_pipeline export-markdown
 ```bash
 uv run python -m snusmic_pipeline sync \
   --pages 19-25 \
-  --skip-sheet \
   --no-market-data
 ```
 
@@ -436,7 +435,6 @@ sequenceDiagram
 ```bash
 uv run python -m snusmic_pipeline sync \
   --pages 19-25 \
-  --skip-sheet \
   --no-market-data
 ```
 
@@ -467,21 +465,12 @@ quarto render site/quarto
 - `data/warehouse/`와 `data/quant_v3/` 생성 확인
 - yfinance outbound 네트워크 확인
 - Git push 권한 확인
-- GitHub Actions secrets 필요 여부 확인
 
-## 24. Google Sheets는 현재 부차적
+## 24. 외부 출력은 GitHub Pages 중심
 
-이 저장소는 이름에 Google Sheets가 남아 있지만, 현재 중심 출력은 GitHub Pages/Quarto입니다.
+현재 운영 출력은 Quarto로 렌더링한 GitHub Pages 대시보드입니다.
 
-Sheets는 아직 선택적 기능입니다.
-
-필요하면:
-
-```bash
-export GOOGLE_SERVICE_ACCOUNT_JSON='{"type":"service_account",...}'
-export GOOGLE_SHEET_ID='your-spreadsheet-id'
-uv run python -m snusmic_pipeline sync --pages 1-18 --sheet-id "$GOOGLE_SHEET_ID"
-```
+정형 데이터는 `data/warehouse/`와 `data/quant_v3/`에 남기고, 공유용 화면은 `site/quarto/_site`에서 생성합니다. 서버에서는 계산을 끝낸 뒤 Pages artifact만 배포하면 됩니다.
 
 ## 25. 파일이 큰 이유
 

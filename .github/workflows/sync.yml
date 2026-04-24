@@ -84,8 +84,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     env:
-      GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
-      GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
       PAGES: ${{ github.event.inputs.pages || '1-7' }}
       ENABLE_HYBRID_OCR: ${{ github.event.inputs.enable_hybrid_ocr || 'false' }}
     steps:
@@ -127,7 +125,7 @@ jobs:
           cat /tmp/opendataloader-hybrid.log
           exit 1
 
-      - name: Sync reports and Google Sheet
+      - name: Sync reports
         run: |
           if [ "$ENABLE_HYBRID_OCR" = "true" ]; then
             uv run python -m snusmic_pipeline sync --pages "$PAGES" --opendataloader-hybrid docling-fast

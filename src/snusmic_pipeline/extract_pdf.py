@@ -147,15 +147,15 @@ def ticker_from_text(text: str, fallback_company: str = "") -> str:
     return ""
 
 
-def infer_exchange_and_symbol(ticker: str) -> tuple[str, str, str]:
+def infer_exchange(ticker: str) -> tuple[str, str]:
     if not ticker:
-        return "", "", "Ticker not found"
+        return "", "Ticker not found"
     if ticker.isdigit() and len(ticker) == 6:
-        return "KRX", f"KRX:{ticker}", "Korean numeric ticker; exchange prefix inferred as KRX"
+        return "KRX", "Korean numeric ticker; exchange prefix inferred as KRX"
     exchange = KNOWN_EXCHANGES.get(ticker.upper(), "")
     if exchange:
-        return exchange, f"{exchange}:{ticker.upper()}", ""
-    return "", ticker.upper(), "Exchange not mapped; verify GoogleFinance symbol"
+        return exchange, ""
+    return "", "Exchange not mapped; verify ticker/exchange"
 
 
 def infer_currency(text: str, ticker: str) -> str:
@@ -189,7 +189,7 @@ def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object
         or (single_target > 1000 and base_target < single_target * 0.2)
     ):
         base_target = single_target
-    exchange, googlefinance_symbol, exchange_note = infer_exchange_and_symbol(ticker)
+    exchange, exchange_note = infer_exchange(ticker)
     notes = []
     if exchange_note:
         notes.append(exchange_note)
@@ -201,7 +201,6 @@ def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object
     return {
         "ticker": ticker,
         "exchange": exchange,
-        "googlefinance_symbol": googlefinance_symbol,
         "report_current_price": parse_money(current_match.group(1)) if current_match else None,
         "bear_target": scenario_values.get("bear"),
         "base_target": base_target,
@@ -234,7 +233,6 @@ def extract_report(download: DownloadedPdf, max_pages: int = 4) -> ExtractedRepo
     parsed = parse_report_text(text, fallback_company=download.meta.company)
     report.ticker = str(parsed["ticker"])
     report.exchange = str(parsed["exchange"])
-    report.googlefinance_symbol = str(parsed["googlefinance_symbol"])
     report.report_current_price = parsed["report_current_price"]  # type: ignore[assignment]
     report.bear_target = parsed["bear_target"]  # type: ignore[assignment]
     report.base_target = parsed["base_target"]  # type: ignore[assignment]

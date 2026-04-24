@@ -18,7 +18,6 @@ def test_parse_report_text_extracts_single_target_for_korean_report():
 
     assert parsed["ticker"] == "100090"
     assert parsed["exchange"] == "KRX"
-    assert parsed["googlefinance_symbol"] == "KRX:100090"
     assert parsed["report_current_price"] == 23300
     assert parsed["base_target"] == 41600
     assert parsed["target_currency"] == "KRW"
@@ -46,7 +45,6 @@ def test_known_overseas_company_mapping_beats_noisy_parentheses():
 
     assert parsed["ticker"] == "2124"
     assert parsed["exchange"] == "TYO"
-    assert parsed["googlefinance_symbol"] == "TYO:2124"
     assert parsed["target_currency"] == "JPY"
 
 

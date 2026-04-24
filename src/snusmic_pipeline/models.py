@@ -32,7 +32,6 @@ class ExtractedReport:
     report_current_price: float | None = None
     ticker: str = ""
     exchange: str = ""
-    googlefinance_symbol: str = ""
     bear_target: float | None = None
     base_target: float | None = None
     bull_target: float | None = None
