@@ -33,12 +33,19 @@ def export_markdown(
     output_dir: Path,
     use_opendataloader: bool = True,
     hybrid: str = "",
+    force: bool = False,
 ) -> list[str]:
     output_dir.mkdir(parents=True, exist_ok=True)
     logs: list[str] = []
     pdf_reports = [report for report in reports if report.pdf_path and report.pdf_path.exists()]
 
     converted: dict[Path, str] = {}
+    if force:
+        for report in pdf_reports:
+            assert report.pdf_path is not None
+            target = markdown_path_for_pdf(report.pdf_path, output_dir)
+            if target.exists():
+                target.unlink()
     if use_opendataloader and pdf_reports:
         try:
             converted = convert_pdfs_to_markdown([report.pdf_path for report in pdf_reports if report.pdf_path], output_dir=output_dir, hybrid=hybrid)
@@ -49,11 +56,11 @@ def export_markdown(
         assert report.pdf_path is not None
         target = markdown_path_for_pdf(report.pdf_path, output_dir)
         if report.pdf_path in converted:
-            body = converted[report.pdf_path]
+            body = converted[report.pdf_path].rstrip() + "\n"
             if "해당 .md 을 ChatGPT, Claude에게 입력하여 인사이트를 얻으세요." not in body:
                 body = "> 해당 .md 을 ChatGPT, Claude에게 입력하여 인사이트를 얻으세요.\n\n" + body
             target.write_text(body, encoding="utf-8")
-        elif not target.exists():
+        elif force or not target.exists():
             target.write_text(fallback_markdown(report), encoding="utf-8")
     logs.append(f"Markdown files available: {len(list(output_dir.glob('*.md')))}")
     return logs

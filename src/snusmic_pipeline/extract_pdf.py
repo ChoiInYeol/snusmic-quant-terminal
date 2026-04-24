@@ -20,9 +20,18 @@ _EN_TARGET_PRICE_RE = re.compile(
     re.IGNORECASE,
 )
 _SCENARIO_RE = re.compile(
-    r"\b(Bear|Base|Bull)\b[^0-9$₩]{0,80}([$₩]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)",
+    r"\b(Bear|Base|Bull)\b[^0-9$₩¥]{0,80}([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)",
     re.IGNORECASE,
 )
+_CASE_PRICE_RE = re.compile(
+    r"(?:(?<!Base )(?<!Bear )(?<!Bull )\bcase\s*([0-9]+)\b|케이스\s*([0-9]+)|시나리오\s*([0-9]+))[^0-9$₩¥]{0,80}([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)",
+    re.IGNORECASE,
+)
+_RATING_LABEL_RE = re.compile(
+    r"(?:투자\s*의견|의견|Rating|Recommendation)[^A-Za-z가-힣]{0,80}(Strong\s*Buy|Buy|Attention|Sell|Hold|Neutral|강력\s*매수|매수|관심|주의|매도|중립)",
+    re.IGNORECASE,
+)
+_RATING_LINE_RE = re.compile(r"^(Strong\s*Buy|Buy|Attention|Sell|Hold|Neutral|강력\s*매수|매수|관심|주의|매도|중립)$", re.IGNORECASE)
 _INVESTMENT_SECTION_RE = re.compile(
     r"(투자포인트|Investment\s+Point|Investment\s+points|Key\s+Points|Why\s+invest|Valuation)\s*[:：]?\s*(.{80,900})",
     re.IGNORECASE | re.DOTALL,
@@ -40,6 +49,7 @@ KNOWN_EXCHANGES = {
     "GLW": "NYSE",
     "LIF": "NASDAQ",
     "DOCS": "NYSE",
+    "CHWY": "NYSE",
     "SRAD": "NASDAQ",
     "TEM": "NASDAQ",
     "CLBT": "NASDAQ",
@@ -47,6 +57,34 @@ KNOWN_EXCHANGES = {
     "PLTR": "NASDAQ",
     "FLNC": "NASDAQ",
     "LEU": "NYSE",
+    "LLY": "NYSE",
+    "VRT": "NYSE",
+    "BAC": "NYSE",
+    "NE": "NYSE",
+    "MP": "NYSE",
+    "WOLF": "NYSE",
+    "TS": "NYSE",
+    "ANET": "NYSE",
+    "EAF": "NYSE",
+    "VTNR": "NASDAQ",
+    "TSM": "NYSE",
+    "STNG": "NYSE",
+    "INMD": "NASDAQ",
+    "OPEN": "NASDAQ",
+    "CHGG": "NYSE",
+    "WFG": "NYSE",
+    "SBLK": "NASDAQ",
+    "ROKU": "NASDAQ",
+    "SE": "NYSE",
+    "NETI": "NYSE",
+    "LONN": "SIX",
+    "BESI": "AMS",
+    "1211": "HKG",
+    "1833": "HKG",
+    "4689": "TYO",
+    "002340": "SZSE",
+    "002714": "SZSE",
+    "GTT": "EPA",
     "6857": "TYO",
     "4680": "TYO",
     "5253": "TYO",
@@ -84,6 +122,34 @@ KNOWN_COMPANY_TICKERS = {
     "Palantir Technologies Inc.": "PLTR",
     "Fluence Energy Inc.": "FLNC",
     "Centrus Energy Corp": "LEU",
+    "BYD": "1211",
+    "Eli Lilly & Co.": "LLY",
+    "Vertiv Holdings Co.": "VRT",
+    "Lonza Group AG": "LONN",
+    "BE Semiconductor Industries N.V.": "BESI",
+    "Bank of America Corp.": "BAC",
+    "Eneti Inc.": "NETI",
+    "Noble Corporation PLC": "NE",
+    "MP Materials": "MP",
+    "Wolfspeed": "WOLF",
+    "Tenaris S.A.": "TS",
+    "Arista Networks": "ANET",
+    "GrafTech International Ltd.": "EAF",
+    "Vertex Energy, Inc.": "VTNR",
+    "TSMC": "TSM",
+    "Scorpio Tankers Inc.": "STNG",
+    "GEM Co., Ltd.": "002340",
+    "Inmode": "INMD",
+    "Opendoor": "OPEN",
+    "Z-holdings": "4689",
+    "Muyuan foods co ltd": "002714",
+    "Chegg": "CHGG",
+    "Ping An Healthcare & Technology": "1833",
+    "West Fraser Timber. Co. Ltd": "WFG",
+    "Star Bulk Carriers": "SBLK",
+    "Roku": "ROKU",
+    "SEA ltd.": "SE",
+    "Gaztransport&technigaz": "GTT",
 }
 
 
@@ -95,6 +161,24 @@ def parse_money(value: str | None) -> float | None:
         return float(cleaned)
     except ValueError:
         return None
+
+
+def normalize_rating(value: str | None) -> str:
+    if not value:
+        return ""
+    compact = re.sub(r"\s+", " ", value).strip()
+    lowered = compact.lower()
+    if lowered in {"strong buy", "강력 매수"}:
+        return "Strong Buy"
+    if lowered in {"buy", "매수"}:
+        return "Buy"
+    if lowered in {"attention", "관심", "주의"}:
+        return "Attention"
+    if lowered in {"sell", "매도"}:
+        return "Sell"
+    if lowered in {"hold", "neutral", "중립"}:
+        return "Hold"
+    return compact
 
 
 def compact_text(value: str) -> str:
@@ -120,14 +204,76 @@ def extract_text_from_pdf(path: Path, max_pages: int | None = None) -> str:
     return "\n".join(page.extract_text() or "" for page in pages)
 
 
-def target_price_from_text(text: str) -> tuple[float | None, str]:
+def target_price_candidates(text: str) -> list[tuple[float, str]]:
+    candidates: list[tuple[float, str]] = []
     for pattern in [_PRE_TARGET_PRICE_RE, _TARGET_PRICE_RE, _EN_TARGET_PRICE_RE]:
-        match = pattern.search(text)
-        if match:
+        for match in pattern.finditer(text):
+            if pattern is _PRE_TARGET_PRICE_RE and "현재" in text[max(0, match.start() - 30) : match.start()]:
+                continue
             value = parse_money(match.group(1))
             if value is not None:
-                return value, match.group(0)
+                candidates.append((value, match.group(0)))
+    return candidates
+
+
+def target_price_from_text(text: str) -> tuple[float | None, str]:
+    candidates = target_price_candidates(text)
+    if candidates:
+        return candidates[0]
     return None, ""
+
+
+def rating_from_text(text: str) -> str:
+    first_pages = text[:6000]
+    match = _RATING_LABEL_RE.search(first_pages)
+    if match:
+        return normalize_rating(match.group(1))
+    for line in first_pages.splitlines()[:100]:
+        cleaned = re.sub(r"^[#>*\-\s]+", "", line).strip()
+        line_match = _RATING_LINE_RE.match(cleaned)
+        if line_match:
+            return normalize_rating(line_match.group(1))
+    return ""
+
+
+def case_targets_from_text(text: str) -> dict[str, float]:
+    values: dict[str, float] = {}
+    for match in _CASE_PRICE_RE.finditer(text[:20000]):
+        case_number = next((group for group in match.groups()[:3] if group), "")
+        value = parse_money(match.group(4))
+        if case_number and value is not None:
+            values.setdefault(f"case_{case_number}", value)
+    return values
+
+
+def median_price(values: list[float]) -> float | None:
+    if not values:
+        return None
+    ordered = sorted(values)
+    midpoint = len(ordered) // 2
+    if len(ordered) % 2:
+        return ordered[midpoint]
+    return (ordered[midpoint - 1] + ordered[midpoint]) / 2
+
+
+def is_plausible_target_price(value: float, ticker: str) -> bool:
+    if ticker.isdigit() and len(ticker) == 6:
+        return value >= 100
+    return value >= 1
+
+
+def target_detail_text(scenario_values: dict[str, float], case_values: dict[str, float], rating: str, base_target: float | None) -> str:
+    items: list[str] = []
+    if rating:
+        items.append(f"rating={rating}")
+    for key in ["bear", "base", "bull"]:
+        if key in scenario_values:
+            items.append(f"{key}={scenario_values[key]:g}")
+    if base_target is not None and "base" not in scenario_values:
+        items.append(f"base={base_target:g}")
+    for key in sorted(case_values):
+        items.append(f"{key}={case_values[key]:g}")
+    return "; ".join(items)
 
 
 def ticker_from_text(text: str, fallback_company: str = "") -> str:
@@ -150,11 +296,11 @@ def ticker_from_text(text: str, fallback_company: str = "") -> str:
 def infer_exchange(ticker: str) -> tuple[str, str]:
     if not ticker:
         return "", "Ticker not found"
-    if ticker.isdigit() and len(ticker) == 6:
-        return "KRX", "Korean numeric ticker; exchange prefix inferred as KRX"
     exchange = KNOWN_EXCHANGES.get(ticker.upper(), "")
     if exchange:
         return exchange, ""
+    if ticker.isdigit() and len(ticker) == 6:
+        return "KRX", "Korean numeric ticker; exchange prefix inferred as KRX"
     return "", "Exchange not mapped; verify ticker/exchange"
 
 
@@ -166,46 +312,79 @@ def infer_currency(text: str, ticker: str) -> str:
         return "USD"
     if ticker in {"6857", "4680", "5253", "2124", "5726"}:
         return "JPY"
+    if ticker in {"1211", "1833"}:
+        return "HKD"
+    if ticker in {"002340", "002714"}:
+        return "CNY"
     return "USD"
 
 
 def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object]:
     ticker = ticker_from_text(text, fallback_company=fallback_company)
+    rating = rating_from_text(text)
     current_match = _CURRENT_PRICE_RE.search(text)
     single_target, target_raw = target_price_from_text(text)
+    notes: list[str] = []
+    current_price = parse_money(current_match.group(1)) if current_match else None
+    if current_price is not None and single_target == current_price:
+        for candidate, raw in target_price_candidates(text):
+            if candidate != current_price:
+                single_target, target_raw = candidate, raw
+                notes.append("Initial target candidate equaled current price; selected next target candidate")
+                break
+    if single_target is not None and not is_plausible_target_price(single_target, ticker):
+        single_target = None
 
     scenario_values: dict[str, float] = {}
     for match in _SCENARIO_RE.finditer(text[:15000]):
         scenario = match.group(1).lower()
         if scenario not in scenario_values:
             value = parse_money(match.group(2))
-            if value is not None:
+            raw_value = match.group(2)
+            looks_like_case_number = "case" in match.group(0).lower() and not any(symbol in raw_value for symbol in "$₩¥") and value is not None and value <= 5
+            if value is not None and not looks_like_case_number and is_plausible_target_price(value, ticker):
                 scenario_values[scenario] = value
 
+    case_values = {
+        key: value
+        for key, value in case_targets_from_text(text).items()
+        if key.split("_", 1)[-1].isdigit()
+        and 1 <= int(key.split("_", 1)[-1]) <= 5
+        and is_plausible_target_price(value, ticker)
+    }
     base_target = scenario_values.get("base", single_target)
-    if single_target is not None and (
-        "base" in target_raw.lower()
-        or base_target is None
-        or (single_target > 1000 and base_target < single_target * 0.2)
-    ):
+    if base_target is None and scenario_values:
+        base_target = median_price(list(scenario_values.values()))
+        notes.append("No explicit Base target; base target uses median scenario value")
+    case_prices = sorted(case_values.values())
+    if base_target is None and case_prices:
+        base_target = median_price(case_prices)
+    elif case_prices and len(case_prices) > 1 and "base" not in target_raw.lower() and base_target in case_prices:
+        base_target = median_price(case_prices)
+    if single_target is not None and ("base" in target_raw.lower() or base_target is None):
         base_target = single_target
     exchange, exchange_note = infer_exchange(ticker)
-    notes = []
     if exchange_note:
         notes.append(exchange_note)
     if base_target is None:
         notes.append("Target price not found")
     if not ticker:
         notes.append("Ticker not found")
+    if case_values and "base" not in scenario_values:
+        notes.append("Case target prices parsed; base target uses median case value; review scenario semantics")
+    if rating and rating not in {"Buy", "Strong Buy"}:
+        notes.append(f"Non-buy rating: {rating}")
 
     return {
         "ticker": ticker,
         "exchange": exchange,
-        "report_current_price": parse_money(current_match.group(1)) if current_match else None,
+        "rating": rating,
+        "report_current_price": current_price,
         "bear_target": scenario_values.get("bear"),
         "base_target": base_target,
         "bull_target": scenario_values.get("bull"),
         "target_currency": infer_currency(text, ticker),
+        "target_price_detail": target_detail_text(scenario_values, case_values, rating, base_target),
         "investment_points": extract_investment_points(text),
         "status": "ok" if ticker and base_target is not None else "needs_review",
         "note": "; ".join(notes),
@@ -233,11 +412,13 @@ def extract_report(download: DownloadedPdf, max_pages: int = 4) -> ExtractedRepo
     parsed = parse_report_text(text, fallback_company=download.meta.company)
     report.ticker = str(parsed["ticker"])
     report.exchange = str(parsed["exchange"])
+    report.rating = str(parsed["rating"])
     report.report_current_price = parsed["report_current_price"]  # type: ignore[assignment]
     report.bear_target = parsed["bear_target"]  # type: ignore[assignment]
     report.base_target = parsed["base_target"]  # type: ignore[assignment]
     report.bull_target = parsed["bull_target"]  # type: ignore[assignment]
     report.target_currency = str(parsed["target_currency"])
+    report.target_price_detail = str(parsed["target_price_detail"])
     report.investment_points = str(parsed["investment_points"])
     report.extraction_status = str(parsed["status"])
     report.note = str(parsed["note"])

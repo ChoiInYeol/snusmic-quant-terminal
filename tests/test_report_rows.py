@@ -19,8 +19,10 @@ def sample_report() -> ExtractedReport:
         pdf_path=Path("data/pdfs/sample.pdf"),
         ticker="100090",
         exchange="KRX",
+        rating="Buy",
         base_target=41600,
         target_currency="KRW",
+        target_price_detail="rating=Buy; base=41600",
         extraction_status="ok",
     )
 
@@ -36,6 +38,7 @@ def test_report_rows_are_local_archive_rows_without_sheet_formulas():
         "종목명",
         "티커",
         "거래소",
+        "투자의견",
         "PDF URL",
         "PDF 파일명",
         "리포트 현재주가",
@@ -43,6 +46,7 @@ def test_report_rows_are_local_archive_rows_without_sheet_formulas():
         "Base 목표가",
         "Bull 목표가",
         "목표가 통화",
+        "목표가 세부",
         "투자포인트",
         "추출 상태",
         "비고",

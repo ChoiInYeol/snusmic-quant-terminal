@@ -32,10 +32,12 @@ class ExtractedReport:
     report_current_price: float | None = None
     ticker: str = ""
     exchange: str = ""
+    rating: str = ""
     bear_target: float | None = None
     base_target: float | None = None
     bull_target: float | None = None
     target_currency: str = ""
+    target_price_detail: str = ""
     investment_points: str = ""
     extraction_status: str = "pending"
     note: str = ""

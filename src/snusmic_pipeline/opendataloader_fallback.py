@@ -33,6 +33,8 @@ def convert_pdfs_to_markdown(
         "input_path": [str(path) for path in pdf_paths],
         "output_dir": str(output_dir),
         "format": "markdown",
+        "image_output": "off",
+        "quiet": True,
     }
     if hybrid:
         kwargs["hybrid"] = hybrid
