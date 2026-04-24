@@ -32,7 +32,9 @@ class PriceMetric:
     publication_date: str
     publication_buy_price: float | None
     current_price: float | None
+    target_price: float | None
     buy_at_publication_return: float | None
+    publication_to_target_return: float | None
     lowest_price_since_publication: float | None
     lowest_price_current_return: float | None
     low_to_high_return: float | None
@@ -51,6 +53,7 @@ class PriceMetric:
     optimal_net_return_10pct: float | None
     target_hit: bool | None
     first_target_hit_date: str
+    target_hit_holding_days: int | None
     status: str
     note: str
 
@@ -257,6 +260,7 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
         q75 = float(close.quantile(0.75))
         target = convert_value_to_krw(report.base_target, target_currency, report.meta.date[:10], fx_rates)
         hit_series = close[close >= target] if target else pd.Series(dtype=float)
+        first_hit_date = None if hit_series.empty else hit_series.index[0]
         holding_days, net_return = optimal_net_holding(close)
         low_to_high_holding_days = (best_after_low_idx - low_idx).days
         current_percentile = float((close <= current).mean())
@@ -273,7 +277,9 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
                 publication_date=report.meta.date[:10],
                 publication_buy_price=pub_price,
                 current_price=current,
+                target_price=target,
                 buy_at_publication_return=pct_return(current, pub_price),
+                publication_to_target_return=pct_return(target, pub_price) if target else None,
                 lowest_price_since_publication=low,
                 lowest_price_current_return=pct_return(current, low),
                 low_to_high_return=pct_return(best_after_low, low),
@@ -291,7 +297,8 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
                 optimal_holding_days_net_10pct=holding_days,
                 optimal_net_return_10pct=net_return,
                 target_hit=bool(not hit_series.empty),
-                first_target_hit_date="" if hit_series.empty else hit_series.index[0].date().isoformat(),
+                first_target_hit_date="" if first_hit_date is None else first_hit_date.date().isoformat(),
+                target_hit_holding_days=None if first_hit_date is None else (first_hit_date - pd.to_datetime(report.meta.date[:10])).days,
                 status="ok",
                 note="",
             )
@@ -332,7 +339,9 @@ def empty_price_metric(report: ExtractedReport, symbol: str, price_currency: str
         publication_date=report.meta.date[:10],
         publication_buy_price=None,
         current_price=None,
+        target_price=None,
         buy_at_publication_return=None,
+        publication_to_target_return=None,
         lowest_price_since_publication=None,
         lowest_price_current_return=None,
         low_to_high_return=None,
@@ -351,6 +360,7 @@ def empty_price_metric(report: ExtractedReport, symbol: str, price_currency: str
         optimal_net_return_10pct=None,
         target_hit=False,
         first_target_hit_date="",
+        target_hit_holding_days=None,
         status=status,
         note=note,
     )

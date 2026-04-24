@@ -35,7 +35,6 @@ export type Position = {
   gross_return: number | null;
   model_contribution: number | null;
   mtt_pass: boolean;
-  rs_score: number | null;
 };
 
 export type EquityRow = {
@@ -84,7 +83,6 @@ export type SignalRow = {
   ma50: number | null;
   ma150: number | null;
   ma200: number | null;
-  rs_score: number | null;
   candidate_universe_active: boolean;
   mtt_pass: boolean;
   pct_above_52w_low: number | null;
@@ -123,8 +121,12 @@ export type PriceMetric = {
   publication_date: string;
   publication_buy_price: number | null;
   current_price: number | null;
+  target_price: number | null;
+  publication_to_target_return: number | null;
   lowest_price_since_publication: number | null;
   lowest_price_current_return: number | null;
+  low_to_high_return: number | null;
+  low_to_high_holding_days: number | null;
   q25_price_since_publication: number | null;
   q25_price_current_return: number | null;
   q75_price_since_publication: number | null;
@@ -136,8 +138,10 @@ export type PriceMetric = {
   buy_at_publication_return: number | null;
   current_price_percentile: number | null;
   target_upside_remaining: number | null;
+  optimal_buy_lag_days: number | null;
   target_hit: boolean;
   first_target_hit_date: string;
+  target_hit_holding_days: number | null;
   status: string;
 };
 

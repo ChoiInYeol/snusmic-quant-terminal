@@ -38,7 +38,7 @@ def price_frame(symbols=("000001.KS",), start="2023-01-02", periods=340):
     return pd.DataFrame(rows)
 
 
-def test_mtt_signal_and_candidate_rs_do_not_include_future_candidates():
+def test_mtt_signal_marks_candidate_universe_without_future_candidates():
     reports = pd.DataFrame(
         [
             {"report_id": "r1", "publication_date": "2023-06-01", "symbol": "000001.KS"},
@@ -53,7 +53,7 @@ def test_mtt_signal_and_candidate_rs_do_not_include_future_candidates():
     assert alpha_late["mtt_pass"].any()
     beta_before_publication = signals[(signals["symbol"] == "000002.KS") & (signals["date"] < pd.Timestamp("2024-03-01"))]
     assert beta_before_publication["candidate_universe_active"].eq(False).all()
-    assert beta_before_publication["rs_score"].isna().all()
+    assert "rs_score" not in signals.columns
 
 
 def test_candidate_starts_after_publication_and_strategy_buys_from_pool():

@@ -3,7 +3,7 @@ import './globals.css';
 
 export const metadata: Metadata = {
   title: 'SNUSMIC Quant Terminal',
-  description: 'Candidate pool 기반 SNUSMIC 리서치 전략 대시보드',
+  description: 'SNUSMIC 리포트 기반 가격 기회와 MTT 전략 성과 대시보드',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

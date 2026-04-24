@@ -103,8 +103,8 @@ def render_index_html() -> str:
     <header class="app-hero">
       <div>
         <p class="eyebrow">Walk-forward quant dashboard</p>
-        <h1>지금 무엇을 얼마나 들고 있고, 왜 들고 있는가</h1>
-        <p>SNUSMIC 리포트가 쌓이는 candidate pool에서 MTT, RS, 목표가 여력, 손절/익절 조건을 통과한 종목만 execution pool로 운용합니다.</p>
+        <h1>현재 보유 종목과 전략별 성과</h1>
+        <p>SNUSMIC 리포트 기반 후보군에서 MTT, 목표가 여력, 손절/익절 조건을 통과한 종목만 실제 보유군으로 운용합니다.</p>
       </div>
       <div id="v3OverviewStats" class="metric-grid hero-stats"></div>
     </header>
@@ -118,9 +118,9 @@ def render_index_html() -> str:
         <p>이 화면은 과거 원장보다 현재 의사결정에 초점을 둡니다. 후보군, 실제 보유, 매매 사유, 누적 성과를 같은 전략 기준으로 연결해서 봅니다.</p>
       </div>
       <div class="guide-grid">
-        <article class="guide-card"><strong>1. Candidate pool</strong><span>리포트 발간 다음 거래일부터 추적 후보가 됩니다. 목표가 도달, 만료, 새 리포트가 상태를 바꿉니다.</span></article>
-        <article class="guide-card"><strong>2. Execution pool</strong><span>전략 조건을 통과한 종목만 실제 보유합니다. 수익은 보유 기간에만 계산합니다.</span></article>
-        <article class="guide-card"><strong>3. Weighting</strong><span>비중 최적화는 execution pool 내부에서만 쓰고, lookback 이전 데이터만 사용합니다.</span></article>
+        <article class="guide-card"><strong>1. 후보군</strong><span>리포트 발간 다음 거래일부터 추적 후보가 됩니다. 목표가 도달, 만료, 새 리포트가 상태를 바꿉니다.</span></article>
+        <article class="guide-card"><strong>2. 보유군</strong><span>전략 조건을 통과한 종목만 실제 보유합니다. 수익은 보유 기간에만 계산합니다.</span></article>
+        <article class="guide-card"><strong>3. 비중</strong><span>비중 최적화는 실제 보유군 내부에서만 쓰고, lookback 이전 데이터만 사용합니다.</span></article>
         <article class="guide-card"><strong>4. Exit</strong><span>손절, R:R 익절, 목표가 도달, 신호 이탈, 추적 만료로 실현 수익을 확정합니다.</span></article>
       </div>
     </section>
@@ -155,7 +155,7 @@ def render_index_html() -> str:
           <p class="eyebrow">Performance</p>
           <h2>누적 성과와 리스크</h2>
         </div>
-        <p>Equity curve와 drawdown은 분리해서 봅니다. 좋은 전략은 높은 수익보다 회복 가능한 낙폭과 일관성이 먼저 보여야 합니다.</p>
+        <p>누적 수익률과 낙폭을 분리해 표시합니다. 전략 평가는 수익률, 변동성, 최대낙폭을 함께 기준으로 삼습니다.</p>
       </div>
       <div class="dashboard-grid two">
         <article class="panel"><h3>누적 자산</h3><div id="strategyEquityPlot" class="plotly-panel"></div></article>
@@ -251,9 +251,9 @@ def render_index_html() -> str:
       <div class="section-head">
         <div>
           <p class="eyebrow">Signals</p>
-          <h2>MTT / RS 신호 탐색</h2>
+          <h2>MTT 신호 탐색</h2>
         </div>
-        <p>전략이 편입 판단에 사용한 추세와 상대강도 신호입니다. 신호는 해당 날짜 이전 데이터만 사용합니다.</p>
+        <p>전략이 편입 판단에 사용한 추세 신호입니다. 신호는 해당 날짜 이전 데이터만 사용합니다.</p>
       </div>
       <div class="toolbar">
         <select id="signalRunSelect"></select>

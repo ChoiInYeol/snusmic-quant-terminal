@@ -63,8 +63,7 @@ export default function Page() {
     const term = query.trim().toLowerCase();
     return (data?.priceMetrics ?? [])
       .filter((item) => !term || item.display_name.toLowerCase().includes(term) || item.yfinance_symbol.toLowerCase().includes(term))
-      .sort((a, b) => b.publication_date.localeCompare(a.publication_date))
-      .slice(0, 30);
+      .sort((a, b) => b.publication_date.localeCompare(a.publication_date));
   }, [data, query]);
   const candidateEvents = useMemo(
     () =>
@@ -84,16 +83,13 @@ export default function Page() {
       const latestDate = activeRows.reduce((latest, row) => (row.date > latest ? row.date : latest), '');
       return activeRows
         .filter((item) => item.date === latestDate)
-        .sort((a, b) => (b.rs_score ?? -1) - (a.rs_score ?? -1))
+        .sort((a, b) => Number(b.mtt_pass) - Number(a.mtt_pass) || (b.pct_above_52w_low ?? -1) - (a.pct_above_52w_low ?? -1))
         .slice(0, 30);
     },
     [data, selectedRunId],
   );
   const latestReports = useMemo(
-    () =>
-      (data?.reports ?? [])
-        .sort((a, b) => (b.publication_date || '').localeCompare(a.publication_date || ''))
-        .slice(0, 80),
+    () => (data?.reports ?? []).sort((a, b) => (b.publication_date || '').localeCompare(a.publication_date || '')),
     [data],
   );
 
@@ -150,8 +146,8 @@ export default function Page() {
             <p className="eyebrow">전략 운용판</p>
             <h1>지금 어떤 전략으로 무엇을 얼마나 들고 있는가</h1>
             <p className="lede">
-              Candidate pool에서 MTT, RS, 목표가 여력, 손절/익절 조건을 통과한 종목만 execution pool로 들어옵니다.
-              이 화면은 과거 로그보다 오늘의 포지션과 그 이유를 먼저 보여줍니다.
+              리포트 발간 이후 후보군을 누적하고, MTT와 목표가 여력 조건으로 실제 보유 종목을 결정한다.
+              본 화면은 현재 포지션, 성과, 매매 근거를 동일한 기준으로 요약한다.
             </p>
           </div>
           <div className="hero-card">
@@ -180,14 +176,14 @@ export default function Page() {
           <SectionIntro
             eyebrow="Strategy guide"
             title="전략을 먼저 읽고, 숫자를 봅니다"
-            body="이 페이지는 백테스트 리포트라기보다 운용 메모에 가깝습니다. 위쪽은 현재 의사결정, 아래쪽은 그 판단을 만든 가격·신호·원장 데이터입니다."
+            body="전략은 후보군 편입 조건, 보유 비중 산정 방식, 리밸런싱 주기로 정의된다. 아래 지표는 동일 기간의 산술 수익률 기준으로 산출한다."
           />
           <article className="panel strategy-guide">
           <div>
             <p className="eyebrow">전략 설명</p>
             <h2>{selectedStrategy.strategy_name}</h2>
             <p>
-              이 전략은 <b>{labelEntryRule(selectedStrategy.entry_rule)}</b> 조건으로 편입 후보를 고르고, execution pool 내부에서
+              이 전략은 <b>{labelEntryRule(selectedStrategy.entry_rule)}</b> 조건으로 편입 후보를 고르고, 실제 보유군 내부에서
               <b> {selectedStrategy.weighting}</b> 방식으로 비중을 조절합니다. 리밸런싱은 <b>{selectedStrategy.rebalance}</b>,
               lookback은 <b>{selectedStrategy.lookback_days} 거래일</b>입니다.
             </p>
@@ -205,7 +201,7 @@ export default function Page() {
           <SectionIntro
             eyebrow="Current book"
             title="지금 들고 있는 것"
-            body="사용자 입장에서는 과거 후보군보다 현재 포지션이 우선입니다. 보유 비중, 미실현 수익, 최근 매매 사유를 같은 문맥에서 보이도록 배치했습니다."
+            body="현재 보유 종목, 비중, 미실현 수익률, 최근 매매 사유를 한 영역에서 표시한다."
           />
           <div className="split">
           <article className="panel">
@@ -283,7 +279,7 @@ export default function Page() {
           <SectionIntro
             eyebrow="Chart"
             title="종목 차트는 최근 구간부터 봅니다"
-            body="Lightweight Charts는 최근 가격 행동을 먼저 확대합니다. 이동평균선, 리포트 발간, 매수·매도 marker를 같은 화면에서 확인합니다."
+            body="최근 가격 구간을 우선 표시한다. 이동평균선, 발간가, 목표가, 매수·매도 표식을 함께 확인한다."
           />
           <article className="panel">
           <div className="panel-head">
@@ -301,7 +297,7 @@ export default function Page() {
           <SectionIntro
             eyebrow="Ledger"
             title="후보군과 신호는 근거 자료입니다"
-            body="여기부터는 왜 후보가 들어오고 나갔는지, 최신 신호 상위 종목은 무엇인지 확인하는 감사 추적 영역입니다."
+            body="후보군 편입·제외와 최신 MTT 상태를 확인한다. 모든 원장성 데이터는 최신순으로 정렬한다."
           />
           <article className="panel">
             <div className="panel-head">
@@ -309,7 +305,7 @@ export default function Page() {
                 <p className="eyebrow">현재 후보군</p>
                 <h2>후보군 지도</h2>
               </div>
-              <span>RS 색상 · MTT 테두리</span>
+              <span>MTT 상태 · 가격 위치</span>
             </div>
             <CandidateHeatmap rows={signalRows} companyBySymbol={companyBySymbol} />
           </article>
@@ -327,10 +323,10 @@ export default function Page() {
           <article className="panel">
             <div className="panel-head">
               <div>
-                <p className="eyebrow">추세/상대강도</p>
-                <h2>신호 상위 종목</h2>
+                <p className="eyebrow">추세 신호</p>
+                <h2>MTT 점검</h2>
               </div>
-              <span>RS 순</span>
+              <span>최신순</span>
             </div>
             <SignalTable rows={signalRows} companyBySymbol={companyBySymbol} />
           </article>
@@ -341,7 +337,7 @@ export default function Page() {
           <SectionIntro
             eyebrow="Opportunity"
             title="리포트 이후의 가격 기회"
-            body="발간가, 저가, 분위수 가격을 함께 보면서 리포트가 실제 매수 기회를 줬는지 확인합니다."
+            body="발간가, 분위수, 저가, 고가, 목표가를 기준으로 리포트 이후의 가격 기회를 비교한다."
           />
           <article className="panel">
           <div className="panel-head">
@@ -359,7 +355,7 @@ export default function Page() {
           <SectionIntro
             eyebrow="Archive"
             title="원문으로 다시 검증하기"
-            body="정량 결과가 이상하면 PDF와 OCR Markdown으로 되돌아가 추출 품질과 투자 논리를 직접 확인합니다."
+            body="정량 결과의 근거가 되는 PDF와 OCR Markdown 링크를 제공한다. 추출값 검증은 원문 기준으로 수행한다."
           />
           <article className="panel">
           <div className="panel-head">
@@ -547,7 +543,7 @@ function PortfolioHeatmap({
           >
             <strong>{position.company || position.symbol}</strong>
             <span>{pct(position.weight)} · {pct(position.gross_return)}</span>
-            <small>RS {position.rs_score?.toFixed(0) ?? '-'} · {position.mtt_pass ? 'MTT 통과' : 'MTT 미통과'}</small>
+            <small>{position.mtt_pass ? 'MTT 통과' : 'MTT 미통과'} · 현재가 {num(position.close, 'KRW')}</small>
           </button>
         );
       })}
@@ -560,16 +556,16 @@ function CandidateHeatmap({ rows, companyBySymbol }: { rows: DashboardData['sign
   return (
     <div className="heatmap candidate-map" aria-label="현재 후보군 히트맵">
       {rows.map((row) => {
-        const rs = row.rs_score ?? 0;
-        const opacity = 0.16 + Math.min(0.68, Math.max(0, rs - 50) / 50 * 0.68);
+        const distance = row.pct_above_52w_low ?? 0;
+        const opacity = 0.16 + Math.min(0.68, Math.max(0, distance) / 1.5 * 0.68);
         return (
           <div
             key={`candidate-${row.run_id}-${row.symbol}`}
             className={row.mtt_pass ? 'heat-tile candidate-pass' : 'heat-tile'}
-            style={{ background: `rgba(31, 79, 143, ${opacity})` }}
+            style={{ background: row.mtt_pass ? `rgba(4, 120, 87, ${opacity})` : `rgba(31, 79, 143, ${opacity})` }}
           >
             <strong>{companyBySymbol.get(row.symbol) ?? row.symbol}</strong>
-            <span>RS {rs ? rs.toFixed(0) : '-'}</span>
+            <span>{row.mtt_pass ? 'MTT' : '대기'}</span>
             <small>{row.mtt_pass ? 'MTT 통과' : 'MTT 대기'} · 현재가 {num(row.close, 'KRW')}</small>
           </div>
         );
@@ -599,7 +595,7 @@ function PositionList({
           <span>
             <strong>{position.company || position.symbol}</strong>
             <small>
-              {position.mtt_pass ? 'MTT 통과' : 'MTT 미통과'} · RS {position.rs_score?.toFixed(0) ?? '-'}
+              {position.mtt_pass ? 'MTT 통과' : 'MTT 미통과'} · 현재가 {num(position.close, 'KRW')}
             </small>
           </span>
           <span className="right">
@@ -652,14 +648,13 @@ function SignalTable({ rows, companyBySymbol }: { rows: DashboardData['signals']
       render: (row) => (row.mtt_pass ? '통과' : '미통과'),
       className: (row) => (row.mtt_pass ? 'gain-text' : 'loss-text'),
     },
-    { key: 'rs', label: 'RS', value: (row) => row.rs_score, render: (row) => row.rs_score?.toFixed(0) ?? '-' },
     { key: 'close', label: '현재가', value: (row) => row.close, render: (row) => num(row.close, 'KRW') },
     { key: 'ma50', label: '50MA', value: (row) => row.ma50, render: (row) => num(row.ma50, 'KRW') },
     { key: 'ma150', label: '150MA', value: (row) => row.ma150, render: (row) => num(row.ma150, 'KRW') },
     { key: 'ma200', label: '200MA', value: (row) => row.ma200, render: (row) => num(row.ma200, 'KRW') },
     { key: 'low52', label: '52주 저점 대비', value: (row) => row.pct_above_52w_low, render: (row) => pct(row.pct_above_52w_low) },
   ];
-  return <SortableDataTable rows={rows} columns={columns} filename="signals.csv" initialSort="rs" empty="신호 데이터가 없습니다." />;
+  return <SortableDataTable rows={rows} columns={columns} filename="signals.csv" initialSort="mtt" empty="신호 데이터가 없습니다." />;
 }
 
 function StrategyRanking({
@@ -708,36 +703,37 @@ function displaySymbolOption(item: ChartIndexRow): string {
 
 function OpportunityTable({ rows }: { rows: PriceMetric[] }) {
   const columns: Column<PriceMetric>[] = [
-    { key: 'publication_date', label: '발간일', value: (row) => row.publication_date, render: (row) => shortDate(row.publication_date) },
+    { key: 'publication_date', label: '일자', value: (row) => row.publication_date, render: (row) => shortDate(row.publication_date) },
     { key: 'company', label: '회사', value: (row) => row.display_name || row.company, render: (row) => row.display_name || row.company },
-    { key: 'current_price', label: '현재가', value: (row) => row.current_price, render: (row) => num(row.current_price, 'KRW') },
-    { key: 'publication_buy_price', label: '발간가', value: (row) => row.publication_buy_price, render: (row) => num(row.publication_buy_price, 'KRW') },
-    { key: 'lowest_price', label: '저가', value: (row) => row.lowest_price_since_publication, render: (row) => num(row.lowest_price_since_publication, 'KRW') },
+    { key: 'publication_buy_price', label: '발간', value: (row) => row.publication_buy_price, render: (row) => num(row.publication_buy_price, 'KRW') },
     { key: 'q25_price', label: 'Q25', value: (row) => row.q25_price_since_publication, render: (row) => num(row.q25_price_since_publication, 'KRW') },
     { key: 'q75_price', label: 'Q75', value: (row) => row.q75_price_since_publication, render: (row) => num(row.q75_price_since_publication, 'KRW') },
-    { key: 'q100_price', label: '고가(Q100)', value: (row) => row.highest_price_since_publication, render: (row) => num(row.highest_price_since_publication, 'KRW') },
+    { key: 'lowest_price', label: '저가', value: (row) => row.lowest_price_since_publication, render: (row) => num(row.lowest_price_since_publication, 'KRW') },
+    { key: 'q100_price', label: '고가', value: (row) => row.highest_price_since_publication, render: (row) => num(row.highest_price_since_publication, 'KRW') },
     {
-      key: 'low_buy_return',
-      label: '저가매수',
-      value: (row) => row.lowest_price_current_return,
-      render: (row) => pct(row.lowest_price_current_return),
-      className: (row) => ((row.lowest_price_current_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
+      key: 'target_sell_return',
+      label: '목표',
+      value: (row) => row.publication_to_target_return,
+      render: (row) => pct(row.publication_to_target_return),
+      className: (row) => ((row.publication_to_target_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
     },
     {
-      key: 'q75_buy_return',
-      label: 'Q75매수',
-      value: (row) => row.q75_price_current_return,
-      render: (row) => pct(row.q75_price_current_return),
-      className: (row) => ((row.q75_price_current_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
+      key: 'low_high_return',
+      label: '최대',
+      value: (row) => row.low_to_high_return,
+      render: (row) => pct(row.low_to_high_return),
+      className: (row) => ((row.low_to_high_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
     },
     {
-      key: 'q100_sell_return',
-      label: '고가매도',
-      value: (row) => row.highest_price_realized_return,
-      render: (row) => pct(row.highest_price_realized_return),
-      className: (row) => ((row.highest_price_realized_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
+      key: 'publication_buy_return',
+      label: '현재',
+      value: (row) => row.buy_at_publication_return,
+      render: (row) => pct(row.buy_at_publication_return),
+      className: (row) => ((row.buy_at_publication_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
     },
-    { key: 'target', label: '목표여력', value: (row) => row.target_upside_remaining, render: (row) => targetUpsideCell(row) },
+    { key: 'target_hit', label: '도달', value: (row) => Number(row.target_hit), render: (row) => (row.target_hit ? 'Y' : 'N') },
+    { key: 'target_days', label: '보유', value: (row) => row.target_hit_holding_days, render: (row) => row.target_hit_holding_days ?? '-' },
+    { key: 'target_upside', label: '여력', value: (row) => row.target_upside_remaining, render: (row) => targetUpsideCell(row) },
   ];
   return <SortableDataTable rows={rows} columns={columns} filename="price-opportunity.csv" initialSort="publication_date" empty="가격 기회 데이터가 없습니다." />;
 }
@@ -788,5 +784,5 @@ function targetPriceCell(value: number | null, reference: number | null) {
 
 function targetUpsideCell(row: PriceMetric) {
   if ((row.target_upside_remaining ?? 0) > 20) return '검토';
-  return row.target_hit ? '도달' : pct(row.target_upside_remaining);
+  return pct(row.target_upside_remaining);
 }

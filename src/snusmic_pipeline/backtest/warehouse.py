@@ -37,10 +37,13 @@ def build_warehouse(data_dir: Path, warehouse_dir: Path) -> dict[str, int]:
     existing_fx = read_table(warehouse_dir, "fx_rates")
     if not existing_fx.empty:
         reports = apply_report_krw_targets(reports, existing_fx)
-    write_table(warehouse_dir, "reports", reports)
     existing_prices = read_table(warehouse_dir, "daily_prices")
     if not existing_prices.empty and not existing_fx.empty:
-        write_table(warehouse_dir, "daily_prices", apply_daily_price_krw_conversion(existing_prices, reports, existing_fx))
+        existing_prices = apply_daily_price_krw_conversion(existing_prices, reports, existing_fx)
+        write_table(warehouse_dir, "daily_prices", existing_prices)
+    if not existing_prices.empty:
+        reports = fill_report_publication_prices(reports, existing_prices)
+    write_table(warehouse_dir, "reports", reports)
     counts = {"reports": len(reports)}
     for table in WAREHOUSE_TABLES:
         path = warehouse_dir / f"{table}.csv"
@@ -93,6 +96,7 @@ def refresh_price_history(
         prices = prices[[column for column in columns if column in prices]].drop_duplicates(["date", "symbol"], keep="last").sort_values(["date", "symbol"])
     write_table(warehouse_dir, "daily_prices", prices)
     reports = apply_report_krw_targets(reports, fx_rates)
+    reports = fill_report_publication_prices(reports, prices)
     write_table(warehouse_dir, "reports", reports)
     sync_duckdb(warehouse_dir)
     return prices
@@ -199,8 +203,7 @@ def optimize_strategies(
         config = BacktestConfig(
             name=f"optuna_{trial.number:03d}",
             weighting=trial.suggest_categorical("weighting", ["1/N", "max_return", "min_var", "sharpe", "sortino", "cvar", "calmar"]),
-            entry_rule=trial.suggest_categorical("entry_rule", ["mtt_or_rs", "mtt_and_rs", "target_only", "hybrid_score"]),
-            rs_threshold=trial.suggest_float("rs_threshold", 60, 95, step=5),
+            entry_rule=trial.suggest_categorical("entry_rule", ["mtt", "target_only", "mtt_target"]),
             mtt_slope_months=trial.suggest_int("mtt_slope_months", 1, 5),
             max_pool_months=trial.suggest_categorical("max_pool_months", [3, 6, 9, 12]),
             target_hit_multiplier=trial.suggest_float("target_hit_multiplier", 1.0, 1.5, step=0.1),
@@ -334,10 +337,11 @@ def _chart_payload_for_symbol(
             "position": "belowBar",
             "shape": "circle",
             "color": "#334155",
-            "text": "리포트",
+            "text": "R",
             "report_id": row.get("report_id", ""),
             "title": row.get("title", ""),
             "target_price": _finite_float(row.get("target_price")),
+            "publication_price": _finite_float(row.get("report_current_price_krw")) or _finite_float(row.get("report_current_price")),
         }
         for row in reports.to_dict("records")
     ]
@@ -406,8 +410,20 @@ def _price_lines_for_report(report: dict[str, Any]) -> list[dict[str, Any]]:
 def _trade_marker_text(row: dict[str, Any]) -> str:
     event = str(row.get("event_type", ""))
     reason = str(row.get("reason", ""))
-    label = {"buy": "매수", "sell": "매도", "rebalance": "조정"}.get(event, event)
-    return f"{label} · {reason}" if reason else label
+    if event == "buy":
+        return "B"
+    if event == "rebalance":
+        return "R"
+    return {
+        "stop_loss": "SL",
+        "take_profit": "TP",
+        "take_profit_rr": "TP",
+        "target_hit": "TG",
+        "signal_loss": "S",
+        "candidate_aging_out": "EX",
+        "candidate_expired": "EX",
+        "candidate_target_hit": "TG",
+    }.get(reason, "S" if event == "sell" else event[:2].upper())
 
 
 def _safe_symbol_filename(symbol: str) -> str:
@@ -495,6 +511,33 @@ def apply_report_krw_targets(reports: pd.DataFrame, fx_rates: pd.DataFrame) -> p
     return frame
 
 
+def fill_report_publication_prices(reports: pd.DataFrame, prices: pd.DataFrame) -> pd.DataFrame:
+    """Use the first available KRW close on or after publication as report publication price."""
+    if reports.empty or prices.empty or "symbol" not in reports or "symbol" not in prices:
+        return reports
+    frame = reports.copy()
+    price_frame = prices.copy()
+    price_frame["date"] = pd.to_datetime(price_frame["date"], errors="coerce")
+    price_frame["close"] = pd.to_numeric(price_frame["close"], errors="coerce")
+    price_frame = price_frame.dropna(subset=["date", "symbol", "close"]).sort_values(["symbol", "date"])
+    if "report_current_price_krw" not in frame:
+        frame["report_current_price_krw"] = pd.NA
+    publication_prices: list[float | None] = []
+    for row in frame.to_dict("records"):
+        symbol = str(row.get("symbol", ""))
+        pub_date = pd.to_datetime(row.get("publication_date"), errors="coerce")
+        if not symbol or pd.isna(pub_date):
+            publication_prices.append(_float_or_none(row.get("report_current_price_krw")))
+            continue
+        symbol_prices = price_frame[(price_frame["symbol"].astype(str) == symbol) & (price_frame["date"] >= pub_date)]
+        if symbol_prices.empty:
+            publication_prices.append(_float_or_none(row.get("report_current_price_krw")))
+        else:
+            publication_prices.append(float(symbol_prices.iloc[0]["close"]))
+    frame["report_current_price_krw"] = publication_prices
+    return frame
+
+
 def read_or_build_reports(data_dir: Path, warehouse_dir: Path) -> pd.DataFrame:
     reports = read_table(warehouse_dir, "reports")
     if reports.empty:
@@ -505,13 +548,13 @@ def read_or_build_reports(data_dir: Path, warehouse_dir: Path) -> pd.DataFrame:
 
 def default_configs() -> list[BacktestConfig]:
     return [
-        BacktestConfig(name="MTT or RS / 1N / 24M", weighting="1/N", entry_rule="mtt_or_rs", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="MTT or RS / Sharpe / 24M", weighting="sharpe", entry_rule="mtt_or_rs", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="MTT and RS / Sortino / 24M", weighting="sortino", entry_rule="mtt_and_rs", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="Hybrid target / CVaR / 24M", weighting="cvar", entry_rule="hybrid_score", rebalance="biweekly", min_target_upside=0.10, lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="MTT / 1N / 24M", weighting="1/N", entry_rule="mtt", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="MTT / Sharpe / 24M", weighting="sharpe", entry_rule="mtt", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="MTT / Sortino / 24M", weighting="sortino", entry_rule="mtt", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="MTT+목표 / CVaR / 24M", weighting="cvar", entry_rule="mtt_target", rebalance="biweekly", min_target_upside=0.10, lookback_days=LOOKBACK_WINDOWS["24M"]),
         BacktestConfig(name="Target only / Calmar / 24M", weighting="calmar", entry_rule="target_only", rebalance="monthly", min_target_upside=0.20, lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="MTT or RS / Max return / 24M", weighting="max_return", entry_rule="mtt_or_rs", rebalance="monthly", lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="MTT or RS / Min var / 24M", weighting="min_var", entry_rule="mtt_or_rs", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="MTT / Max return / 24M", weighting="max_return", entry_rule="mtt", rebalance="monthly", lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(name="MTT / Min var / 24M", weighting="min_var", entry_rule="mtt", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
     ]
 
 
@@ -594,7 +637,10 @@ def sync_duckdb(warehouse_dir: Path) -> None:
         for table in WAREHOUSE_TABLES:
             csv_path = warehouse_dir / f"{table}.csv"
             if csv_path.exists() and csv_path.stat().st_size > 0:
-                con.execute(f"CREATE OR REPLACE TABLE {table} AS SELECT * FROM read_csv_auto(?)", [str(csv_path)])
+                con.execute(
+                    f"CREATE OR REPLACE TABLE {table} AS SELECT * FROM read_csv_auto(?, header=true, quote='\"', sample_size=-1)",
+                    [str(csv_path)],
+                )
     finally:
         con.close()
 

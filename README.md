@@ -69,7 +69,7 @@ flowchart TD
 
 ### 4.2 Execution Pool
 
-실제로 전략이 보유하는 종목 집합입니다. MTT, RS, target upside, stop-loss, rebalancing 조건을 통과한 종목만 들어갑니다.
+실제로 전략이 보유하는 종목 집합입니다. MTT, target upside, stop-loss, rebalancing 조건을 통과한 종목만 들어갑니다.
 
 ### 4.3 Archive
 
@@ -319,13 +319,13 @@ flowchart LR
 
 기본 대시보드는 **24M lookback 대표 전략 7개**만 계산합니다.
 
-- `MTT or RS / 1N / 24M`
-- `MTT or RS / Sharpe / 24M`
-- `MTT and RS / Sortino / 24M`
-- `Hybrid target / CVaR / 24M`
+- `MTT / 1N / 24M`
+- `MTT / Sharpe / 24M`
+- `MTT / Sortino / 24M`
+- `MTT+목표 / CVaR / 24M`
 - `Target only / Calmar / 24M`
-- `MTT or RS / Max return / 24M`
-- `MTT or RS / Min var / 24M`
+- `MTT / Max return / 24M`
+- `MTT / Min var / 24M`
 
 이건 로컬/가벼운 서버용 기본 세트입니다.
 
@@ -336,8 +336,7 @@ Optuna는 더 넓은 파라미터 공간을 탐색합니다.
 현재 탐색 대상:
 
 - weighting: `1/N`, `max_return`, `min_var`, `sharpe`, `sortino`, `cvar`, `calmar`
-- entry rule: `mtt_or_rs`, `mtt_and_rs`, `target_only`, `hybrid_score`
-- RS threshold
+- entry rule: `mtt`, `target_only`, `mtt_target`
 - MTT slope months
 - pool months
 - target hit multiplier

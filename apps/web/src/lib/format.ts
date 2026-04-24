@@ -19,10 +19,9 @@ export function shortDate(value: string | null | undefined): string {
 
 export function labelEntryRule(value: string): string {
   const labels: Record<string, string> = {
-    mtt_or_rs: 'MTT 또는 RS',
-    mtt_and_rs: 'MTT 그리고 RS',
+    mtt: 'MTT',
     target_only: '목표가 여력',
-    hybrid_score: '혼합 점수',
+    mtt_target: 'MTT+목표가',
   };
   return labels[value] ?? value;
 }

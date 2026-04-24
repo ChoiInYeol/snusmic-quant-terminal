@@ -179,7 +179,6 @@ def run_walk_forward_backtest(
                     "gross_return": close / position.entry_price - 1.0 if close and close > 0 else None,
                     "model_contribution": position.contribution_return,
                     "mtt_pass": bool(sig.get("mtt_pass", False)),
-                    "rs_score": _float_or_none(sig.get("rs_score")),
                 }
             )
         prev_date = date
@@ -209,7 +208,6 @@ def empty_result(run_id: str, config: BacktestConfig) -> dict[str, pd.DataFrame]
         weighting=config.weighting,
         entry_rule=config.entry_rule,
         rebalance=config.rebalance,
-        rs_threshold=config.rs_threshold,
         stop_loss_pct=config.stop_loss_pct,
         reward_risk=config.reward_risk,
         max_pool_months=config.max_pool_months,
@@ -398,20 +396,16 @@ def _eligible_symbols(
             continue
         sig = signal_rows.get((signal_date, symbol), {})
         mtt = bool(sig.get("mtt_pass", False))
-        rs = _float_or_none(sig.get("rs_score"))
-        rs_ok = rs is not None and rs >= config.rs_threshold
         target = _float_or_none(report.get("target_price"))
         close = float(close_row[symbol])
         target_upside = (target / close - 1.0) if target and close > 0 else None
         target_ok = target_upside is not None and target_upside >= config.min_target_upside
-        if config.entry_rule == "mtt_or_rs":
-            ok = mtt or rs_ok
-        elif config.entry_rule == "mtt_and_rs":
-            ok = mtt and rs_ok
+        if config.entry_rule == "mtt":
+            ok = mtt
         elif config.entry_rule == "target_only":
             ok = target_ok
         else:
-            ok = (mtt and target_ok) or (rs_ok and target_ok)
+            ok = mtt and target_ok
         if ok:
             eligible.append(symbol)
     return eligible
@@ -471,7 +465,6 @@ def _summarize(
         "weighting": config.weighting,
         "entry_rule": config.entry_rule,
         "rebalance": config.rebalance,
-        "rs_threshold": config.rs_threshold,
         "stop_loss_pct": config.stop_loss_pct,
         "reward_risk": config.reward_risk,
         "max_pool_months": config.max_pool_months,

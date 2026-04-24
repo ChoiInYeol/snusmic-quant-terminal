@@ -5,7 +5,7 @@ from typing import Any
 
 
 WEIGHTING_METHODS = ["1/N", "max_return", "min_var", "sharpe", "sortino", "cvar", "calmar"]
-ENTRY_RULES = ["mtt_or_rs", "mtt_and_rs", "target_only", "hybrid_score"]
+ENTRY_RULES = ["mtt", "target_only", "mtt_target"]
 REBALANCE_FREQUENCIES = ["daily", "weekly", "biweekly", "monthly"]
 LOOKBACK_WINDOWS = {
     "3M": 63,
@@ -17,10 +17,9 @@ LOOKBACK_WINDOWS = {
 
 @dataclass(frozen=True)
 class BacktestConfig:
-    name: str = "mtt_or_rs_equal_weight"
+    name: str = "mtt_equal_weight"
     weighting: str = "1/N"
-    entry_rule: str = "mtt_or_rs"
-    rs_threshold: float = 70.0
+    entry_rule: str = "mtt"
     mtt_slope_months: int = 1
     max_pool_months: int = 12
     target_hit_multiplier: float = 1.0
@@ -61,7 +60,6 @@ class StrategySummary:
     weighting: str
     entry_rule: str
     rebalance: str
-    rs_threshold: float
     stop_loss_pct: float
     reward_risk: float
     max_pool_months: int

@@ -424,6 +424,25 @@ button.heat-tile {
   min-height: 360px;
 }
 
+.chart-tooltip {
+  position: absolute;
+  z-index: 8;
+  min-width: 144px;
+  gap: 2px;
+  padding: 8px 10px;
+  border: 1px solid rgba(31, 79, 143, 0.22);
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 12px 28px rgba(31, 41, 51, 0.12);
+  color: var(--ink);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.chart-tooltip span {
+  color: var(--muted);
+}
+
 .chart-surface.compact {
   min-height: 250px;
 }
@@ -509,7 +528,7 @@ button.heat-tile {
 
 table {
   width: 100%;
-  min-width: 960px;
+  min-width: 1120px;
   border-collapse: collapse;
   background: #ffffff;
   font-size: 12px;
