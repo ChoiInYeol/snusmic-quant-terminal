@@ -10,7 +10,7 @@ _POST_LINK_RE = re.compile(r'href=["\'](http://snusmic\.com/equity-research-[^"\
 
 
 def fetch_research_page_html(url: str = RESEARCH_PAGE_URL) -> str:
-    request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 snusmic-google-finance-sheets/0.2"})
+    request = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 snusmic-quant-terminal/0.2"})
     with urllib.request.urlopen(request, timeout=30) as response:
         return response.read().decode("utf-8", errors="replace")
 

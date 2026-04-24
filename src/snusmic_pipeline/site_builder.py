@@ -25,11 +25,11 @@ def write_json(path: Path, data: Any) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def repo_pdf_url(filename: str, repo: str = "ChoiInYeol/snusmic-google-finance-sheets", branch: str = "main") -> str:
+def repo_pdf_url(filename: str, repo: str = "ChoiInYeol/snusmic-quant-terminal", branch: str = "main") -> str:
     return f"https://github.com/{repo}/blob/{branch}/data/pdfs/{filename}"
 
 
-def repo_markdown_url(filename: str, repo: str = "ChoiInYeol/snusmic-google-finance-sheets", branch: str = "main") -> str:
+def repo_markdown_url(filename: str, repo: str = "ChoiInYeol/snusmic-quant-terminal", branch: str = "main") -> str:
     return f"https://github.com/{repo}/blob/{branch}/data/markdown/{Path(filename).with_suffix('.md').name}"
 
 

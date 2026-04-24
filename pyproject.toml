@@ -3,7 +3,7 @@ requires = ["setuptools>=69"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "snusmic-google-finance-sheets"
+name = "snusmic-quant-terminal"
 version = "0.1.0"
 description = "Collect SNUSMIC research PDFs, extract target prices, and build quant dashboard data."
 readme = "README.md"

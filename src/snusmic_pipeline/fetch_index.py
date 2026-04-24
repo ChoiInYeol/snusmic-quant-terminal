@@ -61,7 +61,7 @@ def fetch_page(page: int, session: requests.Session | None = None) -> list[dict]
             "page": page,
             "_fields": "date,link,title,slug,content",
         },
-        headers={"User-Agent": "Mozilla/5.0 snusmic-google-finance-sheets/0.1"},
+        headers={"User-Agent": "Mozilla/5.0 snusmic-quant-terminal/0.1"},
         timeout=DEFAULT_TIMEOUT,
     )
     response.raise_for_status()

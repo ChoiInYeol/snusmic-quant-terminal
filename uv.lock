@@ -2943,7 +2943,7 @@ wheels = [
 ]
 
 [[package]]
-name = "snusmic-google-finance-sheets"
+name = "snusmic-quant-terminal"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
