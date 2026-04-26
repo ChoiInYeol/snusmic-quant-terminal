@@ -32,12 +32,11 @@ def _common_inputs(synthetic_dates):
 
 def test_prophet_concentrates_on_realised_winner(synthetic_board, synthetic_reports, synthetic_dates):
     plan, fees, cashflows = _common_inputs(synthetic_dates)
-    # max_weight=1.0 lets the max-Sharpe solver concentrate fully on WIN —
-    # the only symbol with materially positive realised return in the fixture.
-    cfg = ProphetConfig(max_weight=1.0, min_history_days=30)
+    # Synthetic fixture: WIN ramps 100→200 (target 180 → hit), LOSS slides
+    # 100→70 (target 130 → never hit), FLAT around 100 (target 110 → hit).
+    # Prophet should buy WIN/FLAT (will hit) and avoid LOSS (will not hit).
+    cfg = ProphetConfig(lookahead_months=24, target_hit_multiplier=1.0)
     out = simulate_prophet(cfg, plan, fees, synthetic_board, synthetic_reports, cashflows, synthetic_dates)
-    # WIN should dominate every buy. LOSS shouldn't appear because its
-    # realised mean return is negative.
     buys = [t for t in out.account.trades if t.side == "buy"]
     assert any(t.symbol == "WIN" for t in buys)
     assert not any(t.symbol == "LOSS" for t in buys)

@@ -1,17 +1,26 @@
-"""Prophet — full-lookahead max-Sharpe oracle.
+"""Prophet — SMIC-constrained target-hit oracle.
 
-Same long-only max-Sharpe optimisation as Weak Prophet, but the
-realised-return window spans the entire remaining simulation horizon
-instead of the next ``lookahead_months``. Concentration is bounded by
-``max_weight`` so the prophet picks a diversified basket of names that
-will perform well rather than blowing all capital into a single illiquid
-winner. This makes the upper bound large but tractable — no
-158-billion-share fills.
+The prophet is restricted to the SMIC report universe (no free-form
+stock picking) but knows ahead of time which reports will actually
+have their target hit. At each monthly rebalance:
+
+1. Find every report published on or before today whose target
+   ``target × target_hit_multiplier`` has *not* been reached by
+   today's close.
+2. Keep only the ones whose price will reach the (multiplied) target
+   *within the next* ``lookahead_months``.
+3. Equal-weight that basket. Empty → sit in cash.
+
+This is the "if SMIC's research is decent, how good could you have
+been with perfect entry-timing knowledge?" question. Naturally
+bounded — the basket is at most the count of open SMIC reports, so
+deployable AUM tracks universe depth instead of compounding to
+quadrillions of KRW.
 """
 
 from __future__ import annotations
 
-from datetime import date
+from datetime import date, timedelta
 
 import pandas as pd
 
@@ -25,7 +34,6 @@ from .base import (
     cumulative_contributions,
     record_equity_point,
 )
-from .sharpe import solve_max_sharpe_weights
 
 
 def simulate_prophet(
@@ -58,7 +66,7 @@ def simulate_prophet(
         if deposit > 0:
             account.deposit(day, deposit)
         if day in rebalance_days:
-            weights = _full_horizon_weights(config, board, reports, day, end_date)
+            weights = _will_hit_target_basket(config, board, reports, day, end_date)
             prices = dict(daily_closes[day])
             for sym, lot in account.holdings.items():
                 if lot.qty > 0 and sym not in prices:
@@ -95,24 +103,70 @@ def _rebalance_days(trading_dates: list[date], cadence: str) -> set[date]:
     raise ValueError(f"unknown prophet cadence: {cadence}")
 
 
-def _full_horizon_weights(
+def _will_hit_target_basket(
     config: ProphetConfig,
     board: PriceBoard,
     reports: pd.DataFrame,
     day: date,
     end_date: date,
 ) -> dict[str, float]:
-    """Solve max-Sharpe over realised returns across ``[day, end_date]``."""
-    if end_date <= day:
+    """Equal-weight basket of SMIC reports whose target hits in the next window."""
+    horizon_end = min(day + timedelta(days=int(config.lookahead_months * 30.5)), end_date)
+    if horizon_end <= day:
         return {}
     active = reports[reports["_pub"] <= day]
     if active.empty:
         return {}
-    candidates = sorted({str(s) for s in active["symbol"].dropna()})
-    rets = board.returns_window(day, end_date, candidates)
-    return solve_max_sharpe_weights(
-        rets,
-        risk_free_rate=config.risk_free_rate,
-        max_weight=config.max_weight,
-        min_history_days=config.min_history_days,
-    )
+    eligible: list[str] = []
+    seen: set[str] = set()
+    multiplier = float(config.target_hit_multiplier)
+    for record in active.to_dict("records"):
+        symbol = str(record["symbol"])
+        if symbol in seen:
+            continue
+        target = _target_price_krw(record)
+        if target is None or target <= 0:
+            continue
+        threshold = target * multiplier
+        # Skip if target was already crossed between publication and today —
+        # the prophet treats it as already-resolved.
+        if _close_reaches(board, record["_pub"], day, symbol, threshold):
+            seen.add(symbol)
+            continue
+        # Eligible iff close hits threshold within the upcoming window.
+        if _close_reaches(board, day, horizon_end, symbol, threshold):
+            seen.add(symbol)
+            eligible.append(symbol)
+    if not eligible:
+        return {}
+    n = len(eligible)
+    return {sym: 1.0 / n for sym in eligible}
+
+
+def _target_price_krw(record: dict) -> float | None:
+    for key in ("target_price_krw", "target_price", "base_target_krw"):
+        value = record.get(key)
+        if value is None or value == "":
+            continue
+        try:
+            v = float(value)
+        except (TypeError, ValueError):
+            continue
+        if v > 0 and v == v:  # exclude NaN
+            return v
+    return None
+
+
+def _close_reaches(board: PriceBoard, start: date, end: date, symbol: str, threshold: float) -> bool:
+    """True iff any close in ``(start, end]`` hits ``threshold`` for ``symbol``."""
+    if board.is_empty or symbol not in board.close.columns:
+        return False
+    if end <= start:
+        return False
+    col = board.close[symbol]
+    ts_start = pd.Timestamp(start)
+    ts_end = pd.Timestamp(end)
+    window = col.loc[(col.index > ts_start) & (col.index <= ts_end)].dropna()
+    if window.empty:
+        return False
+    return bool((window >= threshold).any())

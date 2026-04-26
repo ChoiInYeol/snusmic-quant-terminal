@@ -111,22 +111,35 @@ class _PersonaBase(_FrozenModel):
 
 
 class ProphetConfig(_PersonaBase):
-    """Full-lookahead oracle. Same max-Sharpe solver as Weak Prophet,
-    but the realised-return window covers the **entire remaining
-    simulation horizon** instead of just the next ``lookahead_months``.
+    """SMIC-constrained prophet — knows which reports will hit target.
 
-    This produces a believable upper bound: the optimiser is forced to
-    spread weight across symbols whose covariance lowers portfolio risk,
-    so the prophet does not collapse onto a single symbol it could only
-    buy in unrealistic share quantities.
+    Trade-off framing: free-form 'pick top-K future winners' compounds
+    too fast (reaches absurd 10^15-KRW final balances by month 60).
+    This prophet keeps the upper-bound spirit but constrains the
+    selection universe to **published SMIC reports**, which is exactly
+    the domain question the simulator is designed for: *"if you used
+    only SMIC research but knew in advance which reports would actually
+    hit their target, how would you have done?"*
+
+    Algorithm at each rebalance day ``t``:
+
+    1. Take every SMIC report published on or before ``t`` whose
+       target has not yet been reached by ``t``.
+    2. Keep only the reports whose price will hit
+       ``target × target_hit_multiplier`` *within the next*
+       ``lookahead_months``.
+    3. Equal-weight that basket. If empty → sit in cash.
+
+    Naturally bounded sizing — the basket is at most ~the count of
+    open SMIC reports active in the window, weights are 1/N each, so
+    the prophet's deployable AUM tracks the universe's market depth.
     """
 
     persona_name: Literal["oracle"] = "oracle"
     label: str = "Prophet"
-    risk_free_rate: Annotated[float, Field(ge=0.0, le=0.20)] = 0.03
-    max_weight: Annotated[float, Field(gt=0.0, le=1.0)] = 0.40
+    lookahead_months: Annotated[int, Field(ge=1, le=24)] = 6
+    target_hit_multiplier: Annotated[float, Field(gt=0.0, le=2.0)] = 1.0
     rebalance: Literal["monthly", "quarterly"] = "monthly"
-    min_history_days: Annotated[int, Field(ge=20, le=2520)] = 60
 
 
 class WeakProphetConfig(_PersonaBase):
