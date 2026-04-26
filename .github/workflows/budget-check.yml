@@ -26,7 +26,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
-          payload="$(gh api "/repos/${{ github.repository }}/actions/billing/usage" 2>/dev/null || echo '{}')"
+          # The repository billing endpoint is unavailable for some account
+          # types and returns a non-zero 404 while still writing an error JSON
+          # body to stdout. Capture success explicitly so the fallback does not
+          # concatenate with that error body and produce multi-line jq values.
+          if ! payload="$(gh api "/repos/${{ github.repository }}/actions/billing/usage" 2>/dev/null)"; then
+            payload='{}'
+          fi
           minutes_used=$(echo "$payload" | jq -r '.total_minutes_used // 0')
           minutes_paid=$(echo "$payload" | jq -r '.included_minutes // 2000')
           if [ "$minutes_paid" = 0 ]; then minutes_paid=2000; fi

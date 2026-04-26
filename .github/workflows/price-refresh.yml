@@ -10,7 +10,10 @@ permissions:
 
 concurrency:
   group: snusmic-data-vercel-${{ github.ref }}
-  cancel-in-progress: true
+  # Share the data-writer lane with sync.yml, but serialize instead of
+  # cancelling. A push-triggered sync run can otherwise interrupt this workflow
+  # while it is producing generated data, losing the scheduled refresh.
+  cancel-in-progress: false
 
 jobs:
   refresh:

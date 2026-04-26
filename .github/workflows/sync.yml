@@ -25,7 +25,10 @@ permissions:
 
 concurrency:
   group: snusmic-data-vercel-${{ github.ref }}
-  cancel-in-progress: true
+  # Data-refresh workflows push generated files back to main. Do not cancel an
+  # in-flight writer when another push/scheduled refresh arrives; queue it so
+  # the commit/rebase retry loop below can finish without dropping a refresh.
+  cancel-in-progress: false
 
 jobs:
   check:
