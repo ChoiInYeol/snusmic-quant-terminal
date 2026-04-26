@@ -511,6 +511,37 @@ result = run_simulation(cfg, Path("data/warehouse"))
 
 ## 9. 산출물
 
+### 9-0. SMIC 리포트 자체 통계 (페르소나 무관)
+
+`data/sim/report_stats.json` + `report_performance.csv` 는 페르소나와 별개로
+"리포트 발간 후 가격이 어떻게 움직였는가" 만 답하는 데이터입니다.
+
+기본 시나리오 (2021-01-04 → 2026-04-15) 결과:
+
+- 총 **211개** 리포트, 206개에 가격 데이터 매칭
+- 목표가 도달: **127개 (61.7%)**
+- 목표가 도달까지 걸린 시간: 평균 239일, 중앙값 46일 (긴 꼬리 분포)
+- 발간 후 평균 누적 수익률: **+95.0%** (mean), +28.8% (median)
+- 발간 시점 약속한 목표 상승률: 평균 **+62.6%**
+
+Top 5 종목 (사후 수익률 기준):
+
+| 순위 | 위너 (current return) | 루저 (current return) |
+|---:|---|---|
+| 1 | 이수페타시스 +2,105% | Chegg −94% |
+| 2 | HD현대일렉트릭 +1,433% | 원티드랩 −91% |
+| 3 | SNT에너지 +834% | 제이콘텐트리 −89% |
+| 4 | SK하이닉스 +821% | 티와이홀딩스 −89% |
+| 5 | Vertiv +794% | 카카오게임즈 −89% |
+
+목표가에서 가장 멀리 어긋난 종목 (still open): Z-Holdings(−97%), 아이씨에이치(−95%),
+원티드랩(−93%), 티와이홀딩스(−93%), 이지바이오(−92%).
+
+`report_performance.csv` 에는 리포트별로 `entry_price_krw`,
+`target_price_krw`, `target_upside_at_pub`, `target_hit`, `target_hit_date`,
+`days_to_target`, `last_close_krw`, `current_return`, `peak_return`,
+`trough_return`, `target_gap_pct` 가 모두 들어 있어, 자체 분석에 바로 사용 가능.
+
 ### 9-1. `data/sim/summary.csv` — 페르소나별 종합 통계
 
 | 컬럼 | 의미 |
@@ -561,11 +592,57 @@ smic_follower_v2,2024-09-02,A.KS,sell,12,55310.0,663720.0,99.56,1194.70,...,stop
 - `stop_loss_average_down` — v2 물타기 손절
 - `stop_loss_report_age` — v2 리포트 노후 손절
 
-### 9-4. `data/sim/personas.json`
+### 9-4. 페르소나별 보유 종목 분석
+
+세 가지 뷰가 추가로 생성됩니다:
+
+#### `position_episodes.csv` — 종목별 라운드트립
+
+`(persona, symbol)` 별로 보유 시작 → 종료(또는 still open)의 한 사이클을 한 행으로.
+
+| 컬럼 | 의미 |
+|---|---|
+| `persona`, `symbol`, `company` | 누가, 어떤 종목 |
+| `open_date`, `close_date`, `holding_days` | 보유 시작/종료/일수 (close_date=null이면 still open) |
+| `buy_fills`, `sell_fills` | 분할 매수/매도 횟수 |
+| `total_qty_bought`, `total_qty_sold` | 누적 매수/매도 주식수 |
+| `avg_entry_price_krw`, `avg_exit_price_krw` | 가중평균 진입/청산가 |
+| `realized_pnl_krw` | 이 라운드트립에서 실현된 손익 |
+| `unrealized_pnl_krw`, `last_close_krw` | still open 일 때 |
+| `status` | `"closed"` / `"open"` |
+| `exit_reasons` | 매도 사유 모음 (`target_hit`, `stop_loss_time`, ...) |
+
+#### `current_holdings.csv` — 현재 보유 (마지막 영업일 기준)
+
+증권사 앱의 "내 보유 종목" 화면과 동일. 각 페르소나가 마지막 날 들고 있는 종목들.
+
+| 컬럼 | 의미 |
+|---|---|
+| `persona`, `symbol`, `company`, `qty` | |
+| `avg_cost_krw`, `last_close_krw` | 가중평균 매수원가 vs 최근 종가 |
+| `market_value_krw` | qty × last_close (평가금) |
+| `unrealized_pnl_krw`, `unrealized_return` | 평가손익 (KRW + %) |
+| `holding_days`, `first_buy_date` | 얼마나 들고 있었나 |
+
+샘플 (기본 시나리오 마지막 날):
+
+- **Prophet**: 0 종목 (모두 peak에서 매도 완료)
+- **All-Weather**: 4 종목 (GLD/QQQ/SPY/069500.KS 25/25/25/25)
+- **SMIC Follower v1**: 77 종목 (목표가 미도달 종목들 그대로 보유)
+- **SMIC Follower v2**: 14 종목 (손절 룰로 정리 후 남은 것)
+- **Weak Prophet**: 20 종목 (max-Sharpe 결과로 분산, NE/에이피알/이지바이오 등)
+
+#### `symbol_stats.csv` — 종목별 평생 누적
+
+`(persona, symbol)` 별로 모든 라운드트립 합계: `episodes`, `total_holding_days`,
+`total_realized_pnl_krw`, `is_currently_held`. 한 종목을 여러 번 매매한 경우의
+누적 손익을 보기 좋습니다.
+
+### 9-5. `data/sim/personas.json`
 
 `SimulationResult.model_dump_json()` — 위 셋의 super-set, 그리고 `SimulationConfig` 까지 포함. 5MB 정도.
 
-### 9-5. PNG 시각화
+### 9-6. PNG 시각화
 
 - `equity_curves.png` (1680×840): 5개 페르소나 + 누적 적립금 점선 overlay
 - `net_profit_bar.png` (1400×770): 순이익 막대, 정렬된 가로 막대

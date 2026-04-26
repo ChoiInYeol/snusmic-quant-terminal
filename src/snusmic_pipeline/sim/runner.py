@@ -23,6 +23,11 @@ from .contracts import (
     SmicFollowerV2Config,
     WeakProphetConfig,
 )
+from .holdings import (
+    compute_current_holdings,
+    compute_position_episodes,
+    compute_symbol_stats,
+)
 from .market import PriceBoard, load_benchmark_prices
 from .personas import (
     PersonaRunOutput,
@@ -32,6 +37,7 @@ from .personas import (
     simulate_smic_follower_v2,
     simulate_weak_prophet,
 )
+from .report_stats import aggregate_report_stats, compute_report_performance
 from .savings import build_cash_flow_schedule
 
 
@@ -77,12 +83,70 @@ def run_simulation(
     summaries = tuple(o.summary for o in outputs)
     equity_points = tuple(p for o in outputs for p in o.equity_points)
     trades = tuple(t for o in outputs for t in o.account.trades)
+
+    # Holdings reports — single source of truth is the trade ledger, which is
+    # how a brokerage app reconstructs past positions from statements. Each
+    # persona's episodes are marked against its own price board (SNUSMIC
+    # universe for the four research personas; All-Weather basket for the
+    # benchmark) so the unrealized PnL on still-open positions is correct.
+    company_by_symbol = _company_lookup(reports)
+    last_day = trading_dates[-1]
+    episodes = list(
+        compute_position_episodes(
+            (t for t in trades if t.persona != "all_weather"),
+            board,
+            last_day,
+            company_by_symbol,
+        )
+    )
+    if benchmark_board is not None:
+        episodes.extend(
+            compute_position_episodes(
+                (t for t in trades if t.persona == "all_weather"),
+                benchmark_board,
+                last_day,
+                _ALL_WEATHER_LABELS,
+            )
+        )
+    episodes_tuple = tuple(episodes)
+    current_holdings = tuple(compute_current_holdings(episodes_tuple, board=None, end_date=last_day))
+    symbol_stats = tuple(compute_symbol_stats(episodes_tuple))
+
+    # Persona-agnostic SMIC report statistics.
+    report_perf = tuple(compute_report_performance(reports, board, last_day))
+    report_stats_obj = aggregate_report_stats(report_perf) if report_perf else None
+
     return SimulationResult(
         config=config,
         summaries=summaries,
         equity_points=equity_points,
         trades=trades,
+        position_episodes=episodes_tuple,
+        current_holdings=current_holdings,
+        symbol_stats=symbol_stats,
+        report_performance=report_perf,
+        report_stats=report_stats_obj,
     )
+
+
+_ALL_WEATHER_LABELS: dict[str, str] = {
+    "GLD": "Gold (GLD)",
+    "QQQ": "NASDAQ-100 (QQQ)",
+    "SPY": "S&P 500 (SPY)",
+    "069500.KS": "KOSPI 200 (069500.KS)",
+}
+
+
+def _company_lookup(reports: pd.DataFrame) -> dict[str, str]:
+    if reports.empty or "symbol" not in reports.columns or "company" not in reports.columns:
+        return {}
+    out: dict[str, str] = {}
+    for record in reports.to_dict("records"):
+        symbol = str(record.get("symbol") or "").strip()
+        company = str(record.get("company") or "").strip()
+        if symbol and company and symbol not in out:
+            out[symbol] = company
+    return out
 
 
 def _dispatch(

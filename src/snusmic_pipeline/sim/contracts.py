@@ -257,6 +257,117 @@ class EquityPoint(_FrozenModel):
     open_positions: int
 
 
+class PositionEpisode(_FrozenModel):
+    """One contiguous holding period for a (persona, symbol) pair.
+
+    An "episode" opens when ``qty`` goes from 0 → >0 and closes when ``qty``
+    returns to 0. A partial sell that does NOT fully close the position
+    stays inside the same episode. Symbols that the persona buys, sells
+    fully, then buys again will produce two distinct episodes.
+
+    ``status`` is ``"closed"`` once ``close_date`` is set, otherwise
+    ``"open"`` (still held at the end of the simulation).
+    """
+
+    persona: str
+    symbol: str
+    company: str | None
+    open_date: date
+    close_date: date | None
+    holding_days: int
+    buy_fills: int
+    sell_fills: int
+    total_qty_bought: int
+    total_qty_sold: int
+    avg_entry_price_krw: float
+    avg_exit_price_krw: float | None
+    realized_pnl_krw: float
+    unrealized_pnl_krw: float | None  # only when status == "open"
+    last_close_krw: float | None
+    status: Literal["open", "closed"]
+    exit_reasons: tuple[str, ...]
+
+
+class CurrentHolding(_FrozenModel):
+    """A still-open position at the end of the simulation."""
+
+    persona: str
+    symbol: str
+    company: str | None
+    qty: Annotated[int, Field(ge=1)]
+    avg_cost_krw: float
+    last_close_krw: float | None
+    market_value_krw: float
+    unrealized_pnl_krw: float
+    unrealized_return: float | None  # last_close / avg_cost - 1
+    holding_days: int
+    first_buy_date: date
+
+
+class ReportPerformance(_FrozenModel):
+    """One SMIC report's realised outcome between publication and ``as_of_date``.
+
+    Persona-agnostic: this is just "how did the price move after the report
+    came out". Used by :class:`ReportStats` to aggregate target-hit rates,
+    top winners/losers, and target-gap analysis.
+    """
+
+    report_id: str
+    symbol: str
+    company: str
+    publication_date: date
+    entry_price_krw: float | None  # first close on/after pub_date
+    target_price_krw: float | None
+    target_upside_at_pub: float | None  # target / entry − 1
+    target_hit: bool
+    target_hit_date: date | None
+    days_to_target: int | None  # None when not hit
+    last_close_krw: float | None
+    last_close_date: date | None
+    current_return: float | None  # last_close / entry − 1
+    peak_return: float | None
+    trough_return: float | None
+    target_gap_pct: float | None  # (last_close − target) / target
+
+
+class ReportStats(_FrozenModel):
+    """Aggregate statistics across the entire SMIC report universe."""
+
+    total_reports: int
+    reports_with_prices: int
+    target_hit_count: int
+    target_hit_rate: float  # 0.0..1.0
+    avg_days_to_target: float | None  # only over hit reports
+    median_days_to_target: float | None
+    avg_current_return: float | None  # mean across reports with prices
+    median_current_return: float | None
+    avg_target_upside_at_pub: float | None  # implied promised return at pub
+    avg_target_gap_pct: float | None  # mean (last − target)/target across not-hit reports
+    top_winners: tuple[ReportPerformance, ...]
+    top_losers: tuple[ReportPerformance, ...]
+    biggest_target_gaps_below: tuple[ReportPerformance, ...]  # furthest below target
+    biggest_target_overshoots: tuple[ReportPerformance, ...]  # blew past target the most
+    fastest_target_hits: tuple[ReportPerformance, ...]
+    slowest_target_hits: tuple[ReportPerformance, ...]
+    most_aggressive_targets: tuple[ReportPerformance, ...]  # highest target_upside_at_pub
+
+
+class SymbolStat(_FrozenModel):
+    """Aggregated lifetime stats for a (persona, symbol) pair across all episodes."""
+
+    persona: str
+    symbol: str
+    company: str | None
+    episodes: int
+    total_buy_fills: int
+    total_sell_fills: int
+    total_holding_days: int  # sum across all episodes
+    total_realized_pnl_krw: float
+    is_currently_held: bool
+    current_qty: int
+    current_unrealized_pnl_krw: float | None
+
+
 class PersonaSummary(_FrozenModel):
     """Top-line stats for a persona at the end of the simulation."""
 
@@ -284,6 +395,11 @@ class SimulationResult(_FrozenModel):
     summaries: tuple[PersonaSummary, ...]
     equity_points: tuple[EquityPoint, ...]
     trades: tuple[Trade, ...]
+    position_episodes: tuple[PositionEpisode, ...] = ()
+    current_holdings: tuple[CurrentHolding, ...] = ()
+    symbol_stats: tuple[SymbolStat, ...] = ()
+    report_performance: tuple[ReportPerformance, ...] = ()
+    report_stats: ReportStats | None = None
 
 
 # Discriminator helper so the runner can dispatch by ``persona_name``.
