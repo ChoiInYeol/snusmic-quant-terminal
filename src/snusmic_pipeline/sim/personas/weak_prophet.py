@@ -13,9 +13,7 @@ from __future__ import annotations
 
 from datetime import date, timedelta
 
-import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
 
 from ..brokerage import Account
 from ..contracts import BrokerageFees, SavingsPlan, WeakProphetConfig
@@ -27,6 +25,7 @@ from .base import (
     cumulative_contributions,
     record_equity_point,
 )
+from .sharpe import solve_max_sharpe_weights
 
 
 def simulate_weak_prophet(
@@ -109,56 +108,12 @@ def _solve_target_weights(
         return {}
     candidates = sorted({str(s) for s in active["symbol"].dropna()})
     rets = board.returns_window(day, horizon_end, candidates)
-    if rets.empty:
-        return {}
-    rets = rets.dropna(axis=1, thresh=config.min_history_days)
-    if rets.shape[1] == 0:
-        return {}
-    rets = rets.fillna(0.0)
-    mu = rets.mean().to_numpy() * 252.0
-    cov = rets.cov().to_numpy() * 252.0
-    n = mu.size
-    if n == 1:
-        return {str(rets.columns[0]): 1.0}
-    cap = float(min(1.0, max(config.max_weight, 1.0 / n)))
-
-    def neg_sharpe(weights: np.ndarray) -> float:
-        port_return = float(np.dot(weights, mu))
-        port_var = float(np.dot(weights, cov @ weights))
-        if port_var <= 1e-12:
-            return -port_return
-        port_vol = float(np.sqrt(port_var))
-        return -(port_return - config.risk_free_rate) / port_vol
-
-    constraints = ({"type": "eq", "fun": lambda w: float(np.sum(w) - 1.0)},)
-    bounds = [(0.0, cap)] * n
-    x0 = np.full(n, 1.0 / n)
-    try:
-        result = minimize(
-            neg_sharpe,
-            x0,
-            method="SLSQP",
-            bounds=bounds,
-            constraints=constraints,
-            options={"ftol": 1e-9, "maxiter": 200, "disp": False},
-        )
-        if not result.success:
-            return _equal_weights(rets.columns)
-        weights = np.clip(result.x, 0.0, cap)
-        s = weights.sum()
-        if s <= 0:
-            return _equal_weights(rets.columns)
-        weights = weights / s
-    except Exception:
-        return _equal_weights(rets.columns)
-    return {str(sym): float(w) for sym, w in zip(rets.columns, weights, strict=True) if w > 1e-4}
-
-
-def _equal_weights(columns) -> dict[str, float]:
-    n = len(columns)
-    if n == 0:
-        return {}
-    return {str(c): 1.0 / n for c in columns}
+    return solve_max_sharpe_weights(
+        rets,
+        risk_free_rate=config.risk_free_rate,
+        max_weight=config.max_weight,
+        min_history_days=config.min_history_days,
+    )
 
 
 def _empty_output(persona, label, account, cashflows, initial_capital):

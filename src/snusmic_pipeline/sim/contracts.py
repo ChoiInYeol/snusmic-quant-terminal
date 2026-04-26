@@ -111,19 +111,22 @@ class _PersonaBase(_FrozenModel):
 
 
 class ProphetConfig(_PersonaBase):
-    """Full-lookahead oracle. Picks the post-publication realized winner.
+    """Full-lookahead oracle. Same max-Sharpe solver as Weak Prophet,
+    but the realised-return window covers the **entire remaining
+    simulation horizon** instead of just the next ``lookahead_months``.
 
-    ``dominance_threshold`` controls when the prophet concentrates 100% on
-    the top symbol vs. spreading across a basket: if the top symbol's
-    realized peak return is ``>= dominance_threshold × runner-up`` it goes
-    all-in, otherwise weights are proportional to realized return capped at
-    ``max_weight``."""
+    This produces a believable upper bound: the optimiser is forced to
+    spread weight across symbols whose covariance lowers portfolio risk,
+    so the prophet does not collapse onto a single symbol it could only
+    buy in unrealistic share quantities.
+    """
 
     persona_name: Literal["oracle"] = "oracle"
     label: str = "Prophet"
-    dominance_threshold: Annotated[float, Field(ge=1.0, le=10.0)] = 1.5
-    max_weight: Annotated[float, Field(gt=0.0, le=1.0)] = 1.0
+    risk_free_rate: Annotated[float, Field(ge=0.0, le=0.20)] = 0.03
+    max_weight: Annotated[float, Field(gt=0.0, le=1.0)] = 0.40
     rebalance: Literal["monthly", "quarterly"] = "monthly"
+    min_history_days: Annotated[int, Field(ge=20, le=2520)] = 60
 
 
 class WeakProphetConfig(_PersonaBase):
