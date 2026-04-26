@@ -19,7 +19,6 @@ from .markdown_export import export_markdown
 from .models import DownloadedPdf, ExtractedReport, ReportMeta
 from .opendataloader_fallback import OpenDataLoaderUnavailable, convert_pdfs_to_markdown
 from .quant import compute_portfolio_backtests, compute_price_metrics, dataclass_rows
-from .site_builder import build_site, build_web_data
 
 REPORT_HEADERS = [
     "페이지",
@@ -386,21 +385,6 @@ def run_check_new(args: argparse.Namespace) -> int:
     return 0
 
 
-def run_build_site(args: argparse.Namespace) -> int:
-    build_site(Path(args.data_dir), Path(args.public_dir))
-    print(f"Built site at {args.public_dir}")
-    return 0
-
-
-def run_build_web_data(args: argparse.Namespace) -> int:
-    """Phase 4 — write the dashboard's data bundle directly into the
-    Next.js ``apps/web/public/data/`` tree (or any caller-supplied path)
-    without producing the legacy Quarto ``index.html``."""
-    counts = build_web_data(Path(args.data_dir), Path(args.output_dir))
-    print(f"Built web data at {args.output_dir}: {counts}")
-    return 0
-
-
 def run_refresh_market(args: argparse.Namespace) -> int:
     data_dir = Path(args.data_dir)
     reports = read_extracted_reports_csv(data_dir / "extracted_reports.csv")
@@ -411,8 +395,6 @@ def run_refresh_market(args: argparse.Namespace) -> int:
         data_dir / "portfolio_backtests.json",
         validate_portfolio_backtest_rows(dataclass_rows(portfolio_backtests)),
     )
-    if args.build_site:
-        build_site(data_dir, Path(args.public_dir))
     print(f"Reports loaded: {len(reports)}")
     print(f"Price metrics OK: {sum(1 for item in price_metrics if item.status == 'ok')}")
     print(f"Portfolio backtests: {len(portfolio_backtests)}")
@@ -485,7 +467,7 @@ def run_export_dashboard(args: argparse.Namespace) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Collect SNUSMIC PDFs, extract target prices, and build dashboard data."
+        description="Collect SNUSMIC PDFs, extract target prices, and build simulation data."
     )
     subparsers = parser.add_subparsers(dest="command")
 
@@ -547,28 +529,11 @@ def build_parser() -> argparse.ArgumentParser:
     check_new.add_argument("--github-output", default="")
     check_new.set_defaults(func=run_check_new)
 
-    build_site_parser = subparsers.add_parser(
-        "build-site", help="Build the Vercel-ready static dashboard artifact."
-    )
-    build_site_parser.add_argument("--data-dir", default="data")
-    build_site_parser.add_argument("--public-dir", default="site/public")
-    build_site_parser.set_defaults(func=run_build_site)
-
-    build_web_data_parser = subparsers.add_parser(
-        "build-web-data",
-        help="Phase 4 — emit Next.js dashboard data bundle (no index.html) into apps/web/public/data/.",
-    )
-    build_web_data_parser.add_argument("--data-dir", default="data")
-    build_web_data_parser.add_argument("--output-dir", default="apps/web/public/data")
-    build_web_data_parser.set_defaults(func=run_build_web_data)
-
     refresh_market = subparsers.add_parser(
         "refresh-market",
         help="Refresh yfinance price metrics and portfolio backtests from committed report CSV.",
     )
     refresh_market.add_argument("--data-dir", default="data")
-    refresh_market.add_argument("--build-site", action=argparse.BooleanOptionalAction, default=True)
-    refresh_market.add_argument("--public-dir", default="site/public")
     refresh_market.set_defaults(func=run_refresh_market)
 
     export_md = subparsers.add_parser(
@@ -645,7 +610,7 @@ def build_parser() -> argparse.ArgumentParser:
     optimize.set_defaults(func=run_optimize)
 
     dashboard = subparsers.add_parser(
-        "export-dashboard", help="Export v3 warehouse tables into dashboard JSON artifacts."
+        "export-dashboard", help="Export v3 warehouse tables into quant_v3 JSON artifacts."
     )
     dashboard.add_argument("--data-dir", default="data")
     dashboard.add_argument("--warehouse-dir", default="data/warehouse")

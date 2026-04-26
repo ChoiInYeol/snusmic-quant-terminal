@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: snusmic-data-vercel-${{ github.ref }}
+  group: snusmic-data-${{ github.ref }}
   # Share the data-writer lane with sync.yml, but serialize instead of
   # cancelling. A push-triggered sync run can otherwise interrupt this workflow
   # while it is producing generated data, losing the scheduled refresh.
@@ -35,14 +35,10 @@ jobs:
 
       - name: Refresh yfinance metrics
         run: |
-          uv run python -m snusmic_pipeline refresh-market --no-build-site
+          uv run python -m snusmic_pipeline refresh-market
           uv run python -m snusmic_pipeline build-warehouse
           uv run python -m snusmic_pipeline refresh-prices
           uv run python -m snusmic_pipeline run-backtest
-
-      - name: Build Vercel dashboard artifact
-        run: |
-          uv run python -m snusmic_pipeline build-site
 
       - name: Commit market data updates
         run: |

@@ -1,8 +1,8 @@
-"""Typed schemas for JSON artifacts consumed by the web surfaces.
+"""Typed schemas for JSON artifacts consumed by simulations and reports.
 
 The backtest warehouse schemas cover CSV tables under ``data/warehouse``.
 This module covers JSON artifacts such as ``price_metrics.json`` that are not
-warehouse tables but still form a public data contract for Vercel/Pages.
+warehouse tables but still form a public data contract for server simulations.
 """
 
 from __future__ import annotations
@@ -77,7 +77,7 @@ class PortfolioBacktestRow(BaseModel):
     """Row schema for ``data/portfolio_backtests.json``.
 
     This legacy cohort-level artifact is still published for comparison and
-    archive views. Keep it typed so downstream web surfaces can rely on a stable
+    archive/report views. Keep it typed so downstream consumers can rely on a stable
     contract while newer strategy artifacts evolve separately.
     """
 

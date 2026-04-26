@@ -1,6 +1,6 @@
 {
   "additionalProperties": false,
-  "description": "Row schema for ``data/portfolio_backtests.json``.\n\nThis legacy cohort-level artifact is still published for comparison and\narchive views. Keep it typed so downstream web surfaces can rely on a stable\ncontract while newer strategy artifacts evolve separately.",
+  "description": "Row schema for ``data/portfolio_backtests.json``.\n\nThis legacy cohort-level artifact is still published for comparison and\narchive/report views. Keep it typed so downstream consumers can rely on a stable\ncontract while newer strategy artifacts evolve separately.",
   "properties": {
     "cohort_month": {
       "title": "Cohort Month",

@@ -24,7 +24,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: snusmic-data-vercel-${{ github.ref }}
+  group: snusmic-data-${{ github.ref }}
   # Data-refresh workflows push generated files back to main. Do not cancel an
   # in-flight writer when another push/scheduled refresh arrives; queue it so
   # the commit/rebase retry loop below can finish without dropping a refresh.
@@ -35,7 +35,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       should_sync: ${{ steps.decide.outputs.should_sync }}
-      should_deploy: ${{ steps.decide.outputs.should_deploy }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -60,21 +59,16 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "push" ]; then
             echo "should_sync=false" >> "$GITHUB_OUTPUT"
-            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
           elif [ "${{ github.event.inputs.force_full || 'false' }}" = "true" ]; then
             echo "should_sync=true" >> "$GITHUB_OUTPUT"
-            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
           elif [ "${{ steps.detect.outputs.has_new }}" = "true" ]; then
             echo "should_sync=true" >> "$GITHUB_OUTPUT"
-            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
           elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "No new reports; deploying committed data only."
+            echo "No new reports; no sync needed."
             echo "should_sync=false" >> "$GITHUB_OUTPUT"
-            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
           else
             echo "No new reports on page one; skipping heavy sync."
             echo "should_sync=false" >> "$GITHUB_OUTPUT"
-            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
           fi
 
   sync:
@@ -128,12 +122,11 @@ jobs:
             uv run python -m snusmic_pipeline sync --pages "$PAGES"
           fi
 
-      - name: Build data and Vercel dashboard artifact
+      - name: Build simulation data artifacts
         run: |
           uv run python -m snusmic_pipeline build-warehouse
           uv run python -m snusmic_pipeline refresh-prices
           uv run python -m snusmic_pipeline run-backtest
-          uv run python -m snusmic_pipeline build-site
 
       - name: Commit data updates
         run: |
@@ -163,15 +156,3 @@ jobs:
               exit 1
             fi
           fi
-
-  deploy:
-    needs: check
-    if: needs.check.outputs.should_sync != 'true' && needs.check.outputs.should_deploy == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      - name: Build Vercel dashboard artifact from committed data
-        run: |
-          PYTHONPATH=src python -c 'from pathlib import Path; from snusmic_pipeline.site_builder import build_site; build_site(Path("data"), Path("site/public"))'

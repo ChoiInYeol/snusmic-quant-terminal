@@ -13,13 +13,3 @@ venv/
 data/opendataloader/
 data/warehouse/*.duckdb
 data/warehouse/*.duckdb.wal
-site/public/
-site/quarto/_site/
-site/quarto/data/
-.vercel
-node_modules/
-apps/web/.next/
-apps/web/out/
-apps/web/public/data/
-apps/web/test-results/
-apps/web/tsconfig.tsbuildinfo

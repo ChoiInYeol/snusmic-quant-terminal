@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "snusmic-quant-terminal"
 version = "0.1.0"
-description = "Collect SNUSMIC research PDFs, extract target prices, and build quant dashboard data."
+description = "Collect SNUSMIC research PDFs, extract target prices, and build quant simulation data."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -47,7 +47,7 @@ xfail_strict = true
 [tool.ruff]
 line-length = 110
 target-version = "py311"
-extend-exclude = ["apps", "site", "data", ".omc"]
+extend-exclude = ["data", ".omc"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "UP", "SIM"]

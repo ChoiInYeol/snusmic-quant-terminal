@@ -63,9 +63,8 @@ chronological long-only entry/exit pair with future information. If this invaria
 quality first: currency conversion, missing bars, target-price extraction, and
 split-adjusted price history are the likely causes.
 
-## UI surface decision
+## Output surface decision
 
-The Vercel Next.js app is the primary product UI. The static/GitHub Pages output
-is intentionally allowed to be a simpler archive/mirror for data and source
-verification. Keeping both surfaces visually identical is not a goal unless the
-static surface becomes the primary user-facing entry point again.
+The repository is now server-simulation first. Python code and committed CSV/JSON
+data artifacts are the durable contract; frontend deployment surfaces are no
+longer part of the core product path.
