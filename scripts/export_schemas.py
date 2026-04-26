@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Export Pydantic-v2 table models to committed JSON Schemas.
 
-For every model in :data:`snusmic_pipeline.backtest.schemas.TABLE_MODELS`, emit
-``docs/schemas/{table}.schema.json`` with Phase-1a column-level metadata:
+For every model in the warehouse-table and JSON-artifact schema registries, emit
+``docs/schemas/{name}.schema.json`` with Phase-1a column-level metadata:
 
 * ``x-snusmic-semantic-version`` — model-level ``semantic_version`` (default "1.0").
 * ``properties.{col}.x-snusmic-nan-policy`` — per-column ``nan_policy``
@@ -26,6 +26,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
+from snusmic_pipeline.artifact_schemas import ARTIFACT_MODELS
 from snusmic_pipeline.backtest.schemas import TABLE_MODELS
 
 SCHEMAS_DIR = Path(__file__).resolve().parent.parent / "docs" / "schemas"
@@ -51,10 +52,11 @@ def build_schema(name: str, model: type[BaseModel]) -> dict:
 
 
 def emit_all() -> dict[str, str]:
-    """Return a ``{path: serialized_json}`` mapping for every table model."""
+    """Return a ``{path: serialized_json}`` mapping for every schema model."""
     SCHEMAS_DIR.mkdir(parents=True, exist_ok=True)
     payloads: dict[str, str] = {}
-    for name, model in sorted(TABLE_MODELS.items()):
+    schema_models = {**TABLE_MODELS, **ARTIFACT_MODELS}
+    for name, model in sorted(schema_models.items()):
         schema = build_schema(name, model)
         target = SCHEMAS_DIR / f"{name}.schema.json"
         payloads[str(target)] = json.dumps(schema, indent=2, sort_keys=False) + "\n"

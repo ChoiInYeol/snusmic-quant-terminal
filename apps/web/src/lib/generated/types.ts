@@ -3,7 +3,8 @@
  *
  * Source of truth: docs/schemas/*.schema.json (emitted by
  * scripts/export_schemas.py from the Pydantic models in
- * src/snusmic_pipeline/backtest/schemas.py).
+ * src/snusmic_pipeline/backtest/schemas.py and
+ * src/snusmic_pipeline/artifact_schemas.py).
  *
  * Regenerate with `npm --prefix apps/web run gen:types`. CI verifies this
  * file matches the source schemas on every PR (see
@@ -52,6 +53,61 @@ export interface ExecutionEvent {
   "decision_price": number | null;
   "fill_price": number | null;
   "fill_rule": string | null;
+}
+
+/**
+ * Row schema for ``data/price_metrics.json``.
+ * 
+ * This artifact is the project-facing baseline-band contract: ``smic_follower_*``
+ * is the naive report-publication strategy, and ``oracle_*`` is the future-informed
+ * upper bound used to frame realistic strategy research.
+ */
+export interface PriceMetric {
+  "title": string;
+  "company": string;
+  "display_name": string;
+  "ticker": string;
+  "yfinance_symbol": string;
+  "price_currency": string;
+  "target_currency": string;
+  "display_currency": string;
+  "publication_date": string;
+  "publication_buy_price": number | null;
+  "current_price": number | null;
+  "target_price": number | null;
+  "buy_at_publication_return": number | null;
+  "publication_to_target_return": number | null;
+  "oracle_entry_price": number | null;
+  "oracle_exit_price": number | null;
+  "oracle_return": number | null;
+  "oracle_buy_lag_days": number | null;
+  "oracle_holding_days": number | null;
+  "smic_follower_entry_price": number | null;
+  "smic_follower_exit_price": number | null;
+  "smic_follower_return": number | null;
+  "smic_follower_holding_days": number | null;
+  "smic_follower_status": string;
+  "lowest_price_since_publication": number | null;
+  "lowest_price_current_return": number | null;
+  "low_to_high_return": number | null;
+  "low_to_high_holding_days": number | null;
+  "q25_price_since_publication": number | null;
+  "q25_price_current_return": number | null;
+  "highest_price_since_publication": number | null;
+  "highest_price_realized_return": number | null;
+  "q75_price_since_publication": number | null;
+  "q75_price_realized_return": number | null;
+  "q75_price_current_return": number | null;
+  "current_price_percentile": number | null;
+  "target_upside_remaining": number | null;
+  "optimal_buy_lag_days": number | null;
+  "optimal_holding_days_net_10pct": number | null;
+  "optimal_net_return_10pct": number | null;
+  "target_hit": boolean | null;
+  "first_target_hit_date": string;
+  "target_hit_holding_days": number | null;
+  "status": string;
+  "note": string;
 }
 
 /**

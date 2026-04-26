@@ -5,12 +5,13 @@
 export type {
   DailyPrice,
   ExecutionEvent,
+  PriceMetric,
   ReportRow,
   StrategyRun,
   Trade,
 } from './generated/types';
 
-import type { StrategyRun, ReportRow, Trade } from './generated/types';
+import type { StrategyRun, ReportRow, Trade, PriceMetric } from './generated/types';
 
 export type Position = {
   run_id: string;
@@ -61,49 +62,6 @@ export type SignalRow = {
   mtt_pass: boolean;
   pct_above_52w_low: number | null;
   pct_below_52w_high: number | null;
-};
-
-export type PriceMetric = {
-  title: string;
-  company: string;
-  display_name: string;
-  yfinance_symbol: string;
-  display_currency: string;
-  publication_date: string;
-  publication_buy_price: number | null;
-  current_price: number | null;
-  target_price: number | null;
-  publication_to_target_return: number | null;
-  oracle_entry_price: number | null;
-  oracle_exit_price: number | null;
-  oracle_return: number | null;
-  oracle_buy_lag_days: number | null;
-  oracle_holding_days: number | null;
-  smic_follower_entry_price: number | null;
-  smic_follower_exit_price: number | null;
-  smic_follower_return: number | null;
-  smic_follower_holding_days: number | null;
-  smic_follower_status: string;
-  lowest_price_since_publication: number | null;
-  lowest_price_current_return: number | null;
-  low_to_high_return: number | null;
-  low_to_high_holding_days: number | null;
-  q25_price_since_publication: number | null;
-  q25_price_current_return: number | null;
-  q75_price_since_publication: number | null;
-  q75_price_current_return: number | null;
-  q75_price_realized_return: number | null;
-  highest_price_since_publication: number | null;
-  highest_price_realized_return: number | null;
-  publication_buy_return: number | null;
-  buy_at_publication_return: number | null;
-  current_price_percentile: number | null;
-  target_upside_remaining: number | null;
-  optimal_buy_lag_days: number | null;
-  target_hit: boolean;
-  first_target_hit_date: string;
-  target_hit_holding_days: number | null;
-  status: string;
 };
 
 export type ChartIndexRow = {

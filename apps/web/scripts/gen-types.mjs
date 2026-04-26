@@ -36,7 +36,8 @@ const HEADER = `/**
  *
  * Source of truth: docs/schemas/*.schema.json (emitted by
  * scripts/export_schemas.py from the Pydantic models in
- * src/snusmic_pipeline/backtest/schemas.py).
+ * src/snusmic_pipeline/backtest/schemas.py and
+ * src/snusmic_pipeline/artifact_schemas.py).
  *
  * Regenerate with \`npm --prefix apps/web run gen:types\`. CI verifies this
  * file matches the source schemas on every PR (see
