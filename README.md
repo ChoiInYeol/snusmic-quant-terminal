@@ -496,6 +496,38 @@ GitHub Pages도 같은 UI를 적용합니다. `.github/workflows/pages.yml`은 `
 
 Vercel 프로젝트를 GitHub 저장소에 연결하면 Actions가 data artifact를 커밋한 뒤 push 이벤트로 Vercel 배포가 이어집니다. Pages는 repository Settings > Pages에서 Source를 `GitHub Actions`로 두면 `pages.yml`이 같은 UI를 배포합니다. 수동 검증이나 즉시 배포가 필요할 때는 Vercel CLI 또는 Codex Vercel connector로 현재 커밋을 배포하면 됩니다.
 
+### 21.4 Vercel production alias guard
+
+운영 URL은 `https://snusmic-quant-terminal.vercel.app`입니다. Git Integration이 정상일 때는 production 배포가 끝나면 Vercel이 이 alias를 자동으로 최신 production deployment에 붙입니다. 장애 대응의 핵심은 **배포를 새로 만들기 전에 alias가 최신 READY production deployment를 가리키는지 먼저 확인**하는 것입니다.
+
+이 저장소에는 안전 기본값의 runbook 스크립트가 있습니다.
+
+```bash
+# 읽기 전용 dry-run. VERCEL_TOKEN이 없으면 필요한 환경만 안내하고 종료합니다.
+python scripts/check_vercel_alias.py
+
+# 실제 Vercel API 대조. 팀 프로젝트라면 VERCEL_TEAM_ID도 설정합니다.
+VERCEL_TOKEN=... python scripts/check_vercel_alias.py
+
+# stale/missing으로 판정될 때만 실행합니다. --repair 단독은 여전히 dry-run입니다.
+VERCEL_TOKEN=... python scripts/check_vercel_alias.py --repair --yes
+```
+
+스크립트의 운영 경계:
+
+- 기본 alias는 `snusmic-quant-terminal.vercel.app`입니다. 필요하면 `--alias` 또는 `VERCEL_ALIAS`로 덮어씁니다.
+- project 식별자는 `VERCEL_PROJECT_ID`, `.vercel/project.json`, `snusmic-quant-terminal` 순서로 고릅니다. 현재 저장소에는 `.vercel/project.json`을 커밋하지 않으므로 CI/서버에서는 `VERCEL_PROJECT_ID`를 명시하는 것이 가장 안전합니다.
+- dry-run은 Vercel REST API에서 현재 alias와 최신 `READY` production deployment를 읽고, 다르면 `POST /v2/deployments/{deploymentId}/aliases` repair action만 출력합니다.
+- production alias mutation은 `--repair --yes`를 같이 준 경우에만 수행합니다. token/team/project가 틀렸거나 최신 production deployment가 없으면 실패하고 alias를 건드리지 않습니다.
+
+stale alias 장애 대응 순서:
+
+1. `VERCEL_TOKEN=... VERCEL_PROJECT_ID=... python scripts/check_vercel_alias.py`로 현재 alias deployment와 최신 READY production deployment를 비교합니다.
+2. 출력이 `OK`면 Vercel alias가 원인이 아닙니다. Pages mirror와 최신 data artifact를 확인합니다.
+3. 출력이 `STALE`이면 최신 deployment URL/ID가 의도한 커밋인지 Vercel 대시보드에서 확인합니다.
+4. 확인 후 `--repair --yes`로 alias를 재지정합니다.
+5. `https://snusmic-quant-terminal.vercel.app`을 새로고침하고, 필요하면 GitHub Pages mirror와 같은 data timestamp를 읽는지 비교합니다.
+
 ## 22. 서버에서 권장하는 실제 운영 루틴
 
 ### 22.1 Archive만 늘릴 때
