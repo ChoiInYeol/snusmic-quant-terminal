@@ -2,7 +2,7 @@
 
 SNUSMIC 리서치 PDF에서 목표가·티커·메타데이터를 추출하고, 가격 데이터와 결합해 서버에서 투자 시뮬레이션을 재현하는 Python/data 저장소입니다.
 
-프론트엔드, Vercel, GitHub Pages, Next.js 산출물은 제거했습니다. 이제 저장소의 계약은 Python 코드와 `data/` 아래 CSV/JSON 구조입니다.
+저장소의 계약은 Python 코드와 `data/` 아래 CSV/JSON 구조입니다.
 
 ## 고정 시나리오
 
@@ -49,4 +49,4 @@ uv run python scripts/check_schema_compat.py --base-ref origin/main
 
 ## CI
 
-GitHub Actions는 Python lint/type/test/schema 검증과 데이터 refresh만 수행합니다. Node/npm, Vercel, Pages, Next.js 빌드는 더 이상 없습니다.
+GitHub Actions는 Python lint/type/test/schema 검증과 데이터 refresh을 수행합니다.
