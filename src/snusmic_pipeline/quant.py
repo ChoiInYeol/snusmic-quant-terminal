@@ -253,6 +253,143 @@ def optimal_net_holding(close: pd.Series, annual_cost: float = 0.10) -> tuple[in
     return best_days, best_return if best_return > -math.inf else None
 
 
+@dataclass(frozen=True)
+class TargetHitResult:
+    hit: bool
+    first_hit_date: pd.Timestamp | None
+    holding_days: int | None
+
+
+@dataclass(frozen=True)
+class OracleBaseline:
+    entry_price: float
+    exit_price: float
+    return_: float | None
+    buy_lag_days: int
+    holding_days: int
+
+
+@dataclass(frozen=True)
+class SmicFollowerBaseline:
+    entry_price: float
+    exit_price: float
+    return_: float | None
+    holding_days: int | None
+    status: str
+
+
+@dataclass(frozen=True)
+class PriceDistributionMetrics:
+    publication_price: float
+    current_price: float
+    lowest_price: float
+    lowest_date: pd.Timestamp
+    highest_price: float
+    highest_date: pd.Timestamp
+    best_after_low_price: float
+    best_after_low_date: pd.Timestamp
+    low_to_high_return: float | None
+    low_to_high_holding_days: int
+    q25_price: float
+    q75_price: float
+    current_price_percentile: float
+
+
+def compute_target_hit(
+    close: pd.Series, target: float | None, publication_day: pd.Timestamp | None = None
+) -> TargetHitResult:
+    """Return first target-hit information for a publication-or-later close path."""
+
+    if target is None:
+        return TargetHitResult(hit=False, first_hit_date=None, holding_days=None)
+    hit_series = close[close >= target]
+    if hit_series.empty:
+        return TargetHitResult(hit=False, first_hit_date=None, holding_days=None)
+    first_hit_date = pd.Timestamp(hit_series.index[0])
+    publication_day = pd.Timestamp(close.index[0] if publication_day is None else publication_day)
+    return TargetHitResult(
+        hit=True,
+        first_hit_date=first_hit_date,
+        holding_days=(first_hit_date - publication_day).days,
+    )
+
+
+def compute_oracle_baseline(close: pd.Series, publication_day: pd.Timestamp) -> OracleBaseline:
+    """Compute the future-informed upper-bound baseline after publication.
+
+    The oracle may only use publication-or-later prices: buy at the lowest close
+    in the available post-publication path, then sell at the highest close after
+    that low.
+    """
+
+    low_date = pd.Timestamp(close.idxmin())
+    entry_price = float(close.loc[low_date])
+    post_low = close[close.index >= low_date]
+    exit_date = pd.Timestamp(post_low.idxmax())
+    exit_price = float(post_low.loc[exit_date])
+    return OracleBaseline(
+        entry_price=entry_price,
+        exit_price=exit_price,
+        return_=pct_return(exit_price, entry_price),
+        buy_lag_days=(low_date - publication_day).days,
+        holding_days=(exit_date - low_date).days,
+    )
+
+
+def compute_smic_follower_baseline(
+    close: pd.Series,
+    publication_day: pd.Timestamp,
+    target: float | None,
+    target_hit: TargetHitResult | None = None,
+) -> SmicFollowerBaseline:
+    """Compute the naive SMIC follower baseline.
+
+    The follower buys at publication, exits at the target when hit, otherwise
+    remains open and is marked at the latest available close.
+    """
+
+    entry_price = float(close.iloc[0])
+    hit = target_hit or compute_target_hit(close, target)
+    exit_price = float(target) if hit.hit and target is not None else float(close.iloc[-1])
+    exit_date = hit.first_hit_date if hit.hit else pd.Timestamp(close.index[-1])
+    return SmicFollowerBaseline(
+        entry_price=entry_price,
+        exit_price=exit_price,
+        return_=pct_return(exit_price, entry_price),
+        holding_days=(exit_date - publication_day).days if exit_date is not None else None,
+        status="target_hit" if hit.hit else "open",
+    )
+
+
+def compute_price_distribution_metrics(close: pd.Series) -> PriceDistributionMetrics:
+    """Compute path-distribution metrics reused by baseline and UI artifacts."""
+
+    publication_price = float(close.iloc[0])
+    current_price = float(close.iloc[-1])
+    low_date = pd.Timestamp(close.idxmin())
+    high_date = pd.Timestamp(close.idxmax())
+    lowest_price = float(close.loc[low_date])
+    highest_price = float(close.loc[high_date])
+    post_low = close[close.index >= low_date]
+    best_after_low_date = pd.Timestamp(post_low.idxmax())
+    best_after_low_price = float(post_low.loc[best_after_low_date])
+    return PriceDistributionMetrics(
+        publication_price=publication_price,
+        current_price=current_price,
+        lowest_price=lowest_price,
+        lowest_date=low_date,
+        highest_price=highest_price,
+        highest_date=high_date,
+        best_after_low_price=best_after_low_price,
+        best_after_low_date=best_after_low_date,
+        low_to_high_return=pct_return(best_after_low_price, lowest_price),
+        low_to_high_holding_days=(best_after_low_date - low_date).days,
+        q25_price=float(close.quantile(0.25)),
+        q75_price=float(close.quantile(0.75)),
+        current_price_percentile=float((close <= current_price).mean()),
+    )
+
+
 def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None = None) -> list[PriceMetric]:
     now = now or datetime.now(UTC)
     if not reports:
@@ -308,28 +445,13 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
             )
             continue
         close = post["close"].dropna()
-        pub_price = float(close.iloc[0])
-        current = float(close.iloc[-1])
-        low_idx = close.idxmin()
-        high_idx = close.idxmax()
-        low = float(close.loc[low_idx])
-        high = float(close.loc[high_idx])
-        post_low = close[close.index >= low_idx]
-        best_after_low_idx = post_low.idxmax()
-        best_after_low = float(post_low.loc[best_after_low_idx])
-        q25 = float(close.quantile(0.25))
-        q75 = float(close.quantile(0.75))
+        distribution = compute_price_distribution_metrics(close)
         target = convert_value_to_krw(report.base_target, target_currency, report.meta.date[:10], fx_rates)
-        hit_series = close[close >= target] if target else pd.Series(dtype=float)
-        first_hit_date = None if hit_series.empty else hit_series.index[0]
-        holding_days, net_return = optimal_net_holding(close)
-        low_to_high_holding_days = (best_after_low_idx - low_idx).days
         publication_day = pd.to_datetime(report.meta.date[:10])
-        target_hit = bool(not hit_series.empty)
-        smic_exit_price = target if target_hit else current
-        smic_exit_date = first_hit_date if target_hit else close.index[-1]
-        smic_holding_days = None if smic_exit_date is None else (smic_exit_date - publication_day).days
-        current_percentile = float((close <= current).mean())
+        target_hit = compute_target_hit(close, target, publication_day)
+        oracle = compute_oracle_baseline(close, publication_day)
+        follower = compute_smic_follower_baseline(close, publication_day, target, target_hit)
+        holding_days, net_return = optimal_net_holding(close)
         metrics.append(
             PriceMetric(
                 title=report.meta.title,
@@ -341,42 +463,48 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
                 target_currency=target_currency,
                 display_currency="KRW",
                 publication_date=report.meta.date[:10],
-                publication_buy_price=pub_price,
-                current_price=current,
+                publication_buy_price=distribution.publication_price,
+                current_price=distribution.current_price,
                 target_price=target,
-                buy_at_publication_return=pct_return(current, pub_price),
-                publication_to_target_return=pct_return(target, pub_price) if target else None,
-                oracle_entry_price=low,
-                oracle_exit_price=best_after_low,
-                oracle_return=pct_return(best_after_low, low),
-                oracle_buy_lag_days=(low_idx - publication_day).days,
-                oracle_holding_days=low_to_high_holding_days,
-                smic_follower_entry_price=pub_price,
-                smic_follower_exit_price=smic_exit_price,
-                smic_follower_return=pct_return(smic_exit_price, pub_price),
-                smic_follower_holding_days=smic_holding_days,
-                smic_follower_status="target_hit" if target_hit else "open",
-                lowest_price_since_publication=low,
-                lowest_price_current_return=pct_return(current, low),
-                low_to_high_return=pct_return(best_after_low, low),
-                low_to_high_holding_days=low_to_high_holding_days,
-                q25_price_since_publication=q25,
-                q25_price_current_return=pct_return(current, q25),
-                highest_price_since_publication=high,
-                highest_price_realized_return=pct_return(high, pub_price),
-                q75_price_since_publication=q75,
-                q75_price_realized_return=pct_return(q75, pub_price),
-                q75_price_current_return=pct_return(current, q75),
-                current_price_percentile=current_percentile,
-                target_upside_remaining=pct_return(target, current) if target else None,
-                optimal_buy_lag_days=(low_idx - pd.to_datetime(report.meta.date[:10])).days,
+                buy_at_publication_return=pct_return(
+                    distribution.current_price, distribution.publication_price
+                ),
+                publication_to_target_return=pct_return(target, distribution.publication_price)
+                if target
+                else None,
+                oracle_entry_price=oracle.entry_price,
+                oracle_exit_price=oracle.exit_price,
+                oracle_return=oracle.return_,
+                oracle_buy_lag_days=oracle.buy_lag_days,
+                oracle_holding_days=oracle.holding_days,
+                smic_follower_entry_price=follower.entry_price,
+                smic_follower_exit_price=follower.exit_price,
+                smic_follower_return=follower.return_,
+                smic_follower_holding_days=follower.holding_days,
+                smic_follower_status=follower.status,
+                lowest_price_since_publication=distribution.lowest_price,
+                lowest_price_current_return=pct_return(distribution.current_price, distribution.lowest_price),
+                low_to_high_return=distribution.low_to_high_return,
+                low_to_high_holding_days=distribution.low_to_high_holding_days,
+                q25_price_since_publication=distribution.q25_price,
+                q25_price_current_return=pct_return(distribution.current_price, distribution.q25_price),
+                highest_price_since_publication=distribution.highest_price,
+                highest_price_realized_return=pct_return(
+                    distribution.highest_price, distribution.publication_price
+                ),
+                q75_price_since_publication=distribution.q75_price,
+                q75_price_realized_return=pct_return(distribution.q75_price, distribution.publication_price),
+                q75_price_current_return=pct_return(distribution.current_price, distribution.q75_price),
+                current_price_percentile=distribution.current_price_percentile,
+                target_upside_remaining=pct_return(target, distribution.current_price) if target else None,
+                optimal_buy_lag_days=oracle.buy_lag_days,
                 optimal_holding_days_net_10pct=holding_days,
                 optimal_net_return_10pct=net_return,
-                target_hit=target_hit,
-                first_target_hit_date="" if first_hit_date is None else first_hit_date.date().isoformat(),
-                target_hit_holding_days=None
-                if first_hit_date is None
-                else (first_hit_date - pd.to_datetime(report.meta.date[:10])).days,
+                target_hit=target_hit.hit,
+                first_target_hit_date=""
+                if target_hit.first_hit_date is None
+                else target_hit.first_hit_date.date().isoformat(),
+                target_hit_holding_days=target_hit.holding_days,
                 status="ok",
                 note="",
             )

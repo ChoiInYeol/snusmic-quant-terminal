@@ -1,8 +1,12 @@
 import numpy as np
 import pandas as pd
+import pytest
 
 from snusmic_pipeline.models import ExtractedReport, ReportMeta
 from snusmic_pipeline.quant import (
+    compute_oracle_baseline,
+    compute_smic_follower_baseline,
+    compute_target_hit,
     display_name_for_report,
     optimize_weights,
     pct_return,
@@ -119,3 +123,64 @@ def test_baseline_band_synthetic_path_keeps_follower_below_oracle():
     assert (first_hit_date - publication_day).days == 2
     assert (low_idx - publication_day).days == 1
     assert (best_after_low_idx - low_idx).days == 2
+
+
+def test_oracle_baseline_uses_publication_or_later_prices_only():
+    publication_day = pd.Timestamp("2024-01-01")
+    close = pd.Series(
+        [10.0, 100.0, 80.0, 150.0],
+        index=pd.to_datetime(["2023-12-29", "2024-01-01", "2024-01-02", "2024-01-03"]),
+    )
+
+    oracle = compute_oracle_baseline(close[close.index >= publication_day], publication_day)
+
+    assert oracle.entry_price == 80.0
+    assert oracle.exit_price == 150.0
+    assert oracle.return_ == pytest.approx(0.875)
+    assert oracle.buy_lag_days == 1
+    assert oracle.holding_days == 1
+
+
+def test_smic_follower_exits_at_target_hit_or_latest_close():
+    publication_day = pd.Timestamp("2024-01-01")
+    close = pd.Series(
+        [100.0, 110.0, 120.0, 115.0],
+        index=pd.to_datetime(["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04"]),
+    )
+
+    hit = compute_target_hit(close, 120.0)
+    follower = compute_smic_follower_baseline(close, publication_day, 120.0, hit)
+
+    assert hit.hit is True
+    assert hit.first_hit_date == pd.Timestamp("2024-01-03")
+    assert hit.holding_days == 2
+    assert follower.exit_price == 120.0
+    assert follower.return_ == pytest.approx(0.2)
+    assert follower.status == "target_hit"
+
+    miss = compute_target_hit(close, 130.0)
+    open_follower = compute_smic_follower_baseline(close, publication_day, 130.0, miss)
+
+    assert miss.hit is False
+    assert open_follower.exit_price == 115.0
+    assert open_follower.return_ == pytest.approx(0.15)
+    assert open_follower.holding_days == 3
+    assert open_follower.status == "open"
+
+
+def test_target_hit_handles_missing_target_without_false_exit_signal():
+    publication_day = pd.Timestamp("2024-01-01")
+    close = pd.Series(
+        [100.0, 110.0],
+        index=pd.to_datetime(["2024-01-01", "2024-01-02"]),
+    )
+
+    hit = compute_target_hit(close, None)
+    follower = compute_smic_follower_baseline(close, publication_day, None, hit)
+
+    assert hit.hit is False
+    assert hit.first_hit_date is None
+    assert hit.holding_days is None
+    assert follower.exit_price == 110.0
+    assert follower.return_ == pytest.approx(0.1)
+    assert follower.status == "open"
