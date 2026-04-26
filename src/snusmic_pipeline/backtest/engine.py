@@ -83,7 +83,10 @@ def run_walk_forward_backtest(
     closed_once: set[str] = set()
     last_rebalance: pd.Timestamp | None = None
     prev_date: pd.Timestamp | None = None
+    contribution_month: tuple[int, int] | None = None
     equity_value = 1.0
+    account_value_krw = float(config.initial_capital_krw)
+    contributed_capital_krw = float(config.initial_capital_krw)
 
     candidate_events: list[dict[str, Any]] = []
     execution_events: list[dict[str, Any]] = []
@@ -102,6 +105,15 @@ def run_walk_forward_backtest(
         open_valid_row = wide_open_valid.loc[date]
         imputed_row = wide_imputed.loc[date]
         prev_imputed_row = wide_imputed.loc[prev_date] if prev_date is not None else None
+        cash_flow_krw = 0.0
+        month_key = (date.year, date.month)
+        if contribution_month is None:
+            contribution_month = month_key
+        elif month_key != contribution_month:
+            cash_flow_krw = float(config.monthly_contribution_krw)
+            account_value_krw += cash_flow_krw
+            contributed_capital_krw += cash_flow_krw
+            contribution_month = month_key
         portfolio_return = 0.0
         realized_today = 0.0
         if prev_date is not None and prev_close_row is not None:
@@ -268,7 +280,9 @@ def run_walk_forward_backtest(
             last_rebalance = date
 
         equity_value *= max(0.0, 1.0 + portfolio_return)
+        account_value_krw *= max(0.0, 1.0 + portfolio_return)
         cumulative_return = equity_value - 1.0
+        cash_weight = max(0.0, 1.0 - sum(position.weight for position in positions.values()))
         equity_rows.append(
             {
                 "run_id": run_id,
@@ -277,9 +291,14 @@ def run_walk_forward_backtest(
                 "realized_return": realized_today,
                 "cumulative_return": cumulative_return,
                 "equity": equity_value,
+                "cash_flow_krw": cash_flow_krw,
+                "contributed_capital_krw": contributed_capital_krw,
+                "account_value_krw": account_value_krw,
+                "net_profit_krw": account_value_krw - contributed_capital_krw,
                 "candidate_count": len(candidates),
                 "execution_count": len(positions),
-                "cash_weight": max(0.0, 1.0 - sum(position.weight for position in positions.values())),
+                "cash_weight": cash_weight,
+                "cash_value_krw": account_value_krw * cash_weight,
             }
         )
         for position in positions.values():
@@ -357,7 +376,12 @@ def run_walk_forward_backtest(
 
 
 def stable_run_id(config: BacktestConfig) -> str:
-    payload = repr(sorted(config.to_dict().items()))
+    values = config.to_dict()
+    # The account scenario is now fixed globally (10M initial + 1M monthly), so
+    # keep historical run IDs stable when adding KRW ledger diagnostics.
+    values.pop("initial_capital_krw", None)
+    values.pop("monthly_contribution_krw", None)
+    payload = repr(sorted(values.items()))
     return hashlib.sha1(payload.encode("utf-8")).hexdigest()[:12]
 
 
@@ -374,6 +398,11 @@ def empty_result(run_id: str, config: BacktestConfig) -> dict[str, pd.DataFrame]
         target_hit_multiplier=config.target_hit_multiplier,
         lookback_days=config.lookback_days,
         final_wealth=1.0,
+        final_account_value_krw=float(config.initial_capital_krw),
+        total_contributed_capital_krw=float(config.initial_capital_krw),
+        net_profit_krw=0.0,
+        initial_capital_krw=float(config.initial_capital_krw),
+        monthly_contribution_krw=float(config.monthly_contribution_krw),
         total_return=0.0,
         cagr=None,
         annualized_volatility=None,
@@ -895,6 +924,8 @@ def _summarize(
         return empty_result(run_id, config)["strategy_runs"].iloc[0].to_dict()
     returns = equity["portfolio_return"].astype(float)
     final_wealth = float(equity["equity"].iloc[-1])
+    final_account_value_krw = float(equity["account_value_krw"].iloc[-1])
+    total_contributed_capital_krw = float(equity["contributed_capital_krw"].iloc[-1])
     total_return = final_wealth - 1.0
     start = pd.to_datetime(equity["date"].iloc[0])
     end = pd.to_datetime(equity["date"].iloc[-1])
@@ -926,6 +957,11 @@ def _summarize(
         "target_hit_multiplier": config.target_hit_multiplier,
         "lookback_days": config.lookback_days,
         "final_wealth": final_wealth,
+        "final_account_value_krw": final_account_value_krw,
+        "total_contributed_capital_krw": total_contributed_capital_krw,
+        "net_profit_krw": final_account_value_krw - total_contributed_capital_krw,
+        "initial_capital_krw": float(config.initial_capital_krw),
+        "monthly_contribution_krw": float(config.monthly_contribution_krw),
         "total_return": total_return,
         "cagr": cagr,
         "annualized_volatility": vol,

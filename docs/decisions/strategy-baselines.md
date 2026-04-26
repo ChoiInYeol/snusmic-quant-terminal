@@ -18,6 +18,10 @@ points over the SNUSMIC report universe:
    tradable publication price and exits exactly at the report target when hit;
    if the target is not hit, the position remains open and is marked to the
    latest price.
+3. **Account scenario** — walk-forward strategy runs use a fixed KRW account:
+   KRW 10,000,000 initial capital plus KRW 1,000,000 at the first trading day of
+   each later month. Rebalance days reallocate the selected book to its target
+   weights so active books do not intentionally retain cash.
 3. **Model strategy** — the actual strategy family. Future Optuna/search work
    should try to beat the follower while staying below the oracle ceiling.
 
@@ -37,6 +41,19 @@ points over the SNUSMIC report universe:
 | `smic_follower_return` | Realized target return or current open return. |
 | `smic_follower_holding_days` | Days to target hit or latest mark date. |
 | `smic_follower_status` | `target_hit`, `open`, or `unavailable`. |
+
+## Account-level assumptions
+
+- The SMIC follower account is `1/N` only: every active report position receives
+  the same target weight at rebalance.
+- A target-hit position is sold when the target is observed. A losing or still
+  open position is held with the belief that the target will eventually be hit;
+  new monthly savings are still contributed and rebalanced under the same rule.
+- The oracle account is future-informed and therefore may choose the best
+  long-only allocation for the interval being evaluated. It is an upper bound,
+  not an executable strategy.
+- Account-level KRW columns are additive diagnostics; percentage performance
+  columns remain time-weighted so historical comparisons are stable.
 
 ## Invariant
 

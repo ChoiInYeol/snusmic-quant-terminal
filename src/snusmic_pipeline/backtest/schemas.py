@@ -45,6 +45,8 @@ class BacktestConfig(BaseModel):
     min_target_upside: float = 0.0
     exit_on_signal_loss: bool = True
     allow_reentry: bool = True
+    initial_capital_krw: float = 10_000_000.0
+    monthly_contribution_krw: float = 1_000_000.0
     # Phase 2b legacy escape — when True the backtest reports `objective =
     # total_return` instead of `sortino_oos_tail`. Must travel with the config so
     # the run_id hash diverges between modes (per code-review CRITICAL-4).
@@ -100,6 +102,13 @@ class BacktestConfig(BaseModel):
             raise ValueError("lookback_days must be at least 20")
         return v
 
+    @field_validator("initial_capital_krw", "monthly_contribution_krw")
+    @classmethod
+    def _check_capital_amount(cls, v: float) -> float:
+        if v < 0:
+            raise ValueError("capital amounts must be non-negative")
+        return v
+
     def normalized(self) -> BacktestConfig:
         """Return self (validators already ran). Retained for call-site compatibility."""
         return self
@@ -125,6 +134,11 @@ class StrategySummary(BaseModel):
     target_hit_multiplier: float
     lookback_days: int
     final_wealth: float
+    final_account_value_krw: float = 10_000_000.0
+    total_contributed_capital_krw: float = 10_000_000.0
+    net_profit_krw: float = 0.0
+    initial_capital_krw: float = 10_000_000.0
+    monthly_contribution_krw: float = 1_000_000.0
     total_return: float
     cagr: float | None
     annualized_volatility: float | None
@@ -279,6 +293,11 @@ class StrategyRun(BaseModel):
     target_hit_multiplier: float
     lookback_days: int
     final_wealth: float
+    final_account_value_krw: float = 10_000_000.0
+    total_contributed_capital_krw: float = 10_000_000.0
+    net_profit_krw: float = 0.0
+    initial_capital_krw: float = 10_000_000.0
+    monthly_contribution_krw: float = 1_000_000.0
     total_return: float
     cagr: float | None = None
     annualized_volatility: float | None = None

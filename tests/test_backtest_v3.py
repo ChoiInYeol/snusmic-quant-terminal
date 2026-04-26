@@ -1,6 +1,7 @@
 import math
 
 import pandas as pd
+import pytest
 
 from snusmic_pipeline.backtest.engine import run_walk_forward_backtest
 from snusmic_pipeline.backtest.optimizers import optimize_execution_weights
@@ -105,6 +106,31 @@ def test_stop_loss_sell_event_realizes_arithmetic_return():
 
     assert "stop_loss" in set(sells["reason"])
     assert sells["realized_return"].notna().any()
+
+
+def test_backtest_account_scenario_tracks_monthly_contributions_and_krw_value():
+    reports = report_frame("2024-01-10", target_price=500.0)
+    prices = price_frame(start="2024-01-02", periods=90)
+    config = BacktestConfig(
+        name="capital",
+        entry_rule="target_only",
+        weighting="1/N",
+        rebalance="monthly",
+        min_target_upside=0.0,
+        initial_capital_krw=10_000_000,
+        monthly_contribution_krw=1_000_000,
+    )
+
+    result = run_walk_forward_backtest(reports, prices, config)
+    equity = result["equity_daily"]
+    summary = result["strategy_runs"].iloc[0]
+
+    assert equity["cash_flow_krw"].sum() >= 1_000_000
+    assert equity["contributed_capital_krw"].iloc[0] == 10_000_000
+    assert equity["contributed_capital_krw"].iloc[-1] == summary["total_contributed_capital_krw"]
+    assert equity["account_value_krw"].iloc[-1] == pytest.approx(summary["final_account_value_krw"])
+    assert summary["initial_capital_krw"] == 10_000_000
+    assert summary["monthly_contribution_krw"] == 1_000_000
 
 
 def test_cvar_optimizer_returns_no_short_normalized_weights():

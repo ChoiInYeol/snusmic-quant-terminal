@@ -428,7 +428,7 @@ def _export_chart_series(tables: dict[str, pd.DataFrame], chart_dir: Path) -> di
     report_symbols = sorted(set(reports["symbol"].dropna().astype(str)))
     for symbol in report_symbols:
         symbol_prices = prices[prices["symbol"].astype(str) == symbol].copy().sort_values("date")
-        if symbol_prices.empty:
+        if symbol_prices.empty or pd.to_numeric(symbol_prices["close"], errors="coerce").dropna().empty:
             continue
         symbol_reports = (
             reports[reports["symbol"].astype(str) == symbol].copy().sort_values("publication_date")

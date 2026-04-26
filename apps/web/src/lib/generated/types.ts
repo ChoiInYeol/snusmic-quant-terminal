@@ -70,6 +70,13 @@ export interface PortfolioBacktest {
   "symbols": string;
   "display_symbols": string;
   "weights": string;
+  "initial_capital_krw"?: number;
+  "monthly_contribution_krw"?: number;
+  "contribution_months"?: number;
+  "total_contributed_krw"?: number;
+  "final_value_krw": number | null;
+  "money_weighted_return": number | null;
+  "cash_weight"?: number;
   "expected_return": number | null;
   "expected_volatility": number | null;
   "expected_sharpe": number | null;
@@ -184,6 +191,11 @@ export interface StrategyRun {
   "target_hit_multiplier": number;
   "lookback_days": number;
   "final_wealth": number;
+  "final_account_value_krw"?: number;
+  "total_contributed_capital_krw"?: number;
+  "net_profit_krw"?: number;
+  "initial_capital_krw"?: number;
+  "monthly_contribution_krw"?: number;
   "total_return": number;
   "cagr": number | null;
   "annualized_volatility": number | null;

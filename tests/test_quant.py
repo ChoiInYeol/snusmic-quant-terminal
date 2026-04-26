@@ -9,9 +9,11 @@ from snusmic_pipeline.quant import (
     compute_target_hit,
     display_name_for_report,
     optimize_weights,
+    oracle_forward_weights,
     pct_return,
     portfolio_expected_stats,
     realized_forward_return,
+    scenario_wealth_from_forward_returns,
     yfinance_candidates,
 )
 
@@ -200,3 +202,38 @@ def test_target_hit_handles_missing_target_without_false_exit_signal():
     assert follower.exit_price == 110.0
     assert follower.return_ == pytest.approx(0.1)
     assert follower.status == "open"
+
+
+def test_oracle_forward_weights_choose_best_future_long_only_asset():
+    forward = pd.DataFrame(
+        {
+            "A": [100.0, 105.0],
+            "B": [100.0, 150.0],
+            "C": [100.0, 90.0],
+        },
+        index=pd.to_datetime(["2026-01-02", "2026-02-02"]),
+    )
+
+    weights = oracle_forward_weights(forward)
+
+    assert weights.tolist() == [0.0, 1.0, 0.0]
+
+
+def test_scenario_wealth_adds_monthly_savings_before_monthly_returns():
+    forward = pd.DataFrame(
+        {"A": [100.0, 110.0, 121.0]},
+        index=pd.to_datetime(["2026-01-31", "2026-02-02", "2026-03-02"]),
+    )
+
+    wealth = scenario_wealth_from_forward_returns(
+        forward,
+        np.array([1.0]),
+        initial_capital_krw=10_000_000,
+        monthly_contribution_krw=1_000_000,
+    )
+
+    assert wealth is not None
+    assert wealth.contribution_months == 2
+    assert wealth.total_contributed_krw == 12_000_000
+    assert wealth.final_value_krw == pytest.approx(((10_000_000 + 1_000_000) * 1.1 + 1_000_000) * 1.1)
+    assert wealth.money_weighted_return == pytest.approx(wealth.final_value_krw / 12_000_000 - 1.0)

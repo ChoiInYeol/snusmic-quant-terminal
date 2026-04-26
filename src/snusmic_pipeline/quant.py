@@ -22,6 +22,8 @@ from .models import ExtractedReport
 
 BENCHMARKS = {"KOSPI": "^KS11", "NASDAQ": "^IXIC"}
 RISK_FREE_RATES = [0.03, 0.06, 0.08]
+SCENARIO_INITIAL_CAPITAL_KRW = 10_000_000.0
+SCENARIO_MONTHLY_CONTRIBUTION_KRW = 1_000_000.0
 
 
 @dataclass(frozen=True)
@@ -85,6 +87,13 @@ class PortfolioResult:
     symbols: str
     display_symbols: str
     weights: str
+    initial_capital_krw: float
+    monthly_contribution_krw: float
+    contribution_months: int
+    total_contributed_krw: float
+    final_value_krw: float | None
+    money_weighted_return: float | None
+    cash_weight: float
     expected_return: float | None
     expected_volatility: float | None
     expected_sharpe: float | None
@@ -677,6 +686,63 @@ def realized_forward_return(price_frame: pd.DataFrame, weights: np.ndarray) -> f
     return float(w @ returns)
 
 
+def oracle_forward_weights(price_frame: pd.DataFrame) -> np.ndarray:
+    if price_frame.empty:
+        return np.array([])
+    returns = (price_frame.iloc[-1] / price_frame.iloc[0] - 1.0).replace([np.inf, -np.inf], np.nan)
+    valid = returns.dropna()
+    if valid.empty:
+        return np.ones(price_frame.shape[1]) / price_frame.shape[1]
+    weights = np.zeros(price_frame.shape[1])
+    weights[price_frame.columns.get_loc(valid.idxmax())] = 1.0
+    return weights
+
+
+@dataclass(frozen=True)
+class ScenarioWealth:
+    contribution_months: int
+    total_contributed_krw: float
+    final_value_krw: float
+    money_weighted_return: float
+
+
+def scenario_wealth_from_forward_returns(
+    price_frame: pd.DataFrame,
+    weights: np.ndarray,
+    *,
+    initial_capital_krw: float = SCENARIO_INITIAL_CAPITAL_KRW,
+    monthly_contribution_krw: float = SCENARIO_MONTHLY_CONTRIBUTION_KRW,
+) -> ScenarioWealth | None:
+    if price_frame.empty or len(weights) == 0:
+        return None
+    usable = price_frame.dropna(axis=1)
+    if usable.empty:
+        return None
+    valid = [price_frame.columns.get_loc(column) for column in usable.columns]
+    w = _normalize(weights[valid])
+    returns = usable.pct_change().fillna(0.0)
+    account_value = float(initial_capital_krw)
+    contributed = float(initial_capital_krw)
+    contribution_months = 0
+    current_month: tuple[int, int] | None = None
+    for date, row in returns.iterrows():
+        month = (pd.Timestamp(date).year, pd.Timestamp(date).month)
+        if current_month is None:
+            current_month = month
+        elif month != current_month:
+            account_value += float(monthly_contribution_krw)
+            contributed += float(monthly_contribution_krw)
+            contribution_months += 1
+            current_month = month
+        account_value *= max(0.0, 1.0 + float(np.dot(row.to_numpy(dtype=float), w)))
+    return ScenarioWealth(
+        contribution_months=contribution_months,
+        total_contributed_krw=contributed,
+        final_value_krw=account_value,
+        money_weighted_return=account_value / contributed - 1.0 if contributed > 0 else 0.0,
+    )
+
+
 def portfolio_expected_stats(
     returns: pd.DataFrame, weights: np.ndarray, risk_free_rate: float
 ) -> tuple[float | None, float | None, float | None]:
@@ -760,11 +826,26 @@ def compute_portfolio_backtests(
             )
         returns = lookback.pct_change().dropna()
         for rf in RISK_FREE_RATES:
-            for strategy in ["1/N", "momentum", "max_sharpe", "sortino", "max_return", "min_var", "calmar"]:
-                weights = optimize_weights(returns, strategy, rf)
+            for strategy in [
+                "1/N",
+                "smic_follower_1n",
+                "oracle",
+                "momentum",
+                "max_sharpe",
+                "sortino",
+                "max_return",
+                "min_var",
+                "calmar",
+            ]:
+                weights = (
+                    oracle_forward_weights(forward[returns.columns])
+                    if strategy == "oracle"
+                    else optimize_weights(returns, "1/N" if strategy == "smic_follower_1n" else strategy, rf)
+                )
                 expected_return, expected_volatility, expected_sharpe = portfolio_expected_stats(
                     returns, weights, rf
                 )
+                scenario = scenario_wealth_from_forward_returns(forward[returns.columns], weights)
                 rows.append(
                     PortfolioResult(
                         cohort_month=str(month),
@@ -776,6 +857,17 @@ def compute_portfolio_backtests(
                             display_by_symbol.get(symbol, symbol) for symbol in returns.columns
                         ),
                         weights=",".join(f"{w:.4f}" for w in weights),
+                        initial_capital_krw=SCENARIO_INITIAL_CAPITAL_KRW,
+                        monthly_contribution_krw=SCENARIO_MONTHLY_CONTRIBUTION_KRW,
+                        contribution_months=0 if scenario is None else scenario.contribution_months,
+                        total_contributed_krw=(
+                            SCENARIO_INITIAL_CAPITAL_KRW
+                            if scenario is None
+                            else scenario.total_contributed_krw
+                        ),
+                        final_value_krw=None if scenario is None else scenario.final_value_krw,
+                        money_weighted_return=None if scenario is None else scenario.money_weighted_return,
+                        cash_weight=0.0,
                         expected_return=expected_return,
                         expected_volatility=expected_volatility,
                         expected_sharpe=expected_sharpe,

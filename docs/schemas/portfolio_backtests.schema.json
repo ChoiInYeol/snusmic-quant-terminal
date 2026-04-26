@@ -37,6 +37,62 @@
       "type": "string",
       "x-snusmic-nan-policy": "drop"
     },
+    "initial_capital_krw": {
+      "default": 10000000.0,
+      "title": "Initial Capital Krw",
+      "type": "number",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "monthly_contribution_krw": {
+      "default": 1000000.0,
+      "title": "Monthly Contribution Krw",
+      "type": "number",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "contribution_months": {
+      "default": 0,
+      "title": "Contribution Months",
+      "type": "integer",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "total_contributed_krw": {
+      "default": 10000000.0,
+      "title": "Total Contributed Krw",
+      "type": "number",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "final_value_krw": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Final Value Krw",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "money_weighted_return": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Money Weighted Return",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "cash_weight": {
+      "default": 0.0,
+      "title": "Cash Weight",
+      "type": "number",
+      "x-snusmic-nan-policy": "drop"
+    },
     "expected_return": {
       "anyOf": [
         {

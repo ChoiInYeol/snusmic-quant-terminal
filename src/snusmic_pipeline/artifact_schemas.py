@@ -93,6 +93,13 @@ class PortfolioBacktestRow(BaseModel):
     symbols: str
     display_symbols: str
     weights: str
+    initial_capital_krw: float = 10_000_000.0
+    monthly_contribution_krw: float = 1_000_000.0
+    contribution_months: int = 0
+    total_contributed_krw: float = 10_000_000.0
+    final_value_krw: float | None = None
+    money_weighted_return: float | None = None
+    cash_weight: float = 0.0
     expected_return: float | None = None
     expected_volatility: float | None = None
     expected_sharpe: float | None = None

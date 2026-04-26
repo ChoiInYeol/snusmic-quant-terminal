@@ -33,9 +33,14 @@ export type EquityRow = {
   portfolio_return: number;
   cumulative_return: number;
   equity: number;
+  cash_flow_krw?: number;
+  contributed_capital_krw?: number;
+  account_value_krw?: number;
+  net_profit_krw?: number;
   candidate_count: number;
   execution_count: number;
   cash_weight: number;
+  cash_value_krw?: number;
 };
 
 export type CandidateEvent = {

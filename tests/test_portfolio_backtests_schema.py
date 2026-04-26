@@ -13,10 +13,25 @@ from snusmic_pipeline.artifact_schemas import (
     PortfolioBacktestRow,
     validate_portfolio_backtest_rows,
 )
-from snusmic_pipeline.quant import RISK_FREE_RATES, PortfolioResult
+from snusmic_pipeline.quant import (
+    RISK_FREE_RATES,
+    SCENARIO_INITIAL_CAPITAL_KRW,
+    SCENARIO_MONTHLY_CONTRIBUTION_KRW,
+    PortfolioResult,
+)
 
 PORTFOLIO_BACKTESTS_PATH = Path("data/portfolio_backtests.json")
-EXPECTED_STRATEGIES = {"1/N", "momentum", "max_sharpe", "sortino", "max_return", "min_var", "calmar"}
+EXPECTED_STRATEGIES = {
+    "1/N",
+    "smic_follower_1n",
+    "oracle",
+    "momentum",
+    "max_sharpe",
+    "sortino",
+    "max_return",
+    "min_var",
+    "calmar",
+}
 EXPECTED_RISK_FREE_RATES = set(RISK_FREE_RATES)
 
 
@@ -33,6 +48,13 @@ def _portfolio_result(**overrides: object) -> PortfolioResult:
         "symbols": "000123.KS,AAPL",
         "display_symbols": "TestCo,Apple",
         "weights": "0.5000,0.5000",
+        "initial_capital_krw": SCENARIO_INITIAL_CAPITAL_KRW,
+        "monthly_contribution_krw": SCENARIO_MONTHLY_CONTRIBUTION_KRW,
+        "contribution_months": 2,
+        "total_contributed_krw": 12_000_000.0,
+        "final_value_krw": 13_200_000.0,
+        "money_weighted_return": 0.1,
+        "cash_weight": 0.0,
         "expected_return": 0.12,
         "expected_volatility": 0.24,
         "expected_sharpe": 0.375,
@@ -54,6 +76,7 @@ def test_portfolio_backtest_schema_validates_legacy_artifact_fields() -> None:
 
     assert row["cohort_month"] == "2026-01"
     assert row["symbols"] == "000123.KS,AAPL"
+    assert row["initial_capital_krw"] == SCENARIO_INITIAL_CAPITAL_KRW
     assert row["expected_sharpe"] is None
     assert row["realized_return"] == pytest.approx(0.08)
 
@@ -100,6 +123,12 @@ def test_committed_portfolio_backtests_weights_match_symbols() -> None:
 
         assert symbols
         assert row["display_symbols"]
+        assert row["initial_capital_krw"] == SCENARIO_INITIAL_CAPITAL_KRW
+        assert row["monthly_contribution_krw"] == SCENARIO_MONTHLY_CONTRIBUTION_KRW
+        assert row["contribution_months"] >= 0
+        assert row["total_contributed_krw"] >= row["initial_capital_krw"]
+        assert row["final_value_krw"] is not None
+        assert row["cash_weight"] == pytest.approx(0.0)
         assert len(weights) == len(symbols)
         assert all(symbol for symbol in symbols)
         assert all(weight >= -1e-12 for weight in weights)
@@ -116,6 +145,9 @@ def test_committed_portfolio_backtests_keep_metric_relationships() -> None:
         assert row["realized_return"] is not None
         assert row["kospi_return"] is not None
         assert row["nasdaq_return"] is not None
+        assert row["money_weighted_return"] == pytest.approx(
+            row["final_value_krw"] / row["total_contributed_krw"] - 1.0
+        )
         assert row["expected_volatility"] >= 0
         if row["expected_volatility"] == 0:
             assert row["expected_sharpe"] is None

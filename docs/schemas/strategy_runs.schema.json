@@ -57,6 +57,36 @@
       "type": "number",
       "x-snusmic-nan-policy": "drop"
     },
+    "final_account_value_krw": {
+      "default": 10000000.0,
+      "title": "Final Account Value Krw",
+      "type": "number",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "total_contributed_capital_krw": {
+      "default": 10000000.0,
+      "title": "Total Contributed Capital Krw",
+      "type": "number",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "net_profit_krw": {
+      "default": 0.0,
+      "title": "Net Profit Krw",
+      "type": "number",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "initial_capital_krw": {
+      "default": 10000000.0,
+      "title": "Initial Capital Krw",
+      "type": "number",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "monthly_contribution_krw": {
+      "default": 1000000.0,
+      "title": "Monthly Contribution Krw",
+      "type": "number",
+      "x-snusmic-nan-policy": "drop"
+    },
     "total_return": {
       "title": "Total Return",
       "type": "number",

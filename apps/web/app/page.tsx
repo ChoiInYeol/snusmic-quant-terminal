@@ -197,6 +197,13 @@ function PageInner() {
 
         <section className="metric-grid" aria-label="선택 전략 핵심 지표">
           <Metric title="총 수익" value={pct(currentReturn)} tone={currentReturn >= 0 ? 'gain' : 'loss'} />
+          <Metric title="계좌 평가액" value={`${num(selectedStrategy.final_account_value_krw, 'KRW')}원`} />
+          <Metric title="누적 납입" value={`${num(selectedStrategy.total_contributed_capital_krw, 'KRW')}원`} />
+          <Metric
+            title="납입 대비 손익"
+            value={`${num(selectedStrategy.net_profit_krw, 'KRW')}원`}
+            tone={(selectedStrategy.net_profit_krw ?? 0) >= 0 ? 'gain' : 'loss'}
+          />
           <Metric title="미실현 기여" value={pct(liveReturn)} tone={liveReturn >= 0 ? 'gain' : 'loss'} />
           <Metric title="최대낙폭" value={pct(selectedStrategy.max_drawdown)} tone="loss" />
           <Metric title="현금 비중" value={pct(cashWeight)} />
@@ -220,6 +227,7 @@ function PageInner() {
               이 전략은 <b>{labelEntryRule(selectedStrategy.entry_rule)}</b> 조건으로 편입 후보를 고르고, 실제 보유군 내부에서
               <b> {selectedStrategy.weighting}</b> 방식으로 비중을 조절합니다. 리밸런싱은 <b>{selectedStrategy.rebalance}</b>,
               lookback은 <b>{selectedStrategy.lookback_days} 거래일</b>입니다.
+              계좌 시나리오는 초기 1,000만원과 월 100만원 추가 납입을 고정하고, 리밸런싱 때 보유군 비중을 다시 맞춰 현금이 남지 않도록 투자합니다.
             </p>
           </div>
           <div className="guide-stats">
@@ -572,4 +580,3 @@ function SignalTable({ rows, companyBySymbol }: { rows: DashboardData['signals']
   ];
   return <SortableDataTable rows={rows} columns={columns} filename="signals.csv" initialSort="mtt" empty="신호 데이터가 없습니다." />;
 }
-
