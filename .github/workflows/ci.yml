@@ -82,3 +82,5 @@ jobs:
         run: npm --prefix apps/web run gen:types:check
       - name: tsc --noEmit
         run: npm --prefix apps/web run lint
+      - name: vitest (unit)
+        run: npm --prefix apps/web run test

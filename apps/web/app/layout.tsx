@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import { ThemeProvider } from '../src/components/ThemeProvider';
 
 export const metadata: Metadata = {
@@ -16,7 +17,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     // first load with prefers-color-scheme: dark.
     <html lang="ko" suppressHydrationWarning>
       <body>
-        <ThemeProvider>{children}</ThemeProvider>
+        {/* Phase 6c — ``NuqsAdapter`` lets ``useQueryState`` round-trip
+            dashboard navigation state (selected runId, symbol, query) to
+            the URL bar. ``ThemeProvider`` wraps children so theme +
+            URL-state hooks both work in nested client components. */}
+        <NuqsAdapter>
+          <ThemeProvider>{children}</ThemeProvider>
+        </NuqsAdapter>
       </body>
     </html>
   );

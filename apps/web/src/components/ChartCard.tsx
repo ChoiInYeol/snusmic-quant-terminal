@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTheme } from 'next-themes';
 import {
   AreaSeries,
@@ -96,7 +96,24 @@ function readPalette(): ChartPalette {
   };
 }
 
-function chartOptionsFromPalette(palette: ChartPalette) {
+/**
+ * Phase 7 — currency-aware price formatter. KRW & JPY render with 0 decimals,
+ * USD / GBP / EUR with 2, anything else with 2 by default. The chart applies
+ * this through ``localization.priceFormatter`` and the legacy ko-KR locale
+ * stays the integer rendering for KRW so existing screenshots match.
+ */
+function priceFormatterFor(currency: string | undefined) {
+  const code = (currency ?? 'KRW').toUpperCase();
+  const decimals = code === 'KRW' || code === 'JPY' ? 0 : 2;
+  const locale = code === 'KRW' ? 'ko-KR' : 'en-US';
+  return (price: number) =>
+    new Intl.NumberFormat(locale, {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(price);
+}
+
+function chartOptionsFromPalette(palette: ChartPalette, currency?: string) {
   return {
     layout: {
       background: { type: ColorType.Solid, color: palette.background },
@@ -117,10 +134,18 @@ function chartOptionsFromPalette(palette: ChartPalette) {
     },
     crosshair: { mode: 1 },
     localization: {
-      priceFormatter: (price: number) => Math.round(price).toLocaleString('ko-KR'),
+      priceFormatter: priceFormatterFor(currency),
     },
   };
 }
+
+const RANGE_PRESETS: { id: string; label: string; bars: number | null }[] = [
+  { id: '1M', label: '1M', bars: 21 },
+  { id: '3M', label: '3M', bars: 63 },
+  { id: '6M', label: '6M', bars: 126 },
+  { id: '1Y', label: '1Y', bars: 252 },
+  { id: 'ALL', label: 'ALL', bars: null },
+];
 
 function attachResize(chart: IChartApi, element: HTMLDivElement, afterResize?: () => void) {
   const observer = new ResizeObserver(([entry]) => {
@@ -139,6 +164,28 @@ export function StockChart({ data, runId }: { data: StockChartData | null; runId
   const candlesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
   const lineSeriesRef = useRef<{ ma50?: ISeriesApi<'Line'>; ma150?: ISeriesApi<'Line'>; ma200?: ISeriesApi<'Line'> }>({});
   const { resolvedTheme } = useTheme();
+  const [activeRange, setActiveRange] = useState<string>('6M');
+
+  // Phase 7 — read display currency from the per-symbol payload so KRW
+  // renders without decimals and USD/EUR/etc keep two-decimal precision.
+  const currency = data?.meta?.display_currency;
+  const priceDecimals = currency && /^(usd|eur|gbp)$/i.test(currency) ? 2 : 0;
+
+  const applyRange = useCallback((id: string) => {
+    setActiveRange(id);
+    const chart = chartRef.current;
+    if (!chart || !data) return;
+    const preset = RANGE_PRESETS.find((p) => p.id === id) ?? RANGE_PRESETS[2];
+    const length = data.ohlc.length;
+    if (preset.bars === null || length <= preset.bars) {
+      chart.timeScale().fitContent();
+      return;
+    }
+    chart.timeScale().setVisibleLogicalRange({
+      from: Math.max(0, length - preset.bars),
+      to: length + 5,
+    });
+  }, [data]);
 
   // Chart life-cycle effect — runs only when data / runId changes.
   // CRITICAL Phase 6a AC #2: a theme flip MUST NOT recreate the chart;
@@ -148,7 +195,7 @@ export function StockChart({ data, runId }: { data: StockChartData | null; runId
     ref.current.innerHTML = '';
     ref.current.style.position = 'relative';
     const palette = readPalette();
-    const chart = createChart(ref.current, { ...chartOptionsFromPalette(palette), height: 360 });
+    const chart = createChart(ref.current, { ...chartOptionsFromPalette(palette, currency), height: 360 });
     chartRef.current = chart;
     const candles = chart.addSeries(CandlestickSeries, {
       upColor: palette.candleUp,
@@ -156,13 +203,13 @@ export function StockChart({ data, runId }: { data: StockChartData | null; runId
       borderVisible: false,
       wickUpColor: palette.candleUp,
       wickDownColor: palette.candleDown,
-      priceFormat: { type: 'price', precision: 0, minMove: 1 },
+      priceFormat: { type: 'price', precision: priceDecimals, minMove: priceDecimals === 0 ? 1 : 0.01 },
     });
     candlesRef.current = candles;
     candles.setData(data.ohlc);
-    lineSeriesRef.current.ma50 = addLine(chart, data.ma50, palette.ma50, 2);
-    lineSeriesRef.current.ma150 = addLine(chart, data.ma150, palette.ma150, 1);
-    lineSeriesRef.current.ma200 = addLine(chart, data.ma200, palette.ma200, 1);
+    lineSeriesRef.current.ma50 = addLine(chart, data.ma50, palette.ma50, 2, priceDecimals);
+    lineSeriesRef.current.ma150 = addLine(chart, data.ma150, palette.ma150, 1, priceDecimals);
+    lineSeriesRef.current.ma200 = addLine(chart, data.ma200, palette.ma200, 1, priceDecimals);
     for (const line of data.price_lines) {
       candles.createPriceLine({
         price: line.price,
@@ -233,7 +280,7 @@ export function StockChart({ data, runId }: { data: StockChartData | null; runId
     const chart = chartRef.current;
     if (!chart) return;
     const palette = readPalette();
-    chart.applyOptions(chartOptionsFromPalette(palette));
+    chart.applyOptions(chartOptionsFromPalette(palette, currency));
     candlesRef.current?.applyOptions({
       upColor: palette.candleUp,
       downColor: palette.candleDown,
@@ -243,9 +290,26 @@ export function StockChart({ data, runId }: { data: StockChartData | null; runId
     lineSeriesRef.current.ma50?.applyOptions({ color: palette.ma50 });
     lineSeriesRef.current.ma150?.applyOptions({ color: palette.ma150 });
     lineSeriesRef.current.ma200?.applyOptions({ color: palette.ma200 });
-  }, [resolvedTheme]);
+  }, [resolvedTheme, currency]);
 
-  return <div ref={ref} className="chart-surface" aria-label="종목 가격 차트" />;
+  return (
+    <div className="stock-chart-shell">
+      <div className="chart-toolbar" role="toolbar" aria-label="기간 프리셋">
+        {RANGE_PRESETS.map((preset) => (
+          <button
+            key={preset.id}
+            type="button"
+            className={preset.id === activeRange ? 'range-button active' : 'range-button'}
+            onClick={() => applyRange(preset.id)}
+          >
+            {preset.label}
+          </button>
+        ))}
+        {currency ? <span className="chart-currency">{currency.toUpperCase()}</span> : null}
+      </div>
+      <div ref={ref} className="chart-surface" aria-label="종목 가격 차트" />
+    </div>
+  );
 }
 
 export function EquityChart({ rows }: { rows: EquityRow[] }) {
@@ -329,9 +393,19 @@ function SingleSeriesChart({ rows, mode }: { rows: SeriesPoint[]; mode: 'area' |
   return <div ref={ref} className="chart-surface compact" />;
 }
 
-function addLine(chart: IChartApi, rows: SeriesPoint[], color: string, lineWidth: 1 | 2): ISeriesApi<'Line'> | undefined {
+function addLine(
+  chart: IChartApi,
+  rows: SeriesPoint[],
+  color: string,
+  lineWidth: 1 | 2,
+  precision: number = 0,
+): ISeriesApi<'Line'> | undefined {
   if (!rows.length) return undefined;
-  const series = chart.addSeries(LineSeries, { color, lineWidth, priceFormat: { type: 'price', precision: 0, minMove: 1 } });
+  const series = chart.addSeries(LineSeries, {
+    color,
+    lineWidth,
+    priceFormat: { type: 'price', precision, minMove: precision === 0 ? 1 : 0.01 },
+  });
   series.setData(rows);
   return series;
 }

@@ -1,10 +1,19 @@
 'use client';
 
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { useQueryState, parseAsString } from 'nuqs';
 import { DrawdownChart, EquityChart, StockChart } from '../src/components/ChartCard';
 import { StrategyScatter } from '../src/components/PlotlyPanel';
 import { StaleDataBanner } from '../src/components/StaleDataBanner';
 import { ThemeToggle } from '../src/components/ThemeToggle';
+import { Metric, SectionIntro } from '../src/components/ui/Metric';
+import {
+  type Column,
+  CsvButton,
+  SortHeader,
+  SortableDataTable,
+  useSortedRows,
+} from '../src/components/ui/SortableDataTable';
 import {
   bestStrategy,
   fetchJson,
@@ -20,10 +29,23 @@ import { labelEntryRule, labelReason, num, pct, shortDate } from '../src/lib/for
 
 export default function Page() {
   const [data, setData] = useState<DashboardData | null>(null);
-  const [selectedRunId, setSelectedRunId] = useState('');
-  const [selectedSymbol, setSelectedSymbol] = useState('');
+  // Phase 6c — round-trip selectedRunId / selectedSymbol / query through the
+  // URL bar via nuqs. ``defaultValue: ''`` keeps the existing useState
+  // semantics; ``clearOnDefault`` keeps the URL clean when the value is the
+  // default (no ``?runId=`` when the run is the default selection).
+  const [selectedRunId, setSelectedRunId] = useQueryState(
+    'runId',
+    parseAsString.withDefault('').withOptions({ clearOnDefault: true, history: 'replace' }),
+  );
+  const [selectedSymbol, setSelectedSymbol] = useQueryState(
+    'symbol',
+    parseAsString.withDefault('').withOptions({ clearOnDefault: true, history: 'replace' }),
+  );
   const [chartData, setChartData] = useState<StockChartData | null>(null);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useQueryState(
+    'q',
+    parseAsString.withDefault('').withOptions({ clearOnDefault: true, history: 'replace', throttleMs: 300 }),
+  );
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -378,144 +400,9 @@ export default function Page() {
   );
 }
 
-function Metric({ title, value, tone = '' }: { title: string; value: string; tone?: string }) {
-  return (
-    <article className={`metric ${tone}`}>
-      <span>{title}</span>
-      <strong>{value}</strong>
-    </article>
-  );
-}
+// (Phase 6b) Metric / SectionIntro / SortableDataTable + helpers extracted to
+// apps/web/src/components/ui/{Metric,SortableDataTable}.tsx
 
-function SectionIntro({ eyebrow, title, body }: { eyebrow: string; title: string; body: string }) {
-  return (
-    <div className="section-intro">
-      <p className="eyebrow">{eyebrow}</p>
-      <h2>{title}</h2>
-      <p>{body}</p>
-    </div>
-  );
-}
-
-type SortState = { key: string; direction: 'asc' | 'desc' };
-type Column<T> = {
-  key: string;
-  label: string;
-  value: (row: T) => unknown;
-  render?: (row: T) => ReactNode;
-  className?: (row: T) => string;
-};
-
-function compareValues(a: unknown, b: unknown): number {
-  if (a === null || a === undefined || a === '') return 1;
-  if (b === null || b === undefined || b === '') return -1;
-  if (typeof a === 'number' && typeof b === 'number') return a - b;
-  return String(a).localeCompare(String(b), 'ko', { numeric: true });
-}
-
-function useSortedRows<T>(rows: T[], columns: Column<T>[], initialKey: string, initialDirection: 'asc' | 'desc' = 'desc') {
-  const [sort, setSort] = useState<SortState>({ key: initialKey, direction: initialDirection });
-  const sortedRows = useMemo(() => {
-    const column = columns.find((item) => item.key === sort.key) ?? columns[0];
-    return [...rows].sort((a, b) => {
-      const result = compareValues(column.value(a), column.value(b));
-      return sort.direction === 'asc' ? result : -result;
-    });
-  }, [columns, rows, sort]);
-  const toggleSort = (key: string) => {
-    setSort((current) => ({
-      key,
-      direction: current.key === key && current.direction === 'desc' ? 'asc' : 'desc',
-    }));
-  };
-  return { sortedRows, sort, toggleSort };
-}
-
-function SortHeader<T>({ column, sort, onSort }: { column: Column<T>; sort: SortState; onSort: (key: string) => void }) {
-  const marker = sort.key === column.key ? (sort.direction === 'asc' ? '▲' : '▼') : '';
-  return (
-    <button className="sort-button" onClick={() => onSort(column.key)} type="button">
-      {column.label} <span>{marker}</span>
-    </button>
-  );
-}
-
-function csvValue(value: unknown): string {
-  if (value === null || value === undefined) return '';
-  const text = String(value).replace(/\r?\n/g, ' ');
-  return /[",]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
-}
-
-function downloadCsv<T>(filename: string, rows: T[], columns: Column<T>[]) {
-  const header = columns.map((column) => csvValue(column.label)).join(',');
-  const body = rows.map((row) => columns.map((column) => csvValue(column.value(row))).join(',')).join('\n');
-  const blob = new Blob([`\ufeff${header}\n${body}\n`], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
-}
-
-function CsvButton<T>({ filename, rows, columns }: { filename: string; rows: T[]; columns: Column<T>[] }) {
-  return (
-    <button className="csv-button" onClick={() => downloadCsv(filename, rows, columns)} type="button">
-      CSV
-    </button>
-  );
-}
-
-function SortableDataTable<T>({
-  rows,
-  columns,
-  filename,
-  initialSort,
-  initialDirection = 'desc',
-  empty,
-}: {
-  rows: T[];
-  columns: Column<T>[];
-  filename: string;
-  initialSort: string;
-  initialDirection?: 'asc' | 'desc';
-  empty: string;
-}) {
-  const { sortedRows, sort, toggleSort } = useSortedRows(rows, columns, initialSort, initialDirection);
-  if (!rows.length) return <p className="empty">{empty}</p>;
-  return (
-    <div className="table-card">
-      <div className="table-toolbar">
-        <span>{rows.length.toLocaleString('ko-KR')}개 행</span>
-        <CsvButton filename={filename} rows={sortedRows} columns={columns} />
-      </div>
-      <div className="table-wrap wide-table">
-        <table>
-          <thead>
-            <tr>
-              {columns.map((column) => (
-                <th key={column.key}>
-                  <SortHeader column={column} sort={sort} onSort={toggleSort} />
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {sortedRows.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {columns.map((column) => (
-                  <td key={column.key} className={column.className?.(row)}>
-                    {column.render ? column.render(row) : String(column.value(row) ?? '-')}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
 
 function heatColor(value: number | null | undefined, positiveMax = 0.35) {
   if (value === null || value === undefined || Number.isNaN(value)) return 'rgba(148, 163, 184, 0.18)';

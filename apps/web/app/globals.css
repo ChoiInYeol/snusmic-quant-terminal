@@ -753,3 +753,47 @@ th {
   background: var(--accent-soft);
   border-color: var(--accent);
 }
+
+/* Phase 7 — chart toolbar (range presets + currency badge). Sits directly
+ * above the StockChart canvas. Buttons are theme-aware via tokens. */
+.stock-chart-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.chart-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.range-button {
+  padding: 0.25rem 0.625rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.range-button:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.range-button.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.chart-currency {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
