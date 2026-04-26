@@ -24,7 +24,7 @@ from ..currency import (
     normalize_currency,
 )
 from .engine import run_walk_forward_backtest, stable_run_id
-from .schemas import LOOKBACK_WINDOWS, TABLE_MODELS, BacktestConfig
+from .schemas import LOOKBACK_WINDOWS, TABLE_DTYPES, TABLE_MODELS, BacktestConfig
 
 WAREHOUSE_TABLES = [
     "reports",
@@ -924,7 +924,7 @@ def read_table(warehouse_dir: Path, table: str) -> pd.DataFrame:
     path = warehouse_dir / f"{table}.csv"
     if not path.exists() or path.stat().st_size == 0:
         return pd.DataFrame()
-    frame = pd.read_csv(path)
+    frame = pd.read_csv(path, dtype=TABLE_DTYPES.get(table))
     if _use_pydantic_v2():
         _validate_rows(table, frame)
     return frame

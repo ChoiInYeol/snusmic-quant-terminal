@@ -157,11 +157,7 @@ class StrategySummary(BaseModel):
 class DailyPrice(BaseModel):
     """Row schema for ``data/warehouse/daily_prices.csv``."""
 
-    # `coerce_numbers_to_str` handles the common pandas quirk where pd.read_csv
-    # infers integer-looking tickers (e.g. "000001" → 1) — Pydantic coerces the
-    # int back to a str for fields typed `str`. Column-level dtype hints in
-    # read_table would be the stricter alternative (Phase 2+).
-    model_config = ConfigDict(extra="forbid", coerce_numbers_to_str=True)
+    model_config = ConfigDict(extra="forbid")
 
     # Phase 2b bumps close.nan_policy from "drop" → "forward_fill_then_flag"
     # (per .omc/plans/consensus-full-overhaul.md). The semantic shift is
@@ -191,11 +187,7 @@ class DailyPrice(BaseModel):
 class ReportRow(BaseModel):
     """Row schema for ``data/warehouse/reports.csv``."""
 
-    # `coerce_numbers_to_str` handles the common pandas quirk where pd.read_csv
-    # infers integer-looking tickers (e.g. "000001" → 1) — Pydantic coerces the
-    # int back to a str for fields typed `str`. Column-level dtype hints in
-    # read_table would be the stricter alternative (Phase 2+).
-    model_config = ConfigDict(extra="forbid", coerce_numbers_to_str=True)
+    model_config = ConfigDict(extra="forbid")
 
     semantic_version: ClassVar[str] = "1.0"
     column_nan_policy: ClassVar[dict[str, str]] = {}
@@ -234,11 +226,7 @@ class ExecutionEvent(BaseModel):
     Phase 2 adds `signal_date`, `decision_price`, `fill_price`, `fill_rule`
     (additive per Principle 6 — no v2 sidecar needed)."""
 
-    # `coerce_numbers_to_str` handles the common pandas quirk where pd.read_csv
-    # infers integer-looking tickers (e.g. "000001" → 1) — Pydantic coerces the
-    # int back to a str for fields typed `str`. Column-level dtype hints in
-    # read_table would be the stricter alternative (Phase 2+).
-    model_config = ConfigDict(extra="forbid", coerce_numbers_to_str=True)
+    model_config = ConfigDict(extra="forbid")
 
     semantic_version: ClassVar[str] = "1.0"
     column_nan_policy: ClassVar[dict[str, str]] = {}
@@ -275,11 +263,7 @@ class StrategyRun(BaseModel):
     Phase 2 will introduce ``{primary_objective}_in_sample`` / ``_oos`` columns
     (additive; kept through 2026-Q4 per ADR)."""
 
-    # `coerce_numbers_to_str` handles the common pandas quirk where pd.read_csv
-    # infers integer-looking tickers (e.g. "000001" → 1) — Pydantic coerces the
-    # int back to a str for fields typed `str`. Column-level dtype hints in
-    # read_table would be the stricter alternative (Phase 2+).
-    model_config = ConfigDict(extra="forbid", coerce_numbers_to_str=True)
+    model_config = ConfigDict(extra="forbid")
 
     semantic_version: ClassVar[str] = "1.0"
     column_nan_policy: ClassVar[dict[str, str]] = {}
@@ -335,6 +319,53 @@ TABLE_MODELS: dict[str, type[BaseModel]] = {
     "reports": ReportRow,
     "execution_events": ExecutionEvent,
     "strategy_runs": StrategyRun,
+}
+
+# Pandas must read identifier-like string columns as text before Pydantic sees
+# them. Without these hints, values such as KRX ticker "000999" can be inferred
+# as integer 999, permanently losing leading zeros before validation.
+TABLE_DTYPES: dict[str, dict[str, str]] = {
+    "daily_prices": {
+        "date": "str",
+        "symbol": "str",
+        "source_currency": "str",
+        "display_currency": "str",
+    },
+    "reports": {
+        "report_id": "str",
+        "publication_date": "str",
+        "title": "str",
+        "company": "str",
+        "ticker": "str",
+        "exchange": "str",
+        "symbol": "str",
+        "pdf_filename": "str",
+        "pdf_url": "str",
+        "target_currency": "str",
+        "price_currency": "str",
+        "display_currency": "str",
+        "markdown_filename": "str",
+    },
+    "execution_events": {
+        "run_id": "str",
+        "date": "str",
+        "symbol": "str",
+        "company": "str",
+        "report_id": "str",
+        "event_type": "str",
+        "reason": "str",
+        "entry_date": "str",
+        "signal_date": "str",
+        "fill_rule": "str",
+    },
+    "strategy_runs": {
+        "run_id": "str",
+        "strategy_name": "str",
+        "weighting": "str",
+        "entry_rule": "str",
+        "rebalance": "str",
+        "status": "str",
+    },
 }
 
 
