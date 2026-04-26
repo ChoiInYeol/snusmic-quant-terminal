@@ -12,7 +12,7 @@ from .optimizers import optimize_execution_weights
 from .schemas import BacktestConfig, StrategySummary
 from .signals import compute_signals_daily, signal_lookup
 
-# Phase 2b — walk-forward OOS cross-validation shape.
+# Phase 2b — 3-segment OOS-tail diagnostic shape.
 # See docs/decisions/phase-2-objective.md for the locked contract.
 PHASE_2_FOLD_COUNT = 3
 PHASE_2_OOS_FRACTION = 0.30
@@ -401,9 +401,9 @@ def empty_result(run_id: str, config: BacktestConfig) -> dict[str, pd.DataFrame]
         **summary.model_dump(mode="json"),
         "open_position_count": 0,
         "sortino_in_sample": None,
-        "sortino_oos": None,
-        "sharpe_oos": None,
-        "max_drawdown_oos": None,
+        "sortino_oos_tail": None,
+        "sharpe_oos_tail": None,
+        "max_drawdown_oos_tail": None,
         "fold_count": None,
     }
     return {
@@ -810,11 +810,14 @@ def _equity_max_drawdown(returns: pd.Series) -> float:
     return abs(float(drawdown.min()))
 
 
-def _walk_forward_stats(returns: pd.Series, risk_free: float) -> dict[str, float | int | None]:
-    """Compute 3-fold 70/30 walk-forward diagnostics per Phase 2 plan.
+def _oos_tail_stats(returns: pd.Series, risk_free: float) -> dict[str, float | int | None]:
+    """Compute 3-segment OOS-tail diagnostics, not a true walk-forward replay.
 
-    See ``docs/decisions/phase-2-objective.md``. The primary objective is the
-    average Sortino across each fold's OOS window.
+    This splits one backtest return series into three disjoint contiguous
+    chunks, treats each chunk's first 70% as in-sample and last 30% as an OOS
+    tail, then averages the tail diagnostics. A true walk-forward would replay
+    the backtest per expanding-window fold and is intentionally left as a
+    follow-up. See ``docs/decisions/phase-2-objective.md``.
     """
     fold_count = PHASE_2_FOLD_COUNT
     oos_frac = PHASE_2_OOS_FRACTION
@@ -822,9 +825,9 @@ def _walk_forward_stats(returns: pd.Series, risk_free: float) -> dict[str, float
     if n < fold_count * 10:
         return {
             "sortino_in_sample": None,
-            "sortino_oos": None,
-            "sharpe_oos": None,
-            "max_drawdown_oos": None,
+            "sortino_oos_tail": None,
+            "sharpe_oos_tail": None,
+            "max_drawdown_oos_tail": None,
             "fold_count": fold_count,
         }
     fold_size = n // fold_count
@@ -854,15 +857,15 @@ def _walk_forward_stats(returns: pd.Series, risk_free: float) -> dict[str, float
 
     return {
         "sortino_in_sample": float(np.mean(is_sortinos)) if is_sortinos else None,
-        "sortino_oos": float(np.mean(oos_sortinos)) if oos_sortinos else None,
-        "sharpe_oos": float(np.mean(oos_sharpes)) if oos_sharpes else None,
-        "max_drawdown_oos": float(max(oos_drawdowns)) if oos_drawdowns else None,
+        "sortino_oos_tail": float(np.mean(oos_sortinos)) if oos_sortinos else None,
+        "sharpe_oos_tail": float(np.mean(oos_sharpes)) if oos_sharpes else None,
+        "max_drawdown_oos_tail": float(max(oos_drawdowns)) if oos_drawdowns else None,
         "fold_count": fold_count,
     }
 
 
-def _resolve_objective(config: BacktestConfig, total_return: float, sortino_oos: float | None) -> float:
-    """Default objective is Sortino OOS per docs/decisions/phase-2-objective.md.
+def _resolve_objective(config: BacktestConfig, total_return: float, sortino_oos_tail: float | None) -> float:
+    """Default objective is Sortino OOS-tail per docs/decisions/phase-2-objective.md.
 
     The ``BacktestConfig.legacy_objective`` flag (was the
     ``SNUSMIC_LEGACY_OBJECTIVE=1`` env-var pre code-review) restores
@@ -874,8 +877,8 @@ def _resolve_objective(config: BacktestConfig, total_return: float, sortino_oos:
     """
     if config.legacy_objective:
         return float(total_return)
-    if sortino_oos is not None and math.isfinite(sortino_oos):
-        return float(sortino_oos)
+    if sortino_oos_tail is not None and math.isfinite(sortino_oos_tail):
+        return float(sortino_oos_tail)
     # Fallback when OOS cannot be computed (short runs): use total_return so
     # optimisers still have a finite signal; flagged via `status="ok_short"`.
     return float(total_return)
@@ -908,7 +911,7 @@ def _summarize(
     wins = sells[sells["gross_return"].astype(float) > 0] if not sells.empty else pd.DataFrame()
     realized = float(sells["realized_return"].dropna().astype(float).sum()) if not sells.empty else 0.0
 
-    wf = _walk_forward_stats(returns, config.risk_free_rate)
+    tail_stats = _oos_tail_stats(returns, config.risk_free_rate)
     status = "ok" if len(returns) >= PHASE_2_FOLD_COUNT * 10 else "ok_short"
 
     return {
@@ -947,14 +950,14 @@ def _summarize(
         else float(sells["reason"].astype(str).str.contains("target|take_profit").mean()),
         "stop_loss_hit_rate": None if sells.empty else float((sells["reason"] == "stop_loss").mean()),
         "average_holding_days": None if sells.empty else float(sells["holding_days"].astype(float).mean()),
-        "objective": _resolve_objective(config, total_return, wf["sortino_oos"]),
+        "objective": _resolve_objective(config, total_return, tail_stats["sortino_oos_tail"]),
         "open_position_count": len(open_positions),
         "status": status,
-        "sortino_in_sample": wf["sortino_in_sample"],
-        "sortino_oos": wf["sortino_oos"],
-        "sharpe_oos": wf["sharpe_oos"],
-        "max_drawdown_oos": wf["max_drawdown_oos"],
-        "fold_count": wf["fold_count"],
+        "sortino_in_sample": tail_stats["sortino_in_sample"],
+        "sortino_oos_tail": tail_stats["sortino_oos_tail"],
+        "sharpe_oos_tail": tail_stats["sharpe_oos_tail"],
+        "max_drawdown_oos_tail": tail_stats["max_drawdown_oos_tail"],
+        "fold_count": tail_stats["fold_count"],
     }
 
 

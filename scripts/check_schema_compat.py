@@ -94,14 +94,14 @@ def read_primary_objective() -> str | None:
 
 def check_phase_2_objective_contract(current: dict | None) -> list[str]:
     """If the decision file pins ``primary_objective``, require the
-    ``strategy_runs`` schema to carry ``{obj}_in_sample`` / ``{obj}_oos``
+    ``strategy_runs`` schema to carry ``{obj}_in_sample`` / ``{obj}_oos_tail``
     columns. This enforces the Phase 2 column-naming contract at CI time."""
     violations: list[str] = []
     objective = read_primary_objective()
     if objective is None or current is None:
         return violations
     props = (current or {}).get("properties") or {}
-    expected = [f"{objective}_in_sample", f"{objective}_oos"]
+    expected = [f"{objective}_in_sample", f"{objective}_oos_tail"]
     for col in expected:
         if col not in props:
             violations.append(

@@ -40,6 +40,19 @@ class PriceMetric:
     target_price: float | None
     buy_at_publication_return: float | None
     publication_to_target_return: float | None
+    # Explicit baseline aliases for the project goal:
+    # - oracle_* is the future-informed upper bound over this report's price path.
+    # - smic_follower_* is the naive report-publication-to-target baseline.
+    oracle_entry_price: float | None
+    oracle_exit_price: float | None
+    oracle_return: float | None
+    oracle_buy_lag_days: int | None
+    oracle_holding_days: int | None
+    smic_follower_entry_price: float | None
+    smic_follower_exit_price: float | None
+    smic_follower_return: float | None
+    smic_follower_holding_days: int | None
+    smic_follower_status: str
     lowest_price_since_publication: float | None
     lowest_price_current_return: float | None
     low_to_high_return: float | None
@@ -311,6 +324,11 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
         first_hit_date = None if hit_series.empty else hit_series.index[0]
         holding_days, net_return = optimal_net_holding(close)
         low_to_high_holding_days = (best_after_low_idx - low_idx).days
+        publication_day = pd.to_datetime(report.meta.date[:10])
+        target_hit = bool(not hit_series.empty)
+        smic_exit_price = target if target_hit else current
+        smic_exit_date = first_hit_date if target_hit else close.index[-1]
+        smic_holding_days = None if smic_exit_date is None else (smic_exit_date - publication_day).days
         current_percentile = float((close <= current).mean())
         metrics.append(
             PriceMetric(
@@ -328,6 +346,16 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
                 target_price=target,
                 buy_at_publication_return=pct_return(current, pub_price),
                 publication_to_target_return=pct_return(target, pub_price) if target else None,
+                oracle_entry_price=low,
+                oracle_exit_price=best_after_low,
+                oracle_return=pct_return(best_after_low, low),
+                oracle_buy_lag_days=(low_idx - publication_day).days,
+                oracle_holding_days=low_to_high_holding_days,
+                smic_follower_entry_price=pub_price,
+                smic_follower_exit_price=smic_exit_price,
+                smic_follower_return=pct_return(smic_exit_price, pub_price),
+                smic_follower_holding_days=smic_holding_days,
+                smic_follower_status="target_hit" if target_hit else "open",
                 lowest_price_since_publication=low,
                 lowest_price_current_return=pct_return(current, low),
                 low_to_high_return=pct_return(best_after_low, low),
@@ -344,7 +372,7 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
                 optimal_buy_lag_days=(low_idx - pd.to_datetime(report.meta.date[:10])).days,
                 optimal_holding_days_net_10pct=holding_days,
                 optimal_net_return_10pct=net_return,
-                target_hit=bool(not hit_series.empty),
+                target_hit=target_hit,
                 first_target_hit_date="" if first_hit_date is None else first_hit_date.date().isoformat(),
                 target_hit_holding_days=None
                 if first_hit_date is None
@@ -396,6 +424,16 @@ def empty_price_metric(
         target_price=None,
         buy_at_publication_return=None,
         publication_to_target_return=None,
+        oracle_entry_price=None,
+        oracle_exit_price=None,
+        oracle_return=None,
+        oracle_buy_lag_days=None,
+        oracle_holding_days=None,
+        smic_follower_entry_price=None,
+        smic_follower_exit_price=None,
+        smic_follower_return=None,
+        smic_follower_holding_days=None,
+        smic_follower_status="unavailable",
         lowest_price_since_publication=None,
         lowest_price_current_return=None,
         low_to_high_return=None,

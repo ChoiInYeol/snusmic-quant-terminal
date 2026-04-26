@@ -41,9 +41,9 @@ function strategy(run_id: string, total_return: number, objective?: number | nul
     open_position_count: 0,
     status: 'ok',
     sortino_in_sample: null,
-    sortino_oos: null,
-    sharpe_oos: null,
-    max_drawdown_oos: null,
+    sortino_oos_tail: null,
+    sharpe_oos_tail: null,
+    max_drawdown_oos_tail: null,
     fold_count: null,
   };
 }

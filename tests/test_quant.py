@@ -73,5 +73,15 @@ def test_price_metric_dataclass_exposes_low_high_fields():
     assert "q75_price_current_return" in fields
     assert "current_price_percentile" in fields
     assert "publication_to_target_return" in fields
+    assert "oracle_entry_price" in fields
+    assert "oracle_exit_price" in fields
+    assert "oracle_return" in fields
+    assert "oracle_buy_lag_days" in fields
+    assert "oracle_holding_days" in fields
+    assert "smic_follower_entry_price" in fields
+    assert "smic_follower_exit_price" in fields
+    assert "smic_follower_return" in fields
+    assert "smic_follower_holding_days" in fields
+    assert "smic_follower_status" in fields
     assert "target_hit_holding_days" in fields
     assert "target_upside_remaining" in fields

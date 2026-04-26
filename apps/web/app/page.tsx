@@ -368,14 +368,14 @@ function PageInner() {
         <section className="section-block" id="opportunity">
           <SectionIntro
             eyebrow="Opportunity"
-            title="리포트 이후의 가격 기회"
-            body="발간가, 분위수, 저가, 고가, 목표가를 기준으로 리포트 이후의 가격 기회를 비교한다."
+            title="추종자와 예언자 사이의 전략 공간"
+            body="스믹 추종자는 발간가에 사서 목표가에 파는 단순 기준선이고, 예언자는 사후 최저가와 이후 최고가를 아는 상한선입니다. 현실 전략은 이 둘 사이를 좁히는 것이 목표입니다."
           />
           <article className="panel">
           <div className="panel-head">
             <div>
-              <p className="eyebrow">가격 기회</p>
-              <h2>리포트별 가격 기회</h2>
+              <p className="eyebrow">Baseline band</p>
+              <h2>스믹 추종자 ↔ 예언자</h2>
             </div>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="회사명 검색" />
           </div>
@@ -619,37 +619,41 @@ function OpportunityTable({ rows }: { rows: PriceMetric[] }) {
   const columns: Column<PriceMetric>[] = [
     { key: 'publication_date', label: '일자', value: (row) => row.publication_date, render: (row) => shortDate(row.publication_date) },
     { key: 'company', label: '회사', value: (row) => row.display_name || row.company, render: (row) => row.display_name || row.company },
-    { key: 'publication_buy_price', label: '발간', value: (row) => row.publication_buy_price, render: (row) => num(row.publication_buy_price, 'KRW') },
-    { key: 'q25_price', label: 'Q25', value: (row) => row.q25_price_since_publication, render: (row) => num(row.q25_price_since_publication, 'KRW') },
-    { key: 'q75_price', label: 'Q75', value: (row) => row.q75_price_since_publication, render: (row) => num(row.q75_price_since_publication, 'KRW') },
-    { key: 'lowest_price', label: '저가', value: (row) => row.lowest_price_since_publication, render: (row) => num(row.lowest_price_since_publication, 'KRW') },
-    { key: 'q100_price', label: '고가', value: (row) => row.highest_price_since_publication, render: (row) => num(row.highest_price_since_publication, 'KRW') },
+    { key: 'publication_buy_price', label: '발간가', value: (row) => row.publication_buy_price, render: (row) => num(row.publication_buy_price, 'KRW') },
     {
-      key: 'target_sell_return',
-      label: '목표',
-      value: (row) => row.publication_to_target_return,
-      render: (row) => pct(row.publication_to_target_return),
-      className: (row) => ((row.publication_to_target_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
+      key: 'smic_follower_return',
+      label: '스믹 추종자',
+      value: (row) => row.smic_follower_return,
+      render: (row) => pct(row.smic_follower_return),
+      className: (row) => ((row.smic_follower_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
     },
     {
-      key: 'low_high_return',
-      label: '최대',
-      value: (row) => row.low_to_high_return,
-      render: (row) => pct(row.low_to_high_return),
-      className: (row) => ((row.low_to_high_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
+      key: 'oracle_return',
+      label: '예언자 상한',
+      value: (row) => row.oracle_return,
+      render: (row) => pct(row.oracle_return),
+      className: (row) => ((row.oracle_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
     },
-    {
-      key: 'publication_buy_return',
-      label: '현재',
-      value: (row) => row.buy_at_publication_return,
-      render: (row) => pct(row.buy_at_publication_return),
-      className: (row) => ((row.buy_at_publication_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
-    },
-    { key: 'target_hit', label: '도달', value: (row) => Number(row.target_hit), render: (row) => (row.target_hit ? 'Y' : 'N') },
-    { key: 'target_days', label: '보유', value: (row) => row.target_hit_holding_days, render: (row) => row.target_hit_holding_days ?? '-' },
-    { key: 'target_upside', label: '여력', value: (row) => row.target_upside_remaining, render: (row) => targetUpsideCell(row) },
+    { key: 'oracle_entry_price', label: '예언자 매수가', value: (row) => row.oracle_entry_price, render: (row) => num(row.oracle_entry_price, 'KRW') },
+    { key: 'oracle_exit_price', label: '예언자 매도가', value: (row) => row.oracle_exit_price, render: (row) => num(row.oracle_exit_price, 'KRW') },
+    { key: 'oracle_buy_lag_days', label: '진입대기', value: (row) => row.oracle_buy_lag_days, render: (row) => dayCell(row.oracle_buy_lag_days) },
+    { key: 'oracle_holding_days', label: '상한보유', value: (row) => row.oracle_holding_days, render: (row) => dayCell(row.oracle_holding_days) },
+    { key: 'smic_follower_status', label: '추종상태', value: (row) => row.smic_follower_status, render: (row) => followerStatus(row) },
+    { key: 'target_upside', label: '남은여력', value: (row) => row.target_upside_remaining, render: (row) => targetUpsideCell(row) },
   ];
   return <SortableDataTable rows={rows} columns={columns} filename="price-opportunity.csv" initialSort="publication_date" empty="가격 기회 데이터가 없습니다." />;
+}
+
+
+function dayCell(value: number | null | undefined): string {
+  if (value === null || value === undefined || Number.isNaN(value)) return '-';
+  return `${value.toLocaleString('ko-KR')}일`;
+}
+
+function followerStatus(row: PriceMetric): string {
+  if (row.smic_follower_status === 'target_hit') return `목표 도달 · ${dayCell(row.smic_follower_holding_days)}`;
+  if (row.smic_follower_status === 'open') return `미도달 · ${dayCell(row.smic_follower_holding_days)}`;
+  return '-';
 }
 
 function ReportArchiveTable({ rows }: { rows: ReportRow[] }) {

@@ -89,8 +89,8 @@ export interface ReportRow {
 /**
  * Row schema for ``data/warehouse/strategy_runs.csv``.
  * 
- * Phase 2 will introduce ``{primary_objective}_in_sample`` / ``_oos`` columns
- * (additive; kept through 2026-Q4 per ADR).
+ * Phase 2 will introduce ``{primary_objective}_in_sample`` /
+ * ``_oos_tail`` columns (additive; kept through 2026-Q4 per ADR).
  */
 export interface StrategyRun {
   "run_id": string;
@@ -126,9 +126,9 @@ export interface StrategyRun {
   "open_position_count"?: number;
   "status": string;
   "sortino_in_sample": number | null;
-  "sortino_oos": number | null;
-  "sharpe_oos": number | null;
-  "max_drawdown_oos": number | null;
+  "sortino_oos_tail": number | null;
+  "sharpe_oos_tail": number | null;
+  "max_drawdown_oos_tail": number | null;
   "fold_count": number | null;
 }
 

@@ -275,7 +275,7 @@ def test_critical_3_imputed_bars_excluded_from_mtm() -> None:
 def test_critical_4_legacy_objective_lives_on_config_not_env(monkeypatch) -> None:
     """``BacktestConfig.legacy_objective=True`` must produce
     ``objective == total_return``; ``False`` must produce
-    ``objective == sortino_oos`` (when computable). The env-var that used to
+    ``objective == sortino_oos_tail`` (when computable). The env-var that used to
     drive this is gone — verify by setting it to ``1`` and asserting it has
     no effect.
     """
@@ -330,11 +330,11 @@ def test_critical_4_legacy_objective_lives_on_config_not_env(monkeypatch) -> Non
     default_row = run_walk_forward_backtest(reports, prices, cfg_default)["strategy_runs"].iloc[0]
     legacy_row = run_walk_forward_backtest(reports, prices, cfg_legacy)["strategy_runs"].iloc[0]
 
-    # Default branch: env var is set but ignored — objective == sortino_oos.
-    if default_row["sortino_oos"] is not None and math.isfinite(float(default_row["sortino_oos"])):
+    # Default branch: env var is set but ignored — objective == sortino_oos_tail.
+    if default_row["sortino_oos_tail"] is not None and math.isfinite(float(default_row["sortino_oos_tail"])):
         assert math.isclose(
             float(default_row["objective"]),
-            float(default_row["sortino_oos"]),
+            float(default_row["sortino_oos_tail"]),
             rel_tol=1e-9,
         ), "env var leaked into default-config run"
 

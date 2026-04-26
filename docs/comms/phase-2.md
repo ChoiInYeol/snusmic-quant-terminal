@@ -14,16 +14,18 @@ or reference this file (`Comms: see docs/comms/phase-2.md`).
 
 ## What changes on Phase 2 merge-day
 
-1. **Headline metric switches from `total_return` to OOS Sortino.** The
+1. **Headline metric switches from `total_return` to OOS-tail Sortino.** The
    dashboard's headline strategy ranking is now driven by
-   `sortino_oos`, computed on each fold's out-of-sample window across a
-   3-fold 70/30 walk-forward split. See
+   `sortino_oos_tail`, computed by splitting one backtest return series into
+   three contiguous segments and averaging the last 30% tail metric from each
+   segment. This is not a true per-fold walk-forward replay; that remains a
+   follow-up. See
    `docs/decisions/phase-2-objective.md` for the locked objective
    contract.
 2. **Reported Sortino / Sharpe / total_return will drop.** Iteration-1
    numbers were in-sample-optimised. Expect headline metrics to land
    meaningfully lower once OOS values replace them. Side-by-side columns
-   (`sortino_in_sample` + `sortino_oos`) stay through end of 2026-Q4 so
+   (`sortino_in_sample` + `sortino_oos_tail`) stay through end of 2026-Q4 so
    stakeholders can directly compare the optimism gap.
 3. **Execution events carry lookahead-safe metadata.** Each trade row now
    records `signal_date` (t-1), `decision_price` (t-1 close),
@@ -58,7 +60,7 @@ or reference this file (`Comms: see docs/comms/phase-2.md`).
 - [ ] This file or a hosted announcement URL is referenced in the PR body
       (`Comms: see docs/comms/phase-2.md`).
 - [ ] The announcement was posted ≥24h before merge.
-- [ ] Side-by-side `sortino_in_sample` vs `sortino_oos` screenshot attached
+- [ ] Side-by-side `sortino_in_sample` vs `sortino_oos_tail` screenshot attached
       to the PR description.
 - [ ] The sibling `docs/schemas/daily_prices.v2.schema.json` is committed.
 - [ ] `docs/decisions/phase-2-objective.md` primary_objective is locked

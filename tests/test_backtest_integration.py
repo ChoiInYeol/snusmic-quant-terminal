@@ -113,14 +113,20 @@ def test_integration_run_emits_phase_2b_oos_metrics(integration_result: dict[str
     runs = integration_result["strategy_runs"]
     assert len(runs) == 1
     row = runs.iloc[0]
-    for col in ("sortino_in_sample", "sortino_oos", "sharpe_oos", "max_drawdown_oos", "fold_count"):
+    for col in (
+        "sortino_in_sample",
+        "sortino_oos_tail",
+        "sharpe_oos_tail",
+        "max_drawdown_oos_tail",
+        "fold_count",
+    ):
         assert col in runs.columns, f"strategy_runs missing Phase 2b column {col!r}"
-    # 3-year fixture is long enough that walk-forward must fire.
+    # 3-year fixture is long enough that 3-segment OOS-tail diagnostics must fire.
     assert row["fold_count"] == 3
-    assert row["sortino_oos"] is not None
-    # Default objective must equal sortino_oos (not total_return) per
+    assert row["sortino_oos_tail"] is not None
+    # Default objective must equal sortino_oos_tail (not total_return) per
     # docs/decisions/phase-2-objective.md.
     import math
 
-    if row["sortino_oos"] is not None and math.isfinite(float(row["sortino_oos"])):
-        assert math.isclose(float(row["objective"]), float(row["sortino_oos"]), rel_tol=1e-9)
+    if row["sortino_oos_tail"] is not None and math.isfinite(float(row["sortino_oos_tail"])):
+        assert math.isclose(float(row["objective"]), float(row["sortino_oos_tail"]), rel_tol=1e-9)

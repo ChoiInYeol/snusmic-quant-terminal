@@ -79,7 +79,7 @@ def render_index_html() -> str:
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SNUSMIC Quant Terminal</title>
+  <title>SNUSMIC Static Archive</title>
   <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <style>
 {css}
@@ -89,8 +89,8 @@ def render_index_html() -> str:
   <aside class="app-sidebar">
     <div class="brand-block">
       <span class="brand-kicker">SNUSMIC</span>
-      <strong>Quant Terminal</strong>
-      <small>candidate pool 기반 전략 운용판</small>
+      <strong>Static Archive</strong>
+      <small>원문·데이터 보관용 최소 미러</small>
     </div>
     <nav class="side-nav" aria-label="dashboard sections">
       <a href="#guide">전략 가이드</a>
@@ -101,16 +101,16 @@ def render_index_html() -> str:
       <a href="#reports">리포트 아카이브</a>
     </nav>
     <div class="sidebar-note">
-      GitHub는 데이터 갱신과 원본 보관을 맡고, Vercel은 이 대시보드를 빠르게 배포합니다.
+      정교한 의사결정 UI는 Vercel 앱을 우선합니다. 이 정적 페이지는 원문과 데이터 확인용 최소 미러입니다.
     </div>
   </aside>
 
   <main class="app-main">
     <header class="app-hero">
       <div>
-        <p class="eyebrow">Walk-forward quant dashboard</p>
-        <h1>현재 보유 종목과 전략별 성과</h1>
-        <p>SNUSMIC 리포트 기반 후보군에서 MTT, 목표가 여력, 손절/익절 조건을 통과한 종목만 실제 보유군으로 운용합니다.</p>
+        <p class="eyebrow">Static archive mirror</p>
+        <h1>원문과 산출 데이터를 확인하는 최소 페이지</h1>
+        <p>Vercel Quant Terminal을 주 UI로 두고, 이 정적 페이지는 리포트 원문·가격 지표·생성 JSON이 살아있는지 확인하는 보조 표면으로 유지합니다.</p>
       </div>
       <div id="v3OverviewStats" class="metric-grid hero-stats"></div>
     </header>

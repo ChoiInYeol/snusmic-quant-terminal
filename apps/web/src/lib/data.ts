@@ -74,6 +74,16 @@ export type PriceMetric = {
   current_price: number | null;
   target_price: number | null;
   publication_to_target_return: number | null;
+  oracle_entry_price: number | null;
+  oracle_exit_price: number | null;
+  oracle_return: number | null;
+  oracle_buy_lag_days: number | null;
+  oracle_holding_days: number | null;
+  smic_follower_entry_price: number | null;
+  smic_follower_exit_price: number | null;
+  smic_follower_return: number | null;
+  smic_follower_holding_days: number | null;
+  smic_follower_status: string;
   lowest_price_since_publication: number | null;
   lowest_price_current_return: number | null;
   low_to_high_return: number | null;

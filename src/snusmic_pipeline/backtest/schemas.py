@@ -46,7 +46,7 @@ class BacktestConfig(BaseModel):
     exit_on_signal_loss: bool = True
     allow_reentry: bool = True
     # Phase 2b legacy escape — when True the backtest reports `objective =
-    # total_return` instead of `sortino_oos`. Must travel with the config so
+    # total_return` instead of `sortino_oos_tail`. Must travel with the config so
     # the run_id hash diverges between modes (per code-review CRITICAL-4).
     # The phase 2a look-ahead fix is unconditional and is NOT affected.
     legacy_objective: bool = False
@@ -260,8 +260,8 @@ class ExecutionEvent(BaseModel):
 class StrategyRun(BaseModel):
     """Row schema for ``data/warehouse/strategy_runs.csv``.
 
-    Phase 2 will introduce ``{primary_objective}_in_sample`` / ``_oos`` columns
-    (additive; kept through 2026-Q4 per ADR)."""
+    Phase 2 will introduce ``{primary_objective}_in_sample`` /
+    ``_oos_tail`` columns (additive; kept through 2026-Q4 per ADR)."""
 
     model_config = ConfigDict(extra="forbid")
 
@@ -300,15 +300,16 @@ class StrategyRun(BaseModel):
     objective: float
     open_position_count: int = 0
     status: str
-    # Phase 2b additive columns (walk-forward OOS CV — see
+    # Phase 2b additive columns (3-segment OOS-tail diagnostics — see
     # docs/decisions/phase-2-objective.md for the primary_objective contract).
+    # A true per-fold walk-forward backtest replay is a future follow-up.
     # All are optional because existing rows written pre-Phase-2b do not carry
     # them; validators accept None and downstream consumers should treat
     # missing values as "not computed for this run".
     sortino_in_sample: float | None = None
-    sortino_oos: float | None = None
-    sharpe_oos: float | None = None
-    max_drawdown_oos: float | None = None
+    sortino_oos_tail: float | None = None
+    sharpe_oos_tail: float | None = None
+    max_drawdown_oos_tail: float | None = None
     fold_count: int | None = None
 
 
