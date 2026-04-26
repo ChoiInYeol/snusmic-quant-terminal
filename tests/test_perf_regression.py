@@ -108,6 +108,5 @@ def test_perf_full_500_symbols_5_years() -> None:
     elapsed = time.perf_counter() - t0
     assert not result["equity_daily"].empty
     assert elapsed < PERF_BUDGET_FULL_SECONDS, (
-        f"500×5y backtest took {elapsed:.2f}s, exceeding the "
-        f"{PERF_BUDGET_FULL_SECONDS}s budget."
+        f"500×5y backtest took {elapsed:.2f}s, exceeding the {PERF_BUDGET_FULL_SECONDS}s budget."
     )

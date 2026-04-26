@@ -37,7 +37,9 @@ _RATING_LABEL_RE = re.compile(
     r"(?:투자\s*의견|의견|Rating|Recommendation)[^A-Za-z가-힣]{0,80}(Strong\s*Buy|Buy|Attention|Sell|Hold|Neutral|강력\s*매수|매수|관심|주의|매도|중립)",
     re.IGNORECASE,
 )
-_RATING_LINE_RE = re.compile(r"^(Strong\s*Buy|Buy|Attention|Sell|Hold|Neutral|강력\s*매수|매수|관심|주의|매도|중립)$", re.IGNORECASE)
+_RATING_LINE_RE = re.compile(
+    r"^(Strong\s*Buy|Buy|Attention|Sell|Hold|Neutral|강력\s*매수|매수|관심|주의|매도|중립)$", re.IGNORECASE
+)
 _INVESTMENT_SECTION_RE = re.compile(
     r"(투자포인트|Investment\s+Point|Investment\s+points|Key\s+Points|Why\s+invest|Valuation)\s*[:：]?\s*(.{80,900})",
     re.IGNORECASE | re.DOTALL,
@@ -197,7 +199,9 @@ def extract_investment_points(text: str) -> str:
     if match:
         snippet = compact_text(match.group(2))
     else:
-        paragraphs = [compact_text(part) for part in re.split(r"\n\s*\n", text[:5000]) if len(compact_text(part)) >= 80]
+        paragraphs = [
+            compact_text(part) for part in re.split(r"\n\s*\n", text[:5000]) if len(compact_text(part)) >= 80
+        ]
         snippet = paragraphs[1] if len(paragraphs) > 1 else (paragraphs[0] if paragraphs else "")
     if len(snippet) > 420:
         snippet = snippet[:417].rstrip() + "..."
@@ -219,14 +223,19 @@ def target_price_candidates(text: str) -> list[tuple[float, str]]:
                 after = text[match.end() : match.end() + 30]
                 if "현재" in before:
                     continue
-                if any(noise in before for noise in ["시가총액", "매출", "영업이익", "순이익", "ROE", "PBR", "PER"]):
+                if any(
+                    noise in before
+                    for noise in ["시가총액", "매출", "영업이익", "순이익", "ROE", "PBR", "PER"]
+                ):
                     continue
                 if re.match(r"\s*(?:\([^)]{0,20}\))?\s*[:：]?\s*[$₩¥]?\s*[0-9]", after):
                     continue
             if pattern is _EN_TARGET_PRICE_RE:
                 raw = match.group(0)
                 lowered = raw.lower()
-                if re.search(r"목표\s*주가\s*[로를]", raw) and not re.search(r"[$₩¥]|[0-9]\s*(?:원|엔|위안|달러|usd|jpy|krw)", lowered):
+                if re.search(r"목표\s*주가\s*[로를]", raw) and not re.search(
+                    r"[$₩¥]|[0-9]\s*(?:원|엔|위안|달러|usd|jpy|krw)", lowered
+                ):
                     continue
             value = parse_money(match.group(1))
             if value is not None:
@@ -280,7 +289,9 @@ def is_plausible_target_price(value: float, ticker: str) -> bool:
     return value >= 1
 
 
-def target_detail_text(scenario_values: dict[str, float], case_values: dict[str, float], rating: str, base_target: float | None) -> str:
+def target_detail_text(
+    scenario_values: dict[str, float], case_values: dict[str, float], rating: str, base_target: float | None
+) -> str:
     items: list[str] = []
     if rating:
         items.append(f"rating={rating}")
@@ -359,7 +370,12 @@ def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object
         if scenario not in scenario_values:
             value = parse_money(match.group(2))
             raw_value = match.group(2)
-            looks_like_case_number = "case" in match.group(0).lower() and not any(symbol in raw_value for symbol in "$₩¥") and value is not None and value <= 5
+            looks_like_case_number = (
+                "case" in match.group(0).lower()
+                and not any(symbol in raw_value for symbol in "$₩¥")
+                and value is not None
+                and value <= 5
+            )
             if value is not None and not looks_like_case_number and is_plausible_target_price(value, ticker):
                 scenario_values[scenario] = value
 
@@ -375,7 +391,14 @@ def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object
         base_target = median_price(list(scenario_values.values()))
         notes.append("No explicit Base target; base target uses median scenario value")
     case_prices = sorted(case_values.values())
-    if base_target is None and case_prices or case_prices and len(case_prices) > 1 and "base" not in target_raw.lower() and base_target in case_prices:
+    if (
+        base_target is None
+        and case_prices
+        or case_prices
+        and len(case_prices) > 1
+        and "base" not in target_raw.lower()
+        and base_target in case_prices
+    ):
         base_target = median_price(case_prices)
     if single_target is not None and ("base" in target_raw.lower() or base_target is None):
         base_target = single_target
@@ -387,7 +410,9 @@ def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object
     if not ticker:
         notes.append("Ticker not found")
     if case_values and "base" not in scenario_values:
-        notes.append("Case target prices parsed; base target uses median case value; review scenario semantics")
+        notes.append(
+            "Case target prices parsed; base target uses median case value; review scenario semantics"
+        )
     if rating and rating not in {"Buy", "Strong Buy"}:
         notes.append(f"Non-buy rating: {rating}")
 

@@ -197,8 +197,7 @@ def main(argv: list[str] | None = None) -> int:
         for v in all_violations:
             print(f"  - {v}", file=sys.stderr)
         print(
-            "\nIf this change is intentional, commit a sibling .v2.schema.json file "
-            "per plan Principle 6.",
+            "\nIf this change is intentional, commit a sibling .v2.schema.json file per plan Principle 6.",
             file=sys.stderr,
         )
         return 1

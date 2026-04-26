@@ -41,7 +41,16 @@ def test_currency_for_symbol_uses_exchange_and_suffix():
 
 def test_convert_foreign_prices_to_krw_with_asof_rates():
     fx = download_fx_rates({"USD", "JPY"}, datetime(2024, 1, 1), datetime(2024, 1, 5), fake_downloader)
-    history = pd.DataFrame({"date": ["2024-01-03"], "open": [10.0], "high": [11.0], "low": [9.0], "close": [10.0], "volume": [100]})
+    history = pd.DataFrame(
+        {
+            "date": ["2024-01-03"],
+            "open": [10.0],
+            "high": [11.0],
+            "low": [9.0],
+            "close": [10.0],
+            "volume": [100],
+        }
+    )
 
     converted = convert_ohlcv_to_krw(history, "USD", fx)
 

@@ -67,7 +67,9 @@ def download_pdf(
     if migrated:
         target = migrated
     if not meta.pdf_url:
-        return DownloadedPdf(meta=meta, path=None, sha256=None, status="missing_pdf_url", note="No PDF URL in post content")
+        return DownloadedPdf(
+            meta=meta, path=None, sha256=None, status="missing_pdf_url", note="No PDF URL in post content"
+        )
 
     client = session or requests.Session()
     try:
@@ -79,12 +81,20 @@ def download_pdf(
         response.raise_for_status()
     except requests.RequestException as exc:
         if target.exists() and not force:
-            return DownloadedPdf(meta=meta, path=target, sha256=sha256_file(target), status="reused_after_download_error", note=str(exc))
+            return DownloadedPdf(
+                meta=meta,
+                path=target,
+                sha256=sha256_file(target),
+                status="reused_after_download_error",
+                note=str(exc),
+            )
         return DownloadedPdf(meta=meta, path=None, sha256=None, status="download_failed", note=str(exc))
 
     content_type = response.headers.get("content-type", "")
     if "pdf" not in content_type.lower() and not response.content.startswith(b"%PDF"):
-        return DownloadedPdf(meta=meta, path=None, sha256=None, status="not_pdf", note=f"Content-Type: {content_type}")
+        return DownloadedPdf(
+            meta=meta, path=None, sha256=None, status="not_pdf", note=f"Content-Type: {content_type}"
+        )
 
     new_hash = sha256_bytes(response.content)
     if target.exists() and not force and sha256_file(target) == new_hash:

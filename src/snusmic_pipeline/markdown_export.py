@@ -48,7 +48,11 @@ def export_markdown(
                 target.unlink()
     if use_opendataloader and pdf_reports:
         try:
-            converted = convert_pdfs_to_markdown([report.pdf_path for report in pdf_reports if report.pdf_path], output_dir=output_dir, hybrid=hybrid)
+            converted = convert_pdfs_to_markdown(
+                [report.pdf_path for report in pdf_reports if report.pdf_path],
+                output_dir=output_dir,
+                hybrid=hybrid,
+            )
         except OpenDataLoaderUnavailable as exc:
             logs.append(f"OpenDataLoader markdown export unavailable; falling back to pypdf text: {exc}")
 

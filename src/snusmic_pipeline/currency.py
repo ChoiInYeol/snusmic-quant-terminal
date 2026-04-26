@@ -72,10 +72,16 @@ def yfinance_fx_symbol(currency: str) -> str:
 
 
 def required_fx_currencies(currencies: list[str] | set[str]) -> set[str]:
-    return {normalize_currency(currency) for currency in currencies if normalize_currency(currency) and normalize_currency(currency) != "KRW"}
+    return {
+        normalize_currency(currency)
+        for currency in currencies
+        if normalize_currency(currency) and normalize_currency(currency) != "KRW"
+    }
 
 
-def download_fx_rates(currencies: list[str] | set[str], start: datetime, end: datetime, downloader: Downloader) -> pd.DataFrame:
+def download_fx_rates(
+    currencies: list[str] | set[str], start: datetime, end: datetime, downloader: Downloader
+) -> pd.DataFrame:
     rows = []
     for currency in sorted(required_fx_currencies(currencies)):
         fx_symbol = yfinance_fx_symbol(currency)
@@ -92,7 +98,12 @@ def download_fx_rates(currencies: list[str] | set[str], start: datetime, end: da
         rows.append(normalized[["date", "currency", "fx_symbol", "krw_per_unit"]])
     if not rows:
         return pd.DataFrame(columns=["date", "currency", "fx_symbol", "krw_per_unit"])
-    return pd.concat(rows, ignore_index=True).dropna(subset=["krw_per_unit"]).drop_duplicates(["date", "currency"], keep="last").sort_values(["currency", "date"])
+    return (
+        pd.concat(rows, ignore_index=True)
+        .dropna(subset=["krw_per_unit"])
+        .drop_duplicates(["date", "currency"], keep="last")
+        .sort_values(["currency", "date"])
+    )
 
 
 def convert_ohlcv_to_krw(history: pd.DataFrame, currency: str, fx_rates: pd.DataFrame) -> pd.DataFrame:
@@ -110,7 +121,9 @@ def convert_ohlcv_to_krw(history: pd.DataFrame, currency: str, fx_rates: pd.Data
     return frame
 
 
-def convert_value_to_krw(value: float | None, currency: str, date: str, fx_rates: pd.DataFrame) -> float | None:
+def convert_value_to_krw(
+    value: float | None, currency: str, date: str, fx_rates: pd.DataFrame
+) -> float | None:
     if value is None:
         return None
     currency = normalize_currency(currency)
@@ -129,15 +142,26 @@ def attach_krw_rate(rows: pd.DataFrame, currency: str, fx_rates: pd.DataFrame) -
     if currency in {"", "KRW"}:
         out["krw_per_unit"] = 1.0
         return out
-    rates = fx_rates[fx_rates["currency"].astype(str).str.upper() == currency].copy() if not fx_rates.empty else pd.DataFrame()
+    rates = (
+        fx_rates[fx_rates["currency"].astype(str).str.upper() == currency].copy()
+        if not fx_rates.empty
+        else pd.DataFrame()
+    )
     if rates.empty:
         out["krw_per_unit"] = pd.NA
         return out
     rates["date"] = pd.to_datetime(rates["date"])
     rates = rates.sort_values("date")
-    out = pd.merge_asof(out.sort_values("date"), rates[["date", "krw_per_unit"]], on="date", direction="backward")
+    out = pd.merge_asof(
+        out.sort_values("date"), rates[["date", "krw_per_unit"]], on="date", direction="backward"
+    )
     if out["krw_per_unit"].isna().any():
-        out = pd.merge_asof(out.drop(columns=["krw_per_unit"]).sort_values("date"), rates[["date", "krw_per_unit"]], on="date", direction="forward")
+        out = pd.merge_asof(
+            out.drop(columns=["krw_per_unit"]).sort_values("date"),
+            rates[["date", "krw_per_unit"]],
+            on="date",
+            direction="forward",
+        )
     return out
 
 
@@ -166,8 +190,15 @@ def _normalize_history_frame(frame: pd.DataFrame) -> pd.DataFrame:
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
     if "date" in data.columns and "close" in data.columns:
-        return pd.DataFrame({"date": pd.to_datetime(data["date"]).dt.date.astype(str), "krw_per_unit": pd.to_numeric(data["close"], errors="coerce")})
+        return pd.DataFrame(
+            {
+                "date": pd.to_datetime(data["date"]).dt.date.astype(str),
+                "krw_per_unit": pd.to_numeric(data["close"], errors="coerce"),
+            }
+        )
     if "Close" not in data:
         return pd.DataFrame(columns=["date", "krw_per_unit"])
     index = pd.to_datetime(data.index).tz_localize(None)
-    return pd.DataFrame({"date": index.date.astype(str), "krw_per_unit": pd.to_numeric(data["Close"], errors="coerce")})
+    return pd.DataFrame(
+        {"date": index.date.astype(str), "krw_per_unit": pd.to_numeric(data["Close"], errors="coerce")}
+    )

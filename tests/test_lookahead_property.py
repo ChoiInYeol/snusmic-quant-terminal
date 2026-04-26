@@ -114,17 +114,31 @@ def test_decisions_use_prior_close_not_same_day(site: str) -> None:
         decision_price = ev.get("decision_price")
         fill_rule = ev.get("fill_rule")
         # Every Phase-2a event must carry the 4 new fields.
-        if signal_date is None or decision_price is None or fill_rule not in {"open", "close_fallback", "delisting_last_close"}:
-            violations.append(f"{date}/{symbol}: missing phase-2a metadata (signal_date={signal_date}, decision_price={decision_price}, fill_rule={fill_rule})")
+        if (
+            signal_date is None
+            or decision_price is None
+            or fill_rule not in {"open", "close_fallback", "delisting_last_close"}
+        ):
+            violations.append(
+                f"{date}/{symbol}: missing phase-2a metadata (signal_date={signal_date}, decision_price={decision_price}, fill_rule={fill_rule})"
+            )
             continue
         if str(signal_date) >= date:
             violations.append(f"{date}/{symbol}: signal_date={signal_date} not strictly before trade date")
         same_day_close = close_map.get((date, symbol))
         prev_close = prev_close_map.get((date, symbol))
-        if same_day_close is not None and abs(float(decision_price) - same_day_close) < 1e-9 and (prev_close is None or abs(prev_close - same_day_close) > 1e-9):
-            violations.append(f"{date}/{symbol}: decision_price={decision_price} equals same-day close — lookahead")
+        if (
+            same_day_close is not None
+            and abs(float(decision_price) - same_day_close) < 1e-9
+            and (prev_close is None or abs(prev_close - same_day_close) > 1e-9)
+        ):
+            violations.append(
+                f"{date}/{symbol}: decision_price={decision_price} equals same-day close — lookahead"
+            )
         if prev_close is not None and abs(float(decision_price) - prev_close) > 1e-6:
             # Allow small drift only on the first observation (when prev_close is unavailable and we fall back).
             violations.append(f"{date}/{symbol}: decision_price={decision_price} != prev_close={prev_close}")
 
-    assert not violations, f"{site}: {len(violations)} lookahead violation(s):\n  " + "\n  ".join(violations[:5])
+    assert not violations, f"{site}: {len(violations)} lookahead violation(s):\n  " + "\n  ".join(
+        violations[:5]
+    )

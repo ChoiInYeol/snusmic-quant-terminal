@@ -106,7 +106,9 @@ def test_target_price_label_with_preferred_stock_market_cap_noise():
 
 
 def test_equal_current_and_target_candidate_uses_next_target_candidate():
-    text = "현재주가 : 238.30 위안 목표주가 238.30\n현재주가 : 238.30 위안 목표주가 : 331.70 위안 상승여력: 39%"
+    text = (
+        "현재주가 : 238.30 위안 목표주가 238.30\n현재주가 : 238.30 위안 목표주가 : 331.70 위안 상승여력: 39%"
+    )
 
     parsed = parse_report_text(text, fallback_company="BYD")
 

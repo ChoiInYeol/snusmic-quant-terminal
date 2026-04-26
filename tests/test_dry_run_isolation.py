@@ -59,4 +59,6 @@ def test_dry_run_does_not_overwrite_real_warehouse(tmp_path: Path) -> None:
     assert real_prices_before == real_prices_after, "dry_run overwrote warehouse/daily_prices.csv"
     assert real_quant_before == real_quant_after, "dry_run wrote into quant_v3/strategy_runs.json"
     assert (warehouse / "_dry_run").is_dir(), "dry_run did not isolate output to _dry_run subdirectory"
-    assert (warehouse / "_dry_run" / "daily_prices.csv").exists(), "dry_run did not write synthetic prices to its isolated dir"
+    assert (warehouse / "_dry_run" / "daily_prices.csv").exists(), (
+        "dry_run did not write synthetic prices to its isolated dir"
+    )

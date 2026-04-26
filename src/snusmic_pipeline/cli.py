@@ -54,14 +54,25 @@ def write_manifest(downloads: list[DownloadedPdf], path: Path) -> None:
     data = []
     for download in downloads:
         item = download.meta.model_dump(mode="json")
-        item.update({"pdf_path": str(download.path) if download.path else "", "sha256": download.sha256, "download_status": download.status, "download_note": download.note})
+        item.update(
+            {
+                "pdf_path": str(download.path) if download.path else "",
+                "sha256": download.sha256,
+                "download_status": download.status,
+                "download_note": download.note,
+            }
+        )
         data.append(item)
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=_json_default) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(data, ensure_ascii=False, indent=2, default=_json_default) + "\n", encoding="utf-8"
+    )
 
 
 def write_json(path: Path, data: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=_json_default) + "\n", encoding="utf-8")
+    path.write_text(
+        json.dumps(data, ensure_ascii=False, indent=2, default=_json_default) + "\n", encoding="utf-8"
+    )
 
 
 def _number_or_blank(value: float | None) -> float | str:
@@ -157,11 +168,17 @@ def apply_opendataloader_fallback(
     hybrid: str = "",
     force_all: bool = False,
 ) -> list[str]:
-    candidates = [report for report in reports if report.pdf_path and (force_all or report.extraction_status != "ok")]
+    candidates = [
+        report for report in reports if report.pdf_path and (force_all or report.extraction_status != "ok")
+    ]
     if not candidates:
         return []
     try:
-        markdown_by_path = convert_pdfs_to_markdown([report.pdf_path for report in candidates if report.pdf_path], output_dir=output_dir, hybrid=hybrid)
+        markdown_by_path = convert_pdfs_to_markdown(
+            [report.pdf_path for report in candidates if report.pdf_path],
+            output_dir=output_dir,
+            hybrid=hybrid,
+        )
     except OpenDataLoaderUnavailable as exc:
         return [f"OpenDataLoader fallback unavailable: {exc}"]
 
@@ -218,7 +235,15 @@ def run_sync(args: argparse.Namespace) -> int:
     write_manifest(downloads, data_dir / "manifest.json")
     write_csv(extracted, data_dir / "extracted_reports.csv")
     if args.markdown:
-        logs.extend(export_markdown(extracted, data_dir / "markdown", use_opendataloader=args.markdown_opendataloader, hybrid=args.opendataloader_hybrid, force=args.force_markdown))
+        logs.extend(
+            export_markdown(
+                extracted,
+                data_dir / "markdown",
+                use_opendataloader=args.markdown_opendataloader,
+                hybrid=args.opendataloader_hybrid,
+                force=args.force_markdown,
+            )
+        )
     if args.market_data:
         price_metrics = compute_price_metrics(extracted)
         portfolio_backtests = compute_portfolio_backtests(extracted, price_metrics)
@@ -282,7 +307,11 @@ def run_ocr_reextract(args: argparse.Namespace) -> int:
             continue
         parsed = parse_report_text(text, fallback_company=report.meta.company)
         apply_parsed_report(report, parsed, source=source)
-        if args.preserve_existing_targets and report.base_target is None and previous["base_target"] is not None:
+        if (
+            args.preserve_existing_targets
+            and report.base_target is None
+            and previous["base_target"] is not None
+        ):
             report.report_current_price = previous["report_current_price"]  # type: ignore[assignment]
             report.bear_target = previous["bear_target"]  # type: ignore[assignment]
             report.base_target = previous["base_target"]  # type: ignore[assignment]
@@ -315,7 +344,16 @@ def run_ocr_reextract(args: argparse.Namespace) -> int:
 def print_quality_summary(audit: dict[str, Any]) -> None:
     summary = audit.get("summary", {})
     print("Extraction quality summary")
-    for key in ["ok", "status_needs_review", "review_flagged_rows", "missing_base_target", "current_equals_base_target", "missing_rating", "non_buy_rating", "case_target_without_explicit_base"]:
+    for key in [
+        "ok",
+        "status_needs_review",
+        "review_flagged_rows",
+        "missing_base_target",
+        "current_equals_base_target",
+        "missing_rating",
+        "non_buy_rating",
+        "case_target_without_explicit_base",
+    ]:
         print(f"{key}: {summary.get(key, 0)}")
 
 
@@ -416,7 +454,13 @@ def run_backtest(args: argparse.Namespace) -> int:
 
 
 def run_optimize(args: argparse.Namespace) -> int:
-    trials = optimize_strategies(Path(args.data_dir), Path(args.warehouse_dir), trials=args.trials, seed=args.seed, dry_run=args.dry_run)
+    trials = optimize_strategies(
+        Path(args.data_dir),
+        Path(args.warehouse_dir),
+        trials=args.trials,
+        seed=args.seed,
+        dry_run=args.dry_run,
+    )
     print(f"Optuna trials: {len(trials)}")
     if not trials.empty and "objective" in trials:
         best = trials.sort_values("objective", ascending=False).iloc[0]
@@ -433,30 +477,72 @@ def run_export_dashboard(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Collect SNUSMIC PDFs, extract target prices, and build dashboard data.")
+    parser = argparse.ArgumentParser(
+        description="Collect SNUSMIC PDFs, extract target prices, and build dashboard data."
+    )
     subparsers = parser.add_subparsers(dest="command")
 
     sync = subparsers.add_parser("sync", help="Fetch reports, download PDFs, and extract local archive rows.")
     sync.add_argument("--pages", default="1-7", help="Page range/list, for example 1-7 or 1,3,5.")
     sync.add_argument("--data-dir", default="data", help="Output data directory.")
     sync.add_argument("--force", action="store_true", help="Re-download PDFs even when a local copy exists.")
-    sync.add_argument("--max-pages", type=int, default=4, help="Maximum PDF pages to parse for target-price extraction.")
-    sync.add_argument("--opendataloader-fallback", action=argparse.BooleanOptionalAction, default=True, help="Use opendataloader-pdf for reports that pypdf cannot parse cleanly.")
-    sync.add_argument("--opendataloader-force-all", action="store_true", help="Run OpenDataLoader fallback over every report, not only needs-review rows.")
-    sync.add_argument("--opendataloader-output-dir", default="data/opendataloader", help="OpenDataLoader markdown output directory.")
-    sync.add_argument("--opendataloader-hybrid", default=os.environ.get("OPENDATALOADER_HYBRID", ""), help="Optional OpenDataLoader hybrid mode, for example docling-fast.")
-    sync.add_argument("--market-data", action=argparse.BooleanOptionalAction, default=True, help="Fetch yfinance data and compute return/portfolio metrics.")
-    sync.add_argument("--markdown", action=argparse.BooleanOptionalAction, default=True, help="Export one markdown file per PDF.")
-    sync.add_argument("--markdown-opendataloader", action=argparse.BooleanOptionalAction, default=True, help="Try opendataloader-pdf before falling back to pypdf text.")
-    sync.add_argument("--force-markdown", action="store_true", help="Overwrite existing markdown during markdown export.")
+    sync.add_argument(
+        "--max-pages", type=int, default=4, help="Maximum PDF pages to parse for target-price extraction."
+    )
+    sync.add_argument(
+        "--opendataloader-fallback",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Use opendataloader-pdf for reports that pypdf cannot parse cleanly.",
+    )
+    sync.add_argument(
+        "--opendataloader-force-all",
+        action="store_true",
+        help="Run OpenDataLoader fallback over every report, not only needs-review rows.",
+    )
+    sync.add_argument(
+        "--opendataloader-output-dir",
+        default="data/opendataloader",
+        help="OpenDataLoader markdown output directory.",
+    )
+    sync.add_argument(
+        "--opendataloader-hybrid",
+        default=os.environ.get("OPENDATALOADER_HYBRID", ""),
+        help="Optional OpenDataLoader hybrid mode, for example docling-fast.",
+    )
+    sync.add_argument(
+        "--market-data",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Fetch yfinance data and compute return/portfolio metrics.",
+    )
+    sync.add_argument(
+        "--markdown",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Export one markdown file per PDF.",
+    )
+    sync.add_argument(
+        "--markdown-opendataloader",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Try opendataloader-pdf before falling back to pypdf text.",
+    )
+    sync.add_argument(
+        "--force-markdown", action="store_true", help="Overwrite existing markdown during markdown export."
+    )
     sync.set_defaults(func=run_sync)
 
-    check_new = subparsers.add_parser("check-new", help="Check page one for new reports before running a heavy sync.")
+    check_new = subparsers.add_parser(
+        "check-new", help="Check page one for new reports before running a heavy sync."
+    )
     check_new.add_argument("--manifest", default="data/manifest.json")
     check_new.add_argument("--github-output", default="")
     check_new.set_defaults(func=run_check_new)
 
-    build_site_parser = subparsers.add_parser("build-site", help="Build the Vercel-ready static dashboard artifact.")
+    build_site_parser = subparsers.add_parser(
+        "build-site", help="Build the Vercel-ready static dashboard artifact."
+    )
     build_site_parser.add_argument("--data-dir", default="data")
     build_site_parser.add_argument("--public-dir", default="site/public")
     build_site_parser.set_defaults(func=run_build_site)
@@ -469,22 +555,33 @@ def build_parser() -> argparse.ArgumentParser:
     build_web_data_parser.add_argument("--output-dir", default="apps/web/public/data")
     build_web_data_parser.set_defaults(func=run_build_web_data)
 
-    refresh_market = subparsers.add_parser("refresh-market", help="Refresh yfinance price metrics and portfolio backtests from committed report CSV.")
+    refresh_market = subparsers.add_parser(
+        "refresh-market",
+        help="Refresh yfinance price metrics and portfolio backtests from committed report CSV.",
+    )
     refresh_market.add_argument("--data-dir", default="data")
     refresh_market.add_argument("--build-site", action=argparse.BooleanOptionalAction, default=True)
     refresh_market.add_argument("--public-dir", default="site/public")
     refresh_market.set_defaults(func=run_refresh_market)
 
-    export_md = subparsers.add_parser("export-markdown", help="Export one markdown file per committed PDF/report row.")
+    export_md = subparsers.add_parser(
+        "export-markdown", help="Export one markdown file per committed PDF/report row."
+    )
     export_md.add_argument("--data-dir", default="data")
     export_md.add_argument("--markdown-opendataloader", action=argparse.BooleanOptionalAction, default=True)
     export_md.add_argument("--opendataloader-hybrid", default=os.environ.get("OPENDATALOADER_HYBRID", ""))
     export_md.add_argument("--force", action="store_true", help="Overwrite existing markdown files.")
     export_md.set_defaults(func=run_export_markdown)
 
-    ocr = subparsers.add_parser("ocr-reextract", help="Force OpenDataLoader markdown export and re-extract committed report rows.")
+    ocr = subparsers.add_parser(
+        "ocr-reextract", help="Force OpenDataLoader markdown export and re-extract committed report rows."
+    )
     ocr.add_argument("--data-dir", default="data")
-    ocr.add_argument("--force-opendataloader", action="store_true", help="Regenerate markdown for every PDF with OpenDataLoader before parsing.")
+    ocr.add_argument(
+        "--force-opendataloader",
+        action="store_true",
+        help="Regenerate markdown for every PDF with OpenDataLoader before parsing.",
+    )
     ocr.add_argument("--opendataloader-hybrid", default=os.environ.get("OPENDATALOADER_HYBRID", ""))
     ocr.add_argument("--allow-pypdf-fallback", action=argparse.BooleanOptionalAction, default=True)
     ocr.add_argument("--preserve-existing-targets", action=argparse.BooleanOptionalAction, default=True)
@@ -493,28 +590,42 @@ def build_parser() -> argparse.ArgumentParser:
     ocr.add_argument("--audit-output", default="data/extraction_quality.json")
     ocr.set_defaults(func=run_ocr_reextract)
 
-    audit = subparsers.add_parser("audit-extraction", help="Create extraction quality statistics from extracted_reports.csv.")
+    audit = subparsers.add_parser(
+        "audit-extraction", help="Create extraction quality statistics from extracted_reports.csv."
+    )
     audit.add_argument("--data-dir", default="data")
     audit.add_argument("--output", default="data/extraction_quality.json")
     audit.add_argument("--show-rows", type=int, default=20)
     audit.set_defaults(func=run_audit_extraction)
 
-    warehouse = subparsers.add_parser("build-warehouse", help="Normalize report metadata into the v3 warehouse.")
+    warehouse = subparsers.add_parser(
+        "build-warehouse", help="Normalize report metadata into the v3 warehouse."
+    )
     warehouse.add_argument("--data-dir", default="data")
     warehouse.add_argument("--warehouse-dir", default="data/warehouse")
     warehouse.set_defaults(func=run_build_warehouse)
 
-    refresh_prices = subparsers.add_parser("refresh-prices", help="Download yfinance OHLCV history into the v3 warehouse.")
+    refresh_prices = subparsers.add_parser(
+        "refresh-prices", help="Download yfinance OHLCV history into the v3 warehouse."
+    )
     refresh_prices.add_argument("--data-dir", default="data")
     refresh_prices.add_argument("--warehouse-dir", default="data/warehouse")
-    refresh_prices.add_argument("--symbols", default="", help="Optional comma-separated yfinance symbols for a partial refresh.")
+    refresh_prices.add_argument(
+        "--symbols", default="", help="Optional comma-separated yfinance symbols for a partial refresh."
+    )
     refresh_prices.set_defaults(func=run_refresh_prices)
 
-    backtest = subparsers.add_parser("run-backtest", help="Run event-driven walk-forward v3 strategy backtests.")
+    backtest = subparsers.add_parser(
+        "run-backtest", help="Run event-driven walk-forward v3 strategy backtests."
+    )
     backtest.add_argument("--data-dir", default="data")
     backtest.add_argument("--warehouse-dir", default="data/warehouse")
     backtest.add_argument("--output-dir", default="data/quant_v3")
-    backtest.add_argument("--dry-run", action="store_true", help="Use deterministic synthetic prices when real OHLCV is missing.")
+    backtest.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Use deterministic synthetic prices when real OHLCV is missing.",
+    )
     backtest.add_argument("--export-dashboard", action=argparse.BooleanOptionalAction, default=True)
     backtest.set_defaults(func=run_backtest)
 
@@ -526,7 +637,9 @@ def build_parser() -> argparse.ArgumentParser:
     optimize.add_argument("--dry-run", action="store_true")
     optimize.set_defaults(func=run_optimize)
 
-    dashboard = subparsers.add_parser("export-dashboard", help="Export v3 warehouse tables into dashboard JSON artifacts.")
+    dashboard = subparsers.add_parser(
+        "export-dashboard", help="Export v3 warehouse tables into dashboard JSON artifacts."
+    )
     dashboard.add_argument("--data-dir", default="data")
     dashboard.add_argument("--warehouse-dir", default="data/warehouse")
     dashboard.add_argument("--output-dir", default="data/quant_v3")

@@ -83,8 +83,7 @@ def test_critical_1_first_bar_publication_does_not_emit_lookahead_decision() -> 
     same_day_decisions = [
         (str(ev["date"])[:10], ev["symbol"], ev.get("decision_price"))
         for _, ev in events.iterrows()
-        if ev.get("signal_date") is not None
-        and str(ev["signal_date"])[:10] >= str(ev["date"])[:10]
+        if ev.get("signal_date") is not None and str(ev["signal_date"])[:10] >= str(ev["date"])[:10]
     ]
     assert not same_day_decisions, f"first-bar lookahead reintroduced: {same_day_decisions}"
 

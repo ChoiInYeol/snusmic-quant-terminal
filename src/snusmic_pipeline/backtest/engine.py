@@ -111,23 +111,42 @@ def run_walk_forward_backtest(
                 # construction, which understates realised vol and biases
                 # Sortino upward.
                 imputed_today = bool(imputed_row.get(position.symbol, True))
-                imputed_prev = bool(prev_imputed_row.get(position.symbol, True)) if prev_imputed_row is not None else True
+                imputed_prev = (
+                    bool(prev_imputed_row.get(position.symbol, True))
+                    if prev_imputed_row is not None
+                    else True
+                )
                 if imputed_today or imputed_prev:
                     continue
                 if _has_price(prev_close_row, position.symbol) and _has_price(close_row, position.symbol):
-                    asset_return = float(close_row[position.symbol]) / float(prev_close_row[position.symbol]) - 1.0
+                    asset_return = (
+                        float(close_row[position.symbol]) / float(prev_close_row[position.symbol]) - 1.0
+                    )
                     contribution = position.weight * asset_return
                     position.contribution_return += contribution
                     portfolio_return += contribution
 
-        while pending_idx < len(report_rows) and pd.Timestamp(report_rows[pending_idx]["publication_date"]) < date:
+        while (
+            pending_idx < len(report_rows)
+            and pd.Timestamp(report_rows[pending_idx]["publication_date"]) < date
+        ):
             report = report_rows[pending_idx]
             pending_idx += 1
             if not _has_price(close_row, report["symbol"]):
                 continue
             event_type = "candidate_add" if report["symbol"] not in candidates else "candidate_refresh"
             candidates[report["symbol"]] = {**report, "eligible_date": date}
-            candidate_events.append(_candidate_event(run_id, date, report, event_type, "report_publication", float(close_row[report["symbol"]]), len(candidates)))
+            candidate_events.append(
+                _candidate_event(
+                    run_id,
+                    date,
+                    report,
+                    event_type,
+                    "report_publication",
+                    float(close_row[report["symbol"]]),
+                    len(candidates),
+                )
+            )
 
         realized_today += _exit_positions_for_risk(
             run_id,
@@ -160,10 +179,19 @@ def run_walk_forward_backtest(
             config,
         )
 
-        if prev_date is not None and _is_rebalance_date(date, last_rebalance, config.rebalance, trading_date_index):
+        if prev_date is not None and _is_rebalance_date(
+            date, last_rebalance, config.rebalance, trading_date_index
+        ):
             signal_date = prev_date
             eligible = _eligible_symbols(
-                signal_date, date, prev_close_row, prev_imputed_row, candidates, signal_rows, config, closed_once
+                signal_date,
+                date,
+                prev_close_row,
+                prev_imputed_row,
+                candidates,
+                signal_rows,
+                config,
+                closed_once,
             )
             if config.exit_on_signal_loss:
                 for symbol in list(positions):
@@ -182,7 +210,9 @@ def run_walk_forward_backtest(
                             closed_once,
                             reason="signal_loss",
                         )
-            target_symbols = sorted(set(eligible) | (set(positions) if not config.exit_on_signal_loss else set()))
+            target_symbols = sorted(
+                set(eligible) | (set(positions) if not config.exit_on_signal_loss else set())
+            )
             weights = _weights_for_symbols(wide, date, target_symbols, config)
             for symbol in target_symbols:
                 if not _has_price(close_row, symbol):
@@ -293,7 +323,9 @@ def run_walk_forward_backtest(
             position = positions.pop(symbol)
             last_seen_date = trading_dates[last_seen]
             last_close_row = wide.loc[last_seen_date]
-            last_close = float(last_close_row[symbol]) if _has_price(last_close_row, symbol) else position.entry_price
+            last_close = (
+                float(last_close_row[symbol]) if _has_price(last_close_row, symbol) else position.entry_price
+            )
             execution_events.append(
                 _execution_event(
                     run_id,
@@ -318,7 +350,9 @@ def run_walk_forward_backtest(
         "candidate_pool_events": pd.DataFrame(candidate_events),
         "execution_events": executions,
         "positions_daily": pd.DataFrame(position_rows),
-        "signals_daily": signals.assign(date=signals["date"].dt.date.astype(str)) if not signals.empty else signals,
+        "signals_daily": signals.assign(date=signals["date"].dt.date.astype(str))
+        if not signals.empty
+        else signals,
     }
 
 
@@ -431,7 +465,15 @@ def _prepare_prices(prices: pd.DataFrame) -> pd.DataFrame:
     return frame.drop(columns=["open_raw"]).sort_values(["date", "symbol"]).reset_index(drop=True)
 
 
-def _candidate_event(run_id: str, date: pd.Timestamp, report: dict[str, Any], event_type: str, reason: str, close: float, count: int) -> dict[str, Any]:
+def _candidate_event(
+    run_id: str,
+    date: pd.Timestamp,
+    report: dict[str, Any],
+    event_type: str,
+    reason: str,
+    close: float,
+    count: int,
+) -> dict[str, Any]:
     return {
         "run_id": run_id,
         "date": date.date().isoformat(),
@@ -597,7 +639,11 @@ def _exit_positions_for_risk(
             )
             if reason == "target_hit" and symbol in candidates:
                 report = candidates.pop(symbol)
-                candidate_events.append(_candidate_event(run_id, date, report, "candidate_exit", "target_hit", decision_price, len(candidates)))
+                candidate_events.append(
+                    _candidate_event(
+                        run_id, date, report, "candidate_exit", "target_hit", decision_price, len(candidates)
+                    )
+                )
     return realized
 
 
@@ -630,10 +676,14 @@ def _expire_candidates(
             reason = "aging_out"
         if reason:
             candidates.pop(symbol)
-            event_close = decision_price if decision_price is not None else (
-                float(close_row[symbol]) if _has_price(close_row, symbol) else 0.0
+            event_close = (
+                decision_price
+                if decision_price is not None
+                else (float(close_row[symbol]) if _has_price(close_row, symbol) else 0.0)
             )
-            candidate_events.append(_candidate_event(run_id, date, report, "candidate_exit", reason, event_close, len(candidates)))
+            candidate_events.append(
+                _candidate_event(run_id, date, report, "candidate_exit", reason, event_close, len(candidates))
+            )
             if symbol in positions:
                 _sell_position(
                     run_id,
@@ -694,7 +744,9 @@ def _eligible_symbols(
     return eligible
 
 
-def _weights_for_symbols(wide: pd.DataFrame, date: pd.Timestamp, symbols: list[str], config: BacktestConfig) -> dict[str, float]:
+def _weights_for_symbols(
+    wide: pd.DataFrame, date: pd.Timestamp, symbols: list[str], config: BacktestConfig
+) -> dict[str, float]:
     if not symbols:
         return {}
     lookback = wide.loc[wide.index < date, symbols].tail(config.lookback_days + 1)
@@ -883,10 +935,16 @@ def _summarize(
         "exposure_ratio": float((equity["execution_count"].astype(int) > 0).mean()),
         "average_positions": float(equity["execution_count"].astype(int).mean()),
         "max_positions": int(equity["execution_count"].astype(int).max()),
-        "turnover_events": int(len(executions[executions["event_type"].isin(["buy", "sell", "rebalance"])]) if not executions.empty else 0),
+        "turnover_events": int(
+            len(executions[executions["event_type"].isin(["buy", "sell", "rebalance"])])
+            if not executions.empty
+            else 0
+        ),
         "trade_count": int(len(sells)),
         "win_rate": None if sells.empty else float(len(wins) / len(sells)),
-        "target_hit_rate": None if sells.empty else float(sells["reason"].astype(str).str.contains("target|take_profit").mean()),
+        "target_hit_rate": None
+        if sells.empty
+        else float(sells["reason"].astype(str).str.contains("target|take_profit").mean()),
         "stop_loss_hit_rate": None if sells.empty else float((sells["reason"] == "stop_loss").mean()),
         "average_holding_days": None if sells.empty else float(sells["holding_days"].astype(float).mean()),
         "objective": _resolve_objective(config, total_return, wf["sortino_oos"]),

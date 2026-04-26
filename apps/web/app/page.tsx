@@ -1,6 +1,6 @@
 'use client';
 
-import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { type ReactNode, Suspense, useEffect, useMemo, useState } from 'react';
 import { useQueryState, parseAsString } from 'nuqs';
 import { DrawdownChart, EquityChart, StockChart } from '../src/components/ChartCard';
 import { StrategyScatter } from '../src/components/PlotlyPanel';
@@ -27,7 +27,12 @@ import {
 } from '../src/lib/data';
 import { labelEntryRule, labelReason, num, pct, shortDate } from '../src/lib/format';
 
-export default function Page() {
+// Phase 6c — Next.js static export requires every consumer of
+// ``useSearchParams`` (which ``nuqs`` uses internally) to live below a
+// ``<Suspense>`` boundary so the static page generator can pre-render the
+// non-search-param shell. ``Page`` is a thin Suspense wrapper; the
+// ``PageInner`` body holds all the dashboard state + URL hooks.
+function PageInner() {
   const [data, setData] = useState<DashboardData | null>(null);
   // Phase 6c — round-trip selectedRunId / selectedSymbol / query through the
   // URL bar via nuqs. ``defaultValue: ''`` keeps the existing useState
@@ -397,6 +402,23 @@ export default function Page() {
         </section>
       </section>
     </main>
+  );
+}
+
+export default function Page() {
+  // Suspense fallback uses the same loading copy the original
+  // pre-fetch branch renders so the static export bridges to the
+  // hydrated client component without a visible flash.
+  return (
+    <Suspense
+      fallback={
+        <main className="shell">
+          <section className="loading-panel">SNUSMIC Quant Terminal을 불러오는 중입니다.</section>
+        </main>
+      }
+    >
+      <PageInner />
+    </Suspense>
   );
 }
 

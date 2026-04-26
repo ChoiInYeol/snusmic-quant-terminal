@@ -98,7 +98,11 @@ def test_optuna_resume_is_idempotent_when_budget_already_met(tmp_path: Path) -> 
     storage = tmp_path / "study.sqlite"
     study_name = "phase3a-noop"
 
-    optimize_strategies(data_dir, warehouse, trials=4, seed=42, dry_run=True, study_name=study_name, storage_path=storage)
-    optimize_strategies(data_dir, warehouse, trials=4, seed=42, dry_run=True, study_name=study_name, storage_path=storage)
+    optimize_strategies(
+        data_dir, warehouse, trials=4, seed=42, dry_run=True, study_name=study_name, storage_path=storage
+    )
+    optimize_strategies(
+        data_dir, warehouse, trials=4, seed=42, dry_run=True, study_name=study_name, storage_path=storage
+    )
     persisted = optuna.load_study(study_name=study_name, storage=f"sqlite:///{storage}")
     assert len(persisted.trials) == 4

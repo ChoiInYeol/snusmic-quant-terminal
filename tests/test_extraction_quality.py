@@ -32,8 +32,14 @@ def test_extraction_quality_counts_missing_and_non_buy_rows():
     audit = analyze_extraction_quality(
         [
             report(),
-            report(rating="Attention", target_price_detail="rating=Attention; case_1=8000; case_2=10000", note="Case target prices parsed"),
-            report(ticker="", base_target=None, extraction_status="needs_review", note="Target price not found"),
+            report(
+                rating="Attention",
+                target_price_detail="rating=Attention; case_1=8000; case_2=10000",
+                note="Case target prices parsed",
+            ),
+            report(
+                ticker="", base_target=None, extraction_status="needs_review", note="Target price not found"
+            ),
         ]
     )
 

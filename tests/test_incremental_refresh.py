@@ -83,8 +83,7 @@ def test_second_refresh_with_no_new_bars_fetches_zero_times(tmp_path: Path) -> N
     refresh_price_history(data_dir, warehouse, now=now, downloader=downloader, symbols=["AAA.KS"])
     equity_calls = [c for c in downloader.calls if c[0] == "AAA.KS"]
     assert equity_calls == [], (
-        f"second refresh (no new bars) hit the network: {equity_calls} — "
-        "incremental refresh regressed."
+        f"second refresh (no new bars) hit the network: {equity_calls} — incremental refresh regressed."
     )
 
 
@@ -129,7 +128,9 @@ def test_force_full_flag_bypasses_incremental_path(tmp_path: Path) -> None:
     _seed_reports(warehouse)
     downloader = _RecordingDownloader()
 
-    refresh_price_history(data_dir, warehouse, now=datetime(2024, 7, 5), downloader=downloader, symbols=["AAA.KS"])
+    refresh_price_history(
+        data_dir, warehouse, now=datetime(2024, 7, 5), downloader=downloader, symbols=["AAA.KS"]
+    )
     downloader.calls.clear()
 
     refresh_price_history(

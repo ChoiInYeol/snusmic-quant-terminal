@@ -74,7 +74,9 @@ def test_delisted_symbol_emits_explicit_exit() -> None:
     result = run_walk_forward_backtest(reports, prices, config)
     events = result["execution_events"]
     delistings = events[events["reason"] == "delisting"]
-    assert len(delistings) == 1, f"expected exactly 1 delisting event for BAD.KS, got {len(delistings)}:\n{delistings}"
+    assert len(delistings) == 1, (
+        f"expected exactly 1 delisting event for BAD.KS, got {len(delistings)}:\n{delistings}"
+    )
     row = delistings.iloc[0]
     assert row["symbol"] == "BAD.KS"
     assert row["fill_rule"] == "delisting_last_close"

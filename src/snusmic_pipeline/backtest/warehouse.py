@@ -94,8 +94,14 @@ def refresh_price_history(
     end = now + timedelta(days=1)
     selected_symbols = symbols or sorted(set(reports["symbol"].dropna().astype(str)))
     downloader = downloader or download_history
-    symbol_currencies = {str(row["symbol"]): currency_for_symbol(str(row["symbol"]), str(row.get("exchange", ""))) for row in reports.to_dict("records")}
-    target_currencies = {normalize_currency(str(value)) for value in reports.get("target_currency", pd.Series(dtype=str)).dropna().astype(str)}
+    symbol_currencies = {
+        str(row["symbol"]): currency_for_symbol(str(row["symbol"]), str(row.get("exchange", "")))
+        for row in reports.to_dict("records")
+    }
+    target_currencies = {
+        normalize_currency(str(value))
+        for value in reports.get("target_currency", pd.Series(dtype=str)).dropna().astype(str)
+    }
     fx_rates = download_fx_rates(set(symbol_currencies.values()) | target_currencies, start, end, downloader)
     write_table(warehouse_dir, "fx_rates", fx_rates)
 
@@ -154,8 +160,23 @@ def refresh_price_history(
     if not prices.empty:
         prices["date"] = pd.to_datetime(prices["date"]).dt.date.astype(str)
         prices = apply_daily_price_krw_conversion(prices, reports, fx_rates)
-        columns = ["date", "symbol", "open", "high", "low", "close", "volume", "source_currency", "display_currency", "krw_per_unit"]
-        prices = prices[[column for column in columns if column in prices]].drop_duplicates(["date", "symbol"], keep="last").sort_values(["date", "symbol"])
+        columns = [
+            "date",
+            "symbol",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "source_currency",
+            "display_currency",
+            "krw_per_unit",
+        ]
+        prices = (
+            prices[[column for column in columns if column in prices]]
+            .drop_duplicates(["date", "symbol"], keep="last")
+            .sort_values(["date", "symbol"])
+        )
     write_table(warehouse_dir, "daily_prices", prices)
     reports = apply_report_krw_targets(reports, fx_rates)
     reports = fill_report_publication_prices(reports, prices)
@@ -164,10 +185,15 @@ def refresh_price_history(
     return prices
 
 
-def apply_daily_price_krw_conversion(prices: pd.DataFrame, reports: pd.DataFrame, fx_rates: pd.DataFrame) -> pd.DataFrame:
+def apply_daily_price_krw_conversion(
+    prices: pd.DataFrame, reports: pd.DataFrame, fx_rates: pd.DataFrame
+) -> pd.DataFrame:
     if prices.empty:
         return prices
-    if "display_currency" in prices.columns and prices["display_currency"].astype(str).str.upper().eq("KRW").all():
+    if (
+        "display_currency" in prices.columns
+        and prices["display_currency"].astype(str).str.upper().eq("KRW").all()
+    ):
         return prices
     symbol_meta = (
         reports[["symbol", "exchange"]]
@@ -244,7 +270,11 @@ def run_default_backtests(
             combined.setdefault(table, []).append(frame)
     counts: dict[str, int] = {}
     for table, frames in combined.items():
-        data = pd.concat([frame for frame in frames if not frame.empty], ignore_index=True) if any(not frame.empty for frame in frames) else pd.DataFrame()
+        data = (
+            pd.concat([frame for frame in frames if not frame.empty], ignore_index=True)
+            if any(not frame.empty for frame in frames)
+            else pd.DataFrame()
+        )
         if table == "signals_daily" and not data.empty:
             data = data.sort_values("date").groupby(["run_id", "symbol"], as_index=False).tail(1)
         write_table(warehouse_dir, table, data)
@@ -288,7 +318,9 @@ def optimize_strategies(
     def objective(trial: optuna.Trial) -> float:
         config = BacktestConfig(
             name=f"optuna_{trial.number:03d}",
-            weighting=trial.suggest_categorical("weighting", ["1/N", "max_return", "min_var", "sharpe", "sortino", "cvar", "calmar"]),
+            weighting=trial.suggest_categorical(
+                "weighting", ["1/N", "max_return", "min_var", "sharpe", "sortino", "cvar", "calmar"]
+            ),
             entry_rule=trial.suggest_categorical("entry_rule", ["mtt", "target_only", "mtt_target"]),
             mtt_slope_months=trial.suggest_int("mtt_slope_months", 1, 5),
             max_pool_months=trial.suggest_categorical("max_pool_months", [3, 6, 9, 12]),
@@ -329,11 +361,13 @@ def optimize_strategies(
             # Trial completed in a prior process — full per-run metrics weren't
             # captured in this session; emit params + Optuna's recorded value
             # under the legacy "objective" column to preserve the contract.
-            rows.append({
-                "trial": trial.number,
-                **trial.params,
-                "objective": trial.value,
-            })
+            rows.append(
+                {
+                    "trial": trial.number,
+                    **trial.params,
+                    "objective": trial.value,
+                }
+            )
     trials_df = pd.DataFrame(rows)
     write_table(warehouse_dir, "optuna_trials", trials_df)
     sync_duckdb(warehouse_dir)
@@ -354,12 +388,17 @@ def export_dashboard_data(data_dir: Path, warehouse_dir: Path, output_dir: Path)
         "current_positions.json": _current_positions(tables["positions_daily"]),
         "recent_trades.json": _recent_trades(tables["execution_events"]),
         "optuna_trials.json": _records(tables["optuna_trials"]),
-        "pool_timeline.json": _pool_timeline(tables["equity_daily"], tables["candidate_pool_events"], tables["execution_events"]),
+        "pool_timeline.json": _pool_timeline(
+            tables["equity_daily"], tables["candidate_pool_events"], tables["execution_events"]
+        ),
         "strategy_heatmap.json": _strategy_heatmap(tables["strategy_runs"]),
     }
     counts = {}
     for filename, data in exports.items():
-        (output_dir / filename).write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":"), default=_json_default) + "\n", encoding="utf-8")
+        (output_dir / filename).write_text(
+            json.dumps(data, ensure_ascii=False, separators=(",", ":"), default=_json_default) + "\n",
+            encoding="utf-8",
+        )
         counts[filename] = len(data) if isinstance(data, list) else 1
     counts.update(_export_chart_series(tables, output_dir / "chart_series"))
     return counts
@@ -391,12 +430,25 @@ def _export_chart_series(tables: dict[str, pd.DataFrame], chart_dir: Path) -> di
         symbol_prices = prices[prices["symbol"].astype(str) == symbol].copy().sort_values("date")
         if symbol_prices.empty:
             continue
-        symbol_reports = reports[reports["symbol"].astype(str) == symbol].copy().sort_values("publication_date")
-        symbol_executions = executions[executions["symbol"].astype(str) == symbol].copy() if not executions.empty else pd.DataFrame()
-        symbol_signals = signals[signals["symbol"].astype(str) == symbol].copy() if not signals.empty else pd.DataFrame()
-        payload = _chart_payload_for_symbol(symbol, symbol_prices, symbol_reports, symbol_executions, symbol_signals)
+        symbol_reports = (
+            reports[reports["symbol"].astype(str) == symbol].copy().sort_values("publication_date")
+        )
+        symbol_executions = (
+            executions[executions["symbol"].astype(str) == symbol].copy()
+            if not executions.empty
+            else pd.DataFrame()
+        )
+        symbol_signals = (
+            signals[signals["symbol"].astype(str) == symbol].copy() if not signals.empty else pd.DataFrame()
+        )
+        payload = _chart_payload_for_symbol(
+            symbol, symbol_prices, symbol_reports, symbol_executions, symbol_signals
+        )
         filename = f"{_safe_symbol_filename(symbol)}.json"
-        (chart_dir / filename).write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":"), default=_json_default) + "\n", encoding="utf-8")
+        (chart_dir / filename).write_text(
+            json.dumps(payload, ensure_ascii=False, separators=(",", ":"), default=_json_default) + "\n",
+            encoding="utf-8",
+        )
         index_rows.append(
             {
                 "symbol": symbol,
@@ -408,7 +460,10 @@ def _export_chart_series(tables: dict[str, pd.DataFrame], chart_dir: Path) -> di
                 "trade_count": len(payload["trade_markers"]),
             }
         )
-    (chart_dir / "index.json").write_text(json.dumps(index_rows, ensure_ascii=False, separators=(",", ":"), default=_json_default) + "\n", encoding="utf-8")
+    (chart_dir / "index.json").write_text(
+        json.dumps(index_rows, ensure_ascii=False, separators=(",", ":"), default=_json_default) + "\n",
+        encoding="utf-8",
+    )
     return {"chart_series/index.json": len(index_rows), "chart_series/*.json": len(index_rows)}
 
 
@@ -455,7 +510,8 @@ def _chart_payload_for_symbol(
             "report_id": row.get("report_id", ""),
             "title": row.get("title", ""),
             "target_price": _finite_float(row.get("target_price")),
-            "publication_price": _finite_float(row.get("report_current_price_krw")) or _finite_float(row.get("report_current_price")),
+            "publication_price": _finite_float(row.get("report_current_price_krw"))
+            or _finite_float(row.get("report_current_price")),
         }
         for row in reports.to_dict("records")
     ]
@@ -491,7 +547,9 @@ def _chart_payload_for_symbol(
             "company": company,
             "last_date": last_row.get("date", ""),
             "last_close": _finite_float(last_row.get("close")),
-            "display_currency": str(latest_report.get("display_currency") or latest_report.get("price_currency") or ""),
+            "display_currency": str(
+                latest_report.get("display_currency") or latest_report.get("price_currency") or ""
+            ),
             "report_count": len(reports),
         },
         "ohlc": ohlc,
@@ -560,10 +618,16 @@ def read_reports(data_dir: Path) -> pd.DataFrame:
     with csv_path.open(encoding="utf-8", newline="") as handle:
         for row in csv.DictReader(handle):
             metric = metrics.get(row.get("리포트명", ""), {})
-            symbol = metric.get("yfinance_symbol") or infer_yfinance_symbol(row.get("티커", ""), row.get("거래소", ""))
+            symbol = metric.get("yfinance_symbol") or infer_yfinance_symbol(
+                row.get("티커", ""), row.get("거래소", "")
+            )
             if not symbol:
                 continue
-            target = _float_or_none(row.get("Base 목표가")) or _float_or_none(row.get("Bull 목표가")) or _float_or_none(row.get("Bear 목표가"))
+            target = (
+                _float_or_none(row.get("Base 목표가"))
+                or _float_or_none(row.get("Bull 목표가"))
+                or _float_or_none(row.get("Bear 목표가"))
+            )
             publication = format_date(row.get("게시일", ""))
             report_id = stable_report_id(row.get("게시일", ""), row.get("리포트명", ""), symbol)
             rows.append(
@@ -588,7 +652,9 @@ def read_reports(data_dir: Path) -> pd.DataFrame:
                     "target_currency": row.get("목표가 통화", ""),
                     "price_currency": "",
                     "display_currency": "",
-                    "markdown_filename": Path(row.get("PDF 파일명", "")).with_suffix(".md").name if row.get("PDF 파일명", "") else "",
+                    "markdown_filename": Path(row.get("PDF 파일명", "")).with_suffix(".md").name
+                    if row.get("PDF 파일명", "")
+                    else "",
                 }
             )
     return pd.DataFrame(rows).sort_values(["publication_date", "symbol"])
@@ -603,16 +669,31 @@ def apply_report_krw_targets(reports: pd.DataFrame, fx_rates: pd.DataFrame) -> p
             frame[column] = pd.NA
     converted_rows = []
     for row in frame.to_dict("records"):
-        target_currency = normalize_currency(str(row.get("target_currency", ""))) or currency_for_symbol(str(row.get("symbol", "")), str(row.get("exchange", "")))
+        target_currency = normalize_currency(str(row.get("target_currency", ""))) or currency_for_symbol(
+            str(row.get("symbol", "")), str(row.get("exchange", ""))
+        )
         price_currency = currency_for_symbol(str(row.get("symbol", "")), str(row.get("exchange", "")))
         date = str(row.get("publication_date", ""))
         converted_rows.append(
             {
-                "report_current_price_krw": convert_value_to_krw(_float_or_none(row.get("report_current_price")), price_currency, date, fx_rates),
-                "bear_target_krw": convert_value_to_krw(_float_or_none(row.get("bear_target")), target_currency, date, fx_rates),
-                "base_target_krw": convert_value_to_krw(_float_or_none(row.get("base_target")), target_currency, date, fx_rates),
-                "bull_target_krw": convert_value_to_krw(_float_or_none(row.get("bull_target")), target_currency, date, fx_rates),
-                "target_price_krw": convert_value_to_krw(_float_or_none(row.get("target_price_local") or row.get("target_price")), target_currency, date, fx_rates),
+                "report_current_price_krw": convert_value_to_krw(
+                    _float_or_none(row.get("report_current_price")), price_currency, date, fx_rates
+                ),
+                "bear_target_krw": convert_value_to_krw(
+                    _float_or_none(row.get("bear_target")), target_currency, date, fx_rates
+                ),
+                "base_target_krw": convert_value_to_krw(
+                    _float_or_none(row.get("base_target")), target_currency, date, fx_rates
+                ),
+                "bull_target_krw": convert_value_to_krw(
+                    _float_or_none(row.get("bull_target")), target_currency, date, fx_rates
+                ),
+                "target_price_krw": convert_value_to_krw(
+                    _float_or_none(row.get("target_price_local") or row.get("target_price")),
+                    target_currency,
+                    date,
+                    fx_rates,
+                ),
                 "price_currency": price_currency,
                 "target_currency": target_currency,
                 "display_currency": "KRW",
@@ -643,7 +724,9 @@ def fill_report_publication_prices(reports: pd.DataFrame, prices: pd.DataFrame) 
         if not symbol or pd.isna(pub_date):
             publication_prices.append(_float_or_none(row.get("report_current_price_krw")))
             continue
-        symbol_prices = price_frame[(price_frame["symbol"].astype(str) == symbol) & (price_frame["date"] >= pub_date)]
+        symbol_prices = price_frame[
+            (price_frame["symbol"].astype(str) == symbol) & (price_frame["date"] >= pub_date)
+        ]
         if symbol_prices.empty:
             publication_prices.append(_float_or_none(row.get("report_current_price_krw")))
         else:
@@ -662,13 +745,57 @@ def read_or_build_reports(data_dir: Path, warehouse_dir: Path) -> pd.DataFrame:
 
 def default_configs() -> list[BacktestConfig]:
     return [
-        BacktestConfig(name="MTT / 1N / 24M", weighting="1/N", entry_rule="mtt", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="MTT / Sharpe / 24M", weighting="sharpe", entry_rule="mtt", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="MTT / Sortino / 24M", weighting="sortino", entry_rule="mtt", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="MTT+목표 / CVaR / 24M", weighting="cvar", entry_rule="mtt_target", rebalance="biweekly", min_target_upside=0.10, lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="Target only / Calmar / 24M", weighting="calmar", entry_rule="target_only", rebalance="monthly", min_target_upside=0.20, lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="MTT / Max return / 24M", weighting="max_return", entry_rule="mtt", rebalance="monthly", lookback_days=LOOKBACK_WINDOWS["24M"]),
-        BacktestConfig(name="MTT / Min var / 24M", weighting="min_var", entry_rule="mtt", rebalance="weekly", lookback_days=LOOKBACK_WINDOWS["24M"]),
+        BacktestConfig(
+            name="MTT / 1N / 24M",
+            weighting="1/N",
+            entry_rule="mtt",
+            rebalance="weekly",
+            lookback_days=LOOKBACK_WINDOWS["24M"],
+        ),
+        BacktestConfig(
+            name="MTT / Sharpe / 24M",
+            weighting="sharpe",
+            entry_rule="mtt",
+            rebalance="weekly",
+            lookback_days=LOOKBACK_WINDOWS["24M"],
+        ),
+        BacktestConfig(
+            name="MTT / Sortino / 24M",
+            weighting="sortino",
+            entry_rule="mtt",
+            rebalance="weekly",
+            lookback_days=LOOKBACK_WINDOWS["24M"],
+        ),
+        BacktestConfig(
+            name="MTT+목표 / CVaR / 24M",
+            weighting="cvar",
+            entry_rule="mtt_target",
+            rebalance="biweekly",
+            min_target_upside=0.10,
+            lookback_days=LOOKBACK_WINDOWS["24M"],
+        ),
+        BacktestConfig(
+            name="Target only / Calmar / 24M",
+            weighting="calmar",
+            entry_rule="target_only",
+            rebalance="monthly",
+            min_target_upside=0.20,
+            lookback_days=LOOKBACK_WINDOWS["24M"],
+        ),
+        BacktestConfig(
+            name="MTT / Max return / 24M",
+            weighting="max_return",
+            entry_rule="mtt",
+            rebalance="monthly",
+            lookback_days=LOOKBACK_WINDOWS["24M"],
+        ),
+        BacktestConfig(
+            name="MTT / Min var / 24M",
+            weighting="min_var",
+            entry_rule="mtt",
+            rebalance="weekly",
+            lookback_days=LOOKBACK_WINDOWS["24M"],
+        ),
     ]
 
 
@@ -676,7 +803,15 @@ def download_history(symbol: str, start: datetime, end: datetime) -> pd.DataFram
     import yfinance as yf
 
     with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-        data = yf.download(symbol, start=start.date().isoformat(), end=end.date().isoformat(), progress=False, auto_adjust=True, threads=False, timeout=10)
+        data = yf.download(
+            symbol,
+            start=start.date().isoformat(),
+            end=end.date().isoformat(),
+            progress=False,
+            auto_adjust=True,
+            threads=False,
+            timeout=10,
+        )
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
     if data.empty or "Close" not in data:
@@ -881,7 +1016,9 @@ def _current_positions(positions: pd.DataFrame) -> list[dict[str, Any]]:
     if not last_valid.empty:
         last_valid["date"] = last_valid["date"].astype(str)
         last_valid = last_valid.sort_values("date").groupby(["run_id", "symbol"], as_index=False).tail(1)
-        last_valid = last_valid[["run_id", "symbol", "close", "gross_return"]].rename(columns={"close": "last_close", "gross_return": "last_gross_return"})
+        last_valid = last_valid[["run_id", "symbol", "close", "gross_return"]].rename(
+            columns={"close": "last_close", "gross_return": "last_gross_return"}
+        )
         rows = rows.merge(last_valid, how="left", on=["run_id", "symbol"])
         rows["close"] = rows["close"].fillna(rows["last_close"])
         rows["gross_return"] = rows["gross_return"].fillna(rows["last_gross_return"])
@@ -902,7 +1039,9 @@ def _recent_trades(execution_events: pd.DataFrame) -> list[dict[str, Any]]:
     return _records(rows)
 
 
-def _pool_timeline(equity: pd.DataFrame, candidate_events: pd.DataFrame, execution_events: pd.DataFrame) -> list[dict[str, Any]]:
+def _pool_timeline(
+    equity: pd.DataFrame, candidate_events: pd.DataFrame, execution_events: pd.DataFrame
+) -> list[dict[str, Any]]:
     if equity.empty:
         return []
     rows = equity.copy()
@@ -914,7 +1053,9 @@ def _pool_timeline(equity: pd.DataFrame, candidate_events: pd.DataFrame, executi
     if not execution_events.empty:
         counts = execution_events.groupby(["run_id", "date"]).size().rename("execution_events")
         rows = rows.drop(columns=["execution_events"]).merge(counts, how="left", on=["run_id", "date"])
-    rows[["candidate_events", "execution_events"]] = rows[["candidate_events", "execution_events"]].fillna(0).astype(int)
+    rows[["candidate_events", "execution_events"]] = (
+        rows[["candidate_events", "execution_events"]].fillna(0).astype(int)
+    )
     return _records(rows)
 
 
@@ -923,7 +1064,21 @@ def _strategy_heatmap(strategy_runs: pd.DataFrame) -> list[dict[str, Any]]:
         return []
     rows = strategy_runs.copy()
     rows["bucket"] = rows["entry_rule"].astype(str) + " / " + rows["weighting"].astype(str)
-    return _records(rows[["run_id", "strategy_name", "bucket", "rebalance", "final_wealth", "total_return", "max_drawdown", "sharpe", "calmar"]])
+    return _records(
+        rows[
+            [
+                "run_id",
+                "strategy_name",
+                "bucket",
+                "rebalance",
+                "final_wealth",
+                "total_return",
+                "max_drawdown",
+                "sharpe",
+                "calmar",
+            ]
+        ]
+    )
 
 
 def _float_or_none(value: Any) -> float | None:

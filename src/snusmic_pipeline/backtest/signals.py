@@ -55,7 +55,9 @@ def compute_signals_daily(
 
     # Wide pivots — one cell per (date, symbol). ``aggfunc='last'`` matches
     # the legacy groupby semantics when multiple bars share a (date, symbol).
-    wide_close = frame.pivot_table(index="date", columns="symbol", values="close", aggfunc="last").sort_index()
+    wide_close = frame.pivot_table(
+        index="date", columns="symbol", values="close", aggfunc="last"
+    ).sort_index()
 
     slope_days = max(21, int(mtt_slope_months) * 21)
     slope_min_periods = max(5, slope_days // 2)
@@ -90,9 +92,7 @@ def compute_signals_daily(
         first_pub = pd.to_datetime(reports.groupby("symbol")["publication_date"].min())
     else:
         first_pub = pd.Series(dtype="datetime64[ns]")
-    candidate_universe_active = pd.DataFrame(
-        False, index=wide_close.index, columns=wide_close.columns
-    )
+    candidate_universe_active = pd.DataFrame(False, index=wide_close.index, columns=wide_close.columns)
     for symbol in wide_close.columns:
         cutoff = first_pub.get(symbol)
         if cutoff is not None and pd.notna(cutoff):
@@ -131,24 +131,28 @@ def compute_signals_daily(
     result = result.merge(observed, on=["date", "symbol"], how="inner")
 
     # Match the legacy column order so the integration SHA stays unchanged.
-    return result[
-        [
-            "date",
-            "symbol",
-            "close",
-            "ma50",
-            "ma150",
-            "ma200",
-            "ma200_slope_positive",
-            "ma200_ols_log_slope",
-            "low_52w",
-            "high_52w",
-            "pct_above_52w_low",
-            "pct_below_52w_high",
-            "candidate_universe_active",
-            "mtt_pass",
+    return (
+        result[
+            [
+                "date",
+                "symbol",
+                "close",
+                "ma50",
+                "ma150",
+                "ma200",
+                "ma200_slope_positive",
+                "ma200_ols_log_slope",
+                "low_52w",
+                "high_52w",
+                "pct_above_52w_low",
+                "pct_below_52w_high",
+                "candidate_universe_active",
+                "mtt_pass",
+            ]
         ]
-    ].sort_values(["symbol", "date"]).reset_index(drop=True)
+        .sort_values(["symbol", "date"])
+        .reset_index(drop=True)
+    )
 
 
 def signal_lookup(signals: pd.DataFrame) -> dict[tuple[pd.Timestamp, str], dict]:

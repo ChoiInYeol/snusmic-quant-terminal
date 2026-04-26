@@ -38,13 +38,43 @@ def _sample_rows() -> dict[str, pd.DataFrame]:
     return {
         "daily_prices": pd.DataFrame(
             [
-                {"date": "2025-01-02", "symbol": "005930.KS", "open": 70000.0, "high": 71000.0, "low": 69500.0, "close": 70500.0, "volume": 1234567.0, "source_currency": "KRW", "display_currency": "KRW", "krw_per_unit": 1.0},
-                {"date": "2025-01-03", "symbol": "005930.KS", "open": 70500.0, "high": 72000.0, "low": 70200.0, "close": 71800.0, "volume": 1145678.0, "source_currency": "KRW", "display_currency": "KRW", "krw_per_unit": 1.0},
+                {
+                    "date": "2025-01-02",
+                    "symbol": "005930.KS",
+                    "open": 70000.0,
+                    "high": 71000.0,
+                    "low": 69500.0,
+                    "close": 70500.0,
+                    "volume": 1234567.0,
+                    "source_currency": "KRW",
+                    "display_currency": "KRW",
+                    "krw_per_unit": 1.0,
+                },
+                {
+                    "date": "2025-01-03",
+                    "symbol": "005930.KS",
+                    "open": 70500.0,
+                    "high": 72000.0,
+                    "low": 70200.0,
+                    "close": 71800.0,
+                    "volume": 1145678.0,
+                    "source_currency": "KRW",
+                    "display_currency": "KRW",
+                    "krw_per_unit": 1.0,
+                },
             ]
         ),
         "reports": pd.DataFrame(
             [
-                {"report_id": "r1", "publication_date": "2025-01-02", "title": "Alpha", "company": "Alpha Inc", "ticker": "AAA", "exchange": "NYSE", "symbol": "AAA"},
+                {
+                    "report_id": "r1",
+                    "publication_date": "2025-01-02",
+                    "title": "Alpha",
+                    "company": "Alpha Inc",
+                    "ticker": "AAA",
+                    "exchange": "NYSE",
+                    "symbol": "AAA",
+                },
             ]
         ),
     }

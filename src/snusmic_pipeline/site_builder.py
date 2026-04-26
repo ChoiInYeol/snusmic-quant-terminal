@@ -29,14 +29,18 @@ def repo_pdf_url(filename: str, repo: str = "ChoiInYeol/snusmic-quant-terminal",
     return f"https://github.com/{repo}/blob/{branch}/data/pdfs/{filename}"
 
 
-def repo_markdown_url(filename: str, repo: str = "ChoiInYeol/snusmic-quant-terminal", branch: str = "main") -> str:
+def repo_markdown_url(
+    filename: str, repo: str = "ChoiInYeol/snusmic-quant-terminal", branch: str = "main"
+) -> str:
     return f"https://github.com/{repo}/blob/{branch}/data/markdown/{Path(filename).with_suffix('.md').name}"
 
 
 def build_reports_json(data_dir: Path, public_dir: Path) -> list[dict[str, Any]]:
     reports = read_csv_dicts(data_dir / "extracted_reports.csv")
     metrics = {item.get("title", ""): item for item in read_json(data_dir / "price_metrics.json")}
-    warehouse_reports = {item.get("pdf_filename", ""): item for item in read_csv_dicts(data_dir / "warehouse" / "reports.csv")}
+    warehouse_reports = {
+        item.get("pdf_filename", ""): item for item in read_csv_dicts(data_dir / "warehouse" / "reports.csv")
+    }
     for report in reports:
         filename = report.get("PDF 파일명", "")
         report["GitHub PDF"] = repo_pdf_url(filename) if filename else ""
@@ -46,7 +50,9 @@ def build_reports_json(data_dir: Path, public_dir: Path) -> list[dict[str, Any]]
         report["Company"] = report.get("종목명", "")
         report["Report Date"] = format_kst_datetime(report.get("게시일", ""))
         report["Report Price"] = metric.get("publication_buy_price", "")
-        report["Display Currency"] = metric.get("display_currency") or warehouse_report.get("display_currency") or ""
+        report["Display Currency"] = (
+            metric.get("display_currency") or warehouse_report.get("display_currency") or ""
+        )
         for source, target in [
             ("bear_target_krw", "Bear 목표가"),
             ("base_target_krw", "Base 목표가"),
@@ -294,7 +300,9 @@ def build_site(data_dir: Path, public_dir: Path) -> None:
     public_dir.mkdir(parents=True, exist_ok=True)
     reports = build_reports_json(data_dir, public_dir)
     write_json(public_dir / "data" / "price_metrics.json", read_json(data_dir / "price_metrics.json"))
-    write_json(public_dir / "data" / "portfolio_backtests.json", read_json(data_dir / "portfolio_backtests.json"))
+    write_json(
+        public_dir / "data" / "portfolio_backtests.json", read_json(data_dir / "portfolio_backtests.json")
+    )
     for name in _QUANT_V3_FILES:
         write_json(public_dir / "data" / "quant_v3" / name, read_json(data_dir / "quant_v3" / name))
     (public_dir / "index.html").write_text(render_index_html(), encoding="utf-8")

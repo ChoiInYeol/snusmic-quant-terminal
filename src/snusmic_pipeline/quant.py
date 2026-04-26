@@ -118,7 +118,15 @@ def _download_history(symbol: str, start: datetime, end: datetime) -> pd.DataFra
     import yfinance as yf
 
     with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-        data = yf.download(symbol, start=start.date().isoformat(), end=end.date().isoformat(), progress=False, auto_adjust=True, threads=False, timeout=10)
+        data = yf.download(
+            symbol,
+            start=start.date().isoformat(),
+            end=end.date().isoformat(),
+            progress=False,
+            auto_adjust=True,
+            threads=False,
+            timeout=10,
+        )
     if isinstance(data.columns, pd.MultiIndex):
         data.columns = data.columns.get_level_values(0)
     if "Close" not in data:
@@ -128,7 +136,9 @@ def _download_history(symbol: str, start: datetime, end: datetime) -> pd.DataFra
     return data
 
 
-def _download_histories(symbols: Iterable[str], start: datetime, end: datetime, chunk_size: int = 80) -> dict[str, pd.DataFrame]:
+def _download_histories(
+    symbols: Iterable[str], start: datetime, end: datetime, chunk_size: int = 80
+) -> dict[str, pd.DataFrame]:
     import yfinance as yf
 
     unique_symbols = [symbol for symbol in dict.fromkeys(str(item) for item in symbols if item)]
@@ -136,7 +146,16 @@ def _download_histories(symbols: Iterable[str], start: datetime, end: datetime, 
     for offset in range(0, len(unique_symbols), chunk_size):
         chunk = unique_symbols[offset : offset + chunk_size]
         with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            data = yf.download(chunk, start=start.date().isoformat(), end=end.date().isoformat(), progress=False, auto_adjust=True, threads=True, group_by="ticker", timeout=15)
+            data = yf.download(
+                chunk,
+                start=start.date().isoformat(),
+                end=end.date().isoformat(),
+                progress=False,
+                auto_adjust=True,
+                threads=True,
+                group_by="ticker",
+                timeout=15,
+            )
         if data.empty:
             continue
         for symbol in chunk:
@@ -173,7 +192,9 @@ def _history_to_ohlcv(history: pd.DataFrame) -> pd.DataFrame:
     ).dropna(subset=["close"])
 
 
-def resolve_yfinance_symbol(report: ExtractedReport, start: datetime, end: datetime) -> tuple[str, pd.DataFrame]:
+def resolve_yfinance_symbol(
+    report: ExtractedReport, start: datetime, end: datetime
+) -> tuple[str, pd.DataFrame]:
     candidates = yfinance_candidates(report)
     best_symbol = ""
     best_data = pd.DataFrame()
@@ -223,23 +244,44 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
     now = now or datetime.now(UTC)
     if not reports:
         return []
-    publication_dates = [datetime.fromisoformat(report.meta.date[:10]) for report in reports if report.meta.date]
-    fx_start = (min(publication_dates) if publication_dates else now.replace(tzinfo=None)) - timedelta(days=10)
+    publication_dates = [
+        datetime.fromisoformat(report.meta.date[:10]) for report in reports if report.meta.date
+    ]
+    fx_start = (min(publication_dates) if publication_dates else now.replace(tzinfo=None)) - timedelta(
+        days=10
+    )
     fx_end = now + timedelta(days=1)
-    target_currencies = {normalize_currency(report.target_currency) for report in reports if report.target_currency}
-    price_currencies = {currency_for_symbol(yfinance_candidates(report)[0], report.exchange) for report in reports if yfinance_candidates(report)}
-    fx_rates = download_fx_rates(target_currencies | price_currencies, fx_start, fx_end, lambda fx_symbol, fx_start_arg, fx_end_arg: _history_to_ohlcv(_download_history(fx_symbol, fx_start_arg, fx_end_arg)))
+    target_currencies = {
+        normalize_currency(report.target_currency) for report in reports if report.target_currency
+    }
+    price_currencies = {
+        currency_for_symbol(yfinance_candidates(report)[0], report.exchange)
+        for report in reports
+        if yfinance_candidates(report)
+    }
+    fx_rates = download_fx_rates(
+        target_currencies | price_currencies,
+        fx_start,
+        fx_end,
+        lambda fx_symbol, fx_start_arg, fx_end_arg: _history_to_ohlcv(
+            _download_history(fx_symbol, fx_start_arg, fx_end_arg)
+        ),
+    )
     candidate_symbols = [symbol for report in reports for symbol in yfinance_candidates(report)]
     history_cache = _download_histories(candidate_symbols, fx_start, fx_end)
 
     metrics: list[PriceMetric] = []
     for report in reports:
-        symbol, history = resolve_yfinance_symbol_cached(report, lambda symbol: history_cache.get(symbol, pd.DataFrame()))
+        symbol, history = resolve_yfinance_symbol_cached(
+            report, lambda symbol: history_cache.get(symbol, pd.DataFrame())
+        )
         price_currency = currency_for_symbol(symbol, report.exchange)
         target_currency = normalize_currency(report.target_currency) or price_currency
         if not symbol or history.empty:
             metrics.append(
-                empty_price_metric(report, symbol, price_currency, target_currency, "no_price_history", "No yfinance history")
+                empty_price_metric(
+                    report, symbol, price_currency, target_currency, "no_price_history", "No yfinance history"
+                )
             )
             continue
         history_krw = convert_ohlcv_to_krw(_history_to_ohlcv(history), price_currency, fx_rates)
@@ -247,7 +289,9 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
         post = history_krw[history_krw.index >= pd.to_datetime(report.meta.date[:10])].copy()
         if post.empty:
             metrics.append(
-                empty_price_metric(report, symbol, price_currency, target_currency, "no_post_publication_prices", "")
+                empty_price_metric(
+                    report, symbol, price_currency, target_currency, "no_post_publication_prices", ""
+                )
             )
             continue
         close = post["close"].dropna()
@@ -302,7 +346,9 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
                 optimal_net_return_10pct=net_return,
                 target_hit=bool(not hit_series.empty),
                 first_target_hit_date="" if first_hit_date is None else first_hit_date.date().isoformat(),
-                target_hit_holding_days=None if first_hit_date is None else (first_hit_date - pd.to_datetime(report.meta.date[:10])).days,
+                target_hit_holding_days=None
+                if first_hit_date is None
+                else (first_hit_date - pd.to_datetime(report.meta.date[:10])).days,
                 status="ok",
                 note="",
             )
@@ -310,7 +356,9 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
     return metrics
 
 
-def resolve_yfinance_symbol_cached(report: ExtractedReport, get_history: Callable[[str], pd.DataFrame]) -> tuple[str, pd.DataFrame]:
+def resolve_yfinance_symbol_cached(
+    report: ExtractedReport, get_history: Callable[[str], pd.DataFrame]
+) -> tuple[str, pd.DataFrame]:
     best_symbol = ""
     best_data = pd.DataFrame()
     best_score = math.inf
@@ -330,7 +378,9 @@ def resolve_yfinance_symbol_cached(report: ExtractedReport, get_history: Callabl
     return best_symbol, best_data
 
 
-def empty_price_metric(report: ExtractedReport, symbol: str, price_currency: str, target_currency: str, status: str, note: str) -> PriceMetric:
+def empty_price_metric(
+    report: ExtractedReport, symbol: str, price_currency: str, target_currency: str, status: str, note: str
+) -> PriceMetric:
     return PriceMetric(
         title=report.meta.title,
         company=report.meta.company,
@@ -448,27 +498,43 @@ def realized_forward_return(price_frame: pd.DataFrame, weights: np.ndarray) -> f
     return float(w @ returns)
 
 
-def portfolio_expected_stats(returns: pd.DataFrame, weights: np.ndarray, risk_free_rate: float) -> tuple[float | None, float | None, float | None]:
+def portfolio_expected_stats(
+    returns: pd.DataFrame, weights: np.ndarray, risk_free_rate: float
+) -> tuple[float | None, float | None, float | None]:
     if returns.empty or len(weights) == 0:
         return None, None, None
     mean = _annualized_returns(returns).to_numpy(dtype=float)
     cov = _annualized_cov(returns).to_numpy(dtype=float)
     expected_return = float(weights @ mean)
     expected_volatility = math.sqrt(max(float(weights @ cov @ weights), 0.0))
-    expected_sharpe = None if expected_volatility == 0 else (expected_return - risk_free_rate) / expected_volatility
+    expected_sharpe = (
+        None if expected_volatility == 0 else (expected_return - risk_free_rate) / expected_volatility
+    )
     return expected_return, expected_volatility, expected_sharpe
 
 
-def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: list[PriceMetric], now: datetime | None = None) -> list[PortfolioResult]:
+def compute_portfolio_backtests(
+    reports: list[ExtractedReport], price_metrics: list[PriceMetric], now: datetime | None = None
+) -> list[PortfolioResult]:
     now = now or datetime.now(UTC)
-    by_title = {metric.title: metric for metric in price_metrics if metric.status == "ok" and metric.yfinance_symbol}
-    display_by_symbol = {metric.yfinance_symbol: metric.display_name for metric in price_metrics if metric.yfinance_symbol}
+    by_title = {
+        metric.title: metric for metric in price_metrics if metric.status == "ok" and metric.yfinance_symbol
+    }
+    display_by_symbol = {
+        metric.yfinance_symbol: metric.display_name for metric in price_metrics if metric.yfinance_symbol
+    }
     rows: list[PortfolioResult] = []
     frame_rows = []
     for report in reports:
         metric = by_title.get(report.meta.title)
         if metric:
-            frame_rows.append({"month": report.meta.date[:7], "date": report.meta.date[:10], "symbol": metric.yfinance_symbol})
+            frame_rows.append(
+                {
+                    "month": report.meta.date[:7],
+                    "date": report.meta.date[:10],
+                    "symbol": metric.yfinance_symbol,
+                }
+            )
     if not frame_rows:
         return rows
     all_symbols = sorted({row["symbol"] for row in frame_rows}) + list(BENCHMARKS.values())
@@ -503,13 +569,23 @@ def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: l
         for name, symbol in BENCHMARKS.items():
             benchmark_history = history_cache.get(symbol, pd.DataFrame())
             if not benchmark_history.empty:
-                benchmark_history = benchmark_history[(benchmark_history.index >= forward.index[0]) & (benchmark_history.index < end)]
-            benchmark_returns[name] = None if benchmark_history.empty else pct_return(float(benchmark_history["Close"].iloc[-1]), float(benchmark_history["Close"].iloc[0]))
+                benchmark_history = benchmark_history[
+                    (benchmark_history.index >= forward.index[0]) & (benchmark_history.index < end)
+                ]
+            benchmark_returns[name] = (
+                None
+                if benchmark_history.empty
+                else pct_return(
+                    float(benchmark_history["Close"].iloc[-1]), float(benchmark_history["Close"].iloc[0])
+                )
+            )
         returns = lookback.pct_change().dropna()
         for rf in RISK_FREE_RATES:
             for strategy in ["1/N", "momentum", "max_sharpe", "sortino", "max_return", "min_var", "calmar"]:
                 weights = optimize_weights(returns, strategy, rf)
-                expected_return, expected_volatility, expected_sharpe = portfolio_expected_stats(returns, weights, rf)
+                expected_return, expected_volatility, expected_sharpe = portfolio_expected_stats(
+                    returns, weights, rf
+                )
                 rows.append(
                     PortfolioResult(
                         cohort_month=str(month),
@@ -517,7 +593,9 @@ def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: l
                         strategy=strategy,
                         risk_free_rate=rf,
                         symbols=",".join(returns.columns),
-                        display_symbols=",".join(display_by_symbol.get(symbol, symbol) for symbol in returns.columns),
+                        display_symbols=",".join(
+                            display_by_symbol.get(symbol, symbol) for symbol in returns.columns
+                        ),
                         weights=",".join(f"{w:.4f}" for w in weights),
                         expected_return=expected_return,
                         expected_volatility=expected_volatility,

@@ -39,7 +39,17 @@ def price_frame(symbols=("000001.KS",), start="2023-01-02", periods=340):
         base = 80 + i * 10
         close = pd.Series(range(periods), dtype=float) * (0.12 + i * 0.02) + base
         for date, price in zip(dates, close, strict=True):
-            rows.append({"date": date.date().isoformat(), "symbol": symbol, "open": price, "high": price, "low": price, "close": price, "volume": 1000})
+            rows.append(
+                {
+                    "date": date.date().isoformat(),
+                    "symbol": symbol,
+                    "open": price,
+                    "high": price,
+                    "low": price,
+                    "close": price,
+                    "volume": 1000,
+                }
+            )
     return pd.DataFrame(rows)
 
 
@@ -56,7 +66,9 @@ def test_mtt_signal_marks_candidate_universe_without_future_candidates():
 
     alpha_late = signals[(signals["symbol"] == "000001.KS") & (signals["date"] > pd.Timestamp("2024-02-01"))]
     assert alpha_late["mtt_pass"].any()
-    beta_before_publication = signals[(signals["symbol"] == "000002.KS") & (signals["date"] < pd.Timestamp("2024-03-01"))]
+    beta_before_publication = signals[
+        (signals["symbol"] == "000002.KS") & (signals["date"] < pd.Timestamp("2024-03-01"))
+    ]
     assert beta_before_publication["candidate_universe_active"].eq(False).all()
     assert "rs_score" not in signals.columns
 
@@ -64,7 +76,9 @@ def test_mtt_signal_marks_candidate_universe_without_future_candidates():
 def test_candidate_starts_after_publication_and_strategy_buys_from_pool():
     reports = report_frame("2024-01-10", target_price=200.0)
     prices = price_frame(periods=320)
-    config = BacktestConfig(name="target", entry_rule="target_only", weighting="1/N", rebalance="daily", min_target_upside=0.0)
+    config = BacktestConfig(
+        name="target", entry_rule="target_only", weighting="1/N", rebalance="daily", min_target_upside=0.0
+    )
 
     result = run_walk_forward_backtest(reports, prices, config)
     candidate_events = result["candidate_pool_events"]
@@ -82,7 +96,9 @@ def test_stop_loss_sell_event_realizes_arithmetic_return():
     after_publication = prices["date"] > "2024-01-15"
     prices.loc[after_publication, "close"] = prices.loc[after_publication, "close"] * 0.85
     prices[["open", "high", "low"]] = prices[["close", "close", "close"]].to_numpy()
-    config = BacktestConfig(name="stop", entry_rule="target_only", weighting="1/N", rebalance="daily", stop_loss_pct=0.08)
+    config = BacktestConfig(
+        name="stop", entry_rule="target_only", weighting="1/N", rebalance="daily", stop_loss_pct=0.08
+    )
 
     result = run_walk_forward_backtest(reports, prices, config)
     sells = result["execution_events"][result["execution_events"]["event_type"] == "sell"]
@@ -125,7 +141,9 @@ def test_report_targets_are_converted_to_krw_for_backtest_comparison():
     reports["symbol"] = "IRMD"
     reports["target_currency"] = "USD"
     reports["target_price_local"] = 100.0
-    fx = pd.DataFrame({"date": ["2024-01-10"], "currency": ["USD"], "fx_symbol": ["KRW=X"], "krw_per_unit": [1300.0]})
+    fx = pd.DataFrame(
+        {"date": ["2024-01-10"], "currency": ["USD"], "fx_symbol": ["KRW=X"], "krw_per_unit": [1300.0]}
+    )
 
     converted = apply_report_krw_targets(reports, fx)
 

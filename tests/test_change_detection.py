@@ -18,6 +18,8 @@ def test_parse_page_one_post_urls_dedupes():
 
 def test_new_report_detector_compares_manifest(tmp_path):
     manifest = tmp_path / "manifest.json"
-    manifest.write_text(json.dumps([{"post_url": "http://snusmic.com/equity-research-old/"}]), encoding="utf-8")
+    manifest.write_text(
+        json.dumps([{"post_url": "http://snusmic.com/equity-research-old/"}]), encoding="utf-8"
+    )
 
     assert new_report_urls(manifest, HTML) == ["http://snusmic.com/equity-research-new/"]

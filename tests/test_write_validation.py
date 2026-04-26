@@ -75,5 +75,11 @@ def test_write_table_feature_flag_escape(tmp_path: Path, monkeypatch: pytest.Mon
 def test_write_table_skips_unknown_table(tmp_path: Path) -> None:
     """Tables not in TABLE_MODELS (e.g. fx_rates, positions_daily) are written
     without validation for now — those migrate in later phases."""
-    write_table(tmp_path, "fx_rates", pd.DataFrame([{"date": "2025-01-02", "currency": "USD", "fx_symbol": "USDKRW=X", "krw_per_unit": 1300.0}]))
+    write_table(
+        tmp_path,
+        "fx_rates",
+        pd.DataFrame(
+            [{"date": "2025-01-02", "currency": "USD", "fx_symbol": "USDKRW=X", "krw_per_unit": 1300.0}]
+        ),
+    )
     assert (tmp_path / "fx_rates.csv").exists()

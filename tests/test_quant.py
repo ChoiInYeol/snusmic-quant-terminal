@@ -55,7 +55,9 @@ def test_optimizer_returns_normalized_weights():
 
 def test_portfolio_expected_stats_has_return_risk_and_sharpe():
     returns = pd.DataFrame({"A": [0.01, 0.02, -0.01], "B": [0.0, 0.01, 0.01]})
-    expected_return, expected_volatility, expected_sharpe = portfolio_expected_stats(returns, np.array([0.5, 0.5]), 0.03)
+    expected_return, expected_volatility, expected_sharpe = portfolio_expected_stats(
+        returns, np.array([0.5, 0.5]), 0.03
+    )
 
     assert expected_return is not None
     assert expected_volatility is not None

@@ -16,7 +16,11 @@ def row_reasons(report: ExtractedReport) -> list[str]:
         reasons.append("missing_ticker")
     if not report.base_target:
         reasons.append("missing_base_target")
-    if report.report_current_price and report.base_target and report.report_current_price == report.base_target:
+    if (
+        report.report_current_price
+        and report.base_target
+        and report.report_current_price == report.base_target
+    ):
         reasons.append("current_equals_base_target")
     if not report.rating:
         reasons.append("missing_rating")
@@ -73,7 +77,9 @@ def analyze_extraction_quality(reports: list[ExtractedReport]) -> dict[str, Any]
         "currency_counts": dict(sorted(currency_counts.items())),
         "reason_counts": dict(sorted(reason_counts.items())),
         "review_rows": review_rows,
-        "page_status_counts": {str(page): dict(sorted(counter.items())) for page, counter in sorted(page_counts.items())},
+        "page_status_counts": {
+            str(page): dict(sorted(counter.items())) for page, counter in sorted(page_counts.items())
+        },
         "summary": {
             "ok": status_counts.get("ok", 0),
             "status_needs_review": status_counts.get("needs_review", 0),
@@ -81,7 +87,9 @@ def analyze_extraction_quality(reports: list[ExtractedReport]) -> dict[str, Any]
             "missing_base_target": reason_counts.get("missing_base_target", 0),
             "current_equals_base_target": reason_counts.get("current_equals_base_target", 0),
             "missing_rating": reason_counts.get("missing_rating", 0),
-            "non_buy_rating": sum(count for reason, count in reason_counts.items() if reason.startswith("non_buy_rating:")),
+            "non_buy_rating": sum(
+                count for reason, count in reason_counts.items() if reason.startswith("non_buy_rating:")
+            ),
             "case_target_without_explicit_base": reason_counts.get("case_target_without_explicit_base", 0),
         },
     }

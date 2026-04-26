@@ -95,14 +95,18 @@ def test_equity_curve_is_deterministic_across_runs(integration_result: dict[str,
         )
 
 
-def test_integration_run_emits_phase_2a_lookahead_safe_fields(integration_result: dict[str, pd.DataFrame]) -> None:
+def test_integration_run_emits_phase_2a_lookahead_safe_fields(
+    integration_result: dict[str, pd.DataFrame],
+) -> None:
     events = integration_result["execution_events"]
     assert not events.empty, "phase-2 integration fixture produced no execution events"
     for col in ("signal_date", "decision_price", "fill_price", "fill_rule"):
         assert col in events.columns, f"execution_events missing Phase 2a column {col!r}"
     # Every non-empty row should have a fill_rule in the allowed set.
     observed = set(events["fill_rule"].dropna().unique())
-    assert observed <= {"open", "close_fallback", "delisting_last_close"}, f"unexpected fill_rule values: {observed}"
+    assert observed <= {"open", "close_fallback", "delisting_last_close"}, (
+        f"unexpected fill_rule values: {observed}"
+    )
 
 
 def test_integration_run_emits_phase_2b_oos_metrics(integration_result: dict[str, pd.DataFrame]) -> None:
@@ -117,5 +121,6 @@ def test_integration_run_emits_phase_2b_oos_metrics(integration_result: dict[str
     # Default objective must equal sortino_oos (not total_return) per
     # docs/decisions/phase-2-objective.md.
     import math
+
     if row["sortino_oos"] is not None and math.isfinite(float(row["sortino_oos"])):
         assert math.isclose(float(row["objective"]), float(row["sortino_oos"]), rel_tol=1e-9)
