@@ -1,30 +1,24 @@
 'use client';
 
-import { type ReactNode, Suspense, useEffect, useMemo, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import { useQueryState, parseAsString } from 'nuqs';
 import { DrawdownChart, EquityChart, StockChart } from '../src/components/ChartCard';
 import { BaselineBandSummary } from '../src/components/BaselineBandSummary';
+import { OpportunityTable } from '../src/components/OpportunityTable';
+import { ReportArchiveTable } from '../src/components/ReportArchiveTable';
 import { StrategyScatter } from '../src/components/PlotlyPanel';
 import { StaleDataBanner } from '../src/components/StaleDataBanner';
+import { StrategyRanking } from '../src/components/StrategyRanking';
+import { SymbolSelect } from '../src/components/SymbolSelect';
 import { ThemeToggle } from '../src/components/ThemeToggle';
 import { Metric, SectionIntro } from '../src/components/ui/Metric';
-import {
-  type Column,
-  CsvButton,
-  SortHeader,
-  SortableDataTable,
-  useSortedRows,
-} from '../src/components/ui/SortableDataTable';
+import { type Column, SortableDataTable } from '../src/components/ui/SortableDataTable';
 import {
   bestStrategy,
   fetchJson,
   loadDashboard,
-  type ChartIndexRow,
   type DashboardData,
-  type PriceMetric,
-  type ReportRow,
   type StockChartData,
-  type StrategyRun,
 } from '../src/lib/data';
 import { calculateBaselineBandStats } from '../src/lib/baseline';
 import { labelEntryRule, labelReason, num, pct, shortDate } from '../src/lib/format';
@@ -579,136 +573,3 @@ function SignalTable({ rows, companyBySymbol }: { rows: DashboardData['signals']
   return <SortableDataTable rows={rows} columns={columns} filename="signals.csv" initialSort="mtt" empty="신호 데이터가 없습니다." />;
 }
 
-function StrategyRanking({
-  strategies,
-  selectedRunId,
-  onSelect,
-}: {
-  strategies: StrategyRun[];
-  selectedRunId: string;
-  onSelect: (runId: string) => void;
-}) {
-  return (
-    <div className="ranking">
-      {[...strategies]
-        .sort((a, b) => b.total_return - a.total_return)
-        .slice(0, 8)
-        .map((strategy, index) => (
-          <button key={strategy.run_id} className={strategy.run_id === selectedRunId ? 'rank active' : 'rank'} onClick={() => onSelect(strategy.run_id)}>
-            <span>{index + 1}</span>
-            <strong>{strategy.strategy_name}</strong>
-            <b>{pct(strategy.total_return)}</b>
-          </button>
-        ))}
-    </div>
-  );
-}
-
-function SymbolSelect({ index, value, onChange }: { index: ChartIndexRow[]; value: string; onChange: (symbol: string) => void }) {
-  return (
-    <select value={value} onChange={(event) => onChange(event.target.value)} aria-label="종목 선택">
-      {index
-        .sort((a, b) => a.company.localeCompare(b.company, 'ko'))
-        .map((item) => (
-          <option key={item.symbol} value={item.symbol}>
-            {displaySymbolOption(item)}
-          </option>
-        ))}
-    </select>
-  );
-}
-
-function displaySymbolOption(item: ChartIndexRow): string {
-  if (/\.(KS|KQ|T)$/.test(item.symbol)) return item.company;
-  return `${item.company} · ${item.symbol}`;
-}
-
-function OpportunityTable({ rows }: { rows: PriceMetric[] }) {
-  const columns: Column<PriceMetric>[] = [
-    { key: 'publication_date', label: '일자', value: (row) => row.publication_date, render: (row) => shortDate(row.publication_date) },
-    { key: 'company', label: '회사', value: (row) => row.display_name || row.company, render: (row) => row.display_name || row.company },
-    { key: 'publication_buy_price', label: '발간가', value: (row) => row.publication_buy_price, render: (row) => num(row.publication_buy_price, 'KRW') },
-    {
-      key: 'smic_follower_return',
-      label: '스믹 추종자',
-      value: (row) => row.smic_follower_return,
-      render: (row) => pct(row.smic_follower_return),
-      className: (row) => ((row.smic_follower_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
-    },
-    {
-      key: 'oracle_return',
-      label: '예언자 상한',
-      value: (row) => row.oracle_return,
-      render: (row) => pct(row.oracle_return),
-      className: (row) => ((row.oracle_return ?? 0) >= 0 ? 'gain-text' : 'loss-text'),
-    },
-    { key: 'oracle_entry_price', label: '예언자 매수가', value: (row) => row.oracle_entry_price, render: (row) => num(row.oracle_entry_price, 'KRW') },
-    { key: 'oracle_exit_price', label: '예언자 매도가', value: (row) => row.oracle_exit_price, render: (row) => num(row.oracle_exit_price, 'KRW') },
-    { key: 'oracle_buy_lag_days', label: '진입대기', value: (row) => row.oracle_buy_lag_days, render: (row) => dayCell(row.oracle_buy_lag_days) },
-    { key: 'oracle_holding_days', label: '상한보유', value: (row) => row.oracle_holding_days, render: (row) => dayCell(row.oracle_holding_days) },
-    { key: 'smic_follower_status', label: '추종상태', value: (row) => row.smic_follower_status, render: (row) => followerStatus(row) },
-    { key: 'target_upside', label: '남은여력', value: (row) => row.target_upside_remaining, render: (row) => targetUpsideCell(row) },
-  ];
-  return <SortableDataTable rows={rows} columns={columns} filename="price-opportunity.csv" initialSort="publication_date" empty="가격 기회 데이터가 없습니다." />;
-}
-
-
-function dayCell(value: number | null | undefined): string {
-  if (value === null || value === undefined || Number.isNaN(value)) return '-';
-  return `${value.toLocaleString('ko-KR')}일`;
-}
-
-function followerStatus(row: PriceMetric): string {
-  if (row.smic_follower_status === 'target_hit') return `목표 도달 · ${dayCell(row.smic_follower_holding_days)}`;
-  if (row.smic_follower_status === 'open') return `미도달 · ${dayCell(row.smic_follower_holding_days)}`;
-  return '-';
-}
-
-function ReportArchiveTable({ rows }: { rows: ReportRow[] }) {
-  const columns: Column<ReportRow>[] = [
-    { key: 'publication_date', label: '발간일', value: (row) => row.publication_date, render: (row) => shortDate(row.publication_date) },
-    { key: 'company', label: '회사', value: (row) => row.company, render: (row) => row.company },
-    { key: 'symbol', label: '심볼', value: (row) => row.symbol, render: (row) => (/\.(KS|KQ|T)$/.test(row.symbol) ? row.company : row.symbol) },
-    { key: 'report_price', label: '발간가', value: (row) => row.report_current_price_krw, render: (row) => num(row.report_current_price_krw, 'KRW') },
-    { key: 'bear', label: 'Bear', value: (row) => row.bear_target_krw, render: (row) => targetPriceCell(row.bear_target_krw, row.report_current_price_krw) },
-    { key: 'base', label: 'Base', value: (row) => row.base_target_krw, render: (row) => targetPriceCell(row.base_target_krw, row.report_current_price_krw) },
-    { key: 'bull', label: 'Bull', value: (row) => row.bull_target_krw, render: (row) => targetPriceCell(row.bull_target_krw, row.report_current_price_krw) },
-    {
-      key: 'source',
-      label: '원문',
-      value: (row) => row.pdf_filename,
-      render: (row) => (
-        <span className="link-cell">
-          {row.pdf_filename ? (
-            <a href={githubBlobUrl(`data/pdfs/${row.pdf_filename}`)} target="_blank" rel="noreferrer">
-              PDF
-            </a>
-          ) : null}
-          {row.markdown_filename ? (
-            <a href={githubBlobUrl(`data/markdown/${row.markdown_filename}`)} target="_blank" rel="noreferrer">
-              MD
-            </a>
-          ) : null}
-        </span>
-      ),
-    },
-  ];
-  return <SortableDataTable rows={rows} columns={columns} filename="report-archive.csv" initialSort="publication_date" empty="리포트 원문 데이터가 없습니다." />;
-}
-
-function githubBlobUrl(path: string) {
-  return `https://github.com/ChoiInYeol/snusmic-quant-terminal/blob/main/${path
-    .split('/')
-    .map((part) => encodeURIComponent(part))
-    .join('/')}`;
-}
-
-function targetPriceCell(value: number | null, reference: number | null) {
-  if (value && reference && value / reference > 20) return '검토';
-  return num(value, 'KRW');
-}
-
-function targetUpsideCell(row: PriceMetric) {
-  if ((row.target_upside_remaining ?? 0) > 20) return '검토';
-  return pct(row.target_upside_remaining);
-}
