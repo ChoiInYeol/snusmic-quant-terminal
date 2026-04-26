@@ -141,6 +141,22 @@ def test_oracle_baseline_uses_publication_or_later_prices_only():
     assert oracle.holding_days == 1
 
 
+def test_oracle_baseline_chooses_best_chronological_trade_not_just_absolute_low():
+    publication_day = pd.Timestamp("2024-01-01")
+    close = pd.Series(
+        [100.0, 140.0, 70.0, 90.0],
+        index=pd.to_datetime(["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04"]),
+    )
+
+    oracle = compute_oracle_baseline(close, publication_day)
+
+    assert oracle.entry_price == 100.0
+    assert oracle.exit_price == 140.0
+    assert oracle.return_ == pytest.approx(0.4)
+    assert oracle.buy_lag_days == 0
+    assert oracle.holding_days == 1
+
+
 def test_smic_follower_exits_at_target_hit_or_latest_close():
     publication_day = pd.Timestamp("2024-01-01")
     close = pd.Series(

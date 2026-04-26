@@ -317,22 +317,35 @@ def compute_target_hit(
 def compute_oracle_baseline(close: pd.Series, publication_day: pd.Timestamp) -> OracleBaseline:
     """Compute the future-informed upper-bound baseline after publication.
 
-    The oracle may only use publication-or-later prices: buy at the lowest close
-    in the available post-publication path, then sell at the highest close after
-    that low.
+    The oracle may only use publication-or-later prices and chooses the best
+    buy/sell pair in chronological order. This is a true long-only upper bound
+    for the realized price path; it is intentionally separate from the
+    distribution's low-to-later-high descriptive metric.
     """
 
-    low_date = pd.Timestamp(close.idxmin())
-    entry_price = float(close.loc[low_date])
-    post_low = close[close.index >= low_date]
-    exit_date = pd.Timestamp(post_low.idxmax())
-    exit_price = float(post_low.loc[exit_date])
+    values = close.to_numpy(dtype=float)
+    best_buy_idx = 0
+    best_sell_idx = 0
+    min_idx = 0
+    best_return = 0.0
+    for sell_idx in range(len(values)):
+        if values[sell_idx] < values[min_idx]:
+            min_idx = sell_idx
+        candidate_return = values[sell_idx] / values[min_idx] - 1
+        if candidate_return > best_return:
+            best_return = float(candidate_return)
+            best_buy_idx = min_idx
+            best_sell_idx = sell_idx
+    entry_date = pd.Timestamp(close.index[best_buy_idx])
+    exit_date = pd.Timestamp(close.index[best_sell_idx])
+    entry_price = float(values[best_buy_idx])
+    exit_price = float(values[best_sell_idx])
     return OracleBaseline(
         entry_price=entry_price,
         exit_price=exit_price,
-        return_=pct_return(exit_price, entry_price),
-        buy_lag_days=(low_date - publication_day).days,
-        holding_days=(exit_date - low_date).days,
+        return_=best_return,
+        buy_lag_days=(entry_date - publication_day).days,
+        holding_days=(exit_date - entry_date).days,
     )
 
 

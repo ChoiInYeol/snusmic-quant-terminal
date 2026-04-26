@@ -1,6 +1,8 @@
 from __future__ import annotations
 
+import json
 from dataclasses import asdict
+from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
@@ -80,3 +82,21 @@ def test_price_metric_schema_rejects_unplanned_fields() -> None:
 
     with pytest.raises(ValidationError):
         validate_price_metric_rows([row])
+
+
+def test_committed_price_metrics_preserve_baseline_band_invariants() -> None:
+    rows = validate_price_metric_rows(json.loads(Path("data/price_metrics.json").read_text(encoding="utf-8")))
+    allowed_follower_statuses = {"target_hit", "open", "unavailable"}
+
+    assert rows
+    for row in rows:
+        assert row["smic_follower_status"] in allowed_follower_statuses
+        if row["status"] != "ok":
+            continue
+        assert row["oracle_return"] is not None
+        assert row["smic_follower_return"] is not None
+        assert row["smic_follower_return"] <= row["oracle_return"] + 1e-12
+        if row["smic_follower_status"] == "target_hit":
+            assert row["target_hit"] is True
+            assert row["first_target_hit_date"]
+            assert row["target_hit_holding_days"] is not None
