@@ -588,9 +588,6 @@ uv run python scripts/check_schema_compat.py --base-ref origin/main
 
 ### 10-2. CI
 
-<<<<<<< HEAD
-GitHub Actions는 Python lint/type/test/schema 검증과 데이터 refresh을 수행합니다.
-=======
 GitHub Actions 는 위 검증 + warehouse refresh 만 수행합니다 (Node/npm/Vercel 빌드는 제거). 워크플로:
 
 - `.github/workflows/ci.yml` — PR 단위 lint·type·test·schema 검증
@@ -614,4 +611,3 @@ GitHub Actions 는 위 검증 + warehouse refresh 만 수행합니다 (Node/npm/
 - **Prophet / Weak Prophet 결과는 lookahead-bias 가 들어간 상한선** 입니다. 실거래로 베틸 수 없습니다.
 - SMIC Follower 결과는 **실제 SMIC가 발간한 리포트의 목표가**를 기반으로 하지만, 발간 후 시장에서 즉시 매수했을 때의 가상 시뮬레이션입니다. 실제 진입 시점·체결가·세금 효과는 다를 수 있습니다.
 - 본 저장소는 SMIC 동아리의 리서치 품질을 평가하거나 매매 추천을 하지 않습니다. 단순히 "사라는 대로 사고 손실은 버티는 추종자가 글로벌 ETF DCA를 이기는가?" 라는 정량 질문에 답하는 도구입니다.
->>>>>>> 0d33127 (Add share-based persona simulation (SSOT/SDD/TDD))
