@@ -64,7 +64,9 @@ def test_repair_requires_explicit_yes(monkeypatch, capsys):
     monkeypatch.setattr(
         check_vercel_alias,
         "assign_alias",
-        lambda token, deployment_id, alias, team: (_ for _ in ()).throw(AssertionError("unexpected mutation")),
+        lambda token, deployment_id, alias, team: (_ for _ in ()).throw(
+            AssertionError("unexpected mutation")
+        ),
     )
 
     result = check_vercel_alias.main(["--project", "snusmic-quant-terminal", "--repair"])

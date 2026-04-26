@@ -131,8 +131,12 @@ def main(argv: list[str] | None = None) -> int:
         help="Vercel project id/name. Defaults to VERCEL_PROJECT_ID, .vercel/project.json, then repo name.",
     )
     parser.add_argument("--team", default=os.getenv("VERCEL_TEAM_ID"), help="Optional Vercel team id.")
-    parser.add_argument("--token-env", default="VERCEL_TOKEN", help="Environment variable containing the Vercel token.")
-    parser.add_argument("--repair", action="store_true", help="Repair stale/missing alias if --yes is also set.")
+    parser.add_argument(
+        "--token-env", default="VERCEL_TOKEN", help="Environment variable containing the Vercel token."
+    )
+    parser.add_argument(
+        "--repair", action="store_true", help="Repair stale/missing alias if --yes is also set."
+    )
     parser.add_argument("--yes", action="store_true", help="Allow the --repair mutation. Omit for dry-run.")
     args = parser.parse_args(argv)
 
@@ -153,7 +157,9 @@ def main(argv: list[str] | None = None) -> int:
 
     latest_id = deployment_id(latest)
     if latest_id is None:
-        print("ERROR: latest production deployment response did not include a deployment id.", file=sys.stderr)
+        print(
+            "ERROR: latest production deployment response did not include a deployment id.", file=sys.stderr
+        )
         return 2
 
     current_id = None if alias_record is None else alias_record.get("deploymentId")

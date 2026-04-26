@@ -21,9 +21,7 @@ EXPECTED_RISK_FREE_RATES = set(RISK_FREE_RATES)
 
 
 def _committed_portfolio_backtest_rows() -> list[dict[str, Any]]:
-    return validate_portfolio_backtest_rows(
-        json.loads(PORTFOLIO_BACKTESTS_PATH.read_text(encoding="utf-8"))
-    )
+    return validate_portfolio_backtest_rows(json.loads(PORTFOLIO_BACKTESTS_PATH.read_text(encoding="utf-8")))
 
 
 def _portfolio_result(**overrides: object) -> PortfolioResult:
@@ -77,7 +75,10 @@ def test_committed_portfolio_backtests_preserve_strategy_grid() -> None:
     for row in rows:
         assert row["strategy"] in EXPECTED_STRATEGIES
         assert row["risk_free_rate"] in EXPECTED_RISK_FREE_RATES
-        assert row["cohort_month"] == row["rebalance_date"][:7] or row["cohort_month"] < row["rebalance_date"][:7]
+        assert (
+            row["cohort_month"] == row["rebalance_date"][:7]
+            or row["cohort_month"] < row["rebalance_date"][:7]
+        )
         by_month[row["cohort_month"]].add((row["strategy"], row["risk_free_rate"]))
 
     expected_grid = {

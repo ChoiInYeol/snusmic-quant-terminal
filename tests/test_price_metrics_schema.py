@@ -121,8 +121,16 @@ def test_committed_price_metrics_preserve_baseline_band_invariants() -> None:
         assert row["current_price"] is not None
         assert row["current_price"] > 0
         assert row["publication_buy_price"] > 0
-        assert row["lowest_price_since_publication"] <= row["oracle_entry_price"] <= row["highest_price_since_publication"]
-        assert row["lowest_price_since_publication"] <= row["oracle_exit_price"] <= row["highest_price_since_publication"]
+        assert (
+            row["lowest_price_since_publication"]
+            <= row["oracle_entry_price"]
+            <= row["highest_price_since_publication"]
+        )
+        assert (
+            row["lowest_price_since_publication"]
+            <= row["oracle_exit_price"]
+            <= row["highest_price_since_publication"]
+        )
         assert row["smic_follower_return"] <= row["oracle_return"] + 1e-12
         if row["smic_follower_status"] == "target_hit":
             assert row["target_hit"] is True
