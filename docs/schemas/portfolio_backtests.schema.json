@@ -1,0 +1,138 @@
+{
+  "additionalProperties": false,
+  "description": "Row schema for ``data/portfolio_backtests.json``.\n\nThis legacy cohort-level artifact is still published for comparison and\narchive views. Keep it typed so downstream web surfaces can rely on a stable\ncontract while newer strategy artifacts evolve separately.",
+  "properties": {
+    "cohort_month": {
+      "title": "Cohort Month",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "rebalance_date": {
+      "title": "Rebalance Date",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "strategy": {
+      "title": "Strategy",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "risk_free_rate": {
+      "title": "Risk Free Rate",
+      "type": "number",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "symbols": {
+      "title": "Symbols",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "display_symbols": {
+      "title": "Display Symbols",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "weights": {
+      "title": "Weights",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "expected_return": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Return",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "expected_volatility": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Volatility",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "expected_sharpe": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Expected Sharpe",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "realized_return": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Realized Return",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "kospi_return": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Kospi Return",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "nasdaq_return": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Nasdaq Return",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "status": {
+      "title": "Status",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    }
+  },
+  "required": [
+    "cohort_month",
+    "rebalance_date",
+    "strategy",
+    "risk_free_rate",
+    "symbols",
+    "display_symbols",
+    "weights",
+    "status"
+  ],
+  "title": "PortfolioBacktest",
+  "type": "object",
+  "x-snusmic-table": "portfolio_backtests",
+  "x-snusmic-semantic-version": "1.0"
+}

@@ -7,7 +7,7 @@ import os
 from pathlib import Path
 from typing import Any
 
-from .artifact_schemas import validate_price_metric_rows
+from .artifact_schemas import validate_portfolio_backtest_rows, validate_price_metric_rows
 from .backtest import build_warehouse, export_dashboard_data, refresh_price_history, run_default_backtests
 from .backtest.warehouse import optimize_strategies
 from .change_detection import new_report_urls
@@ -155,7 +155,7 @@ def read_extracted_reports_csv(path: Path) -> list[ExtractedReport]:
 
 
 def _float_or_none(value: str | None) -> float | None:
-    if value in (None, ""):
+    if value is None or value == "":
         return None
     try:
         return float(value)
@@ -253,7 +253,10 @@ def run_sync(args: argparse.Namespace) -> int:
         portfolio_backtests = []
         logs.append("Market data skipped by --no-market-data")
     write_json(data_dir / "price_metrics.json", validate_price_metric_rows(dataclass_rows(price_metrics)))
-    write_json(data_dir / "portfolio_backtests.json", dataclass_rows(portfolio_backtests))
+    write_json(
+        data_dir / "portfolio_backtests.json",
+        validate_portfolio_backtest_rows(dataclass_rows(portfolio_backtests)),
+    )
 
     print(f"Reports fetched: {len(metas)}")
     print(f"PDFs available: {sum(1 for item in downloads if item.path)}")
@@ -404,7 +407,10 @@ def run_refresh_market(args: argparse.Namespace) -> int:
     price_metrics = compute_price_metrics(reports)
     portfolio_backtests = compute_portfolio_backtests(reports, price_metrics)
     write_json(data_dir / "price_metrics.json", validate_price_metric_rows(dataclass_rows(price_metrics)))
-    write_json(data_dir / "portfolio_backtests.json", dataclass_rows(portfolio_backtests))
+    write_json(
+        data_dir / "portfolio_backtests.json",
+        validate_portfolio_backtest_rows(dataclass_rows(portfolio_backtests)),
+    )
     if args.build_site:
         build_site(data_dir, Path(args.public_dir))
     print(f"Reports loaded: {len(reports)}")

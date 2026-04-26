@@ -73,10 +73,40 @@ class PriceMetricRow(BaseModel):
     note: str
 
 
+class PortfolioBacktestRow(BaseModel):
+    """Row schema for ``data/portfolio_backtests.json``.
+
+    This legacy cohort-level artifact is still published for comparison and
+    archive views. Keep it typed so downstream web surfaces can rely on a stable
+    contract while newer strategy artifacts evolve separately.
+    """
+
+    model_config = ConfigDict(extra="forbid", title="PortfolioBacktest")
+
+    semantic_version: ClassVar[str] = "1.0"
+    column_nan_policy: ClassVar[dict[str, str]] = {}
+
+    cohort_month: str
+    rebalance_date: str
+    strategy: str
+    risk_free_rate: float
+    symbols: str
+    display_symbols: str
+    weights: str
+    expected_return: float | None = None
+    expected_volatility: float | None = None
+    expected_sharpe: float | None = None
+    realized_return: float | None = None
+    kospi_return: float | None = None
+    nasdaq_return: float | None = None
+    status: str
+
+
 # Registry consumed by scripts/export_schemas.py + TS codegen. These are JSON
 # artifact row schemas, not warehouse CSV tables, so warehouse.read/write_table
 # intentionally do not use them.
 ARTIFACT_MODELS: dict[str, type[BaseModel]] = {
+    "portfolio_backtests": PortfolioBacktestRow,
     "price_metrics": PriceMetricRow,
 }
 
@@ -90,3 +120,9 @@ def validate_price_metric_rows(rows: Iterable[Mapping[str, Any]]) -> list[dict[s
     """
 
     return [PriceMetricRow.model_validate(row).model_dump(mode="json") for row in rows]
+
+
+def validate_portfolio_backtest_rows(rows: Iterable[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    """Validate and normalize ``portfolio_backtests.json`` rows before writing."""
+
+    return [PortfolioBacktestRow.model_validate(row).model_dump(mode="json") for row in rows]

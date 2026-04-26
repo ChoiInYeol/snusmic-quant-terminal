@@ -56,6 +56,30 @@ export interface ExecutionEvent {
 }
 
 /**
+ * Row schema for ``data/portfolio_backtests.json``.
+ * 
+ * This legacy cohort-level artifact is still published for comparison and
+ * archive views. Keep it typed so downstream web surfaces can rely on a stable
+ * contract while newer strategy artifacts evolve separately.
+ */
+export interface PortfolioBacktest {
+  "cohort_month": string;
+  "rebalance_date": string;
+  "strategy": string;
+  "risk_free_rate": number;
+  "symbols": string;
+  "display_symbols": string;
+  "weights": string;
+  "expected_return": number | null;
+  "expected_volatility": number | null;
+  "expected_sharpe": number | null;
+  "realized_return": number | null;
+  "kospi_return": number | null;
+  "nasdaq_return": number | null;
+  "status": string;
+}
+
+/**
  * Row schema for ``data/price_metrics.json``.
  * 
  * This artifact is the project-facing baseline-band contract: ``smic_follower_*``

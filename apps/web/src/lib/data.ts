@@ -5,6 +5,7 @@
 export type {
   DailyPrice,
   ExecutionEvent,
+  PortfolioBacktest,
   PriceMetric,
   ReportRow,
   StrategyRun,
