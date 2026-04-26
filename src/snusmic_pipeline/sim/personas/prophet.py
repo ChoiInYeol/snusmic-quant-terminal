@@ -64,7 +64,7 @@ def simulate_prophet(
             if mid is not None:
                 account.sell_all(day, sym, mid, "target_hit")
         equity_points.append(
-            record_equity_point(account, persona, day, daily_closes[day], contributions[day])
+            record_equity_point(account, persona, day, daily_closes[day], contributions[day], board=board)
         )
 
     summary = build_summary(

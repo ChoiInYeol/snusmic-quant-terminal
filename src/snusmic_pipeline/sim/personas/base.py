@@ -16,6 +16,7 @@ import numpy as np
 
 from ..brokerage import Account
 from ..contracts import EquityPoint, PersonaSummary, Trade
+from ..market import PriceBoard
 from ..savings import CashFlowEvent
 
 
@@ -42,6 +43,7 @@ def record_equity_point(
     day: date,
     prices_today: dict[str, float],
     contributed_today: float,
+    board: PriceBoard | None = None,
 ) -> EquityPoint:
     """Snapshot the account RIGHT NOW.
 
@@ -50,15 +52,30 @@ def record_equity_point(
     state, so calling it after the loop produces a single bogus end-state
     repeated across all dates (this was the original bug).
 
-    ``prices_today`` should be the close map for ``day``; symbols held
-    without a close today fall back to weighted-average cost so a halted
-    name doesn't appear as a synthetic loss.
+    Mark-to-market resolution order for each held symbol:
+
+    1. ``prices_today[symbol]`` — today's close.
+    2. ``board.asof(day, symbol)`` — last observed close on or before today
+       (forward-fill). This is the critical step: when a symbol simply has
+       no quote published today, the holding stays marked at yesterday's
+       price rather than collapsing back to weighted-average cost.
+    3. ``lot.avg_cost_krw`` — final fallback for a holding that was bought
+       and then never had any subsequent quote (extremely rare).
+
+    Without step 2 the equity curve develops fake one-day −30% spikes on
+    holiday/halt days for symbols whose actual price has run up well above
+    cost.
     """
-    holdings_value = sum(
-        lot.qty * prices_today.get(sym, lot.avg_cost_krw)
-        for sym, lot in account.holdings.items()
-        if lot.qty > 0
-    )
+    holdings_value = 0.0
+    for sym, lot in account.holdings.items():
+        if lot.qty <= 0:
+            continue
+        mid = prices_today.get(sym)
+        if (mid is None or mid <= 0) and board is not None:
+            mid = board.asof(day, sym)
+        if mid is None or mid <= 0:
+            mid = lot.avg_cost_krw
+        holdings_value += lot.qty * mid
     equity = account.cash_krw + holdings_value
     return EquityPoint(
         persona=persona,

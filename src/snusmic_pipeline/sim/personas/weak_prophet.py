@@ -69,7 +69,7 @@ def simulate_weak_prophet(
                         tradable = {sym: w / s for sym, w in tradable.items()}
                     account.rebalance_to_weights(day, tradable, prices)
         equity_points.append(
-            record_equity_point(account, persona, day, daily_closes[day], contributions[day])
+            record_equity_point(account, persona, day, daily_closes[day], contributions[day], board=board)
         )
     summary = build_summary(
         persona, config.label, account, equity_points, cashflows, plan.initial_capital_krw

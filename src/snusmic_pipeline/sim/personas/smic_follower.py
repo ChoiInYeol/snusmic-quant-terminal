@@ -107,7 +107,7 @@ def _simulate_follower(
         if deposit_today > 0 or day in rebalance_days:
             _rebalance_to_one_n(account, day, board, daily_closes[day], state)
         equity_points.append(
-            record_equity_point(account, persona, day, daily_closes[day], contributions[day])
+            record_equity_point(account, persona, day, daily_closes[day], contributions[day], board=board)
         )
     summary = build_summary(persona, label, account, equity_points, cashflows, plan.initial_capital_krw)
     return PersonaRunOutput(account=account, equity_points=equity_points, summary=summary)

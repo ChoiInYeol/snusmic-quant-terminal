@@ -73,7 +73,14 @@ def simulate_all_weather(
                             prices[sym] = mid
                 account.rebalance_to_weights(day, tradable, prices)
         equity_points.append(
-            record_equity_point(account, persona, day, daily_closes.get(day, {}), contributions[day])
+            record_equity_point(
+                account,
+                persona,
+                day,
+                daily_closes.get(day, {}),
+                contributions[day],
+                board=benchmark_board,
+            )
         )
 
     summary = build_summary(persona, label, account, equity_points, cashflows, plan.initial_capital_krw)

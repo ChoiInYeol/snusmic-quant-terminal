@@ -66,10 +66,11 @@ def plot_equity_curves(result: SimulationResult, out_path: Path) -> Path:
         cy = [c[1] / 1e6 for c in contributions]
         ax.plot(cx, cy, label="Cumulative deposits", color="black", linestyle="--", linewidth=1.0)
 
-    ax.set_title("Persona equity curves (M KRW)")
+    ax.set_yscale("log")
+    ax.set_title("Persona equity curves (log scale, M KRW)")
     ax.set_xlabel("Date")
-    ax.set_ylabel("Equity (M KRW)")
-    ax.grid(True, alpha=0.3)
+    ax.set_ylabel("Equity (M KRW, log)")
+    ax.grid(True, which="both", alpha=0.3)
     ax.legend(loc="upper left", fontsize=9)
     fig.autofmt_xdate()
     fig.tight_layout()
