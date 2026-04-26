@@ -808,7 +808,15 @@ def download_history(symbol: str, start: datetime, end: datetime) -> pd.DataFram
             start=start.date().isoformat(),
             end=end.date().isoformat(),
             progress=False,
-            auto_adjust=True,
+            # auto_adjust=False so OHLC matches the **actual market price**
+            # users (and SMIC reports) reference. With auto_adjust=True yfinance
+            # back-adjusts historical OHLC for cumulative dividends, which on
+            # high-yield Korean stocks (e.g. 고려신용정보 049720) drags the
+            # historical price 10–60% below the price the report quoted.
+            # Returns understate dividend reinvestment as a result; that's
+            # the correct trade-off for this product because the brokerage
+            # ledger already accounts for cash separately.
+            auto_adjust=False,
             threads=False,
             timeout=10,
         )

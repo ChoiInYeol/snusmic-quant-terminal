@@ -23,6 +23,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
+import json  # noqa: E402
+
 import pandas as pd  # noqa: E402
 
 from snusmic_pipeline.sim.contracts import SimulationConfig  # noqa: E402
@@ -32,6 +34,36 @@ from snusmic_pipeline.sim.visualize import (  # noqa: E402
     plot_equity_curves,
     plot_net_profit_bars,
 )
+
+ROUND_NDIGITS = 2
+
+
+def _to_csv_rounded(df: pd.DataFrame, path: Path) -> None:
+    """Write ``df`` to ``path`` with every float column rounded to ROUND_NDIGITS.
+
+    Keeps integer columns intact. Writes regardless of whether ``df`` is empty —
+    callers always want the file to exist with at least a header.
+    """
+    if df.empty:
+        df.to_csv(path, index=False)
+        return
+    rounded = df.copy()
+    for col in rounded.select_dtypes(include="float").columns:
+        rounded[col] = rounded[col].round(ROUND_NDIGITS)
+    rounded.to_csv(path, index=False)
+
+
+def _round_floats(value):
+    """Recursively round floats in a JSON-serialisable structure."""
+    if isinstance(value, float):
+        return round(value, ROUND_NDIGITS)
+    if isinstance(value, dict):
+        return {k: _round_floats(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_round_floats(v) for v in value]
+    if isinstance(value, tuple):
+        return tuple(_round_floats(v) for v in value)
+    return value
 
 
 def parse_args() -> argparse.Namespace:
@@ -62,23 +94,32 @@ def main() -> int:
 
     result = run_simulation(config, args.warehouse, refresh_benchmark=args.refresh_benchmark)
 
-    (out / "personas.json").write_text(result.model_dump_json(indent=2), encoding="utf-8")
-    pd.DataFrame([s.model_dump() for s in result.summaries]).to_csv(out / "summary.csv", index=False)
-    pd.DataFrame([p.model_dump() for p in result.equity_points]).to_csv(out / "equity_daily.csv", index=False)
-    pd.DataFrame([t.model_dump() for t in result.trades]).to_csv(out / "trades.csv", index=False)
-    pd.DataFrame([e.model_dump() for e in result.position_episodes]).to_csv(
-        out / "position_episodes.csv", index=False
+    (out / "personas.json").write_text(
+        json.dumps(_round_floats(result.model_dump(mode="json")), ensure_ascii=False, indent=2),
+        encoding="utf-8",
     )
-    pd.DataFrame([h.model_dump() for h in result.current_holdings]).to_csv(
-        out / "current_holdings.csv", index=False
+    _to_csv_rounded(pd.DataFrame([s.model_dump() for s in result.summaries]), out / "summary.csv")
+    _to_csv_rounded(pd.DataFrame([p.model_dump() for p in result.equity_points]), out / "equity_daily.csv")
+    _to_csv_rounded(pd.DataFrame([t.model_dump() for t in result.trades]), out / "trades.csv")
+    _to_csv_rounded(
+        pd.DataFrame([e.model_dump() for e in result.position_episodes]),
+        out / "position_episodes.csv",
     )
-    pd.DataFrame([s.model_dump() for s in result.symbol_stats]).to_csv(out / "symbol_stats.csv", index=False)
-    pd.DataFrame([p.model_dump() for p in result.report_performance]).to_csv(
-        out / "report_performance.csv", index=False
+    _to_csv_rounded(
+        pd.DataFrame([h.model_dump() for h in result.current_holdings]),
+        out / "current_holdings.csv",
+    )
+    _to_csv_rounded(pd.DataFrame([s.model_dump() for s in result.symbol_stats]), out / "symbol_stats.csv")
+    _to_csv_rounded(
+        pd.DataFrame([p.model_dump() for p in result.report_performance]),
+        out / "report_performance.csv",
     )
     if result.report_stats is not None:
         (out / "report_stats.json").write_text(
-            result.report_stats.model_dump_json(indent=2), encoding="utf-8"
+            json.dumps(
+                _round_floats(result.report_stats.model_dump(mode="json")), ensure_ascii=False, indent=2
+            ),
+            encoding="utf-8",
         )
 
     plot_equity_curves(result, out / "equity_curves.png")
