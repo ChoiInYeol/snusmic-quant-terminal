@@ -85,3 +85,37 @@ def test_price_metric_dataclass_exposes_low_high_fields():
     assert "smic_follower_status" in fields
     assert "target_hit_holding_days" in fields
     assert "target_upside_remaining" in fields
+
+
+def test_baseline_band_synthetic_path_keeps_follower_below_oracle():
+    """A simple report path should preserve the project invariant:
+    SMIC follower <= oracle upper bound.
+
+    This avoids yfinance/Optuna and locks the baseline-band semantics directly:
+    follower buys at publication and exits at target, while oracle buys the
+    later low and exits at the later high.
+    """
+
+    publication_day = pd.Timestamp("2024-01-01")
+    close = pd.Series(
+        [100.0, 80.0, 120.0, 150.0],
+        index=pd.to_datetime(["2024-01-01", "2024-01-02", "2024-01-03", "2024-01-04"]),
+    )
+    target = 120.0
+
+    pub_price = float(close.iloc[0])
+    hit_series = close[close >= target]
+    first_hit_date = hit_series.index[0]
+    low_idx = close.idxmin()
+    post_low = close[close.index >= low_idx]
+    best_after_low_idx = post_low.idxmax()
+
+    smic_follower_return = pct_return(target, pub_price)
+    oracle_return = pct_return(float(post_low.loc[best_after_low_idx]), float(close.loc[low_idx]))
+
+    assert abs(smic_follower_return - 0.2) < 1e-12
+    assert abs(oracle_return - 0.875) < 1e-12
+    assert smic_follower_return <= oracle_return
+    assert (first_hit_date - publication_day).days == 2
+    assert (low_idx - publication_day).days == 1
+    assert (best_after_low_idx - low_idx).days == 2

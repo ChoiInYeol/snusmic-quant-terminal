@@ -1,6 +1,6 @@
 # SNUSMIC Quant Platform
 
-SNUSMIC 리서치 PDF를 장기 보관하고, 목표가/티커/메타데이터를 추출하고, 가격 데이터를 붙여서 candidate pool 기반의 walk-forward 백테스트와 Quant Terminal 대시보드까지 만드는 저장소입니다.
+SNUSMIC 리서치 PDF를 장기 보관하고, 목표가/티커/메타데이터를 추출하고, 가격 데이터를 붙여서 “스믹 추종자”와 “예언자” 사이에 놓일 수 있는 현실적인 투자전략을 연구하는 저장소입니다. Vercel Quant Terminal은 이 baseline band를 읽는 주 UI이고, GitHub Pages/static output은 원문과 산출 데이터 확인용 최소 미러입니다.
 
 주요 링크:
 
@@ -60,6 +60,24 @@ flowchart TD
     N --> O["Vercel primary deployment"]
     N --> P["GitHub Pages mirror"]
 ```
+
+## 3.1 프로젝트의 투자전략 기준선
+
+이 프로젝트의 전략 연구 목표는 단순합니다. 모든 결과는 아래 세 기준선 사이에서 읽습니다.
+
+1. **예언자 / 투자의 신 upper bound**
+   - 미래 가격 경로를 모두 안다고 가정합니다.
+   - 리포트 발간 이후 가장 유리한 매수가와 그 이후 가장 유리한 매도가를 고릅니다.
+   - 현실 전략이 이 값을 넘으면 전략이 뛰어난 것이 아니라 데이터/가정/스키마를 먼저 의심합니다.
+2. **스믹 추종자 baseline**
+   - 리포트 발간 시점의 첫 거래 가능 가격에 사고, 목표가에 도달하면 정확히 팝니다.
+   - 목표가 미도달 종목은 최신 가격으로 mark-to-market합니다.
+   - 현실 전략은 최소한 이 기준선을 넘는 것을 목표로 합니다.
+3. **현실 모델 전략**
+   - MTT, 목표가 여력, 손절/익절, 리밸런싱, 비중 산정으로 구성됩니다.
+   - 장기적으로 Optuna/search는 이 전략군을 탐색하되, 로컬 기본 실행 대상은 아닙니다.
+
+이 계약은 `docs/decisions/strategy-baselines.md`에 고정되어 있고, `price_metrics.json`에는 `oracle_*` 및 `smic_follower_*` 필드로 직접 노출됩니다.
 
 ## 4. 핵심 개념
 
@@ -123,8 +141,8 @@ site/
 권장 서버 성격:
 
 - 로컬 맥북 Air 대신, CPU/메모리가 더 넉넉한 Linux 서버
-- 백그라운드로 긴 yfinance 수집과 Optuna 실험을 돌릴 수 있는 환경
-- Optuna/가격 갱신까지 같이 돌릴 예정이면 시스템 패키지/네트워크/브라우저 캐시 이슈를 감당할 수 있는 환경
+- 백그라운드로 긴 yfinance 수집을 돌릴 수 있는 환경
+- Optuna는 현재 로컬/가벼운 서버의 기본 운영 대상이 아니라, baseline band가 충분히 검증된 뒤 별도 서버에서 실행할 장기 실험입니다.
 
 권장 사양:
 
@@ -331,7 +349,7 @@ flowchart LR
 
 ## 17. Optuna 실험
 
-Optuna는 더 넓은 파라미터 공간을 탐색합니다.
+Optuna는 지금 당장 “정답을 찾아주는 도구”가 아니라, baseline band가 안정된 뒤 현실 모델 전략을 탐색하는 장기 실험 도구입니다. 로컬 맥북/가벼운 서버에서는 기본 실행 대상으로 보지 않습니다. 먼저 `price_metrics.json`의 예언자 upper bound와 스믹 추종자 baseline이 정상인지 확인하고, 그 다음에 별도 서버에서 넓은 파라미터 공간을 탐색합니다.
 
 현재 탐색 대상:
 
@@ -352,7 +370,7 @@ Optuna는 더 넓은 파라미터 공간을 탐색합니다.
 uv run python -m snusmic_pipeline optimize-strategies --trials 300
 ```
 
-서버에서는 이 부분이 제일 오래 걸릴 수 있습니다.
+서버에서도 이 부분이 제일 오래 걸릴 수 있습니다. 현재 우선순위는 Optuna trial 수 확대가 아니라, 입력 스키마·baseline invariant·산출물 검증을 안정화하는 것입니다.
 
 ## 18. Lookback 윈도우 해석
 
@@ -628,11 +646,12 @@ PY
 
 현재 기준 자연스러운 다음 단계:
 
-1. `page 19+`로 내려가서 2020년 초반까지 archive 확장
-2. 서버에서 full `refresh-prices` + `run-backtest`
-3. Optuna trial 수 확대
-4. archive 전체에 대해 markdown 재생성
-5. Quant Terminal UI에서 전략별 현재 포지션과 매매 사유 추가 정제
+1. 계획 파일과 README를 baseline-band 전략 목표에 맞춰 유지
+2. `price_metrics.json`의 예언자 upper bound / 스믹 추종자 baseline invariant 테스트 강화
+3. Vercel Quant Terminal을 주 UI로 유지하고, GitHub Pages/static output은 archive mirror로 축소
+4. `page 19+`로 내려가서 2020년 초반까지 archive 확장
+5. 서버에서 full `refresh-prices` + `run-backtest`
+6. baseline과 데이터 품질이 안정된 뒤에만 Optuna trial 수 확대
 
 ## 30. 한 줄 운영 요약
 
