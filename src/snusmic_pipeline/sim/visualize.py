@@ -22,6 +22,7 @@ import matplotlib
 matplotlib.use("Agg")  # always headless; CI and CLI use the same backend.
 
 import matplotlib.pyplot as plt  # noqa: E402
+import pandas as pd  # noqa: E402
 
 from .contracts import SimulationResult  # noqa: E402
 
@@ -104,6 +105,84 @@ def plot_net_profit_bars(result: SimulationResult, out_path: Path) -> Path:
     ax.set_title("Persona net profit (M KRW) — final equity − total contributed")
     ax.set_xlabel("Net Profit (M KRW)")
     ax.grid(True, axis="x", alpha=0.3)
+    fig.tight_layout()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, dpi=140)
+    plt.close(fig)
+    return out_path
+
+
+def plot_portfolio_composition(
+    result: SimulationResult,
+    out_path: Path,
+    *,
+    top_k: int = 8,
+) -> Path:
+    """Stacked-area chart of every persona's month-end portfolio composition.
+
+    One subplot per persona, each showing the top ``top_k`` holdings by
+    end-of-sim weight as named bands plus an "others" band. The Y axis
+    is the share of the invested book (cash excluded), so each subplot's
+    bands always sum to 1.0 on any given month-end.
+    """
+    if not result.monthly_holdings:
+        raise ValueError("SimulationResult has no monthly_holdings to plot.")
+    persona_labels = {s.persona: s.label for s in result.summaries}
+    rows = [m.model_dump() for m in result.monthly_holdings]
+    df = pd.DataFrame(rows)
+    if df.empty:
+        raise ValueError("monthly_holdings rendered an empty frame.")
+    personas = sorted(
+        df["persona"].unique(), key=lambda p: -result.summaries[0].final_equity_krw if False else 0
+    )
+    personas = list(df["persona"].unique())
+    n = len(personas)
+    fig, axes = plt.subplots(n, 1, figsize=(13, 3.0 * n), sharex=True)
+    if n == 1:
+        axes = [axes]
+    for ax, persona in zip(axes, personas, strict=True):
+        sub = df[df["persona"] == persona].copy()
+        # Pick the top_k symbols by their FINAL-month weight.
+        last_month = sub["month_end"].max()
+        last_slice = sub[sub["month_end"] == last_month]
+        top_symbols = list(
+            last_slice.sort_values("weight_in_portfolio", ascending=False)["symbol"].head(top_k)
+        )
+        # Pivot to wide: index=month_end, columns=symbol, values=weight.
+        wide = sub.pivot_table(
+            index="month_end", columns="symbol", values="weight_in_portfolio", aggfunc="sum"
+        ).fillna(0.0)
+        wide = wide.sort_index()
+        if wide.empty:
+            continue
+        # Group anything not in ``top_symbols`` as "Others".
+        others_cols = [c for c in wide.columns if c not in top_symbols]
+        if others_cols:
+            others_sum = wide[others_cols].sum(axis=1)
+            wide = wide.drop(columns=others_cols)
+            wide["Others"] = others_sum
+        # Re-order so Others is last.
+        column_order = [c for c in top_symbols if c in wide.columns]
+        if "Others" in wide.columns:
+            column_order.append("Others")
+        wide = wide[column_order]
+        # Use company names as labels where available.
+        sym_to_company = {row["symbol"]: row["company"] for row in rows if row["company"]}
+        labels = []
+        for col in wide.columns:
+            if col == "Others":
+                labels.append("Others")
+            else:
+                comp = sym_to_company.get(col, "")
+                labels.append(f"{col} {comp[:14]}" if comp else col)
+        ax.stackplot(wide.index, wide.values.T, labels=labels, alpha=0.85)
+        ax.set_title(persona_labels.get(persona, persona))
+        ax.set_ylim(0, 1)
+        ax.set_ylabel("Weight")
+        ax.legend(loc="upper left", fontsize=7, ncol=2, framealpha=0.85)
+        ax.grid(True, alpha=0.3)
+    axes[-1].set_xlabel("Month-end")
+    fig.suptitle("Portfolio composition over time (top holdings, weight share of invested book)", y=1.0)
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out_path, dpi=140)

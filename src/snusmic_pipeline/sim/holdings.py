@@ -1,6 +1,6 @@
 """Per-persona holdings reports derived from the trade ledger.
 
-Three views, all reconstructed from :class:`Trade` records (not from
+Four views, all reconstructed from :class:`Trade` records (not from
 intermediate engine state — so they round-trip through ``trades.csv``):
 
 * :func:`compute_position_episodes` — every contiguous holding period
@@ -11,6 +11,9 @@ intermediate engine state — so they round-trip through ``trades.csv``):
   last simulation day, marked-to-market against the price board.
 * :func:`compute_symbol_stats` — episode aggregates per (persona,
   symbol): total holding days, total realised PnL, current open status.
+* :func:`compute_monthly_holdings` — month-end snapshot of each
+  persona's book (qty + market value + weight per symbol). Drives the
+  portfolio-evolution stacked-area chart in the README.
 
 The arithmetic is the same moving-average cost basis used by the
 :class:`Account` ledger. By recomputing here we guarantee the saved
@@ -24,6 +27,8 @@ from collections import defaultdict
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from datetime import date
+
+import pandas as pd
 
 from .contracts import CurrentHolding, PositionEpisode, SymbolStat, Trade
 from .market import PriceBoard
@@ -218,6 +223,114 @@ def compute_current_holdings(
         )
     holdings.sort(key=lambda h: (h.persona, -h.market_value_krw))
     return holdings
+
+
+def compute_monthly_holdings(
+    trades: Iterable[Trade],
+    boards_by_persona: Mapping[str, PriceBoard],
+    end_date: date,
+    company_by_symbol: Mapping[str, str] | None = None,
+) -> pd.DataFrame:
+    """Month-end snapshot of every still-open position per persona.
+
+    Walks the trade ledger chronologically per persona, keeping a running
+    integer-share book. At every calendar month-end inside the simulation
+    window it freezes the book against the persona's price board, then
+    emits one row per ``(persona, month_end, symbol)`` with positive qty.
+
+    Output columns: ``persona``, ``month_end``, ``symbol``, ``company``,
+    ``qty``, ``market_value_krw``, ``weight_in_portfolio`` (share of the
+    invested book on that date, ignoring cash). Sorted ascending by
+    persona then month_end then descending market value.
+
+    ``boards_by_persona`` is a dict like ``{"oracle": board, "all_weather":
+    benchmark_board}``. Personas not in the dict fall back to whatever
+    is keyed under ``"_default"`` (or no MTM if neither exists).
+    """
+    grouped: dict[str, list[Trade]] = defaultdict(list)
+    for t in trades:
+        grouped[t.persona].append(t)
+    if not grouped:
+        return pd.DataFrame()
+
+    company_lookup = dict(company_by_symbol or {})
+    rows: list[dict] = []
+    default_board = boards_by_persona.get("_default")
+
+    for persona, persona_trades in grouped.items():
+        persona_trades.sort(key=lambda t: (t.date, t.side))
+        board = boards_by_persona.get(persona, default_board)
+        if board is None:
+            continue
+        first_date = persona_trades[0].date
+        month_ends = _month_ends_between(first_date, end_date)
+        if not month_ends:
+            continue
+        positions: dict[str, dict[str, float]] = {}
+        cursor = 0
+        for month_end in month_ends:
+            while cursor < len(persona_trades) and persona_trades[cursor].date <= month_end:
+                t = persona_trades[cursor]
+                cursor += 1
+                pos = positions.setdefault(t.symbol, {"qty": 0, "cost": 0.0})
+                if t.side == "buy":
+                    pos["qty"] += t.qty
+                    pos["cost"] += t.gross_krw + t.commission_krw
+                else:
+                    if pos["qty"] <= 0:
+                        continue
+                    avg_cost = pos["cost"] / pos["qty"] if pos["qty"] else 0.0
+                    sold = min(t.qty, pos["qty"])
+                    pos["qty"] -= sold
+                    pos["cost"] = max(0.0, pos["cost"] - avg_cost * sold)
+                    if pos["qty"] == 0:
+                        pos["cost"] = 0.0
+            snapshot = []
+            total_value = 0.0
+            for symbol, pos in positions.items():
+                if pos["qty"] <= 0:
+                    continue
+                mid = board.asof(month_end, symbol)
+                if mid is None:
+                    mid = (pos["cost"] / pos["qty"]) if pos["qty"] else 0.0
+                value = pos["qty"] * mid
+                snapshot.append((symbol, int(pos["qty"]), value))
+                total_value += value
+            for symbol, qty, value in snapshot:
+                rows.append(
+                    {
+                        "persona": persona,
+                        "month_end": month_end,
+                        "symbol": symbol,
+                        "company": company_lookup.get(symbol, ""),
+                        "qty": qty,
+                        "market_value_krw": value,
+                        "weight_in_portfolio": (value / total_value) if total_value > 0 else 0.0,
+                    }
+                )
+    if not rows:
+        return pd.DataFrame()
+    df = pd.DataFrame(rows)
+    df = df.sort_values(["persona", "month_end", "market_value_krw"], ascending=[True, True, False])
+    return df.reset_index(drop=True)
+
+
+def _month_ends_between(start: date, end: date) -> list[date]:
+    """All calendar month-ends in ``[start, end]``, plus the final ``end`` itself."""
+    if end < start:
+        return []
+    cursor = pd.Timestamp(start).to_period("M").to_timestamp("M").date()
+    ends: list[date] = []
+    final = end
+    while cursor <= final:
+        ends.append(cursor)
+        next_month = (pd.Timestamp(cursor) + pd.Timedelta(days=1)).to_period("M").to_timestamp("M").date()
+        if next_month <= cursor:
+            break
+        cursor = next_month
+    if not ends or ends[-1] != final:
+        ends.append(final)
+    return ends
 
 
 def compute_symbol_stats(episodes: Iterable[PositionEpisode]) -> list[SymbolStat]:

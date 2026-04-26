@@ -15,6 +15,7 @@ import pandas as pd
 from ..backtest.warehouse import read_table
 from .contracts import (
     AllWeatherConfig,
+    MonthlyHolding,
     PersonaConfig,
     ProphetConfig,
     SimulationConfig,
@@ -25,6 +26,7 @@ from .contracts import (
 )
 from .holdings import (
     compute_current_holdings,
+    compute_monthly_holdings,
     compute_position_episodes,
     compute_symbol_stats,
 )
@@ -112,6 +114,16 @@ def run_simulation(
     current_holdings = tuple(compute_current_holdings(episodes_tuple, board=None, end_date=last_day))
     symbol_stats = tuple(compute_symbol_stats(episodes_tuple))
 
+    # Month-end portfolio composition. Each persona is marked against its
+    # own price board; All-Weather goes to the benchmark board.
+    boards_by_persona: dict[str, PriceBoard] = {p.persona_name: board for p in config.personas}
+    if benchmark_board is not None and not benchmark_board.is_empty:
+        boards_by_persona["all_weather"] = benchmark_board
+    monthly_df = compute_monthly_holdings(trades, boards_by_persona, last_day, company_by_symbol)
+    monthly_holdings = (
+        tuple(MonthlyHolding(**row) for row in monthly_df.to_dict("records")) if not monthly_df.empty else ()
+    )
+
     # Persona-agnostic SMIC report statistics.
     report_perf = tuple(compute_report_performance(reports, board, last_day))
     report_stats_obj = aggregate_report_stats(report_perf) if report_perf else None
@@ -124,6 +136,7 @@ def run_simulation(
         position_episodes=episodes_tuple,
         current_holdings=current_holdings,
         symbol_stats=symbol_stats,
+        monthly_holdings=monthly_holdings,
         report_performance=report_perf,
         report_stats=report_stats_obj,
     )

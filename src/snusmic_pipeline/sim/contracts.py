@@ -352,6 +352,22 @@ class ReportStats(_FrozenModel):
     most_aggressive_targets: tuple[ReportPerformance, ...]  # highest target_upside_at_pub
 
 
+class MonthlyHolding(_FrozenModel):
+    """Month-end snapshot of one (persona, symbol) pair.
+
+    Used to render the portfolio-evolution stacked-area chart and to
+    produce the monthly_holdings.csv long-form table.
+    """
+
+    persona: str
+    month_end: date
+    symbol: str
+    company: str
+    qty: Annotated[int, Field(ge=1)]
+    market_value_krw: float
+    weight_in_portfolio: float
+
+
 class SymbolStat(_FrozenModel):
     """Aggregated lifetime stats for a (persona, symbol) pair across all episodes."""
 
@@ -398,6 +414,7 @@ class SimulationResult(_FrozenModel):
     position_episodes: tuple[PositionEpisode, ...] = ()
     current_holdings: tuple[CurrentHolding, ...] = ()
     symbol_stats: tuple[SymbolStat, ...] = ()
+    monthly_holdings: tuple[MonthlyHolding, ...] = ()
     report_performance: tuple[ReportPerformance, ...] = ()
     report_stats: ReportStats | None = None
 

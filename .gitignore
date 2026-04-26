@@ -17,4 +17,5 @@ data/warehouse/benchmark_prices.csv
 data/sim/equity_daily.csv
 data/sim/trades.csv
 data/sim/personas.json
+data/sim/monthly_holdings.csv
 .omc/

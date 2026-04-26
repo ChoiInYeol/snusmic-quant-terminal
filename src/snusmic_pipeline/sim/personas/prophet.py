@@ -1,14 +1,28 @@
-"""Prophet (full-lookahead oracle).
+"""Prophet (rolling-interval lookahead oracle).
 
-The prophet sees the entire future price path and, on every cash event,
-puts the new money into the report whose realised peak return after today
-is the highest. If that top realised return is dominant (>= ``dominance_threshold``
-× the runner-up) it concentrates 100%; otherwise it spreads proportional
-to realised returns, capped per name.
+Strict upper bound on the SMIC report universe. At every rebalance date
+the prophet looks at the **next rebalance interval** (one month by
+default), computes each candidate symbol's realised return over that
+interval, and reallocates the entire book to the top performer(s).
 
-Each opened position is scheduled to exit at its realised peak date — the
-prophet never holds past a peak. This is the ceiling, not an executable
-strategy.
+This is intentionally different from a "buy at start, hold to peak"
+prophet. With monthly rebalances:
+
+* if symbol A is the best performer in month 1, the prophet holds A
+  through month 1 and then re-checks for month 2,
+* if A also wins month 2 the rebalance is a no-op,
+* if a different symbol B wins month 2, the prophet swaps the entire
+  book into B,
+
+so capital compounds month-over-month rather than sitting idle after a
+single lifetime-peak exit. This makes the prophet a strict superset of
+the weak-prophet (whose 6-month max-Sharpe portfolio cannot beat
+foreseeable monthly winners with concentration ≤ ``max_weight``).
+
+``dominance_threshold`` and ``max_weight`` still control concentration:
+if the top symbol's interval return ≥ ``dominance_threshold`` ×
+runner-up, weight 100%; otherwise spread proportional to realised
+return capped at ``max_weight`` per name.
 """
 
 from __future__ import annotations
@@ -46,11 +60,11 @@ def simulate_prophet(
         summary = build_summary(persona, config.label, account, [], cashflows, plan.initial_capital_krw)
         return PersonaRunOutput(account=account, equity_points=[], summary=summary)
 
-    end_date = trading_dates[-1]
     pub_dates = pd.to_datetime(reports["publication_date"]).dt.date
     reports = reports.assign(_pub=pub_dates)
     daily_closes: dict[date, dict[str, float]] = {d: board.close_on(d) for d in trading_dates}
-    scheduled_sells: dict[date, list[str]] = {}
+    rebalance_days = _rebalance_days(trading_dates, config.rebalance)
+    next_rebalance = _next_rebalance_lookup(trading_dates, rebalance_days)
     contributions = cumulative_contributions(cashflows, trading_dates)
     equity_points: list = []
 
@@ -58,11 +72,24 @@ def simulate_prophet(
         deposit = cashflow_by_date.get(day, 0.0)
         if deposit > 0:
             account.deposit(day, deposit)
-            _allocate_prophet(account, config, board, reports, day, end_date, scheduled_sells)
-        for sym in scheduled_sells.pop(day, []):
-            mid = board.asof(day, sym)
-            if mid is not None:
-                account.sell_all(day, sym, mid, "target_hit")
+        if day in rebalance_days:
+            interval_end = next_rebalance.get(day, trading_dates[-1])
+            weights = _interval_winner_weights(config, board, reports, day, interval_end)
+            prices = dict(daily_closes[day])
+            for sym, lot in account.holdings.items():
+                if lot.qty > 0 and sym not in prices:
+                    mid = board.asof(day, sym)
+                    if mid is not None:
+                        prices[sym] = mid
+            tradable = {s: w for s, w in weights.items() if s in prices and prices[s] > 0}
+            if tradable:
+                s = sum(tradable.values())
+                if s > 0:
+                    tradable = {sym: w / s for sym, w in tradable.items()}
+            # Always rebalance — empty ``tradable`` means "no winners this
+            # interval, sit in cash" and rebalance_to_weights will sell every
+            # currently-held symbol to bring its weight to zero.
+            account.rebalance_to_weights(day, tradable, prices)
         equity_points.append(
             record_equity_point(account, persona, day, daily_closes[day], contributions[day], board=board)
         )
@@ -73,70 +100,69 @@ def simulate_prophet(
     return PersonaRunOutput(account=account, equity_points=equity_points, summary=summary)
 
 
-def _allocate_prophet(
-    account: Account,
+def _rebalance_days(trading_dates: list[date], cadence: str) -> set[date]:
+    if cadence == "monthly":
+        seen: dict[tuple[int, int], date] = {}
+        for d in trading_dates:
+            seen.setdefault((d.year, d.month), d)
+        return set(seen.values())
+    if cadence == "quarterly":
+        seen_q: dict[tuple[int, int], date] = {}
+        for d in trading_dates:
+            seen_q.setdefault((d.year, (d.month - 1) // 3), d)
+        return set(seen_q.values())
+    raise ValueError(f"unknown prophet cadence: {cadence}")
+
+
+def _next_rebalance_lookup(trading_dates: list[date], rebalance_days: set[date]) -> dict[date, date]:
+    """``day → the next rebalance day strictly after day``. Last interval ends at ``trading_dates[-1]``."""
+    sorted_rebalances = sorted(rebalance_days)
+    out: dict[date, date] = {}
+    for rebalance in sorted_rebalances:
+        next_one = next((r for r in sorted_rebalances if r > rebalance), trading_dates[-1])
+        out[rebalance] = next_one
+    return out
+
+
+def _interval_winner_weights(
     config: ProphetConfig,
     board: PriceBoard,
     reports: pd.DataFrame,
     day: date,
-    end_date: date,
-    scheduled_sells: dict[date, list[str]],
-) -> None:
-    """Buy with all available cash on ``day`` according to look-ahead returns.
+    interval_end: date,
+) -> dict[str, float]:
+    """Pick target weights for the upcoming rebalance interval.
 
-    The candidate set is every report whose publication is on or before
-    ``day`` and whose symbol has a close on ``day``."""
+    For every active SMIC report symbol with a close on ``day``, compute
+    the realised cumulative return over ``(day, interval_end]`` and treat
+    it as the prophet's score. Return a long-only weight dict that sums
+    to 1.0 (or empty when the universe is empty).
+    """
     active = reports[reports["_pub"] <= day]
-    if active.empty:
-        return
-    candidates: list[tuple[str, float, date]] = []
+    if active.empty or interval_end <= day:
+        return {}
+    candidates: list[tuple[str, float]] = []
     seen: set[str] = set()
     for record in active.to_dict("records"):
         symbol = str(record["symbol"])
         if symbol in seen:
             continue
-        peak_return = board.peak_return_after(day, end_date, symbol)
-        peak_day = board.peak_date_after(day, end_date, symbol)
-        if peak_return is None or peak_day is None or peak_return <= 0:
-            continue
         seen.add(symbol)
-        candidates.append((symbol, peak_return, peak_day))
+        ret = board.cumulative_return(day, interval_end, symbol)
+        if ret is None or ret <= 0:
+            continue
+        candidates.append((symbol, ret))
     if not candidates:
-        return
+        return {}
     candidates.sort(key=lambda x: x[1], reverse=True)
-    top_symbol, top_return, top_peak = candidates[0]
+    top_symbol, top_return = candidates[0]
     runner_up_return = candidates[1][1] if len(candidates) > 1 else 0.0
 
     if runner_up_return <= 0 or top_return >= runner_up_return * config.dominance_threshold:
-        # Concentrate 100% on the top name.
-        mid = board.asof(day, top_symbol)
-        if mid is None:
-            return
-        report_id = _report_id_for(reports, top_symbol)
-        account.buy_value(
-            day,
-            top_symbol,
-            mid,
-            account.cash_krw,
-            "deposit_buy",
-            report_id=report_id,
-        )
-        scheduled_sells.setdefault(top_peak, []).append(top_symbol)
-        return
+        return {top_symbol: 1.0}
 
-    # Otherwise diversify proportional to realised return, capped per name.
     weights = _proportional_weights([c[1] for c in candidates], config.max_weight)
-    cash = account.cash_krw
-    for (symbol, _ret, peak_day), weight in zip(candidates, weights, strict=True):
-        if weight <= 0:
-            continue
-        mid = board.asof(day, symbol)
-        if mid is None:
-            continue
-        target_value = cash * weight
-        report_id = _report_id_for(reports, symbol)
-        account.buy_value(day, symbol, mid, target_value, "deposit_buy", report_id=report_id)
-        scheduled_sells.setdefault(peak_day, []).append(symbol)
+    return {symbol: w for (symbol, _ret), w in zip(candidates, weights, strict=True) if w > 1e-4}
 
 
 def _proportional_weights(returns: list[float], cap: float) -> list[float]:
@@ -175,10 +201,3 @@ def _proportional_weights(returns: list[float], cap: float) -> list[float]:
         if not free or remaining <= 1e-9:
             break
     return weights
-
-
-def _report_id_for(reports: pd.DataFrame, symbol: str) -> str | None:
-    matches = reports[reports["symbol"].astype(str) == symbol]
-    if matches.empty:
-        return None
-    return str(matches.iloc[0].get("report_id", "") or None)

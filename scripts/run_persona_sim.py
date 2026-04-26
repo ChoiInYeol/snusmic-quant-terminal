@@ -33,6 +33,7 @@ from snusmic_pipeline.sim.visualize import (  # noqa: E402
     plot_drawdowns,
     plot_equity_curves,
     plot_net_profit_bars,
+    plot_portfolio_composition,
 )
 
 ROUND_NDIGITS = 2
@@ -111,6 +112,10 @@ def main() -> int:
     )
     _to_csv_rounded(pd.DataFrame([s.model_dump() for s in result.symbol_stats]), out / "symbol_stats.csv")
     _to_csv_rounded(
+        pd.DataFrame([m.model_dump() for m in result.monthly_holdings]),
+        out / "monthly_holdings.csv",
+    )
+    _to_csv_rounded(
         pd.DataFrame([p.model_dump() for p in result.report_performance]),
         out / "report_performance.csv",
     )
@@ -125,6 +130,8 @@ def main() -> int:
     plot_equity_curves(result, out / "equity_curves.png")
     plot_net_profit_bars(result, out / "net_profit_bar.png")
     plot_drawdowns(result, out / "drawdowns.png")
+    if result.monthly_holdings:
+        plot_portfolio_composition(result, out / "portfolio_composition.png")
 
     print("\n=== Final results ===")
     rows = sorted(result.summaries, key=lambda s: -s.net_profit_krw)
