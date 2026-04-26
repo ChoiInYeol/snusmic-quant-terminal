@@ -1,12 +1,10 @@
 name: Sync SNUSMIC reports
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
     inputs:
-      pages:
-        description: "SNUSMIC research pages to sync"
+      report_pages:
+        description: "SNUSMIC research page range to sync"
         required: false
         default: "1-7"
       enable_hybrid_ocr:
@@ -57,9 +55,7 @@ jobs:
       - name: Decide work
         id: decide
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
-            echo "should_sync=false" >> "$GITHUB_OUTPUT"
-          elif [ "${{ github.event.inputs.force_full || 'false' }}" = "true" ]; then
+          if [ "${{ github.event.inputs.force_full || 'false' }}" = "true" ]; then
             echo "should_sync=true" >> "$GITHUB_OUTPUT"
           elif [ "${{ steps.detect.outputs.has_new }}" = "true" ]; then
             echo "should_sync=true" >> "$GITHUB_OUTPUT"
@@ -76,7 +72,7 @@ jobs:
     if: needs.check.outputs.should_sync == 'true'
     runs-on: ubuntu-latest
     env:
-      PAGES: ${{ github.event.inputs.pages || '1-7' }}
+      REPORT_PAGES: ${{ github.event.inputs.report_pages || '1-7' }}
       ENABLE_HYBRID_OCR: ${{ github.event.inputs.enable_hybrid_ocr || 'false' }}
     steps:
       - name: Check out repository
@@ -117,9 +113,9 @@ jobs:
       - name: Sync reports
         run: |
           if [ "$ENABLE_HYBRID_OCR" = "true" ]; then
-            uv run python -m snusmic_pipeline sync --pages "$PAGES" --opendataloader-hybrid docling-fast
+            uv run python -m snusmic_pipeline sync --pages "$REPORT_PAGES" --opendataloader-hybrid docling-fast
           else
-            uv run python -m snusmic_pipeline sync --pages "$PAGES"
+            uv run python -m snusmic_pipeline sync --pages "$REPORT_PAGES"
           fi
 
       - name: Build simulation data artifacts
@@ -138,7 +134,7 @@ jobs:
           else
             git commit -m "Refresh SNUSMIC report data"
             # Phase 4 — rebase + retry loop (plan README §27.3 fix). Concurrent
-            # workflows (price-refresh, keepalive) may push between our last
+            # workflows (for example price-refresh) may push between our last
             # fetch and the push, producing a non-fast-forward. Retry up to
             # 3 times with exponential-ish backoff before giving up.
             pushed=false
