@@ -2,7 +2,6 @@ import json
 
 from snusmic_pipeline.change_detection import new_report_urls, parse_page_one_post_urls
 
-
 HTML = """
 <a href="http://snusmic.com/equity-research-new/">Read More</a>
 <a href="http://snusmic.com/equity-research-old/">Read More</a>

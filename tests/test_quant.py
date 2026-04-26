@@ -1,13 +1,29 @@
 import numpy as np
 import pandas as pd
 
-from snusmic_pipeline.quant import display_name_for_report, optimize_weights, pct_return, portfolio_expected_stats, realized_forward_return, yfinance_candidates
 from snusmic_pipeline.models import ExtractedReport, ReportMeta
+from snusmic_pipeline.quant import (
+    display_name_for_report,
+    optimize_weights,
+    pct_return,
+    portfolio_expected_stats,
+    realized_forward_return,
+    yfinance_candidates,
+)
 
 
 def make_report(ticker="005930", exchange="KRX"):
     return ExtractedReport(
-        meta=ReportMeta(1, 1, "2026-01-01T00:00:00", "Equity Research, Test", "Test", "test", "http://post", "http://pdf"),
+        meta=ReportMeta(
+            page=1,
+            ordinal=1,
+            date="2026-01-01T00:00:00",
+            title="Equity Research, Test",
+            company="Test",
+            slug="test",
+            post_url="http://post",
+            pdf_url="http://pdf",
+        ),
         pdf_path=None,
         ticker=ticker,
         exchange=exchange,

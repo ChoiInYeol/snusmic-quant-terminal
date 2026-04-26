@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
-@dataclass(frozen=True)
-class ReportMeta:
+class ReportMeta(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
     page: int
     ordinal: int
     date: str
@@ -16,8 +19,9 @@ class ReportMeta:
     pdf_url: str
 
 
-@dataclass
-class DownloadedPdf:
+class DownloadedPdf(BaseModel):
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
+
     meta: ReportMeta
     path: Path | None
     sha256: str | None
@@ -25,8 +29,9 @@ class DownloadedPdf:
     note: str = ""
 
 
-@dataclass
-class ExtractedReport:
+class ExtractedReport(BaseModel):
+    model_config = ConfigDict(extra="forbid", arbitrary_types_allowed=True)
+
     meta: ReportMeta
     pdf_path: Path | None
     report_current_price: float | None = None
@@ -41,8 +46,13 @@ class ExtractedReport:
     investment_points: str = ""
     extraction_status: str = "pending"
     note: str = ""
-    raw_matches: dict[str, str] = field(default_factory=dict)
+    raw_matches: dict[str, str] = Field(default_factory=dict)
 
     @property
     def pdf_filename(self) -> str:
         return self.pdf_path.name if self.pdf_path else ""
+
+
+def model_rows(items: list[BaseModel]) -> list[dict[str, Any]]:
+    """Serialize a list of Pydantic models to CSV/JSON-friendly row dicts."""
+    return [item.model_dump(mode="json") for item in items]

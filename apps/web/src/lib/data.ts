@@ -1,28 +1,16 @@
-export type StrategyRun = {
-  run_id: string;
-  strategy_name: string;
-  weighting: string;
-  entry_rule: string;
-  rebalance: string;
-  lookback_days: number;
-  final_wealth: number;
-  total_return: number;
-  cagr: number | null;
-  sharpe: number | null;
-  sortino: number | null;
-  calmar: number | null;
-  max_drawdown: number;
-  annualized_volatility: number | null;
-  realized_return: number;
-  live_return: number;
-  exposure_ratio: number;
-  average_positions: number;
-  turnover_events: number;
-  trade_count: number;
-  win_rate: number | null;
-  objective: number;
-  status: string;
-};
+// Generated table-row types (from docs/schemas/*.schema.json via
+// apps/web/scripts/gen-types.mjs — DO NOT hand-edit the underlying definitions).
+// We re-export them here so existing `import { StrategyRun } from '../lib/data'`
+// call sites keep working without a rename pass.
+export type {
+  DailyPrice,
+  ExecutionEvent,
+  ReportRow,
+  StrategyRun,
+  Trade,
+} from './generated/types';
+
+import type { StrategyRun, ReportRow, Trade } from './generated/types';
 
 export type Position = {
   run_id: string;
@@ -46,20 +34,6 @@ export type EquityRow = {
   candidate_count: number;
   execution_count: number;
   cash_weight: number;
-};
-
-export type Trade = {
-  run_id: string;
-  date: string;
-  symbol: string;
-  company: string;
-  event_type: string;
-  reason: string;
-  price: number;
-  weight: number;
-  gross_return: number | null;
-  realized_return: number | null;
-  holding_days: number | null;
 };
 
 export type CandidateEvent = {
@@ -87,29 +61,6 @@ export type SignalRow = {
   mtt_pass: boolean;
   pct_above_52w_low: number | null;
   pct_below_52w_high: number | null;
-};
-
-export type ReportRow = {
-  report_id: string;
-  page: number | null;
-  ordinal: number | null;
-  publication_date: string;
-  title: string;
-  company: string;
-  ticker: string;
-  exchange: string;
-  symbol: string;
-  pdf_filename: string;
-  pdf_url: string;
-  markdown_filename: string;
-  report_current_price_krw: number | null;
-  bear_target_krw: number | null;
-  base_target_krw: number | null;
-  bull_target_krw: number | null;
-  target_price_krw: number | null;
-  target_currency: string;
-  price_currency: string;
-  display_currency: string;
 };
 
 export type PriceMetric = {
@@ -191,7 +142,14 @@ export function dataUrl(path: string): string {
 }
 
 export async function fetchJson<T>(path: string): Promise<T> {
-  const response = await fetch(dataUrl(path), { cache: 'no-store' });
+  // Phase 4 — switch from ``cache: 'no-store'`` to ``'force-cache'``. Once
+  // the data pipeline lives in GitHub Actions (Phase 4 plan AC #5) the
+  // dashboard JSONs change at most once per scheduled run; ``no-store``
+  // forced a network round-trip on every navigation. ``force-cache`` lets
+  // the browser / CDN serve the bundled artifact and the StaleDataBanner is
+  // the source of truth for "is this data current?" rather than a
+  // network-cache-busting heuristic.
+  const response = await fetch(dataUrl(path), { cache: 'force-cache' });
   if (!response.ok) {
     throw new Error(`Failed to load ${path}: ${response.status}`);
   }

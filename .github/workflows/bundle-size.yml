@@ -1,0 +1,14 @@
+name: bundle-size
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Phase 1a stub — replaced in Phase 7
+        run: echo "bundle-size stub; real body lands in Phase 7 (>=20% reduction + First Load JS <=+5KB)."

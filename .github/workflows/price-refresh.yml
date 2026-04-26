@@ -50,5 +50,21 @@ jobs:
             echo "No market data changes to commit"
           else
             git commit -m "Refresh market data"
-            git push
+            # Phase 4 — rebase + retry loop. Mirrors sync.yml; concurrent
+            # workflows can race on the same branch and produce non-fast-
+            # forward errors that resolve on a fresh ``git pull --rebase``.
+            pushed=false
+            for attempt in 1 2 3; do
+              git pull --rebase --autostash origin "${GITHUB_REF#refs/heads/}" || true
+              if git push origin "HEAD:${GITHUB_REF#refs/heads/}"; then
+                pushed=true
+                break
+              fi
+              echo "price-refresh: push attempt $attempt failed; retrying."
+              sleep $((attempt * 5))
+            done
+            if [ "$pushed" != "true" ]; then
+              echo "::error::price-refresh failed to push after 3 attempts."
+              exit 1
+            fi
           fi

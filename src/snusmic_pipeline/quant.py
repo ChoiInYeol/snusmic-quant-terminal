@@ -1,18 +1,23 @@
 from __future__ import annotations
 
-import math
 import contextlib
 import io
+import math
+from collections.abc import Callable, Iterable
 from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-from typing import Callable, Iterable
+from datetime import UTC, datetime, timedelta
 
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize
 
-from .currency import convert_ohlcv_to_krw, convert_value_to_krw, currency_for_symbol, download_fx_rates, normalize_currency
+from .currency import (
+    convert_ohlcv_to_krw,
+    convert_value_to_krw,
+    currency_for_symbol,
+    download_fx_rates,
+    normalize_currency,
+)
 from .models import ExtractedReport
 
 BENCHMARKS = {"KOSPI": "^KS11", "NASDAQ": "^IXIC"}
@@ -215,7 +220,7 @@ def optimal_net_holding(close: pd.Series, annual_cost: float = 0.10) -> tuple[in
 
 
 def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None = None) -> list[PriceMetric]:
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(UTC)
     if not reports:
         return []
     publication_dates = [datetime.fromisoformat(report.meta.date[:10]) for report in reports if report.meta.date]
@@ -229,7 +234,6 @@ def compute_price_metrics(reports: list[ExtractedReport], now: datetime | None =
 
     metrics: list[PriceMetric] = []
     for report in reports:
-        publication = datetime.fromisoformat(report.meta.date[:10])
         symbol, history = resolve_yfinance_symbol_cached(report, lambda symbol: history_cache.get(symbol, pd.DataFrame()))
         price_currency = currency_for_symbol(symbol, report.exchange)
         target_currency = normalize_currency(report.target_currency) or price_currency
@@ -456,7 +460,7 @@ def portfolio_expected_stats(returns: pd.DataFrame, weights: np.ndarray, risk_fr
 
 
 def compute_portfolio_backtests(reports: list[ExtractedReport], price_metrics: list[PriceMetric], now: datetime | None = None) -> list[PortfolioResult]:
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(UTC)
     by_title = {metric.title: metric for metric in price_metrics if metric.status == "ok" and metric.yfinance_symbol}
     display_by_symbol = {metric.yfinance_symbol: metric.display_name for metric in price_metrics if metric.yfinance_symbol}
     rows: list[PortfolioResult] = []

@@ -6,16 +6,25 @@ import hashlib
 import io
 import json
 import math
-from datetime import datetime, timedelta, timezone
+import os
+from collections.abc import Callable
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 import pandas as pd
+from pydantic import TypeAdapter
 
-from ..currency import attach_krw_rate, convert_value_to_krw, currency_for_symbol, download_fx_rates, normalize_currency
+from ..currency import (
+    attach_krw_rate,
+    convert_value_to_krw,
+    currency_for_symbol,
+    download_fx_rates,
+    normalize_currency,
+)
 from .engine import run_walk_forward_backtest, stable_run_id
-from .schemas import BacktestConfig, LOOKBACK_WINDOWS
+from .schemas import LOOKBACK_WINDOWS, TABLE_MODELS, BacktestConfig
 
 WAREHOUSE_TABLES = [
     "reports",
@@ -59,14 +68,28 @@ def refresh_price_history(
     now: datetime | None = None,
     downloader: Callable[[str, datetime, datetime], pd.DataFrame] | None = None,
     symbols: list[str] | None = None,
+    force_full: bool = False,
 ) -> pd.DataFrame:
+    """Refresh ``daily_prices.csv``.
+
+    Phase 3b: per-symbol **incremental** fetch — when the warehouse already
+    has bars for a symbol up to ``last_seen``, the downloader is invoked with
+    ``start = last_seen + 1 day`` instead of the full publication-window
+    start. Symbols whose ``last_seen >= end`` are skipped entirely (zero
+    network calls). The merged result re-deduplicates on
+    ``(date, symbol)`` so re-running with overlapping windows is idempotent.
+
+    Pass ``force_full=True`` to bypass the incremental path and re-fetch the
+    entire window per symbol (used for backfills or when a symbol's history
+    needs to be rebuilt from scratch).
+    """
     warehouse_dir.mkdir(parents=True, exist_ok=True)
     reports = read_or_build_reports(data_dir, warehouse_dir)
     if reports.empty:
         prices = pd.DataFrame()
         write_table(warehouse_dir, "daily_prices", prices)
         return prices
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(UTC)
     start = pd.to_datetime(reports["publication_date"]).min().to_pydatetime() - timedelta(days=820)
     end = now + timedelta(days=1)
     selected_symbols = symbols or sorted(set(reports["symbol"].dropna().astype(str)))
@@ -75,20 +98,59 @@ def refresh_price_history(
     target_currencies = {normalize_currency(str(value)) for value in reports.get("target_currency", pd.Series(dtype=str)).dropna().astype(str)}
     fx_rates = download_fx_rates(set(symbol_currencies.values()) | target_currencies, start, end, downloader)
     write_table(warehouse_dir, "fx_rates", fx_rates)
+
+    # Per-symbol incremental window: fetch only bars after ``last_seen``.
+    last_seen: dict[str, datetime] = {}
+    existing_full = pd.DataFrame()
+    if not force_full:
+        existing_full = read_table(warehouse_dir, "daily_prices")
+        if not existing_full.empty:
+            existing_full = existing_full.copy()
+            existing_full["date"] = pd.to_datetime(existing_full["date"])
+            for sym, group_max in existing_full.groupby("symbol")["date"].max().items():
+                # Pandas may yield the timestamp as Timestamp (not datetime).
+                last_seen[str(sym)] = group_max.to_pydatetime()
+
     frames = []
     for symbol in selected_symbols:
-        history = downloader(symbol, start, end)
+        symbol_start = start
+        existing_last = last_seen.get(symbol)
+        if existing_last is not None and not force_full:
+            candidate = existing_last + timedelta(days=1)
+            if candidate.tzinfo is None and start.tzinfo is not None:
+                candidate = candidate.replace(tzinfo=start.tzinfo)
+            symbol_start = max(start, candidate)
+        # Skip entirely when no new bars are possible.
+        if symbol_start.date() >= end.date():
+            continue
+        history = downloader(symbol, symbol_start, end)
         if history.empty:
             continue
         history = history.copy()
         history["symbol"] = symbol
         frames.append(history)
-    prices = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+    new_prices = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+
+    # Merge incremental bars with existing on-disk warehouse.
     if symbols:
-        existing = read_table(warehouse_dir, "daily_prices")
+        # When a caller restricts to a subset, leave other symbols' rows alone.
+        existing = read_table(warehouse_dir, "daily_prices") if not force_full else existing_full
         if not existing.empty:
             existing = existing[~existing["symbol"].astype(str).isin(selected_symbols)]
-            prices = pd.concat([existing, prices], ignore_index=True) if not prices.empty else existing
+        else:
+            existing = pd.DataFrame()
+        prices = pd.concat([existing, new_prices], ignore_index=True) if not new_prices.empty else existing
+    else:
+        # Full-universe refresh: union existing + new_prices, then dedupe.
+        if force_full:
+            prices = new_prices
+        elif not existing_full.empty and not new_prices.empty:
+            prices = pd.concat([existing_full, new_prices], ignore_index=True)
+        elif not existing_full.empty:
+            prices = existing_full
+        else:
+            prices = new_prices
+
     if not prices.empty:
         prices["date"] = pd.to_datetime(prices["date"]).dt.date.astype(str)
         prices = apply_daily_price_krw_conversion(prices, reports, fx_rates)
@@ -148,9 +210,17 @@ def run_default_backtests(
     dry_run: bool = False,
     configs: list[BacktestConfig] | None = None,
 ) -> dict[str, int]:
+    # Phase 2c — dry-run path isolation (plan AC #5). When ``dry_run=True`` we
+    # redirect every write to ``{warehouse_dir}/_dry_run/`` so real on-disk
+    # warehouse / dashboard artifacts are never clobbered by synthetic data.
+    # Reports still load from the real ``warehouse_dir`` so the synthetic
+    # run uses the actual report universe.
+    real_warehouse_dir = warehouse_dir
+    if dry_run:
+        warehouse_dir = warehouse_dir / "_dry_run"
     warehouse_dir.mkdir(parents=True, exist_ok=True)
-    reports = read_or_build_reports(data_dir, warehouse_dir)
-    prices = read_table(warehouse_dir, "daily_prices")
+    reports = read_or_build_reports(data_dir, real_warehouse_dir)
+    prices = read_table(real_warehouse_dir, "daily_prices")
     if dry_run or prices.empty:
         prices = synthetic_price_history(reports)
         write_table(warehouse_dir, "daily_prices", prices)
@@ -189,7 +259,17 @@ def optimize_strategies(
     trials: int = 25,
     seed: int = 42,
     dry_run: bool = False,
+    study_name: str = "snusmic-default",
+    storage_path: Path | None = None,
 ) -> pd.DataFrame:
+    """Run an Optuna search over the strategy space.
+
+    Phase 3a: persists the study to a SQLite database so a killed run can be
+    **resumed** from where it stopped (see plan AC #3 — "kill after trial 3,
+    restart, reach trial 10 without replay"). Concurrency is **single-writer
+    per study** by design (plan line 181); cross-study parallelism is the
+    grid-search caller's job.
+    """
     import optuna
 
     reports = read_or_build_reports(data_dir, warehouse_dir)
@@ -197,7 +277,13 @@ def optimize_strategies(
     if dry_run or prices.empty:
         prices = synthetic_price_history(reports)
 
-    trial_rows: list[dict[str, Any]] = []
+    storage_path = storage_path or (warehouse_dir / "optuna.sqlite")
+    storage_path.parent.mkdir(parents=True, exist_ok=True)
+    storage_url = f"sqlite:///{storage_path}"
+
+    # Cache trial-runtime metrics outside Optuna so resumed sessions still
+    # rebuild the full optuna_trials.csv from the on-disk study state.
+    trial_metrics: dict[int, dict[str, Any]] = {}
 
     def objective(trial: optuna.Trial) -> float:
         config = BacktestConfig(
@@ -215,12 +301,40 @@ def optimize_strategies(
         )
         result = run_walk_forward_backtest(reports, prices, config)
         summary = result["strategy_runs"].iloc[0].to_dict()
-        trial_rows.append({"trial": trial.number, **config.to_dict(), **summary})
+        trial_metrics[trial.number] = {**config.to_dict(), **summary}
         return float(summary.get("objective") or 0.0)
 
-    study = optuna.create_study(direction="maximize", sampler=optuna.samplers.TPESampler(seed=seed))
-    study.optimize(objective, n_trials=trials)
-    trials_df = pd.DataFrame(trial_rows)
+    study = optuna.create_study(
+        study_name=study_name,
+        storage=storage_url,
+        direction="maximize",
+        sampler=optuna.samplers.TPESampler(seed=seed),
+        load_if_exists=True,
+    )
+    completed = sum(1 for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE)
+    remaining = max(0, trials - completed)
+    if remaining > 0:
+        study.optimize(objective, n_trials=remaining)
+
+    # Rebuild trials_df from the full study so resumed sessions emit a row
+    # per completed trial — including ones executed in a previous process.
+    rows: list[dict[str, Any]] = []
+    for trial in study.trials:
+        if trial.state != optuna.trial.TrialState.COMPLETE:
+            continue
+        cached = trial_metrics.get(trial.number)
+        if cached is not None:
+            rows.append({"trial": trial.number, **cached})
+        else:
+            # Trial completed in a prior process — full per-run metrics weren't
+            # captured in this session; emit params + Optuna's recorded value
+            # under the legacy "objective" column to preserve the contract.
+            rows.append({
+                "trial": trial.number,
+                **trial.params,
+                "objective": trial.value,
+            })
+    trials_df = pd.DataFrame(rows)
     write_table(warehouse_dir, "optuna_trials", trials_df)
     sync_duckdb(warehouse_dir)
     return trials_df
@@ -585,7 +699,7 @@ def synthetic_price_history(reports: pd.DataFrame) -> pd.DataFrame:
     if reports.empty:
         return pd.DataFrame()
     start = pd.to_datetime(reports["publication_date"]).min() - pd.Timedelta(days=820)
-    end = pd.Timestamp(datetime.now(timezone.utc).date())
+    end = pd.Timestamp(datetime.now(UTC).date())
     dates = pd.bdate_range(start, end)
     frames = []
     for i, report in enumerate(reports.drop_duplicates("symbol").to_dict("records")):
@@ -613,17 +727,72 @@ def synthetic_price_history(reports: pd.DataFrame) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
 
+def _use_pydantic_v2() -> bool:
+    """Principle-1a feature-flag escape per pre-mortem Scenario 1.
+
+    Set ``SNUSMIC_USE_PYDANTIC_V2=0`` to fall back to raw ``pd.read_csv`` /
+    ``to_csv`` (pre-migration path), kept inline for one release cycle to
+    give us a one-env-var rollback.
+    TODO(phase-1a): remove this escape hatch after one release cycle per plan.
+    """
+    return os.environ.get("SNUSMIC_USE_PYDANTIC_V2", "1") != "0"
+
+
+def _validate_rows(table: str, frame: pd.DataFrame) -> None:
+    """Validate every row of ``frame`` against ``TABLE_MODELS[table]``.
+
+    Raises ``pydantic.ValidationError`` when:
+      * a required column is missing,
+      * an unknown column is present (``ConfigDict(extra='forbid')``),
+      * a cell fails model-level type coercion.
+    """
+    model = TABLE_MODELS.get(table)
+    if model is None or frame.empty:
+        return
+    # Pandas stores integer columns with NaN as float64; coerce NaN → None
+    # so Pydantic's Optional[int] / Optional[float] validators accept them.
+    records: list[dict[str, Any]] = []
+    for raw in frame.to_dict(orient="records"):
+        cleaned: dict[str, Any] = {}
+        for key, value in raw.items():
+            str_key = str(key)
+            if isinstance(value, float) and math.isnan(value):
+                cleaned[str_key] = None
+            else:
+                cleaned[str_key] = value
+        records.append(cleaned)
+    TypeAdapter(list[model]).validate_python(records)  # type: ignore[valid-type]
+
+
 def write_table(warehouse_dir: Path, table: str, frame: pd.DataFrame) -> None:
+    """Write a DataFrame to ``{warehouse_dir}/{table}.csv``.
+
+    If ``table`` is registered in :data:`TABLE_MODELS` and the Pydantic-v2
+    feature flag is on (default), every row is validated via ``TypeAdapter``
+    before ``to_csv`` — unknown or missing columns raise ``ValidationError``.
+    This is the write-side half of Principle 2 (typed SSOT at read AND write
+    boundaries).
+    """
     warehouse_dir.mkdir(parents=True, exist_ok=True)
     path = warehouse_dir / f"{table}.csv"
+    if _use_pydantic_v2():
+        _validate_rows(table, frame)
     frame.to_csv(path, index=False, encoding="utf-8")
 
 
 def read_table(warehouse_dir: Path, table: str) -> pd.DataFrame:
+    """Read ``{warehouse_dir}/{table}.csv`` into a DataFrame.
+
+    Under the default Pydantic-v2 flag, rows are validated after ``pd.read_csv``
+    so downstream callers get a guaranteed-shape DataFrame. With
+    ``SNUSMIC_USE_PYDANTIC_V2=0`` we bypass validation (legacy path)."""
     path = warehouse_dir / f"{table}.csv"
     if not path.exists() or path.stat().st_size == 0:
         return pd.DataFrame()
-    return pd.read_csv(path)
+    frame = pd.read_csv(path)
+    if _use_pydantic_v2():
+        _validate_rows(table, frame)
+    return frame
 
 
 def sync_duckdb(warehouse_dir: Path) -> None:
@@ -672,7 +841,7 @@ def infer_yfinance_symbol(ticker: str, exchange: str) -> str:
 
 
 def stable_report_id(date: str, title: str, symbol: str) -> str:
-    return hashlib.sha1(f"{date}|{title}|{symbol}".encode("utf-8")).hexdigest()[:16]
+    return hashlib.sha1(f"{date}|{title}|{symbol}".encode()).hexdigest()[:16]
 
 
 def format_date(value: str) -> str:

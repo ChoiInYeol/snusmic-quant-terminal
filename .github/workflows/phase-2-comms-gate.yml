@@ -1,0 +1,15 @@
+name: phase-2-comms-gate
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Phase 1a stub — replaced in Phase 2
+        run: echo "phase-2-comms-gate stub; real body lands in Phase 2 (AC #0 pre-merge comms gate)."

@@ -1,19 +1,17 @@
 name: Publish GitHub Pages mirror
 
+# Phase 4 — chain after sync.yml instead of relying on paths-filter on push.
+# A push to main with no data update used to skip the deploy because the
+# paths filter rejected the diff; conversely a sync.yml run that wrote new
+# warehouse rows would NOT trigger pages because it ran on schedule, not on
+# push. ``workflow_run`` waits for sync.yml to succeed and only then rebuilds
+# the mirror against the freshly-pushed data.
 on:
   workflow_dispatch:
-  push:
+  workflow_run:
+    workflows: ["Sync SNUSMIC reports"]
+    types: [completed]
     branches: [main]
-    paths:
-      - "data/**/*.json"
-      - "data/**/*.csv"
-      - "apps/web/**"
-      - "src/snusmic_pipeline/site_builder.py"
-      - "src/snusmic_pipeline/backtest/warehouse.py"
-      - "site/quarto/dashboard.js"
-      - "site/quarto/styles.css"
-      - "vercel.json"
-      - ".github/workflows/pages.yml"
 
 permissions:
   contents: read
@@ -27,6 +25,10 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Skip when the upstream sync.yml run failed (workflow_run fires on every
+    # completed conclusion — success, failure, cancelled). We only want to
+    # publish artifacts derived from a green data run.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4

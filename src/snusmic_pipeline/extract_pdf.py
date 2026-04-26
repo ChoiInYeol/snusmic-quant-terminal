@@ -375,9 +375,7 @@ def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object
         base_target = median_price(list(scenario_values.values()))
         notes.append("No explicit Base target; base target uses median scenario value")
     case_prices = sorted(case_values.values())
-    if base_target is None and case_prices:
-        base_target = median_price(case_prices)
-    elif case_prices and len(case_prices) > 1 and "base" not in target_raw.lower() and base_target in case_prices:
+    if base_target is None and case_prices or case_prices and len(case_prices) > 1 and "base" not in target_raw.lower() and base_target in case_prices:
         base_target = median_price(case_prices)
     if single_target is not None and ("base" in target_raw.lower() or base_target is None):
         base_target = single_target

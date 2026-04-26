@@ -141,7 +141,24 @@ jobs:
             echo "No data changes to commit"
           else
             git commit -m "Refresh SNUSMIC report data"
-            git push
+            # Phase 4 — rebase + retry loop (plan README §27.3 fix). Concurrent
+            # workflows (price-refresh, keepalive) may push between our last
+            # fetch and the push, producing a non-fast-forward. Retry up to
+            # 3 times with exponential-ish backoff before giving up.
+            pushed=false
+            for attempt in 1 2 3; do
+              git pull --rebase --autostash origin "${GITHUB_REF#refs/heads/}" || true
+              if git push origin "HEAD:${GITHUB_REF#refs/heads/}"; then
+                pushed=true
+                break
+              fi
+              echo "sync: push attempt $attempt failed; retrying."
+              sleep $((attempt * 5))
+            done
+            if [ "$pushed" != "true" ]; then
+              echo "::error::sync data refresh failed to push after 3 attempts."
+              exit 1
+            fi
           fi
 
   deploy:

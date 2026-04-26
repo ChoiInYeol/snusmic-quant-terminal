@@ -4,22 +4,21 @@ import argparse
 import csv
 import json
 import os
-from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
+from .backtest import build_warehouse, export_dashboard_data, refresh_price_history, run_default_backtests
+from .backtest.warehouse import optimize_strategies
+from .change_detection import new_report_urls
 from .download_pdfs import download_all
 from .extract_pdf import extract_report, extract_text_from_pdf, parse_report_text
 from .extraction_quality import analyze_extraction_quality
 from .fetch_index import fetch_reports, parse_pages
-from .models import DownloadedPdf, ExtractedReport, ReportMeta
 from .markdown_export import export_markdown
+from .models import DownloadedPdf, ExtractedReport, ReportMeta
 from .opendataloader_fallback import OpenDataLoaderUnavailable, convert_pdfs_to_markdown
 from .quant import compute_portfolio_backtests, compute_price_metrics, dataclass_rows
-from .change_detection import new_report_urls
-from .site_builder import build_site
-from .backtest import build_warehouse, export_dashboard_data, refresh_price_history, run_default_backtests
-from .backtest.warehouse import optimize_strategies
+from .site_builder import build_site, build_web_data
 
 REPORT_HEADERS = [
     "페이지",
@@ -54,7 +53,7 @@ def write_manifest(downloads: list[DownloadedPdf], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     data = []
     for download in downloads:
-        item = asdict(download.meta)
+        item = download.meta.model_dump(mode="json")
         item.update({"pdf_path": str(download.path) if download.path else "", "sha256": download.sha256, "download_status": download.status, "download_note": download.note})
         data.append(item)
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2, default=_json_default) + "\n", encoding="utf-8")
@@ -351,6 +350,15 @@ def run_build_site(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_build_web_data(args: argparse.Namespace) -> int:
+    """Phase 4 — write the dashboard's data bundle directly into the
+    Next.js ``apps/web/public/data/`` tree (or any caller-supplied path)
+    without producing the legacy Quarto ``index.html``."""
+    counts = build_web_data(Path(args.data_dir), Path(args.output_dir))
+    print(f"Built web data at {args.output_dir}: {counts}")
+    return 0
+
+
 def run_refresh_market(args: argparse.Namespace) -> int:
     data_dir = Path(args.data_dir)
     reports = read_extracted_reports_csv(data_dir / "extracted_reports.csv")
@@ -452,6 +460,14 @@ def build_parser() -> argparse.ArgumentParser:
     build_site_parser.add_argument("--data-dir", default="data")
     build_site_parser.add_argument("--public-dir", default="site/public")
     build_site_parser.set_defaults(func=run_build_site)
+
+    build_web_data_parser = subparsers.add_parser(
+        "build-web-data",
+        help="Phase 4 — emit Next.js dashboard data bundle (no index.html) into apps/web/public/data/.",
+    )
+    build_web_data_parser.add_argument("--data-dir", default="data")
+    build_web_data_parser.add_argument("--output-dir", default="apps/web/public/data")
+    build_web_data_parser.set_defaults(func=run_build_web_data)
 
     refresh_market = subparsers.add_parser("refresh-market", help="Refresh yfinance price metrics and portfolio backtests from committed report CSV.")
     refresh_market.add_argument("--data-dir", default="data")

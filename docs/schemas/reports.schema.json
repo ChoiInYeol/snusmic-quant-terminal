@@ -1,0 +1,301 @@
+{
+  "additionalProperties": false,
+  "description": "Row schema for ``data/warehouse/reports.csv``.",
+  "properties": {
+    "report_id": {
+      "title": "Report Id",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "page": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Page",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "ordinal": {
+      "anyOf": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Ordinal",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "publication_date": {
+      "title": "Publication Date",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "title": {
+      "title": "Title",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "company": {
+      "title": "Company",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "ticker": {
+      "title": "Ticker",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "exchange": {
+      "title": "Exchange",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "symbol": {
+      "title": "Symbol",
+      "type": "string",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "pdf_filename": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pdf Filename",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "pdf_url": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Pdf Url",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "report_current_price": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Report Current Price",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "bear_target": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bear Target",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "base_target": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Base Target",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "bull_target": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bull Target",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "target_price_local": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Price Local",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "target_price": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Price",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "target_currency": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Currency",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "price_currency": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Price Currency",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "display_currency": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Display Currency",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "markdown_filename": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Markdown Filename",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "report_current_price_krw": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Report Current Price Krw",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "bear_target_krw": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bear Target Krw",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "base_target_krw": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Base Target Krw",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "bull_target_krw": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Bull Target Krw",
+      "x-snusmic-nan-policy": "drop"
+    },
+    "target_price_krw": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Target Price Krw",
+      "x-snusmic-nan-policy": "drop"
+    }
+  },
+  "required": [
+    "report_id",
+    "publication_date",
+    "title",
+    "company",
+    "ticker",
+    "exchange",
+    "symbol"
+  ],
+  "title": "ReportRow",
+  "type": "object",
+  "x-snusmic-table": "reports",
+  "x-snusmic-semantic-version": "1.0"
+}

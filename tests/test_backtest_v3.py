@@ -6,7 +6,12 @@ from snusmic_pipeline.backtest.engine import run_walk_forward_backtest
 from snusmic_pipeline.backtest.optimizers import optimize_execution_weights
 from snusmic_pipeline.backtest.schemas import BacktestConfig
 from snusmic_pipeline.backtest.signals import compute_signals_daily
-from snusmic_pipeline.backtest.warehouse import apply_report_krw_targets, export_dashboard_data, run_default_backtests, write_table
+from snusmic_pipeline.backtest.warehouse import (
+    apply_report_krw_targets,
+    export_dashboard_data,
+    run_default_backtests,
+    write_table,
+)
 
 
 def report_frame(publication_date="2024-01-10", target_price=140.0):

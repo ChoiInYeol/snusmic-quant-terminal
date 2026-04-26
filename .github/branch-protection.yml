@@ -1,0 +1,45 @@
+# Declarative branch-protection spec for `main`.
+#
+# Consumed by `probot/settings` (https://github.com/apps/settings) or
+# `repository-settings-syncer`. To sync manually:
+#   gh api -X PUT /repos/:owner/:repo/branches/main/protection \
+#     --input .github/branch-protection-payload.json
+# (Generate payload.json by converting this yaml — a helper script will land
+#  alongside the settings bot when it is installed.)
+#
+# Phase 1a registers ALL required status checks up-front. Workflows that are
+# Phase 2/4/7 deliverables land here as stub workflows that succeed with an echo,
+# so GitHub can mark them required immediately. Later phases replace each stub's
+# body without changing the workflow NAME (which is what branch-protection
+# references).
+
+branches:
+  - name: main
+    protection:
+      required_pull_request_reviews:
+        required_approving_review_count: 1
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: false
+      required_status_checks:
+        strict: true
+        contexts:
+          # CI (Phase 1a/1b, real bodies)
+          - ci / lint
+          - ci / type
+          - ci / test
+          - ci / schema-drift
+          - ci / schema-compat
+          - ci / web-types
+          # Phase 2 gates (stubs now, bodies land in Phase 2)
+          - phase-2-comms-gate / gate
+          - phase-2-xfail-transition / gate
+          # Phase 4 gate (stub now, body lands in Phase 4)
+          - atomic-rehoming / gate
+          # Phase 7 gate (stub now, body lands in Phase 7)
+          - bundle-size / gate
+      enforce_admins: true
+      required_linear_history: true
+      allow_force_pushes: false
+      allow_deletions: false
+      required_conversation_resolution: true
+      restrictions: null

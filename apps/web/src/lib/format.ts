@@ -26,7 +26,8 @@ export function labelEntryRule(value: string): string {
   return labels[value] ?? value;
 }
 
-export function labelReason(value: string): string {
+export function labelReason(value: string | null | undefined): string {
+  if (!value) return '';
   const labels: Record<string, string> = {
     buy: '매수',
     sell: '매도',

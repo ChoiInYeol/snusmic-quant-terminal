@@ -1,5 +1,5 @@
-from snusmic_pipeline.fetch_index import clean_html_text, fetch_reports, parse_pages
 from snusmic_pipeline.cli import build_parser
+from snusmic_pipeline.fetch_index import clean_html_text, fetch_reports, parse_pages
 
 
 class FakeResponse:

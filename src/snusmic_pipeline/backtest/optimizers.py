@@ -86,7 +86,7 @@ def _optimize(returns: pd.DataFrame, method: str, risk_free_rate: float) -> np.n
 
     def calmar_loss(weights: np.ndarray) -> float:
         port = pd.Series(_portfolio_series(returns, weights), index=returns.index)
-        equity = np.exp(port.cumsum())
+        equity = pd.Series(np.exp(port.cumsum()), index=returns.index)
         drawdown = equity / equity.cummax() - 1.0
         max_dd = abs(float(drawdown.min()))
         return -float((weights @ mean - risk_free_rate) / max(max_dd, 1e-6))

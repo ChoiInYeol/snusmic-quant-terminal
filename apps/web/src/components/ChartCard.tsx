@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useTheme } from 'next-themes';
 import {
   AreaSeries,
   BaselineSeries,
@@ -18,28 +19,103 @@ import type { EquityRow, StockChartData } from '../lib/data';
 
 type SeriesPoint = { time: string; value: number };
 
-function baseOptions() {
+/**
+ * Phase 6a — palette is read from CSS variables on the document root so
+ * a theme change never has to rebuild the chart. ``readPalette()`` runs
+ * inside a ``useEffect`` keyed on the resolved theme and pushes the new
+ * options through ``applyOptions`` (chart instance + series instances).
+ *
+ * Falls back to hard-coded light tokens when running outside the browser
+ * (SSR pass) so ``baseOptions()`` stays pure-function for unit tests.
+ */
+type ChartPalette = {
+  background: string;
+  text: string;
+  grid: string;
+  border: string;
+  candleUp: string;
+  candleDown: string;
+  ma50: string;
+  ma150: string;
+  ma200: string;
+  areaTop: string;
+  areaBottom: string;
+  baselineTopLine: string;
+  baselineTopFill1: string;
+  baselineTopFill2: string;
+  baselineBottomLine: string;
+  baselineBottomFill1: string;
+  baselineBottomFill2: string;
+};
+
+const FALLBACK_PALETTE: ChartPalette = {
+  background: '#fbfcfd',
+  text: '#334155',
+  grid: '#eef2f7',
+  border: '#d5dee8',
+  candleUp: '#047857',
+  candleDown: '#b91c1c',
+  ma50: '#2454a6',
+  ma150: '#7c3aed',
+  ma200: '#475569',
+  areaTop: 'rgba(36, 84, 166, 0.28)',
+  areaBottom: 'rgba(36, 84, 166, 0.02)',
+  baselineTopLine: '#047857',
+  baselineTopFill1: 'rgba(4, 120, 87, 0.18)',
+  baselineTopFill2: 'rgba(4, 120, 87, 0.02)',
+  baselineBottomLine: '#b91c1c',
+  baselineBottomFill1: 'rgba(185, 28, 28, 0.18)',
+  baselineBottomFill2: 'rgba(185, 28, 28, 0.02)',
+};
+
+function readPalette(): ChartPalette {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return FALLBACK_PALETTE;
+  const root = document.documentElement;
+  const get = (name: string, fallback: string) => {
+    const value = getComputedStyle(root).getPropertyValue(name).trim();
+    return value || fallback;
+  };
+  return {
+    background: get('--chart-bg', FALLBACK_PALETTE.background),
+    text: get('--chart-text', FALLBACK_PALETTE.text),
+    grid: get('--chart-grid', FALLBACK_PALETTE.grid),
+    border: get('--chart-border', FALLBACK_PALETTE.border),
+    candleUp: get('--chart-line-up', FALLBACK_PALETTE.candleUp),
+    candleDown: get('--chart-line-down', FALLBACK_PALETTE.candleDown),
+    ma50: get('--chart-ma-50', FALLBACK_PALETTE.ma50),
+    ma150: get('--chart-ma-150', FALLBACK_PALETTE.ma150),
+    ma200: get('--chart-ma-200', FALLBACK_PALETTE.ma200),
+    areaTop: get('--chart-area-top', FALLBACK_PALETTE.areaTop),
+    areaBottom: get('--chart-area-bottom', FALLBACK_PALETTE.areaBottom),
+    baselineTopLine: get('--chart-baseline-top-line', FALLBACK_PALETTE.baselineTopLine),
+    baselineTopFill1: get('--chart-baseline-top-fill1', FALLBACK_PALETTE.baselineTopFill1),
+    baselineTopFill2: get('--chart-baseline-top-fill2', FALLBACK_PALETTE.baselineTopFill2),
+    baselineBottomLine: get('--chart-baseline-bottom-line', FALLBACK_PALETTE.baselineBottomLine),
+    baselineBottomFill1: get('--chart-baseline-bottom-fill1', FALLBACK_PALETTE.baselineBottomFill1),
+    baselineBottomFill2: get('--chart-baseline-bottom-fill2', FALLBACK_PALETTE.baselineBottomFill2),
+  };
+}
+
+function chartOptionsFromPalette(palette: ChartPalette) {
   return {
     layout: {
-      background: { type: ColorType.Solid, color: '#fbfcfd' },
-      textColor: '#334155',
+      background: { type: ColorType.Solid, color: palette.background },
+      textColor: palette.text,
       fontFamily: '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
     },
     grid: {
-      vertLines: { color: '#eef2f7' },
-      horzLines: { color: '#eef2f7' },
+      vertLines: { color: palette.grid },
+      horzLines: { color: palette.grid },
     },
     rightPriceScale: {
-      borderColor: '#d5dee8',
+      borderColor: palette.border,
       minimumWidth: 92,
     },
     timeScale: {
-      borderColor: '#d5dee8',
+      borderColor: palette.border,
       timeVisible: false,
     },
-    crosshair: {
-      mode: 1,
-    },
+    crosshair: { mode: 1 },
     localization: {
       priceFormatter: (price: number) => Math.round(price).toLocaleString('ko-KR'),
     },
@@ -59,24 +135,34 @@ function attachResize(chart: IChartApi, element: HTMLDivElement, afterResize?: (
 
 export function StockChart({ data, runId }: { data: StockChartData | null; runId: string }) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const candlesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
+  const lineSeriesRef = useRef<{ ma50?: ISeriesApi<'Line'>; ma150?: ISeriesApi<'Line'>; ma200?: ISeriesApi<'Line'> }>({});
+  const { resolvedTheme } = useTheme();
 
+  // Chart life-cycle effect — runs only when data / runId changes.
+  // CRITICAL Phase 6a AC #2: a theme flip MUST NOT recreate the chart;
+  // ``resolvedTheme`` is intentionally NOT in the dep array.
   useEffect(() => {
     if (!ref.current || !data || data.ohlc.length === 0) return;
     ref.current.innerHTML = '';
     ref.current.style.position = 'relative';
-    const chart = createChart(ref.current, { ...baseOptions(), height: 360 });
+    const palette = readPalette();
+    const chart = createChart(ref.current, { ...chartOptionsFromPalette(palette), height: 360 });
+    chartRef.current = chart;
     const candles = chart.addSeries(CandlestickSeries, {
-      upColor: '#047857',
-      downColor: '#b91c1c',
+      upColor: palette.candleUp,
+      downColor: palette.candleDown,
       borderVisible: false,
-      wickUpColor: '#047857',
-      wickDownColor: '#b91c1c',
+      wickUpColor: palette.candleUp,
+      wickDownColor: palette.candleDown,
       priceFormat: { type: 'price', precision: 0, minMove: 1 },
     });
+    candlesRef.current = candles;
     candles.setData(data.ohlc);
-    addLine(chart, data.ma50, '#2454a6', 2);
-    addLine(chart, data.ma150, '#7c3aed', 1);
-    addLine(chart, data.ma200, '#475569', 1);
+    lineSeriesRef.current.ma50 = addLine(chart, data.ma50, palette.ma50, 2);
+    lineSeriesRef.current.ma150 = addLine(chart, data.ma150, palette.ma150, 1);
+    lineSeriesRef.current.ma200 = addLine(chart, data.ma200, palette.ma200, 1);
     for (const line of data.price_lines) {
       candles.createPriceLine({
         price: line.price,
@@ -93,7 +179,7 @@ export function StockChart({ data, runId }: { data: StockChartData | null; runId
     ].map((marker) => ({
       time: marker.time as Time,
       position: marker.position as 'aboveBar' | 'belowBar' | 'inBar',
-      color: String(marker.color ?? '#334155'),
+      color: String(marker.color ?? palette.text),
       shape: marker.shape as 'circle' | 'square' | 'arrowUp' | 'arrowDown',
       text: String(marker.text ?? ''),
     }));
@@ -135,14 +221,35 @@ export function StockChart({ data, runId }: { data: StockChartData | null; runId
     return () => {
       cleanupResize();
       chart.remove();
+      chartRef.current = null;
+      candlesRef.current = null;
+      lineSeriesRef.current = {};
     };
   }, [data, runId]);
+
+  // Theme application effect — runs on every theme flip without
+  // touching the chart instance pointer (AC #2).
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (!chart) return;
+    const palette = readPalette();
+    chart.applyOptions(chartOptionsFromPalette(palette));
+    candlesRef.current?.applyOptions({
+      upColor: palette.candleUp,
+      downColor: palette.candleDown,
+      wickUpColor: palette.candleUp,
+      wickDownColor: palette.candleDown,
+    });
+    lineSeriesRef.current.ma50?.applyOptions({ color: palette.ma50 });
+    lineSeriesRef.current.ma150?.applyOptions({ color: palette.ma150 });
+    lineSeriesRef.current.ma200?.applyOptions({ color: palette.ma200 });
+  }, [resolvedTheme]);
 
   return <div ref={ref} className="chart-surface" aria-label="종목 가격 차트" />;
 }
 
 export function EquityChart({ rows }: { rows: EquityRow[] }) {
-  return <SingleSeriesChart rows={rows.map((row) => ({ time: row.date, value: row.equity }))} color="#2454a6" mode="area" />;
+  return <SingleSeriesChart rows={rows.map((row) => ({ time: row.date, value: row.equity }))} mode="area" />;
 }
 
 export function DrawdownChart({ rows }: { rows: EquityRow[] }) {
@@ -151,49 +258,82 @@ export function DrawdownChart({ rows }: { rows: EquityRow[] }) {
     peak = Math.max(peak, row.equity || 1);
     return { time: row.date, value: row.equity / peak - 1 };
   });
-  return <SingleSeriesChart rows={drawdown} color="#b91c1c" mode="baseline" />;
+  return <SingleSeriesChart rows={drawdown} mode="baseline" />;
 }
 
-function SingleSeriesChart({ rows, color, mode }: { rows: SeriesPoint[]; color: string; mode: 'area' | 'baseline' }) {
+function SingleSeriesChart({ rows, mode }: { rows: SeriesPoint[]; mode: 'area' | 'baseline' }) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const chartRef = useRef<IChartApi | null>(null);
+  const seriesRef = useRef<ISeriesApi<'Area'> | ISeriesApi<'Baseline'> | null>(null);
+  const { resolvedTheme } = useTheme();
+
   useEffect(() => {
     if (!ref.current || rows.length === 0) return;
     ref.current.innerHTML = '';
-    const chart = createChart(ref.current, { ...baseOptions(), height: 250 });
+    const palette = readPalette();
+    const chart = createChart(ref.current, { ...chartOptionsFromPalette(palette), height: 250 });
+    chartRef.current = chart;
     let series: ISeriesApi<'Area'> | ISeriesApi<'Baseline'>;
     if (mode === 'area') {
       series = chart.addSeries(AreaSeries, {
-        lineColor: color,
-        topColor: 'rgba(36, 84, 166, 0.28)',
-        bottomColor: 'rgba(36, 84, 166, 0.02)',
+        lineColor: palette.ma50,
+        topColor: palette.areaTop,
+        bottomColor: palette.areaBottom,
       });
     } else {
       series = chart.addSeries(BaselineSeries, {
         baseValue: { type: 'price', price: 0 },
-        topLineColor: '#047857',
-        topFillColor1: 'rgba(4, 120, 87, 0.18)',
-        topFillColor2: 'rgba(4, 120, 87, 0.02)',
-        bottomLineColor: color,
-        bottomFillColor1: 'rgba(185, 28, 28, 0.18)',
-        bottomFillColor2: 'rgba(185, 28, 28, 0.02)',
+        topLineColor: palette.baselineTopLine,
+        topFillColor1: palette.baselineTopFill1,
+        topFillColor2: palette.baselineTopFill2,
+        bottomLineColor: palette.baselineBottomLine,
+        bottomFillColor1: palette.baselineBottomFill1,
+        bottomFillColor2: palette.baselineBottomFill2,
       });
     }
+    seriesRef.current = series;
     series.setData(rows);
     chart.timeScale().fitContent();
     const cleanupResize = attachResize(chart, ref.current);
     return () => {
       cleanupResize();
       chart.remove();
+      chartRef.current = null;
+      seriesRef.current = null;
     };
-  }, [rows, color, mode]);
+  }, [rows, mode]);
+
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (!chart) return;
+    const palette = readPalette();
+    chart.applyOptions(chartOptionsFromPalette(palette));
+    if (mode === 'area' && seriesRef.current) {
+      (seriesRef.current as ISeriesApi<'Area'>).applyOptions({
+        lineColor: palette.ma50,
+        topColor: palette.areaTop,
+        bottomColor: palette.areaBottom,
+      });
+    } else if (mode === 'baseline' && seriesRef.current) {
+      (seriesRef.current as ISeriesApi<'Baseline'>).applyOptions({
+        topLineColor: palette.baselineTopLine,
+        topFillColor1: palette.baselineTopFill1,
+        topFillColor2: palette.baselineTopFill2,
+        bottomLineColor: palette.baselineBottomLine,
+        bottomFillColor1: palette.baselineBottomFill1,
+        bottomFillColor2: palette.baselineBottomFill2,
+      });
+    }
+  }, [resolvedTheme, mode]);
 
   return <div ref={ref} className="chart-surface compact" />;
 }
 
-function addLine(chart: IChartApi, rows: SeriesPoint[], color: string, lineWidth: 1 | 2) {
-  if (!rows.length) return;
+function addLine(chart: IChartApi, rows: SeriesPoint[], color: string, lineWidth: 1 | 2): ISeriesApi<'Line'> | undefined {
+  if (!rows.length) return undefined;
   const series = chart.addSeries(LineSeries, { color, lineWidth, priceFormat: { type: 'price', precision: 0, minMove: 1 } });
   series.setData(rows);
+  return series;
 }
 
 function formatTooltipPct(value: number | null) {

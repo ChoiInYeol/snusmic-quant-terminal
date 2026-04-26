@@ -271,6 +271,19 @@ def render_index_html() -> str:
 """
 
 
+_QUANT_V3_FILES = (
+    "strategy_runs.json",
+    "equity_daily.json",
+    "pool_timeline.json",
+    "candidate_pool_events.json",
+    "current_positions.json",
+    "recent_trades.json",
+    "signals_daily.json",
+    "strategy_heatmap.json",
+    "optuna_trials.json",
+)
+
+
 def build_site(data_dir: Path, public_dir: Path) -> None:
     resolved_public = public_dir.resolve()
     resolved_cwd = Path.cwd().resolve()
@@ -282,17 +295,50 @@ def build_site(data_dir: Path, public_dir: Path) -> None:
     reports = build_reports_json(data_dir, public_dir)
     write_json(public_dir / "data" / "price_metrics.json", read_json(data_dir / "price_metrics.json"))
     write_json(public_dir / "data" / "portfolio_backtests.json", read_json(data_dir / "portfolio_backtests.json"))
-    for name in [
-        "strategy_runs.json",
-        "equity_daily.json",
-        "pool_timeline.json",
-        "candidate_pool_events.json",
-        "current_positions.json",
-        "recent_trades.json",
-        "signals_daily.json",
-        "strategy_heatmap.json",
-        "optuna_trials.json",
-    ]:
+    for name in _QUANT_V3_FILES:
         write_json(public_dir / "data" / "quant_v3" / name, read_json(data_dir / "quant_v3" / name))
     (public_dir / "index.html").write_text(render_index_html(), encoding="utf-8")
     write_json(public_dir / "data" / "site_summary.json", {"reports": len(reports)})
+
+
+def build_web_data(data_dir: Path, output_data_dir: Path) -> dict[str, int]:
+    """Phase 4 — write only the JSON data files the Next.js dashboard consumes,
+    flat into ``output_data_dir`` (no ``/data/`` subfolder, no index.html).
+
+    This lets the GitHub Actions data pipeline (sync.yml) populate
+    ``apps/web/public/data/`` directly so Vercel can drop its inline Python
+    build step. Pre-Phase 4 the only path that produced ``reports.json`` and
+    ``site_summary.json`` was :func:`build_site`, which also wrote the legacy
+    Quarto-style ``index.html`` that conflicts with the Next.js build output.
+    ``build_web_data`` runs the same content pipeline through a scratch
+    directory and re-emits only the data side-effects.
+    """
+    import tempfile
+
+    output_data_dir.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_public = Path(tmp) / "public"
+        reports = build_reports_json(data_dir, tmp_public)
+
+    write_json(output_data_dir / "reports.json", reports)
+    write_json(output_data_dir / "site_summary.json", {"reports": len(reports)})
+    write_json(output_data_dir / "price_metrics.json", read_json(data_dir / "price_metrics.json"))
+    write_json(output_data_dir / "portfolio_backtests.json", read_json(data_dir / "portfolio_backtests.json"))
+
+    quant_out = output_data_dir / "quant_v3"
+    quant_out.mkdir(parents=True, exist_ok=True)
+    for name in _QUANT_V3_FILES:
+        write_json(quant_out / name, read_json(data_dir / "quant_v3" / name))
+
+    # The chart-series tree is a directory full of generated JSON files —
+    # ``build_site`` doesn't recreate it (the per-symbol files come from
+    # the Python warehouse export pipeline directly). For the web data
+    # contract we copy the tree as-is so the dashboard's ``StockChart``
+    # panel keeps loading the right symbol payloads.
+    chart_src = data_dir / "quant_v3" / "chart_series"
+    chart_dst = quant_out / "chart_series"
+    if chart_src.is_dir():
+        shutil.rmtree(chart_dst, ignore_errors=True)
+        shutil.copytree(chart_src, chart_dst)
+
+    return {"reports": len(reports), "quant_v3_files": len(_QUANT_V3_FILES)}

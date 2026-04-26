@@ -1,0 +1,73 @@
+name: budget-check
+# Phase 4 pre-mortem Scenario 4 mitigation — opens (or refreshes) a tracking
+# issue when this repository's GitHub Actions billing usage drops below 20%
+# of the monthly quota, so a runaway pipeline does not silently exhaust the
+# Actions budget mid-month and stop the data refresh. The issue auto-closes
+# at the start of the next billing cycle when usage resets.
+
+on:
+  schedule:
+    - cron: "23 11 * * *" # daily at 11:23 UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inspect Actions billing
+        id: bill
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          payload="$(gh api "/repos/${{ github.repository }}/actions/billing/usage" 2>/dev/null || echo '{}')"
+          minutes_used=$(echo "$payload" | jq -r '.total_minutes_used // 0')
+          minutes_paid=$(echo "$payload" | jq -r '.included_minutes // 2000')
+          if [ "$minutes_paid" = 0 ]; then minutes_paid=2000; fi
+          remaining=$(awk "BEGIN { print $minutes_paid - $minutes_used }")
+          ratio=$(awk "BEGIN { if ($minutes_paid==0) print 0; else printf \"%.4f\", ($minutes_paid - $minutes_used) / $minutes_paid }")
+          echo "used=$minutes_used" >> "$GITHUB_OUTPUT"
+          echo "paid=$minutes_paid" >> "$GITHUB_OUTPUT"
+          echo "remaining=$remaining" >> "$GITHUB_OUTPUT"
+          echo "ratio=$ratio" >> "$GITHUB_OUTPUT"
+          # 20% threshold — open issue when ratio < 0.20.
+          if awk "BEGIN { exit !($ratio < 0.20) }"; then
+            echo "below_threshold=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "below_threshold=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Open or refresh tracking issue
+        if: steps.bill.outputs.below_threshold == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          title="Actions budget below 20% remaining"
+          body=$(printf 'Auto-tracked by .github/workflows/budget-check.yml.\n\n- Used: %s minutes\n- Quota: %s minutes\n- Remaining: %s minutes (%.2f%%)\n\nThis issue auto-resolves when remaining minutes climb back above 20%% (typically at the start of the next billing cycle).' \
+            "${{ steps.bill.outputs.used }}" \
+            "${{ steps.bill.outputs.paid }}" \
+            "${{ steps.bill.outputs.remaining }}" \
+            "$(awk "BEGIN { print ${{ steps.bill.outputs.ratio }} * 100 }")")
+          existing=$(gh issue list --search "$title in:title" --state open --json number,title -q '.[0].number' || echo "")
+          if [ -n "$existing" ] && [ "$existing" != "null" ]; then
+            gh issue edit "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body" --label "automation"
+          fi
+
+      - name: Close tracking issue when budget recovered
+        if: steps.bill.outputs.below_threshold == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing=$(gh issue list --search "Actions budget below 20% remaining in:title" --state open --json number -q '.[0].number' || echo "")
+          if [ -n "$existing" ] && [ "$existing" != "null" ]; then
+            gh issue close "$existing" --comment "Budget recovered — auto-closing."
+          fi

@@ -5,7 +5,9 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: light;
+  color-scheme: light dark; /* Phase 6a — Drop the hard light pin so the
+                               browser can pick the user-system default
+                               before next-themes hydrates. */
   --ink: #1f2933;
   --muted: #667085;
   --line: #d9e2ec;
@@ -16,6 +18,60 @@
   --accent-soft: #eef5ff;
   --gain: #047857;
   --loss: #b42318;
+
+  /* Chart palette — referenced by ChartCard.tsx via getComputedStyle.
+   * ChartCard reads these tokens at mount + on every next-themes theme
+   * change; the chart applies new options in-place rather than being
+   * destroyed/recreated (Phase 6a AC #2). */
+  --chart-bg: #fbfcfd;
+  --chart-grid: #eef2f7;
+  --chart-text: #334155;
+  --chart-border: #d5dee8;
+  --chart-line-up: #047857;
+  --chart-line-down: #b91c1c;
+  --chart-ma-50: #2454a6;
+  --chart-ma-150: #7c3aed;
+  --chart-ma-200: #475569;
+  --chart-area-top: rgba(36, 84, 166, 0.28);
+  --chart-area-bottom: rgba(36, 84, 166, 0.02);
+  --chart-baseline-top-line: #047857;
+  --chart-baseline-top-fill1: rgba(4, 120, 87, 0.18);
+  --chart-baseline-top-fill2: rgba(4, 120, 87, 0.02);
+  --chart-baseline-bottom-line: #b91c1c;
+  --chart-baseline-bottom-fill1: rgba(185, 28, 28, 0.18);
+  --chart-baseline-bottom-fill2: rgba(185, 28, 28, 0.02);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #e2e8f0;
+  --muted: #94a3b8;
+  --line: #1e293b;
+  --soft: #0f172a;
+  --panel: #111827;
+  --paper: #0b1220;
+  --accent: #60a5fa;
+  --accent-soft: rgba(96, 165, 250, 0.14);
+  --gain: #34d399;
+  --loss: #f87171;
+
+  --chart-bg: #0f172a;
+  --chart-grid: #1f2937;
+  --chart-text: #cbd5e1;
+  --chart-border: #1e293b;
+  --chart-line-up: #34d399;
+  --chart-line-down: #f87171;
+  --chart-ma-50: #60a5fa;
+  --chart-ma-150: #a78bfa;
+  --chart-ma-200: #94a3b8;
+  --chart-area-top: rgba(96, 165, 250, 0.32);
+  --chart-area-bottom: rgba(96, 165, 250, 0.04);
+  --chart-baseline-top-line: #34d399;
+  --chart-baseline-top-fill1: rgba(52, 211, 153, 0.22);
+  --chart-baseline-top-fill2: rgba(52, 211, 153, 0.04);
+  --chart-baseline-bottom-line: #f87171;
+  --chart-baseline-bottom-fill1: rgba(248, 113, 113, 0.22);
+  --chart-baseline-bottom-fill2: rgba(248, 113, 113, 0.04);
 }
 
 * {
@@ -648,4 +704,52 @@ th {
   .panel-head {
     display: grid;
   }
+}
+
+/* Phase 4 — pre-mortem Scenario 4 mitigation. Renders only when the
+ * StaleDataBanner component decides the dashboard data is older than the
+ * configured threshold (default 48h). Deliberately high-contrast / loud so a
+ * silent pipeline stop is not missed by a passing reader. */
+.stale-data-banner {
+  margin: 0.75rem 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: #4b1010;
+  color: #ffe6e6;
+  border: 1px solid #c64949;
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.stale-data-banner strong {
+  color: #ffd0d0;
+  font-weight: 700;
+}
+
+/* Phase 6a — theme toggle button. Sits in the topbar, cycles light/dark.
+ * The icon is a single Unicode glyph so the bundle picks up no extra
+ * dependency. Borders inherit the theme tokens so the same selector
+ * looks coherent in both palettes. */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.theme-toggle:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent);
 }

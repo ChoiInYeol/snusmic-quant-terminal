@@ -3,6 +3,8 @@
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { DrawdownChart, EquityChart, StockChart } from '../src/components/ChartCard';
 import { StrategyScatter } from '../src/components/PlotlyPanel';
+import { StaleDataBanner } from '../src/components/StaleDataBanner';
+import { ThemeToggle } from '../src/components/ThemeToggle';
 import {
   bestStrategy,
   fetchJson,
@@ -138,7 +140,10 @@ export default function Page() {
           <a href="#opportunity">가격 기회</a>
           <a href="#reports">리포트</a>
         </nav>
+        <ThemeToggle />
       </header>
+
+      <StaleDataBanner equity={data.equity} />
 
       <section className="content">
         <header className="hero" id="decision">
