@@ -12,6 +12,7 @@ not the SNUSMIC report universe.
 
 from __future__ import annotations
 
+import math
 from datetime import date
 
 from ..brokerage import Account
@@ -46,32 +47,51 @@ def simulate_all_weather(
             summary=build_summary(persona, label, account, [], cashflows, plan.initial_capital_krw),
         )
 
-    target_weights = {asset.symbol: asset.weight for asset in config.assets}
+    target_weights_full = {asset.symbol: asset.weight for asset in config.assets}
     daily_closes = {d: benchmark_board.close_on(d) for d in trading_dates}
+
+    # Drop targets that have NO close anywhere in the window (e.g. dataset
+    # missing one ETF) and renormalize once. This is the only legitimate
+    # reason to deviate from the configured weights — never per-day, since
+    # per-day pruning concentrates the book into whatever subset of markets
+    # happened to be open (e.g. Korea-open + US-closed → 100% KOSPI).
+    seen: set[str] = set()
+    for prices in daily_closes.values():
+        seen.update(prices)
+    target_weights = {sym: w for sym, w in target_weights_full.items() if sym in seen}
+    weight_sum = sum(target_weights.values())
+    if weight_sum > 0 and not math.isclose(weight_sum, 1.0):
+        target_weights = {sym: w / weight_sum for sym, w in target_weights.items()}
+    target_symbols = set(target_weights)
+
     contributions = cumulative_contributions(cashflows, trading_dates)
     rebalance_days = _rebalance_days(trading_dates, config.rebalance)
     equity_points: list = []
+    pending_rebalance = False
 
     for day in trading_dates:
         deposit = cashflow_by_date.get(day, 0.0)
         if deposit > 0:
             account.deposit(day, deposit)
-        if deposit > 0 or day in rebalance_days:
-            prices_today = daily_closes.get(day, {})
-            tradable = {
-                sym: w for sym, w in target_weights.items() if sym in prices_today and prices_today[sym] > 0
-            }
-            if tradable:
-                s = sum(tradable.values())
-                if s > 0:
-                    tradable = {sym: w / s for sym, w in tradable.items()}
-                prices = {**prices_today}
-                for sym, lot in account.holdings.items():
-                    if lot.qty > 0 and sym not in prices:
-                        mid = benchmark_board.asof(day, sym)
-                        if mid is not None:
-                            prices[sym] = mid
-                account.rebalance_to_weights(day, tradable, prices)
+            pending_rebalance = True
+        if day in rebalance_days:
+            pending_rebalance = True
+        prices_today = daily_closes.get(day, {})
+        # Only execute when EVERY surviving target market has a close today.
+        # If a deposit or cadence trigger landed on a partial-market day
+        # (typically a US holiday that is also a Korean trading day), the
+        # rebalance is deferred to the next fully-open trading date — the
+        # cash sits as cash until then. This prevents the historical bug
+        # where the basket flipped to 100% KOSPI on those dates.
+        if pending_rebalance and target_symbols and target_symbols.issubset(prices_today):
+            prices = {**prices_today}
+            for sym, lot in account.holdings.items():
+                if lot.qty > 0 and sym not in prices:
+                    mid = benchmark_board.asof(day, sym)
+                    if mid is not None:
+                        prices[sym] = mid
+            account.rebalance_to_weights(day, target_weights, prices)
+            pending_rebalance = False
         equity_points.append(
             record_equity_point(
                 account,

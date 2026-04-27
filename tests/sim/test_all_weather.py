@@ -94,3 +94,46 @@ def test_all_weather_handles_partial_basket_when_one_symbol_missing():
     bought = {t.symbol for t in out.account.trades if t.side == "buy"}
     assert "GLD" not in bought
     assert {"QQQ", "SPY", "069500.KS"} <= bought
+
+
+def test_all_weather_skips_rebalance_on_us_holiday_korean_trading_day():
+    """Korean trading day + US holiday must NOT cause a 100% KOSPI rebalance.
+
+    Reproduces the historical bug where on dates that the SNUSMIC universe
+    treated as trading days but the US ETFs had no close (e.g. Thanksgiving,
+    July 4), the per-day weight renormalization concentrated the entire book
+    into 069500.KS. The fix defers the rebalance to the next fully-open day.
+    """
+    plan = SavingsPlan(initial_capital_krw=10_000_000, monthly_contribution_krw=0)
+    fees = BrokerageFees(commission_bps=0, sell_tax_bps=0, slippage_bps=0)
+    board = _bench_board()
+    trading_dates = [d.date() for d in board.close.index]
+    # Punch NaN holes into the US ETFs on the FIRST trading day of every
+    # month — that's exactly when the monthly rebalance fires, so without
+    # the fix this is the worst-case "100% KOSPI" trigger.
+    first_of_month: dict[tuple[int, int], pd.Timestamp] = {}
+    for ts in board.close.index:
+        first_of_month.setdefault((ts.year, ts.month), ts)
+    holiday_ts = list(first_of_month.values())
+    for ts in holiday_ts:
+        for sym in ("GLD", "QQQ", "SPY"):
+            board.close.at[ts, sym] = float("nan")
+    cashflows = build_cash_flow_schedule(trading_dates, plan)
+    cfg = AllWeatherConfig()
+    out = simulate_all_weather(cfg, plan, fees, board, cashflows, trading_dates)
+    # Final composition should still hold all four buckets near 25/25/25/25.
+    last_day = trading_dates[-1]
+    prices = board.close_on(last_day)
+    equity = out.account.equity(prices)
+    weights = {
+        sym: lot.qty * prices[sym] / equity
+        for sym, lot in out.account.holdings.items()
+        if lot.qty > 0 and sym in prices
+    }
+    assert len(weights) == 4
+    for w in weights.values():
+        assert 0.15 <= w <= 0.40
+    # No rebalance trade should land on a punched holiday date.
+    holiday_dates = {ts.date() for ts in holiday_ts}
+    rebalance_trade_dates = {t.date for t in out.account.trades}
+    assert rebalance_trade_dates.isdisjoint(holiday_dates)
