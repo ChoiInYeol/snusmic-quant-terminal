@@ -47,6 +47,28 @@ class DailyPrice(BaseModel):
     krw_per_unit: float | None = None
 
 
+class DividendEvent(BaseModel):
+    """Row schema for ``data/warehouse/dividends.csv``.
+
+    One row per (symbol, ex-date) cash dividend event. ``dps_local`` is in
+    the issuer's home currency; ``dps_krw`` is the FX-converted KRW
+    equivalent the simulator credits to held lots after withholding tax.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    semantic_version: ClassVar[str] = "1.0"
+    column_nan_policy: ClassVar[dict[str, str]] = {
+        "dps_krw": "drop",
+    }
+
+    date: str
+    symbol: str
+    dps_local: float
+    source_currency: str | None = None
+    dps_krw: float | None = None
+
+
 class ReportRow(BaseModel):
     """Row schema for ``data/warehouse/reports.csv``."""
 
@@ -86,6 +108,7 @@ class ReportRow(BaseModel):
 # Registry consumed by warehouse.write_table / read_table + scripts/export_schemas.py.
 TABLE_MODELS: dict[str, type[BaseModel]] = {
     "daily_prices": DailyPrice,
+    "dividends": DividendEvent,
     "reports": ReportRow,
 }
 
@@ -98,6 +121,11 @@ TABLE_DTYPES: dict[str, dict[str, str]] = {
         "symbol": "str",
         "source_currency": "str",
         "display_currency": "str",
+    },
+    "dividends": {
+        "date": "str",
+        "symbol": "str",
+        "source_currency": "str",
     },
     "reports": {
         "report_id": "str",

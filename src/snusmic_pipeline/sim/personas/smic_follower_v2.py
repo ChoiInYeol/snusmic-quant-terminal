@@ -25,7 +25,7 @@ from ..brokerage import Account
 from ..contracts import BrokerageFees, SavingsPlan, SmicFollowerV2Config
 from ..market import PriceBoard
 from ..savings import CashFlowEvent
-from .base import PersonaRunOutput
+from .base import DividendIndex, PersonaRunOutput
 from .smic_follower import FollowerState, _simulate_follower
 
 
@@ -37,6 +37,8 @@ def simulate_smic_follower_v2(
     reports: pd.DataFrame,
     cashflows: list[CashFlowEvent],
     trading_dates: list[date],
+    *,
+    dividends_by_date: DividendIndex | None = None,
 ) -> PersonaRunOutput:
     def stop_loss_hook(
         account: Account,
@@ -92,4 +94,5 @@ def simulate_smic_follower_v2(
         cashflows=cashflows,
         trading_dates=trading_dates,
         stop_loss_hook=stop_loss_hook,
+        dividends_by_date=dividends_by_date,
     )

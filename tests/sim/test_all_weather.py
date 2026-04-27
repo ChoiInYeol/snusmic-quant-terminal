@@ -137,3 +137,37 @@ def test_all_weather_skips_rebalance_on_us_holiday_korean_trading_day():
     holiday_dates = {ts.date() for ts in holiday_ts}
     rebalance_trade_dates = {t.date for t in out.account.trades}
     assert rebalance_trade_dates.isdisjoint(holiday_dates)
+
+
+def test_all_weather_dividends_credit_cash_and_lift_final_equity():
+    """A dividend overlay on QQQ should credit cash net-of-withholding and
+    lift final equity vs. the same simulation with no overlay."""
+    plan = SavingsPlan(initial_capital_krw=10_000_000, monthly_contribution_krw=0)
+    fees = BrokerageFees(commission_bps=0, sell_tax_bps=0, slippage_bps=0, dividend_withholding_bps=1500.0)
+    board = _bench_board()
+    trading_dates = [d.date() for d in board.close.index]
+    cashflows = build_cash_flow_schedule(trading_dates, plan)
+    cfg = AllWeatherConfig()
+
+    base = simulate_all_weather(cfg, plan, fees, board, cashflows, trading_dates)
+
+    # Synthetic quarterly dividend: 5,000 KRW per QQQ share on 4 ex-dates.
+    div_dates = [trading_dates[i] for i in (60, 120, 180, 240) if i < len(trading_dates)]
+    dividends = {d: [("QQQ", 5_000.0)] for d in div_dates}
+    with_div = simulate_all_weather(
+        cfg, plan, fees, board, cashflows, trading_dates, dividends_by_date=dividends
+    )
+
+    div_trades = [t for t in with_div.account.trades if t.side == "dividend"]
+    assert len(div_trades) == len(div_dates)
+    # Each trade should record gross = qty * 5_000 and 15% withholding.
+    for trade in div_trades:
+        assert trade.symbol == "QQQ"
+        assert trade.fill_price_krw == 5_000.0
+        assert trade.tax_krw == trade.gross_krw * 0.15
+
+    # The dividend credits should propagate to higher final equity. We don't
+    # assert against realized_pnl directly because subsequent rebalance fills
+    # can realise small capital losses on the integer-share book that mute
+    # the dividend's contribution to that specific accumulator.
+    assert with_div.summary.final_equity_krw > base.summary.final_equity_krw

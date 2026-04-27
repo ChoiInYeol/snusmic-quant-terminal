@@ -29,7 +29,7 @@ from .holdings import (
     compute_position_episodes,
     compute_symbol_stats,
 )
-from .market import PriceBoard, load_benchmark_prices
+from .market import PriceBoard, load_benchmark_dividends, load_benchmark_prices
 from .personas import (
     PersonaRunOutput,
     simulate_all_weather,
@@ -38,6 +38,7 @@ from .personas import (
     simulate_smic_follower_v2,
     simulate_weak_prophet,
 )
+from .personas.base import DividendIndex
 from .report_stats import aggregate_report_stats, compute_report_performance
 from .savings import build_cash_flow_schedule
 from .warehouse import read_table
@@ -65,6 +66,7 @@ def run_simulation(
     reports = _prepare_reports(reports, config.start_date, config.end_date)
 
     benchmark_board: PriceBoard | None = None
+    benchmark_dividends_df: pd.DataFrame | None = None
     if any(isinstance(p, AllWeatherConfig) for p in config.personas):
         symbols_needed: set[str] = set()
         for p in config.personas:
@@ -77,10 +79,32 @@ def run_simulation(
             config.end_date,
             refresh=refresh_benchmark,
         )
+        benchmark_dividends_df = load_benchmark_dividends(
+            warehouse_dir,
+            symbols_needed,
+            config.start_date,
+            config.end_date,
+            refresh=refresh_benchmark,
+        )
+
+    snusmic_dividends = _build_dividend_index(read_table(warehouse_dir, "dividends"))
+    benchmark_dividends = _build_dividend_index(benchmark_dividends_df)
 
     outputs: list[PersonaRunOutput] = []
     for persona in config.personas:
-        outputs.append(_dispatch(persona, config, board, benchmark_board, reports, cashflows, trading_dates))
+        outputs.append(
+            _dispatch(
+                persona,
+                config,
+                board,
+                benchmark_board,
+                reports,
+                cashflows,
+                trading_dates,
+                snusmic_dividends,
+                benchmark_dividends,
+            )
+        )
 
     summaries = tuple(o.summary for o in outputs)
     equity_points = tuple(p for o in outputs for p in o.equity_points)
@@ -170,30 +194,58 @@ def _dispatch(
     reports: pd.DataFrame,
     cashflows,
     trading_dates: list[date],
+    snusmic_dividends: DividendIndex,
+    benchmark_dividends: DividendIndex,
 ) -> PersonaRunOutput:
     if isinstance(persona, ProphetConfig):
         return simulate_prophet(
-            persona, config.savings_plan, config.fees, board, reports, cashflows, trading_dates
+            persona, config.savings_plan, config.fees, board, reports, cashflows, trading_dates,
+            dividends_by_date=snusmic_dividends,
         )
     if isinstance(persona, WeakProphetConfig):
         return simulate_weak_prophet(
-            persona, config.savings_plan, config.fees, board, reports, cashflows, trading_dates
+            persona, config.savings_plan, config.fees, board, reports, cashflows, trading_dates,
+            dividends_by_date=snusmic_dividends,
         )
     if isinstance(persona, SmicFollowerConfig):
         return simulate_smic_follower(
-            persona, config.savings_plan, config.fees, board, reports, cashflows, trading_dates
+            persona, config.savings_plan, config.fees, board, reports, cashflows, trading_dates,
+            dividends_by_date=snusmic_dividends,
         )
     if isinstance(persona, SmicFollowerV2Config):
         return simulate_smic_follower_v2(
-            persona, config.savings_plan, config.fees, board, reports, cashflows, trading_dates
+            persona, config.savings_plan, config.fees, board, reports, cashflows, trading_dates,
+            dividends_by_date=snusmic_dividends,
         )
     if isinstance(persona, AllWeatherConfig):
         if benchmark_board is None or benchmark_board.is_empty:
             raise RuntimeError("All-Weather persona requested but benchmark prices unavailable.")
         return simulate_all_weather(
-            persona, config.savings_plan, config.fees, benchmark_board, cashflows, trading_dates
+            persona, config.savings_plan, config.fees, benchmark_board, cashflows, trading_dates,
+            dividends_by_date=benchmark_dividends,
         )
     raise TypeError(f"unknown persona config: {type(persona).__name__}")
+
+
+def _build_dividend_index(df: pd.DataFrame | None) -> DividendIndex:
+    """Pivot the warehouse dividend table into ``ex_date → [(symbol, dps_krw)]``.
+
+    Returns an empty dict (not ``None``) when the dataframe is missing or
+    empty, so the persona helper's no-op path stays cheap and the runner
+    can pass the result unconditionally.
+    """
+    if df is None or df.empty or "dps_krw" not in df.columns:
+        return {}
+    out: DividendIndex = {}
+    sub = df.dropna(subset=["dps_krw"])
+    sub = sub[sub["dps_krw"] > 0]
+    for record in sub.to_dict("records"):
+        try:
+            ex_date = pd.to_datetime(record["date"]).date()
+        except (TypeError, ValueError):
+            continue
+        out.setdefault(ex_date, []).append((str(record["symbol"]), float(record["dps_krw"])))
+    return out
 
 
 def _prepare_reports(reports: pd.DataFrame, start: date, end: date) -> pd.DataFrame:

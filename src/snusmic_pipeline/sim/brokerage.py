@@ -209,6 +209,53 @@ class Account:
         return self.sell_qty(when, symbol, mid_price_krw, lot.qty, reason, report_id)
 
     # ------------------------------------------------------------------
+    # Cash dividends.
+    # ------------------------------------------------------------------
+
+    def credit_dividend(self, when: date, symbol: str, dps_gross_krw: float) -> float:
+        """Apply ex-dividend cash credit for currently-held shares of ``symbol``.
+
+        ``dps_gross_krw`` is the gross per-share dividend in KRW. The held
+        share count × dps_gross is computed, then withholding tax (per
+        ``self.fees.dividend_withholding_bps``) is netted off and the
+        remainder credited to ``cash_krw``. The event is recorded in
+        ``self.trades`` as a zero-quantity ``side="dividend"`` row so the
+        trade ledger remains the single source of truth for cash flow.
+
+        Returns the net KRW credited (0 if not held or dps ≤ 0).
+        """
+        lot = self.holdings.get(symbol)
+        if lot is None or lot.qty <= 0 or dps_gross_krw <= 0:
+            return 0.0
+        gross = lot.qty * dps_gross_krw
+        tax = gross * (self.fees.dividend_withholding_bps / 10_000.0)
+        net = gross - tax
+        if net <= 0:
+            return 0.0
+        self.cash_krw += net
+        # Treat dividends as realised PnL — the cash is locked in regardless
+        # of what happens to the share price afterwards.
+        self.realized_pnl_krw += net
+        lot.realized_pnl_krw += net
+        self.trades.append(
+            Trade(
+                persona=self.persona,
+                date=when,
+                symbol=symbol,
+                side="dividend",
+                qty=lot.qty,
+                fill_price_krw=dps_gross_krw,
+                gross_krw=gross,
+                commission_krw=0.0,
+                tax_krw=tax,
+                cash_after_krw=self.cash_krw,
+                reason="dividend_cash",
+                report_id=None,
+            )
+        )
+        return net
+
+    # ------------------------------------------------------------------
     # Composite operations.
     # ------------------------------------------------------------------
 

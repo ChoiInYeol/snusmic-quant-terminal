@@ -103,3 +103,35 @@ def test_open_position_count_excludes_closed_lots():
     acc.sell_all(date(2024, 6, 1), "A", 200_000, "target_hit")
     assert acc.open_position_count() == 0
     assert isinstance(acc.holdings["A"], Lot)
+
+
+def test_credit_dividend_applies_withholding_and_records_trade():
+    """Dividend credits the cash balance net of withholding and logs a
+    zero-trade entry so the trade ledger remains the source of truth."""
+    acc = Account(
+        persona="t",
+        fees=BrokerageFees(
+            commission_bps=0, sell_tax_bps=0, slippage_bps=0, dividend_withholding_bps=1500.0
+        ),
+    )
+    acc.deposit(date(2024, 1, 1), 1_000_000)
+    acc.buy_value(date(2024, 1, 1), "A", 100_000, 1_000_000, "deposit_buy")
+    cash_before = acc.cash_krw
+    # 10 shares × 1,000 KRW dividend × (1 - 0.15 withholding) = 8,500 net.
+    net = acc.credit_dividend(date(2024, 3, 1), "A", 1_000.0)
+    assert net == 8_500.0
+    assert acc.cash_krw == cash_before + 8_500.0
+    assert acc.realized_pnl_krw == 8_500.0
+    assert acc.holdings["A"].realized_pnl_krw == 8_500.0
+    div_trade = next(t for t in acc.trades if t.side == "dividend")
+    assert div_trade.gross_krw == 10_000.0
+    assert div_trade.tax_krw == 1_500.0
+    assert div_trade.commission_krw == 0.0
+    assert div_trade.reason == "dividend_cash"
+
+
+def test_credit_dividend_no_op_when_not_held():
+    acc = _zero_fee_account()
+    assert acc.credit_dividend(date(2024, 3, 1), "Z", 1_000.0) == 0.0
+    assert acc.cash_krw == 0.0
+    assert not [t for t in acc.trades if t.side == "dividend"]
