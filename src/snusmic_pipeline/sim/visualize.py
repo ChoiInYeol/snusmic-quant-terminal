@@ -22,6 +22,7 @@ import matplotlib
 matplotlib.use("Agg")  # always headless; CI and CLI use the same backend.
 
 import matplotlib.pyplot as plt  # noqa: E402
+import matplotlib.ticker as mticker  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from .contracts import SimulationResult  # noqa: E402
@@ -35,26 +36,43 @@ PERSONA_COLORS = {
 }
 
 
+def _multiplier_to_pct_label(value: float, _pos: int) -> str:
+    """Format a wealth multiplier (1.0 = breakeven) as a signed percent return."""
+    if value <= 0:
+        return ""
+    pct = (value - 1.0) * 100.0
+    if pct == 0:
+        return "+0%"
+    if abs(pct) >= 1000:
+        return f"+{pct:,.0f}%" if pct > 0 else f"{pct:,.0f}%"
+    return f"+{pct:.0f}%" if pct > 0 else f"{pct:.0f}%"
+
+
 def plot_equity_curves(result: SimulationResult, out_path: Path) -> Path:
-    """Equity-curve overlay; one subplot, one line per persona."""
+    """Cumulative return (% vs cumulative deposits) over time, log Y.
+
+    The plotted quantity is ``equity / cumulative_contributions`` — i.e. the
+    wealth multiplier on every won the user has deposited up to that date,
+    which is what a brokerage app shows as "your account is up X%". Log Y
+    so a constant compound growth rate reads as a straight line and
+    Prophet's 184× outcome doesn't crush mid-tier personas visually.
+    """
     if not result.equity_points:
         raise ValueError("SimulationResult has no equity points to plot.")
     by_persona: dict[str, list[tuple[date, float]]] = defaultdict(list)
-    contributions: list[tuple[date, float]] = []
-    contribution_seen: set[date] = set()
     for ep in result.equity_points:
-        by_persona[ep.persona].append((ep.date, ep.equity_krw))
-        if ep.date not in contribution_seen:
-            contributions.append((ep.date, ep.contributed_capital_krw))
-            contribution_seen.add(ep.date)
-    contributions.sort(key=lambda x: x[0])
+        if ep.contributed_capital_krw > 0:
+            mult = ep.equity_krw / ep.contributed_capital_krw
+        else:
+            mult = 1.0
+        by_persona[ep.persona].append((ep.date, mult))
 
     fig, ax = plt.subplots(figsize=(12, 6))
     persona_labels = {s.persona: s.label for s in result.summaries}
     for persona, points in by_persona.items():
         points.sort(key=lambda x: x[0])
         xs = [p[0] for p in points]
-        ys = [p[1] / 1e6 for p in points]  # KRW → M KRW
+        ys = [p[1] for p in points]
         ax.plot(
             xs,
             ys,
@@ -62,15 +80,19 @@ def plot_equity_curves(result: SimulationResult, out_path: Path) -> Path:
             color=PERSONA_COLORS.get(persona),
             linewidth=1.6,
         )
-    if contributions:
-        cx = [c[0] for c in contributions]
-        cy = [c[1] / 1e6 for c in contributions]
-        ax.plot(cx, cy, label="Cumulative deposits", color="black", linestyle="--", linewidth=1.0)
+    ax.axhline(1.0, color="black", linestyle="--", linewidth=0.9, alpha=0.6, label="Breakeven (+0%)")
 
     ax.set_yscale("log")
-    ax.set_title("Persona equity curves (log scale, M KRW)")
+    # Decades plus 2× and 5× intermediates so mid-tier personas (+30%, +100%,
+    # +400%) get readable tick labels instead of disappearing into the gap
+    # between +0% and +900%.
+    ax.yaxis.set_major_locator(mticker.LogLocator(base=10.0, subs=(1.0, 2.0, 5.0), numticks=12))
+    ax.yaxis.set_minor_locator(mticker.LogLocator(base=10.0, subs=(3.0, 4.0, 6.0, 7.0, 8.0, 9.0), numticks=12))
+    ax.yaxis.set_major_formatter(mticker.FuncFormatter(_multiplier_to_pct_label))
+    ax.yaxis.set_minor_formatter(mticker.NullFormatter())
+    ax.set_title("Persona cumulative return — equity ÷ cumulative deposits (log scale)")
     ax.set_xlabel("Date")
-    ax.set_ylabel("Equity (M KRW, log)")
+    ax.set_ylabel("Cumulative return")
     ax.grid(True, which="both", alpha=0.3)
     ax.legend(loc="upper left", fontsize=9)
     fig.autofmt_xdate()
@@ -82,28 +104,42 @@ def plot_equity_curves(result: SimulationResult, out_path: Path) -> Path:
 
 
 def plot_net_profit_bars(result: SimulationResult, out_path: Path) -> Path:
-    """Bar chart of final net profit per persona (sorted ascending)."""
+    """Bar chart of final total return (%) per persona (sorted ascending).
+
+    Total return is ``net_profit / total_contributed`` — i.e. "for every
+    won deposited, how many won did the persona end up with on top".
+    Comparable across personas and immune to the absolute scale of the
+    savings plan.
+    """
     if not result.summaries:
         raise ValueError("SimulationResult has no summaries to plot.")
-    summaries = sorted(result.summaries, key=lambda s: s.net_profit_krw)
+
+    def total_return_pct(s) -> float:
+        if s.total_contributed_krw <= 0:
+            return 0.0
+        return (s.net_profit_krw / s.total_contributed_krw) * 100.0
+
+    summaries = sorted(result.summaries, key=total_return_pct)
     labels = [s.label for s in summaries]
-    values = [s.net_profit_krw / 1e6 for s in summaries]
+    values = [total_return_pct(s) for s in summaries]
     colors = [PERSONA_COLORS.get(s.persona, "#6b7280") for s in summaries]
 
     fig, ax = plt.subplots(figsize=(10, 5.5))
     bars = ax.barh(labels, values, color=colors)
     for bar, value in zip(bars, values, strict=True):
+        sign = "+" if value >= 0 else ""
         ax.text(
             bar.get_width(),
             bar.get_y() + bar.get_height() / 2,
-            f" {value:,.1f}M",
+            f" {sign}{value:,.1f}%",
             va="center",
             ha="left" if value >= 0 else "right",
             fontsize=9,
         )
     ax.axvline(0, color="black", linewidth=0.6)
-    ax.set_title("Persona net profit (M KRW) — final equity − total contributed")
-    ax.set_xlabel("Net Profit (M KRW)")
+    ax.set_title("Persona total return (%) — net profit ÷ total contributed")
+    ax.set_xlabel("Total Return (%)")
+    ax.xaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _p: f"{v:,.0f}%"))
     ax.grid(True, axis="x", alpha=0.3)
     fig.tight_layout()
     out_path.parent.mkdir(parents=True, exist_ok=True)

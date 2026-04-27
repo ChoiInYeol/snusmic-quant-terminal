@@ -126,7 +126,7 @@
 
 > 모든 평가금/순이익은 **share-based** 회계 — 정수 주식 + 가중평균원가 + 매수 0.015% 수수료 + 매도 0.18% 거래세 + 0.05% 슬리피지가 모든 체결에 적용된 결과입니다. 증권사 앱에서 보는 숫자와 같은 의미를 갖습니다.
 >
-> equity curve는 **로그 Y 축** — 직선의 기울기가 곧 CAGR이고, 5년 동안 100→1,000 (10x) 과 1,000→10,000 (10x)이 같은 시각적 거리로 보입니다. 마크-투-마켓은 종목 close가 결측되는 휴장/거래정지일에도 직전 close를 forward-fill (`board.asof`) 해서, 기존에 있던 가짜 −30% 스파이크를 제거했습니다.
+> equity curve / net profit 차트는 **% 수익률 기준** — 누적 적립금 대비 평가금 비율 (`equity / cumulative_deposits − 1`) 입니다. 같은 1억을 적립한 가상의 투자자 5명을 비교한다는 의미. equity curve의 Y축은 **로그 스케일** (눈금 라벨은 `+0% / +100% / +1,000% / +10,000%` 형태)이라 직선의 기울기가 곧 CAGR이고 Prophet의 184× outcome 이 mid-tier 페르소나의 +30~+150% 영역을 가리지 않습니다. 마크-투-마켓은 종목 close가 결측되는 휴장/거래정지일에도 직전 close를 forward-fill (`board.asof`) 해서, 기존에 있던 가짜 −30% 스파이크를 제거했습니다.
 
 핵심 관찰:
 
@@ -440,8 +440,8 @@ def test_prophet_concentrates_on_realised_winner(...):
 │       ├── summary.csv                    #     페르소나별 종합 통계
 │       ├── equity_daily.csv               #     일별 mark-to-market
 │       ├── trades.csv                     #     매수/매도 원장
-│       ├── equity_curves.png              #     5개 페르소나 equity overlay
-│       ├── net_profit_bar.png             #     순이익 막대 차트
+│       ├── equity_curves.png              #     5개 페르소나 % 수익률 overlay (log Y)
+│       ├── net_profit_bar.png             #     총 수익률 막대 차트 (%)
 │       └── drawdowns.png                  #     낙폭 곡선
 │
 ├── docs/
@@ -728,8 +728,8 @@ smic_follower_v2,2024-09-02,A.KS,sell,12,55310.0,663720.0,99.56,1194.70,...,stop
 
 ### 9-7. PNG 시각화
 
-- `equity_curves.png` (1680×840): 5개 페르소나 + 누적 적립금 점선 overlay (log Y)
-- `net_profit_bar.png` (1400×770): 순이익 막대
+- `equity_curves.png` (1680×840): 5개 페르소나 누적 수익률 (`equity / cumulative_deposits − 1`) overlay, log Y, breakeven(+0%) 점선 표시
+- `net_profit_bar.png` (1400×770): 총 수익률 (`net_profit / total_contributed`) 막대, 정렬됨
 - `drawdowns.png` (1680×700): 낙폭 곡선
 - `portfolio_composition.png` (≈1820×2100): 페르소나별 시점별 보유 비중 stacked area
 
