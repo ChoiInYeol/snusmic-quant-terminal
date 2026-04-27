@@ -16,7 +16,6 @@ dependencies = [
   "numpy",
   "scipy",
   "duckdb",
-  "optuna",
   "pydantic>=2.6",
   "matplotlib>=3.7",
 ]
@@ -60,24 +59,30 @@ ignore = ["E501", "B008", "SIM108"]
 
 [tool.mypy]
 python_version = "3.11"
-files = ["src/snusmic_pipeline/backtest"]
+files = ["src/snusmic_pipeline/sim"]
 ignore_missing_imports = true
 warn_unused_ignores = false
-# Strict typing is staged: Phase 1a lands the type-checker with baseline rules
-# that pass on existing pandas-heavy code. Phase 2+ progressively enables
-# `disallow_untyped_defs`, `disallow_any_generics`, and finally `strict = true`
-# as the backtest module is refactored with explicit type annotations.
+# Baseline rules that pass on the persona-simulation module.
 check_untyped_defs = true
 warn_return_any = false
 warn_unused_configs = true
 
 [[tool.mypy.overrides]]
-module = ["yfinance.*", "optuna.*", "duckdb.*"]
+module = ["yfinance.*", "duckdb.*"]
 ignore_missing_imports = true
 
-# Pandas-stubs is installed but many warehouse/engine call sites mix Series /
-# DataFrame in ways the stubs narrow imprecisely. Until Phase 3 vectorizes the
-# engine, allow those callsites to keep Any-typed intermediates.
+# Pandas-stubs / matplotlib stubs are installed but the sim mixes Series /
+# DataFrame in ways the stubs narrow imprecisely, and the personas module
+# relies on optional-keyed sort/dict comprehensions that the stricter sort
+# protocol rejects. Allow these call-sites to keep Any-typed intermediates
+# without forcing a typed-coercion refactor inside this scope.
 [[tool.mypy.overrides]]
-module = ["snusmic_pipeline.backtest.engine", "snusmic_pipeline.backtest.warehouse"]
-disable_error_code = ["arg-type", "assignment", "return-value", "dict-item", "call-overload", "type-arg"]
+module = [
+    "snusmic_pipeline.sim.warehouse",
+    "snusmic_pipeline.sim.market",
+    "snusmic_pipeline.sim.holdings",
+    "snusmic_pipeline.sim.report_stats",
+    "snusmic_pipeline.sim.runner",
+    "snusmic_pipeline.sim.visualize",
+]
+disable_error_code = ["arg-type", "assignment", "return-value", "dict-item", "call-overload", "type-arg", "misc", "union-attr"]

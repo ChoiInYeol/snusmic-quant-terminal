@@ -122,13 +122,12 @@ jobs:
         run: |
           uv run python -m snusmic_pipeline build-warehouse
           uv run python -m snusmic_pipeline refresh-prices
-          uv run python -m snusmic_pipeline run-backtest
 
       - name: Commit data updates
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/manifest.json data/extracted_reports.csv data/price_metrics.json data/portfolio_backtests.json data/pdfs data/markdown data/warehouse data/quant_v3
+          git add data/manifest.json data/extracted_reports.csv data/pdfs data/markdown data/warehouse
           if git diff --cached --quiet; then
             echo "No data changes to commit"
           else

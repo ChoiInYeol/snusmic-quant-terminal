@@ -29,8 +29,8 @@ jobs:
         with:
           enable-cache: true
       - run: uv sync --group dev
-      - name: mypy (backtest only)
-        run: uv run mypy src/snusmic_pipeline/backtest
+      - name: mypy (sim only)
+        run: uv run mypy src/snusmic_pipeline/sim
 
   test:
     runs-on: ubuntu-latest

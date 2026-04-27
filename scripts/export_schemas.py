@@ -26,8 +26,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from snusmic_pipeline.artifact_schemas import ARTIFACT_MODELS
-from snusmic_pipeline.backtest.schemas import TABLE_MODELS
+from snusmic_pipeline.sim.schemas import TABLE_MODELS
 
 SCHEMAS_DIR = Path(__file__).resolve().parent.parent / "docs" / "schemas"
 
@@ -55,8 +54,7 @@ def emit_all() -> dict[str, str]:
     """Return a ``{path: serialized_json}`` mapping for every schema model."""
     SCHEMAS_DIR.mkdir(parents=True, exist_ok=True)
     payloads: dict[str, str] = {}
-    schema_models = {**TABLE_MODELS, **ARTIFACT_MODELS}
-    for name, model in sorted(schema_models.items()):
+    for name, model in sorted(TABLE_MODELS.items()):
         schema = build_schema(name, model)
         target = SCHEMAS_DIR / f"{name}.schema.json"
         payloads[str(target)] = json.dumps(schema, indent=2, sort_keys=False) + "\n"

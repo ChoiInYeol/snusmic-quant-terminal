@@ -12,7 +12,6 @@ from pathlib import Path
 
 import pandas as pd
 
-from ..backtest.warehouse import read_table
 from .contracts import (
     AllWeatherConfig,
     MonthlyHolding,
@@ -41,6 +40,7 @@ from .personas import (
 )
 from .report_stats import aggregate_report_stats, compute_report_performance
 from .savings import build_cash_flow_schedule
+from .warehouse import read_table
 
 
 def run_simulation(

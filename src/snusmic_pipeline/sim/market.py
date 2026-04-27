@@ -22,13 +22,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from ..backtest.warehouse import (
+from ..currency import download_fx_rates
+from .warehouse import (
     apply_daily_price_krw_conversion,
     download_history,
     read_table,
     write_table,
 )
-from ..currency import download_fx_rates
 
 # ---------------------------------------------------------------------------
 # PriceBoard — fast lookups for the SNUSMIC report universe.

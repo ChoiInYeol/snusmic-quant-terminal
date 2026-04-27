@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from snusmic_pipeline.backtest.warehouse import infer_yfinance_symbol, read_table, write_table
+from snusmic_pipeline.sim.warehouse import infer_yfinance_symbol, read_table, write_table
 
 
 def _report_with_numeric_looking_ticker() -> pd.DataFrame:

@@ -138,16 +138,11 @@ data/warehouse/reports.csv       (목표가도 모두 KRW 환산)
 
 이 데이터 자체가 한국어 리서치 PDF에서 정량 데이터를 끌어내는 **재현 가능한 추출 컨트랙트**의 산출물입니다. 추출 품질은 `data/extraction_quality.json` 으로 추적됩니다.
 
-### 2-2. 두 종류의 시뮬레이션 모듈
+### 2-2. 시뮬레이션 모듈
 
-저장소에는 의도적으로 분리된 두 개의 시뮬레이션 모듈이 있습니다:
-
-| 모듈 | 목적 | 회계 방식 |
-|---|---|---|
-| `snusmic_pipeline.backtest` | **전략 최적화** — Optuna 그리드 탐색, 다양한 weighting 비교, walk-forward sortino OOS-tail | Weight-based (포지션 = float, 합 = 1.0) |
-| `snusmic_pipeline.sim` | **페르소나 비교** — 사용자가 실제 1억 굴렸을 때 얼마인지 | **Share-based** (정수 주식, 현금 원장, 수수료/세금 차감) |
-
-이 README는 주로 `sim` 모듈에 대한 설명입니다. 두 모듈은 같은 `data/warehouse/` 데이터를 공유합니다.
+`snusmic_pipeline.sim` 이 이 저장소의 유일한 시뮬레이션 표면입니다 — share-based
+증권 원장(정수 주식, 현금 원장, 수수료/세금 차감)으로 5개 페르소나를 동일한
+`data/warehouse/` CSV 위에서 굴립니다.
 
 ---
 
@@ -357,7 +352,7 @@ class SavingsPlan(_FrozenModel):
 데이터 보관 형식은 **두 단계**로 검증됩니다:
 
 1. **In-process**: 모든 in-memory 객체는 frozen Pydantic 모델 — 잘못된 dict가 함수 인자로 들어가면 즉시 `ValidationError`.
-2. **On-disk**: `src/snusmic_pipeline/backtest/schemas.py` 의 `TABLE_MODELS` registry로 CSV 읽기/쓰기 양쪽에서 행 단위 검증. 미상의 컬럼이 보이면 즉시 fail.
+2. **On-disk**: `src/snusmic_pipeline/sim/schemas.py` 의 `TABLE_MODELS` registry로 CSV 읽기/쓰기 양쪽에서 행 단위 검증. 미상의 컬럼이 보이면 즉시 fail.
 
 스키마 호환성 보장:
 
@@ -414,23 +409,14 @@ def test_prophet_concentrates_on_realised_winner(...):
 ├── data/
 │   ├── extracted_reports.csv              # PDF 추출 원천
 │   ├── extraction_quality.json            # 추출 품질 메트릭
-│   ├── price_metrics.json                 # 리포트별 가격/목표가 메트릭
 │   ├── manifest.json                      # PDF 다운로드 manifest
 │   ├── pdfs/                              # 218개 PDF (gitignored 가능)
 │   ├── markdown/                          # PDF → MD 변환 결과
-│   ├── warehouse/                         # ── 정규화된 v3 warehouse ──
+│   ├── warehouse/                         # ── 정규화된 sim warehouse ──
 │   │   ├── reports.csv                    #     리포트 + KRW 환산 목표가
 │   │   ├── daily_prices.csv               #     KRW 환산 OHLCV (전 종목)
 │   │   ├── fx_rates.csv                   #     일별 환율
-│   │   ├── benchmark_prices.csv           #     올웨더 ETF KRW 환산 캐시
-│   │   ├── signals_daily.csv              #     MTT 시그널 (백테스트용)
-│   │   ├── candidate_pool_events.csv      #     리포트 풀 이벤트
-│   │   ├── execution_events.csv           #     백테스트 체결 원장
-│   │   ├── positions_daily.csv            #     백테스트 일별 포지션
-│   │   ├── equity_daily.csv               #     백테스트 일별 지분곡선
-│   │   ├── strategy_runs.csv              #     백테스트 런 요약
-│   │   └── snusmic.duckdb                 #     모든 CSV의 DuckDB 미러
-│   ├── quant_v3/                          # JSON 미러 (서버 분석용)
+│   │   └── benchmark_prices.csv           #     올웨더 ETF KRW 환산 캐시
 │   └── sim/                               # ── 페르소나 시뮬 산출물 ──
 │       ├── personas.json                  #     SimulationResult 전체
 │       ├── summary.csv                    #     페르소나별 종합 통계
@@ -442,10 +428,8 @@ def test_prophet_concentrates_on_realised_winner(...):
 │
 ├── docs/
 │   ├── decisions/
-│   │   ├── persona-simulation.md          # 페르소나 시뮬 설계 결정
-│   │   ├── strategy-baselines.md          # 백테스트 baseline 컨트랙트
-│   │   └── phase-2-objective.md           # OOS sortino objective 결정
-│   └── schemas/                           # 공개 데이터 JSON 스키마
+│   │   └── persona-simulation.md          # 페르소나 시뮬 설계 결정
+│   └── schemas/                           # 공개 데이터 JSON 스키마 (daily_prices, reports)
 │
 ├── scripts/
 │   ├── run_persona_sim.py                 # 페르소나 시뮬 CLI
@@ -464,23 +448,18 @@ def test_prophet_concentrates_on_realised_winner(...):
 │   ├── fetch_index.py                     # SMIC 사이트 인덱스 fetch
 │   ├── opendataloader_fallback.py         # OCR 폴백
 │   ├── models.py                          # 메타 모델
-│   ├── artifact_schemas.py                # 공통 artifact 스키마
-│   ├── quant.py                           # legacy 백테스트 (단일 파일)
 │   │
-│   ├── backtest/                          # ── v3 walk-forward 엔진 ──
-│   │   ├── schemas.py                     #     Pydantic 모델 + TABLE_MODELS
-│   │   ├── warehouse.py                   #     read_table/write_table + Optuna
-│   │   ├── engine.py                      #     event-driven backtest 엔진
-│   │   ├── signals.py                     #     MTT 시그널
-│   │   └── optimizers.py                  #     weighting 메소드들
-│   │
-│   └── sim/                               # ── 페르소나 시뮬레이션 (NEW) ──
+│   └── sim/                               # ── 페르소나 시뮬레이션 (canonical) ──
 │       ├── contracts.py                   #     SSOT pydantic 모델 전체
+│       ├── schemas.py                     #     warehouse 행 스키마 + TABLE_MODELS
+│       ├── warehouse.py                   #     read_table/write_table + FX/yfinance IO
 │       ├── savings.py                     #     적립금 스케줄 (에스컬레이션)
 │       ├── brokerage.py                   #     share-based 증권 원장
 │       ├── market.py                      #     PriceBoard + 올웨더 ETF 로더
 │       ├── runner.py                      #     SimulationConfig 디스패치
-│       ├── visualize.py                   #     matplotlib 3종 차트
+│       ├── report_stats.py                #     리포트 풀 통계
+│       ├── holdings.py                    #     포지션/현재 보유 집계
+│       ├── visualize.py                   #     matplotlib 차트
 │       └── personas/
 │           ├── base.py                    #     공통 헬퍼 (IRR, MDD, snapshot)
 │           ├── prophet.py                 #     Prophet
@@ -514,24 +493,20 @@ uv sync --group dev
 
 `uv` 가 없으면 `pip install uv` 한 번 실행. Python 3.11 이상.
 
-### 8-2. 데이터 파이프라인 (PDF → warehouse)
+### 8-2. 데이터 파이프라인 (PDF → warehouse → 시뮬)
 
-PDF 다운로드부터 KRW 가격 warehouse 빌드까지:
+PDF 다운로드부터 페르소나 시뮬레이션 산출까지:
 
 ```bash
-uv run python -m snusmic_pipeline refresh-market    # PDF 인덱스 + 다운로드 + 추출
+uv run python -m snusmic_pipeline refresh-market    # extracted_reports.csv 검증
 uv run python -m snusmic_pipeline build-warehouse   # data/warehouse/reports.csv
 uv run python -m snusmic_pipeline refresh-prices    # data/warehouse/daily_prices.csv (yfinance)
+uv run python -m snusmic_pipeline run-sim           # data/sim/* 산출
 ```
 
-### 8-3. 백테스트 (전략 최적화)
+`run-sim` 은 `scripts/run_persona_sim.py` 에 위임하므로 둘 중 어느 쪽을 호출해도 결과는 동일합니다.
 
-```bash
-uv run python -m snusmic_pipeline run-backtest      # default config 5종 + Optuna
-uv run python -m snusmic_pipeline export-dashboard  # data/quant_v3/*.json export
-```
-
-### 8-4. **페르소나 시뮬레이션 (이 README의 핵심)**
+### 8-3. **페르소나 시뮬레이션 (이 README의 핵심)**
 
 ```bash
 uv run python scripts/run_persona_sim.py \
@@ -548,7 +523,7 @@ uv run python scripts/run_persona_sim.py \
 
 콘솔에 페르소나별 종합 결과 표가 출력되고, `data/sim/` 에 모든 산출물이 저장됩니다.
 
-### 8-5. 파라미터 변경 예시
+### 8-4. 파라미터 변경 예시
 
 `SimulationConfig` 만 바꾸면 시나리오 변경 가능. 예) 월 적립 50만, 손절 6개월:
 
@@ -769,9 +744,7 @@ GitHub Actions 는 위 검증 + warehouse refresh 만 수행합니다 (Node/npm/
 ## 11. 참고 문서
 
 - `docs/decisions/persona-simulation.md` — 본 시뮬 시스템 ADR
-- `docs/decisions/strategy-baselines.md` — 백테스트 baseline 컨트랙트
-- `docs/decisions/phase-2-objective.md` — OOS sortino objective 결정
-- `docs/schemas/*.json` — 공개 데이터 스키마
+- `docs/schemas/*.json` — 공개 데이터 스키마 (daily_prices, reports)
 
 ---
 

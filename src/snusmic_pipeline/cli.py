@@ -4,12 +4,11 @@ import argparse
 import csv
 import json
 import os
+import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
-from .artifact_schemas import validate_portfolio_backtest_rows, validate_price_metric_rows
-from .backtest import build_warehouse, export_dashboard_data, refresh_price_history, run_default_backtests
-from .backtest.warehouse import optimize_strategies
 from .change_detection import new_report_urls
 from .download_pdfs import download_all
 from .extract_pdf import extract_report, extract_text_from_pdf, parse_report_text
@@ -18,7 +17,7 @@ from .fetch_index import fetch_reports, parse_pages
 from .markdown_export import export_markdown
 from .models import DownloadedPdf, ExtractedReport, ReportMeta
 from .opendataloader_fallback import OpenDataLoaderUnavailable, convert_pdfs_to_markdown
-from .quant import compute_portfolio_backtests, compute_price_metrics, dataclass_rows
+from .sim.warehouse import build_warehouse, refresh_price_history
 
 REPORT_HEADERS = [
     "페이지",
@@ -41,6 +40,9 @@ REPORT_HEADERS = [
     "추출 상태",
     "비고",
 ]
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+PERSONA_SIM_SCRIPT = REPO_ROOT / "scripts" / "run_persona_sim.py"
 
 
 def _json_default(value: Any) -> Any:
@@ -244,18 +246,6 @@ def run_sync(args: argparse.Namespace) -> int:
                 force=args.force_markdown,
             )
         )
-    if args.market_data:
-        price_metrics = compute_price_metrics(extracted)
-        portfolio_backtests = compute_portfolio_backtests(extracted, price_metrics)
-    else:
-        price_metrics = []
-        portfolio_backtests = []
-        logs.append("Market data skipped by --no-market-data")
-    write_json(data_dir / "price_metrics.json", validate_price_metric_rows(dataclass_rows(price_metrics)))
-    write_json(
-        data_dir / "portfolio_backtests.json",
-        validate_portfolio_backtest_rows(dataclass_rows(portfolio_backtests)),
-    )
 
     print(f"Reports fetched: {len(metas)}")
     print(f"PDFs available: {sum(1 for item in downloads if item.path)}")
@@ -388,16 +378,7 @@ def run_check_new(args: argparse.Namespace) -> int:
 def run_refresh_market(args: argparse.Namespace) -> int:
     data_dir = Path(args.data_dir)
     reports = read_extracted_reports_csv(data_dir / "extracted_reports.csv")
-    price_metrics = compute_price_metrics(reports)
-    portfolio_backtests = compute_portfolio_backtests(reports, price_metrics)
-    write_json(data_dir / "price_metrics.json", validate_price_metric_rows(dataclass_rows(price_metrics)))
-    write_json(
-        data_dir / "portfolio_backtests.json",
-        validate_portfolio_backtest_rows(dataclass_rows(portfolio_backtests)),
-    )
     print(f"Reports loaded: {len(reports)}")
-    print(f"Price metrics OK: {sum(1 for item in price_metrics if item.status == 'ok')}")
-    print(f"Portfolio backtests: {len(portfolio_backtests)}")
     return 0
 
 
@@ -431,43 +412,34 @@ def run_refresh_prices(args: argparse.Namespace) -> int:
     return 0
 
 
-def run_backtest(args: argparse.Namespace) -> int:
-    counts = run_default_backtests(Path(args.data_dir), Path(args.warehouse_dir), dry_run=args.dry_run)
-    for table, count in sorted(counts.items()):
-        print(f"{table}: {count}")
-    if args.export_dashboard:
-        exports = export_dashboard_data(Path(args.data_dir), Path(args.warehouse_dir), Path(args.output_dir))
-        for name, count in sorted(exports.items()):
-            print(f"{name}: {count}")
-    return 0
+def run_persona_sim(args: argparse.Namespace) -> int:
+    """Thin wrapper around ``scripts/run_persona_sim.py``.
 
-
-def run_optimize(args: argparse.Namespace) -> int:
-    trials = optimize_strategies(
-        Path(args.data_dir),
-        Path(args.warehouse_dir),
-        trials=args.trials,
-        seed=args.seed,
-        dry_run=args.dry_run,
+    Forwards the standard CLI arguments so ``python -m snusmic_pipeline run-sim``
+    behaves identically to the standalone script callers already use.
+    """
+    forwarded: list[str] = [
+        "--start",
+        args.start,
+        "--end",
+        args.end,
+        "--warehouse",
+        str(args.warehouse),
+        "--out",
+        str(args.out),
+    ]
+    if args.refresh_benchmark:
+        forwarded.append("--refresh-benchmark")
+    completed = subprocess.run(
+        [sys.executable, str(PERSONA_SIM_SCRIPT), *forwarded],
+        check=False,
     )
-    print(f"Optuna trials: {len(trials)}")
-    if not trials.empty and "objective" in trials:
-        best = trials.sort_values("objective", ascending=False).iloc[0]
-        print(f"Best objective: {best['objective']}")
-        print(f"Best strategy: {best.get('strategy_name', best.get('name', ''))}")
-    return 0
-
-
-def run_export_dashboard(args: argparse.Namespace) -> int:
-    exports = export_dashboard_data(Path(args.data_dir), Path(args.warehouse_dir), Path(args.output_dir))
-    for name, count in sorted(exports.items()):
-        print(f"{name}: {count}")
-    return 0
+    return completed.returncode
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Collect SNUSMIC PDFs, extract target prices, and build simulation data."
+        description="Collect SNUSMIC PDFs, extract target prices, and run persona simulations."
     )
     subparsers = parser.add_subparsers(dest="command")
 
@@ -500,12 +472,6 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional OpenDataLoader hybrid mode, for example docling-fast.",
     )
     sync.add_argument(
-        "--market-data",
-        action=argparse.BooleanOptionalAction,
-        default=True,
-        help="Fetch yfinance data and compute return/portfolio metrics.",
-    )
-    sync.add_argument(
         "--markdown",
         action=argparse.BooleanOptionalAction,
         default=True,
@@ -531,7 +497,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     refresh_market = subparsers.add_parser(
         "refresh-market",
-        help="Refresh yfinance price metrics and portfolio backtests from committed report CSV.",
+        help="Sanity-check that data/extracted_reports.csv is loadable.",
     )
     refresh_market.add_argument("--data-dir", default="data")
     refresh_market.set_defaults(func=run_refresh_market)
@@ -571,14 +537,14 @@ def build_parser() -> argparse.ArgumentParser:
     audit.set_defaults(func=run_audit_extraction)
 
     warehouse = subparsers.add_parser(
-        "build-warehouse", help="Normalize report metadata into the v3 warehouse."
+        "build-warehouse", help="Normalize report metadata into the sim warehouse."
     )
     warehouse.add_argument("--data-dir", default="data")
     warehouse.add_argument("--warehouse-dir", default="data/warehouse")
     warehouse.set_defaults(func=run_build_warehouse)
 
     refresh_prices = subparsers.add_parser(
-        "refresh-prices", help="Download yfinance OHLCV history into the v3 warehouse."
+        "refresh-prices", help="Download yfinance OHLCV history into the sim warehouse."
     )
     refresh_prices.add_argument("--data-dir", default="data")
     refresh_prices.add_argument("--warehouse-dir", default="data/warehouse")
@@ -587,35 +553,20 @@ def build_parser() -> argparse.ArgumentParser:
     )
     refresh_prices.set_defaults(func=run_refresh_prices)
 
-    backtest = subparsers.add_parser(
-        "run-backtest", help="Run event-driven walk-forward v3 strategy backtests."
+    sim = subparsers.add_parser(
+        "run-sim", help="Run the persona simulation (delegates to scripts/run_persona_sim.py)."
     )
-    backtest.add_argument("--data-dir", default="data")
-    backtest.add_argument("--warehouse-dir", default="data/warehouse")
-    backtest.add_argument("--output-dir", default="data/quant_v3")
-    backtest.add_argument(
-        "--dry-run",
+    sim.add_argument("--start", default="2021-01-04")
+    sim.add_argument("--end", default="2026-04-15")
+    sim.add_argument("--warehouse", default=str(REPO_ROOT / "data" / "warehouse"))
+    sim.add_argument("--out", default=str(REPO_ROOT / "data" / "sim"))
+    sim.add_argument(
+        "--refresh-benchmark",
         action="store_true",
-        help="Use deterministic synthetic prices when real OHLCV is missing.",
+        help="Force re-download of the All-Weather benchmark prices.",
     )
-    backtest.add_argument("--export-dashboard", action=argparse.BooleanOptionalAction, default=True)
-    backtest.set_defaults(func=run_backtest)
+    sim.set_defaults(func=run_persona_sim)
 
-    optimize = subparsers.add_parser("optimize-strategies", help="Search v3 trading parameters with Optuna.")
-    optimize.add_argument("--data-dir", default="data")
-    optimize.add_argument("--warehouse-dir", default="data/warehouse")
-    optimize.add_argument("--trials", type=int, default=25)
-    optimize.add_argument("--seed", type=int, default=42)
-    optimize.add_argument("--dry-run", action="store_true")
-    optimize.set_defaults(func=run_optimize)
-
-    dashboard = subparsers.add_parser(
-        "export-dashboard", help="Export v3 warehouse tables into quant_v3 JSON artifacts."
-    )
-    dashboard.add_argument("--data-dir", default="data")
-    dashboard.add_argument("--warehouse-dir", default="data/warehouse")
-    dashboard.add_argument("--output-dir", default="data/quant_v3")
-    dashboard.set_defaults(func=run_export_dashboard)
     return parser
 
 

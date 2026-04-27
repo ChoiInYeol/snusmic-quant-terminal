@@ -1,9 +1,8 @@
 """Account-level persona simulation.
 
-A separate experiment surface from :mod:`snusmic_pipeline.backtest`. Where the
-backtest engine is weight-based, this module simulates a real Korean
-brokerage: KRW cash ledger, integer-share holdings, fees and sell-side tax,
-and a step-up monthly contribution.
+The canonical (and only) simulation surface in this repo. Simulates a real
+Korean brokerage: KRW cash ledger, integer-share holdings, fees and sell-side
+tax, and a step-up monthly contribution.
 
 See ``docs/decisions/persona-simulation.md`` for the contract.
 """

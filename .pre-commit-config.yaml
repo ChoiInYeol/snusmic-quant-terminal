@@ -22,7 +22,7 @@ repos:
     rev: v1.11.2
     hooks:
       - id: mypy
-        files: ^src/snusmic_pipeline/backtest/
+        files: ^src/snusmic_pipeline/sim/
         additional_dependencies:
           - pydantic>=2.6
           - pandas-stubs

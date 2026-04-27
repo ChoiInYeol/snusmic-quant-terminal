@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Principle-6 CI gate.
+"""Schema additivity gate for sim warehouse tables.
 
 Compares every ``docs/schemas/{table}.schema.json`` in the current working tree
 against the same file at ``--base-ref`` (default ``origin/main``) and fails when:
@@ -22,8 +22,6 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SCHEMAS_DIR = REPO_ROOT / "docs" / "schemas"
-DECISIONS_DIR = REPO_ROOT / "docs" / "decisions"
-PHASE_2_OBJECTIVE_DOC = DECISIONS_DIR / "phase-2-objective.md"
 
 
 def load_current(table: str) -> dict | None:
@@ -77,43 +75,8 @@ def has_v2_sidecar(table: str) -> bool:
     return (SCHEMAS_DIR / f"{table}.v2.schema.json").exists()
 
 
-def read_primary_objective() -> str | None:
-    """Read ``docs/decisions/phase-2-objective.md`` for the locked
-    ``primary_objective``. Missing file / missing key returns ``None`` (not
-    a failure; Phase 1a projects pre-decision-file state)."""
-    if not PHASE_2_OBJECTIVE_DOC.exists():
-        return None
-    text = PHASE_2_OBJECTIVE_DOC.read_text(encoding="utf-8")
-    for line in text.splitlines():
-        stripped = line.strip()
-        if stripped.startswith("primary_objective:"):
-            value = stripped.split(":", 1)[1].strip().strip("'\"")
-            return value or None
-    return None
-
-
-def check_phase_2_objective_contract(current: dict | None) -> list[str]:
-    """If the decision file pins ``primary_objective``, require the
-    ``strategy_runs`` schema to carry ``{obj}_in_sample`` / ``{obj}_oos_tail``
-    columns. This enforces the Phase 2 column-naming contract at CI time."""
-    violations: list[str] = []
-    objective = read_primary_objective()
-    if objective is None or current is None:
-        return violations
-    props = (current or {}).get("properties") or {}
-    expected = [f"{objective}_in_sample", f"{objective}_oos_tail"]
-    for col in expected:
-        if col not in props:
-            violations.append(
-                f"strategy_runs: docs/decisions/phase-2-objective.md pins "
-                f"primary_objective={objective!r}, but column {col!r} is absent "
-                f"from docs/schemas/strategy_runs.schema.json."
-            )
-    return violations
-
-
 def diff_one(table: str, base: dict, current: dict) -> list[str]:
-    """Return a list of Principle-6 violations for one table."""
+    """Return a list of additivity violations for one table."""
     violations: list[str] = []
     base_props = (base or {}).get("properties") or {}
     cur_props = (current or {}).get("properties") or {}
@@ -123,7 +86,7 @@ def diff_one(table: str, base: dict, current: dict) -> list[str]:
     if deleted_cols and not has_v2_sidecar(table):
         violations.append(
             f"{table}: column(s) {deleted_cols} deleted without a "
-            f"docs/schemas/{table}.v2.schema.json sidecar (Principle 6 (a))."
+            f"docs/schemas/{table}.v2.schema.json sidecar."
         )
 
     # Model-level semantic_version change.
@@ -132,7 +95,7 @@ def diff_one(table: str, base: dict, current: dict) -> list[str]:
     if base_ver is not None and cur_ver is not None and base_ver != cur_ver and not has_v2_sidecar(table):
         violations.append(
             f"{table}: x-snusmic-semantic-version changed {base_ver!r} → {cur_ver!r} "
-            f"without a docs/schemas/{table}.v2.schema.json sidecar (Principle 6 (b))."
+            f"without a docs/schemas/{table}.v2.schema.json sidecar."
         )
 
     # (b) Column-level nan_policy / semantic metadata drift.
@@ -144,7 +107,7 @@ def diff_one(table: str, base: dict, current: dict) -> list[str]:
         if base_nan != cur_nan and not has_v2_sidecar(table):
             violations.append(
                 f"{table}.{col}: x-snusmic-nan-policy changed {base_nan!r} → {cur_nan!r} "
-                f"without a docs/schemas/{table}.v2.schema.json sidecar (Principle 6 (b))."
+                f"without a docs/schemas/{table}.v2.schema.json sidecar."
             )
         base_semver_col = base_col.get("x-snusmic-semantic-version")
         cur_semver_col = cur_col.get("x-snusmic-semantic-version")
@@ -156,7 +119,7 @@ def diff_one(table: str, base: dict, current: dict) -> list[str]:
         ):
             violations.append(
                 f"{table}.{col}: x-snusmic-semantic-version changed "
-                f"{base_semver_col!r} → {cur_semver_col!r} without a .v2 sidecar (Principle 6 (b))."
+                f"{base_semver_col!r} → {cur_semver_col!r} without a .v2 sidecar."
             )
     return violations
 
@@ -177,32 +140,27 @@ def main(argv: list[str] | None = None) -> int:
         current = load_current(table)
         if base is None:
             # New table — additive, pass.
-            if table == "strategy_runs":
-                all_violations.extend(check_phase_2_objective_contract(current))
             continue
         if current is None:
             # Table removed entirely. Require .v2 sidecar.
             if not has_v2_sidecar(table):
                 all_violations.append(
-                    f"{table}: entire schema removed without a "
-                    f"docs/schemas/{table}.v2.schema.json sidecar (Principle 6 (a))."
+                    f"{table}: entire schema removed without a docs/schemas/{table}.v2.schema.json sidecar."
                 )
             continue
         all_violations.extend(diff_one(table, base, current))
-        if table == "strategy_runs":
-            all_violations.extend(check_phase_2_objective_contract(current))
 
     if all_violations:
-        print("Principle-6 schema-compat violations:", file=sys.stderr)
+        print("schema-compat violations:", file=sys.stderr)
         for v in all_violations:
             print(f"  - {v}", file=sys.stderr)
         print(
-            "\nIf this change is intentional, commit a sibling .v2.schema.json file per plan Principle 6.",
+            "\nIf this change is intentional, commit a sibling .v2.schema.json file.",
             file=sys.stderr,
         )
         return 1
 
-    print(f"schema-compat check: {len(tables)} tables, no Principle-6 violations against {args.base_ref}")
+    print(f"schema-compat check: {len(tables)} tables, no violations against {args.base_ref}")
     return 0
 
 
