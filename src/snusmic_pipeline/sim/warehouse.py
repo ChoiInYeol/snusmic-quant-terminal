@@ -33,7 +33,7 @@ from ..currency import (
 )
 from .schemas import TABLE_DTYPES, TABLE_MODELS
 
-WAREHOUSE_TABLES = ["reports", "fx_rates", "daily_prices", "dividends"]
+WAREHOUSE_TABLES = ["reports", "fx_rates", "daily_prices"]
 
 
 def build_warehouse(data_dir: Path, warehouse_dir: Path) -> dict[str, int]:
@@ -172,15 +172,6 @@ def refresh_price_history(
     reports = apply_report_krw_targets(reports, fx_rates)
     reports = fill_report_publication_prices(reports, prices)
     write_table(warehouse_dir, "reports", reports)
-    # Refresh dividends in lockstep with prices so the warehouse stays
-    # consistent — same window, same FX cache, same incremental path.
-    refresh_dividend_history(
-        data_dir,
-        warehouse_dir,
-        now=now,
-        symbols=symbols,
-        force_full=force_full,
-    )
     sync_duckdb(warehouse_dir)
     return prices
 
@@ -401,176 +392,6 @@ def download_history(symbol: str, start: datetime, end: datetime) -> pd.DataFram
             "volume": pd.to_numeric(data.get("Volume", 0), errors="coerce").fillna(0),
         }
     ).dropna(subset=["close"])
-
-
-def download_dividends(symbol: str, start: datetime, end: datetime) -> pd.DataFrame:
-    """Fetch ex-dividend events for ``symbol`` in ``[start, end)`` from yfinance.
-
-    Returns a frame with ``date`` (ISO string in the issuer's local TZ) and
-    ``dps_local`` (gross per-share dividend in the issuer's home currency).
-    Empty frame for symbols that simply don't pay dividends — yfinance
-    reports those as an empty Series, not an error.
-
-    yfinance occasionally raises ``AttributeError: '_dividends'`` for
-    delisted or otherwise broken tickers; we treat that as "no dividends"
-    rather than letting it kill an entire universe-wide backfill.
-    """
-    import yfinance as yf
-
-    try:
-        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
-            series = yf.Ticker(symbol).dividends
-    except (AttributeError, KeyError, ValueError):
-        return pd.DataFrame(columns=["date", "dps_local"])
-    if series is None or series.empty:
-        return pd.DataFrame(columns=["date", "dps_local"])
-    idx = series.index
-    if idx.tz is not None:
-        # Use the issuer's local clock-time as the ex-date — that's what
-        # both KRX and US brokerage statements record.
-        idx = idx.tz_localize(None)
-    out = pd.DataFrame(
-        {
-            "date": pd.DatetimeIndex(idx).date.astype(str),
-            "dps_local": pd.to_numeric(series.values, errors="coerce"),
-        }
-    )
-    s_iso = start.date().isoformat()
-    e_iso = end.date().isoformat()
-    out = out[(out["date"] >= s_iso) & (out["date"] < e_iso)]
-    out = out.dropna(subset=["dps_local"])
-    out = out[out["dps_local"] > 0]
-    return out.reset_index(drop=True)
-
-
-def apply_dividend_krw_conversion(
-    dividends: pd.DataFrame, reports: pd.DataFrame, fx_rates: pd.DataFrame
-) -> pd.DataFrame:
-    """Mirror of :func:`apply_daily_price_krw_conversion` for cash dividends.
-
-    Resolves each symbol's source currency via ``reports.exchange`` (with
-    ``currency_for_symbol`` as the fallback heuristic), looks up the
-    KRW-per-unit FX on the ex-date, multiplies ``dps_local`` to produce
-    ``dps_krw``. Missing FX leaves ``dps_krw`` null — the simulator skips
-    those events rather than guessing.
-    """
-    if dividends.empty:
-        return dividends
-    symbol_meta = (
-        reports[["symbol", "exchange"]]
-        .dropna(subset=["symbol"])
-        .drop_duplicates("symbol", keep="last")
-        .set_index("symbol")
-        .to_dict("index")
-        if not reports.empty and "symbol" in reports
-        else {}
-    )
-    frames = []
-    for symbol, group in dividends.copy().groupby(dividends["symbol"].astype(str), sort=False):
-        group = group.copy()
-        exchange = str(symbol_meta.get(symbol, {}).get("exchange", ""))
-        source_currency = currency_for_symbol(symbol, exchange)
-        group["source_currency"] = source_currency
-        if normalize_currency(source_currency) == "KRW":
-            group["dps_krw"] = pd.to_numeric(group["dps_local"], errors="coerce")
-            frames.append(group)
-            continue
-        rates = attach_krw_rate(group[["date"]].copy(), source_currency, fx_rates)
-        rate = pd.to_numeric(rates["krw_per_unit"], errors="coerce").to_numpy(dtype=float)
-        group["dps_krw"] = pd.to_numeric(group["dps_local"], errors="coerce") * rate
-        frames.append(group)
-    return pd.concat(frames, ignore_index=True) if frames else dividends
-
-
-def refresh_dividend_history(
-    data_dir: Path,
-    warehouse_dir: Path,
-    now: datetime | None = None,
-    downloader: Callable[[str, datetime, datetime], pd.DataFrame] | None = None,
-    symbols: list[str] | None = None,
-    force_full: bool = False,
-) -> pd.DataFrame:
-    """Refresh ``dividends.csv``.
-
-    Parallels :func:`refresh_price_history` — per-symbol incremental window,
-    skip-if-up-to-date, KRW conversion via the cached ``fx_rates.csv``.
-    Symbols that simply don't pay dividends produce zero rows and that's
-    persisted as the absence of any row for that symbol.
-    """
-    warehouse_dir.mkdir(parents=True, exist_ok=True)
-    reports = read_or_build_reports(data_dir, warehouse_dir)
-    if reports.empty:
-        existing = read_table(warehouse_dir, "dividends")
-        if existing.empty:
-            write_table(warehouse_dir, "dividends", pd.DataFrame())
-        return existing
-    now = now or datetime.now(UTC)
-    start = pd.to_datetime(reports["publication_date"]).min().to_pydatetime() - timedelta(days=820)
-    end = now + timedelta(days=1)
-    selected_symbols = symbols or sorted(set(reports["symbol"].dropna().astype(str)))
-    downloader = downloader or download_dividends
-    fx_rates = read_table(warehouse_dir, "fx_rates")
-
-    last_seen: dict[str, datetime] = {}
-    existing_full = pd.DataFrame()
-    if not force_full:
-        existing_full = read_table(warehouse_dir, "dividends")
-        if not existing_full.empty:
-            tmp = existing_full.copy()
-            tmp["date"] = pd.to_datetime(tmp["date"], errors="coerce")
-            for sym, group_max in tmp.groupby("symbol")["date"].max().items():
-                if pd.notna(group_max):
-                    last_seen[str(sym)] = group_max.to_pydatetime()
-
-    frames: list[pd.DataFrame] = []
-    for symbol in selected_symbols:
-        symbol_start = start
-        existing_last = last_seen.get(symbol)
-        if existing_last is not None and not force_full:
-            candidate = existing_last + timedelta(days=1)
-            symbol_start = max(start, candidate)
-        if symbol_start.date() >= end.date():
-            continue
-        events = downloader(symbol, symbol_start, end)
-        if events.empty:
-            continue
-        events = events.copy()
-        events["symbol"] = symbol
-        frames.append(events)
-    new_events = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
-
-    if symbols:
-        existing = read_table(warehouse_dir, "dividends") if not force_full else existing_full
-        if not existing.empty:
-            existing = existing[~existing["symbol"].astype(str).isin(selected_symbols)]
-        else:
-            existing = pd.DataFrame()
-        merged = pd.concat([existing, new_events], ignore_index=True) if not new_events.empty else existing
-    else:
-        if force_full:
-            merged = new_events
-        elif not existing_full.empty and not new_events.empty:
-            merged = pd.concat([existing_full, new_events], ignore_index=True)
-        elif not existing_full.empty:
-            merged = existing_full
-        else:
-            merged = new_events
-
-    if merged.empty:
-        write_table(warehouse_dir, "dividends", merged)
-        return merged
-
-    merged = apply_dividend_krw_conversion(merged, reports, fx_rates)
-    columns = ["date", "symbol", "dps_local", "source_currency", "dps_krw"]
-    merged["date"] = pd.to_datetime(merged["date"]).dt.date.astype(str)
-    merged = (
-        merged[[c for c in columns if c in merged]]
-        .drop_duplicates(["date", "symbol"], keep="last")
-        .sort_values(["date", "symbol"])
-    )
-    write_table(warehouse_dir, "dividends", merged)
-    sync_duckdb(warehouse_dir)
-    return merged
 
 
 def _use_pydantic_v2() -> bool:

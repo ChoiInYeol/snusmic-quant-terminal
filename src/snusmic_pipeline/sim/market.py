@@ -25,8 +25,6 @@ import pandas as pd
 from ..currency import download_fx_rates
 from .warehouse import (
     apply_daily_price_krw_conversion,
-    apply_dividend_krw_conversion,
-    download_dividends,
     download_history,
     read_table,
     write_table,
@@ -177,7 +175,6 @@ class PriceBoard:
 
 
 _BENCHMARK_TABLE = "benchmark_prices"
-_BENCHMARK_DIVIDENDS_TABLE = "benchmark_dividends"
 
 
 def load_benchmark_prices(
@@ -255,65 +252,3 @@ def load_benchmark_prices(
 def _currency_for_benchmark_symbol(symbol: str) -> str:
     """All-Weather defaults: yfinance ``.KS`` suffix → KRW; otherwise USD."""
     return "KRW" if symbol.endswith(".KS") else "USD"
-
-
-def load_benchmark_dividends(
-    warehouse_dir: Path,
-    symbols: Iterable[str],
-    start: date,
-    end: date,
-    *,
-    refresh: bool = False,
-) -> pd.DataFrame:
-    """Load KRW-converted ex-dividend events for benchmark ETFs.
-
-    Parallels :func:`load_benchmark_prices`. Cached at
-    ``{warehouse_dir}/benchmark_dividends.csv``. Returns a frame with at
-    least ``date``, ``symbol``, ``dps_krw`` columns; missing symbols (e.g.
-    GLD has no dividends) simply produce no rows. An entirely-empty result
-    is legal — the caller skips the dividend overlay.
-    """
-    cached = read_table(warehouse_dir, _BENCHMARK_DIVIDENDS_TABLE)
-    needed = {str(s) for s in symbols}
-    have = set(cached["symbol"].astype(str)) if not cached.empty else set()
-    missing = needed - have
-    if refresh or missing:
-        frames: list[pd.DataFrame] = []
-        for symbol in sorted(needed):
-            if not refresh and symbol in have:
-                continue
-            events = download_dividends(
-                symbol,
-                datetime.combine(start, datetime.min.time(), tzinfo=UTC),
-                datetime.combine(end + timedelta(days=1), datetime.min.time(), tzinfo=UTC),
-            )
-            if events.empty:
-                continue
-            events = events.copy()
-            events["symbol"] = symbol
-            frames.append(events)
-        if frames:
-            new_events = pd.concat(frames, ignore_index=True)
-            currencies = {_currency_for_benchmark_symbol(s) for s in symbols}
-            fx = download_fx_rates(
-                currencies,
-                datetime.combine(start, datetime.min.time(), tzinfo=UTC),
-                datetime.combine(end + timedelta(days=1), datetime.min.time(), tzinfo=UTC),
-                download_history,
-            )
-            reports = pd.DataFrame(
-                [{"symbol": s, "exchange": "KRX" if s.endswith(".KS") else "NYSE"} for s in symbols]
-            )
-            new_events = apply_dividend_krw_conversion(new_events, reports, fx)
-            if not cached.empty:
-                cached = cached[~cached["symbol"].astype(str).isin(needed)]
-                cached = pd.concat([cached, new_events], ignore_index=True)
-            else:
-                cached = new_events
-            write_table(warehouse_dir, _BENCHMARK_DIVIDENDS_TABLE, cached)
-    if cached.empty:
-        return pd.DataFrame()
-    cached = cached.copy()
-    cached["date"] = pd.to_datetime(cached["date"]).dt.date.astype(str)
-    cached = cached[cached["symbol"].astype(str).isin(needed)]
-    return cached.reset_index(drop=True)

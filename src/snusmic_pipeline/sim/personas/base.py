@@ -37,37 +37,6 @@ def deposits_indexed_by_date(events: list[CashFlowEvent]) -> dict[date, float]:
     return out
 
 
-# Type alias used by every persona's daily loop. Mapping ex-date → list of
-# (symbol, dps_krw_gross) events. ``None`` means "no dividend overlay" — the
-# persona behaves like the legacy raw-OHLC simulation.
-DividendIndex = dict[date, list[tuple[str, float]]]
-
-
-def credit_dividends_due(
-    account,
-    day: date,
-    dividends_by_date: DividendIndex | None,
-) -> None:
-    """Apply any ex-dividend cash credits scheduled for ``day``.
-
-    Called at the top of every persona's daily loop, BEFORE deposits and
-    rebalances, so today's dividend cash is available for today's
-    rebalance. Ignored when ``dividends_by_date`` is ``None`` (legacy
-    behaviour) or empty for that date.
-
-    Withholding tax is applied per ``account.fees.dividend_withholding_bps``
-    inside :meth:`Account.credit_dividend` — this helper is intentionally
-    thin so each persona's loop stays one line larger.
-    """
-    if not dividends_by_date:
-        return
-    events = dividends_by_date.get(day)
-    if not events:
-        return
-    for symbol, dps_krw in events:
-        account.credit_dividend(day, symbol, dps_krw)
-
-
 def record_equity_point(
     account: Account,
     persona: str,

@@ -27,10 +27,8 @@ from ..contracts import AllWeatherConfig, BrokerageFees, SavingsPlan
 from ..market import PriceBoard
 from ..savings import CashFlowEvent
 from .base import (
-    DividendIndex,
     PersonaRunOutput,
     build_summary,
-    credit_dividends_due,
     cumulative_contributions,
     record_equity_point,
 )
@@ -44,8 +42,6 @@ def simulate_all_weather(
     cashflows: list[CashFlowEvent],
     trading_dates: list[date],
     label: str = "All-Weather (25/25/25/25)",
-    *,
-    dividends_by_date: DividendIndex | None = None,
 ) -> PersonaRunOutput:
     persona = config.persona_name
     account = Account(persona=persona, fees=fees)
@@ -88,7 +84,6 @@ def simulate_all_weather(
     equity_points: list = []
 
     for day in trading_dates:
-        credit_dividends_due(account, day, dividends_by_date)
         deposit = cashflow_by_date.get(day, 0.0)
         if deposit > 0:
             account.deposit(day, deposit)

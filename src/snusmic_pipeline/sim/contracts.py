@@ -58,12 +58,6 @@ class BrokerageFees(_FrozenModel):
     commission_bps: Annotated[float, Field(ge=0, le=200)] = 1.5
     sell_tax_bps: Annotated[float, Field(ge=0, le=200)] = 18.0
     slippage_bps: Annotated[float, Field(ge=0, le=200)] = 5.0
-    # Korean retail withholding on cash dividends. Korean source dividends
-    # are taxed at 15.4% (14% national + 1.4% local); foreign source ETFs
-    # default to 15% under most US/Korea-treaty paths. We model both with
-    # one knob since the 0.4pp delta is well inside model noise — set this
-    # bps to whatever your simulated tax bracket requires.
-    dividend_withholding_bps: Annotated[float, Field(ge=0, le=5000)] = 1500.0
 
 
 # ---------------------------------------------------------------------------
@@ -236,7 +230,7 @@ class SimulationConfig(_FrozenModel):
 # ---------------------------------------------------------------------------
 
 
-TradeSide = Literal["buy", "sell", "dividend"]
+TradeSide = Literal["buy", "sell"]
 TradeReason = Literal[
     "deposit_buy",
     "rebalance_buy",
@@ -246,7 +240,6 @@ TradeReason = Literal[
     "stop_loss_average_down",
     "stop_loss_report_age",
     "end_of_sim",
-    "dividend_cash",
 ]
 
 

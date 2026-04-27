@@ -20,10 +20,8 @@ from ..contracts import BrokerageFees, SavingsPlan, SmicFollowerConfig
 from ..market import PriceBoard
 from ..savings import CashFlowEvent
 from .base import (
-    DividendIndex,
     PersonaRunOutput,
     build_summary,
-    credit_dividends_due,
     cumulative_contributions,
     record_equity_point,
 )
@@ -37,8 +35,6 @@ def simulate_smic_follower(
     reports: pd.DataFrame,
     cashflows: list[CashFlowEvent],
     trading_dates: list[date],
-    *,
-    dividends_by_date: DividendIndex | None = None,
 ) -> PersonaRunOutput:
     return _simulate_follower(
         persona=config.persona_name,
@@ -52,7 +48,6 @@ def simulate_smic_follower(
         cashflows=cashflows,
         trading_dates=trading_dates,
         stop_loss_hook=None,
-        dividends_by_date=dividends_by_date,
     )
 
 
@@ -74,7 +69,6 @@ def _simulate_follower(
     cashflows: list[CashFlowEvent],
     trading_dates: list[date],
     stop_loss_hook,
-    dividends_by_date: DividendIndex | None = None,
 ) -> PersonaRunOutput:
     """Engine shared by SMIC followers v1 and v2.
 
@@ -103,7 +97,6 @@ def _simulate_follower(
     equity_points: list = []
 
     for day in trading_dates:
-        credit_dividends_due(account, day, dividends_by_date)
         state.absorb_reports(reports, day, board)
         deposit_today = cashflow_by_date.get(day, 0.0)
         if deposit_today > 0:
