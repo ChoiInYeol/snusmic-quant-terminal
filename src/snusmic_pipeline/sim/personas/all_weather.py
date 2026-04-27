@@ -1,10 +1,17 @@
 """All-Weather benchmark.
 
 Constant-weight DCA across the basket declared in
-:class:`AllWeatherConfig`. On every cash event the deposit is rebalanced
-back to the configured weights; an optional ``rebalance`` cadence forces
-a rebalance on every month-start (or quarter / year start) even when no
-deposit lands that day.
+:class:`AllWeatherConfig`. Each ETF rebalances itself toward its target
+weight on **the first trading day of the cadence period on its own
+exchange** — KR ETFs on KR's first KR-trading-day of each month, US
+ETFs on US's first US-trading-day of each month. The two firings do not
+need to coincide: cash from deposits or dividends just sits until the
+next per-asset trigger absorbs it.
+
+This per-asset cadence is the realistic model — IRL you'd place each
+order on its market's normal calendar — and avoids the historical
+"100% KOSPI on US holidays" trap that the old whole-basket rebalance
+fell into without an aggressive deferral hack.
 
 This persona uses its own :class:`PriceBoard` (benchmark ETFs in KRW),
 not the SNUSMIC report universe.
@@ -68,35 +75,34 @@ def simulate_all_weather(
         target_weights = {sym: w / weight_sum for sym, w in target_weights.items()}
     target_symbols = set(target_weights)
 
+    # Per-asset cadence: each ETF triggers its own rebalance on the first
+    # trading day of the cadence period AS OBSERVED ON THAT ETF'S EXCHANGE.
+    # Two separate firings (KR vs. US) just absorb their share of any
+    # accumulated cash; we never try to push KOSPI to 100% because US
+    # markets happen to be closed today.
+    asset_rebalance_days = _per_asset_rebalance_days(
+        trading_dates, daily_closes, target_symbols, config.rebalance
+    )
+
     contributions = cumulative_contributions(cashflows, trading_dates)
-    rebalance_days = _rebalance_days(trading_dates, config.rebalance)
     equity_points: list = []
-    pending_rebalance = False
 
     for day in trading_dates:
         credit_dividends_due(account, day, dividends_by_date)
         deposit = cashflow_by_date.get(day, 0.0)
         if deposit > 0:
             account.deposit(day, deposit)
-            pending_rebalance = True
-        if day in rebalance_days:
-            pending_rebalance = True
-        prices_today = daily_closes.get(day, {})
-        # Only execute when EVERY surviving target market has a close today.
-        # If a deposit or cadence trigger landed on a partial-market day
-        # (typically a US holiday that is also a Korean trading day), the
-        # rebalance is deferred to the next fully-open trading date — the
-        # cash sits as cash until then. This prevents the historical bug
-        # where the basket flipped to 100% KOSPI on those dates.
-        if pending_rebalance and target_symbols and target_symbols.issubset(prices_today):
-            prices = {**prices_today}
-            for sym, lot in account.holdings.items():
-                if lot.qty > 0 and sym not in prices:
-                    mid = benchmark_board.asof(day, sym)
-                    if mid is not None:
-                        prices[sym] = mid
-            account.rebalance_to_weights(day, target_weights, prices)
-            pending_rebalance = False
+        # Per-asset rebalance: each ETF whose own exchange is at its
+        # first-of-period today rebalances itself toward
+        # ``target_weight × current_equity``. Other ETFs' share counts are
+        # untouched — their next firing on their own market will catch up.
+        due_today = [sym for sym in target_weights if day in asset_rebalance_days.get(sym, frozenset())]
+        if due_today:
+            prices = _build_price_view(benchmark_board, daily_closes.get(day, {}), account, day)
+            equity_now = account.equity(prices)
+            for sym in due_today:
+                target_value = equity_now * target_weights[sym]
+                _rebalance_one_asset(account, day, sym, target_value, prices.get(sym))
         equity_points.append(
             record_equity_point(
                 account,
@@ -112,20 +118,80 @@ def simulate_all_weather(
     return PersonaRunOutput(account=account, equity_points=equity_points, summary=summary)
 
 
-def _rebalance_days(trading_dates: list[date], cadence: str) -> set[date]:
-    if cadence == "monthly":
-        seen: dict[tuple[int, int], date] = {}
-        for d in trading_dates:
-            seen.setdefault((d.year, d.month), d)
-        return set(seen.values())
-    if cadence == "quarterly":
-        seen_q: dict[tuple[int, int], date] = {}
-        for d in trading_dates:
-            seen_q.setdefault((d.year, (d.month - 1) // 3), d)
-        return set(seen_q.values())
-    if cadence == "yearly":
-        seen_y: dict[int, date] = {}
-        for d in trading_dates:
-            seen_y.setdefault(d.year, d)
-        return set(seen_y.values())
-    raise ValueError(f"unknown all-weather cadence: {cadence}")
+def _per_asset_rebalance_days(
+    trading_dates: list[date],
+    daily_closes: dict[date, dict[str, float]],
+    target_symbols: set[str],
+    cadence: str,
+) -> dict[str, frozenset[date]]:
+    """For each target symbol, the first trading date of every cadence
+    period where the symbol has a valid close — i.e. the symbol's own
+    exchange's first-of-period day, restricted to the dates we actually
+    iterate."""
+    out: dict[str, frozenset[date]] = {}
+    for sym in target_symbols:
+        sym_days = [
+            d for d in trading_dates
+            if sym in daily_closes.get(d, {}) and daily_closes[d][sym] > 0
+        ]
+        if cadence == "monthly":
+            first: dict[tuple[int, int], date] = {}
+            for d in sym_days:
+                first.setdefault((d.year, d.month), d)
+        elif cadence == "quarterly":
+            first = {}
+            for d in sym_days:
+                first.setdefault((d.year, (d.month - 1) // 3), d)
+        elif cadence == "yearly":
+            first_y: dict[int, date] = {}
+            for d in sym_days:
+                first_y.setdefault(d.year, d)
+            out[sym] = frozenset(first_y.values())
+            continue
+        else:
+            raise ValueError(f"unknown all-weather cadence: {cadence}")
+        out[sym] = frozenset(first.values())
+    return out
+
+
+def _build_price_view(
+    benchmark_board: PriceBoard,
+    prices_today: dict[str, float],
+    account: Account,
+    day: date,
+) -> dict[str, float]:
+    """Today's closes where available, asof for held-but-closed-market
+    symbols. Used to mark equity for the per-asset rebalance math."""
+    prices = dict(prices_today)
+    for sym, lot in account.holdings.items():
+        if lot.qty > 0 and sym not in prices:
+            mid = benchmark_board.asof(day, sym)
+            if mid is not None:
+                prices[sym] = mid
+    return prices
+
+
+def _rebalance_one_asset(
+    account: Account,
+    day: date,
+    symbol: str,
+    target_value_krw: float,
+    mid_price_krw: float | None,
+) -> None:
+    """Trade only ``symbol`` toward ``target_value_krw`` — the partial-
+    rebalance primitive the per-asset cadence path relies on. Positions
+    in other symbols are left exactly as they were."""
+    if mid_price_krw is None or mid_price_krw <= 0:
+        return
+    lot = account.holdings.get(symbol)
+    current_qty = lot.qty if lot is not None else 0
+    current_value = current_qty * mid_price_krw
+    if current_value > target_value_krw:
+        excess = current_value - target_value_krw
+        sell_qty = math.floor(excess / mid_price_krw)
+        if sell_qty > 0:
+            account.sell_qty(day, symbol, mid_price_krw, sell_qty, "rebalance_sell")
+    elif current_value < target_value_krw:
+        deficit = target_value_krw - current_value
+        if deficit > 0:
+            account.buy_value(day, symbol, mid_price_krw, deficit, "rebalance_buy")

@@ -1,8 +1,8 @@
 persona,symbol,company,episodes,total_buy_fills,total_sell_fills,total_holding_days,total_realized_pnl_krw,is_currently_held,current_qty,current_unrealized_pnl_krw
-all_weather,069500.KS,KOSPI 200 (069500.KS),1,52,12,1927,9023935.16,True,610,32676596.64
-all_weather,GLD,Gold (GLD),1,41,8,1927,2691100.87,True,76,28175986.68
-all_weather,QQQ,NASDAQ-100 (QQQ),1,33,0,1927,0.0,True,57,19825972.13
-all_weather,SPY,S&P 500 (SPY),1,34,0,1927,0.0,True,51,16472701.15
+all_weather,069500.KS,KOSPI 200 (069500.KS),1,52,12,1927,9038659.24,True,610,32728312.46
+all_weather,GLD,Gold (GLD),1,40,13,1927,3145607.8,True,76,27880559.05
+all_weather,QQQ,NASDAQ-100 (QQQ),1,35,1,1927,276741.71,True,58,19551255.39
+all_weather,SPY,S&P 500 (SPY),1,33,0,1927,0.0,True,50,16528687.23
 oracle,440110.KS,파두,1,4,3,182,1502513268.36,False,0,
 oracle,322000.KS,현대에너지솔루션,1,5,2,182,875866920.05,False,0,
 oracle,009830.KS,한화솔루션,1,6,1,182,756359407.87,False,0,

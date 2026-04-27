@@ -102,15 +102,22 @@ def test_all_weather_skips_rebalance_on_us_holiday_korean_trading_day():
     Reproduces the historical bug where on dates that the SNUSMIC universe
     treated as trading days but the US ETFs had no close (e.g. Thanksgiving,
     July 4), the per-day weight renormalization concentrated the entire book
-    into 069500.KS. The fix defers the rebalance to the next fully-open day.
+    into 069500.KS.
+
+    Per-asset cadence fix: each ETF rebalances toward its target weight on
+    the first trading day of the month *on its own exchange*. When US is
+    closed and KR is open, KOSPI fires on its KR-first-of-month and the
+    US ETFs skip that day, firing on the next day they have a close. No
+    100% concentration ever happens because each asset only ever moves
+    toward its own 25% slot.
     """
     plan = SavingsPlan(initial_capital_krw=10_000_000, monthly_contribution_krw=0)
     fees = BrokerageFees(commission_bps=0, sell_tax_bps=0, slippage_bps=0)
     board = _bench_board()
     trading_dates = [d.date() for d in board.close.index]
     # Punch NaN holes into the US ETFs on the FIRST trading day of every
-    # month — that's exactly when the monthly rebalance fires, so without
-    # the fix this is the worst-case "100% KOSPI" trigger.
+    # month — without per-asset cadence this is the worst-case "100% KOSPI"
+    # trigger; with it, those days only trigger KOSPI's own rebalance.
     first_of_month: dict[tuple[int, int], pd.Timestamp] = {}
     for ts in board.close.index:
         first_of_month.setdefault((ts.year, ts.month), ts)
@@ -133,10 +140,15 @@ def test_all_weather_skips_rebalance_on_us_holiday_korean_trading_day():
     assert len(weights) == 4
     for w in weights.values():
         assert 0.15 <= w <= 0.40
-    # No rebalance trade should land on a punched holiday date.
+    # No US-ETF trade should land on a punched holiday date — each ETF
+    # waits for the next day its own market is open. KOSPI may (and
+    # should) trade on those dates because they are KR's first-of-month.
     holiday_dates = {ts.date() for ts in holiday_ts}
-    rebalance_trade_dates = {t.date for t in out.account.trades}
-    assert rebalance_trade_dates.isdisjoint(holiday_dates)
+    us_holiday_trades = [
+        t for t in out.account.trades
+        if t.date in holiday_dates and t.symbol in {"GLD", "QQQ", "SPY"}
+    ]
+    assert not us_holiday_trades
 
 
 def test_all_weather_dividends_credit_cash_and_lift_final_equity():
