@@ -19,6 +19,7 @@ from snusmic_pipeline.sim.contracts import (
     WeakProphetConfig,
 )
 from snusmic_pipeline.sim.runner import run_simulation
+from snusmic_pipeline.sim.warehouse import apply_daily_price_krw_conversion, fill_report_publication_prices
 
 
 @pytest.fixture
@@ -146,3 +147,49 @@ def test_prophet_beats_smic_follower_on_synthetic_universe(fake_warehouse: Path)
     result = run_simulation(cfg, fake_warehouse)
     by_name = {s.persona: s for s in result.summaries}
     assert by_name["oracle"].net_profit_krw >= by_name["smic_follower"].net_profit_krw
+
+
+def test_krw_price_conversion_is_idempotent_for_cached_rows():
+    prices = pd.DataFrame(
+        [
+            {
+                "date": "2024-01-02",
+                "symbol": "USD",
+                "close": 1300.0,
+                "display_currency": "KRW",
+                "krw_per_unit": 1300.0,
+            },
+            {"date": "2024-01-02", "symbol": "RAW", "close": 10.0},
+        ]
+    )
+    reports = pd.DataFrame(
+        [
+            {"symbol": "USD", "exchange": "NYSE"},
+            {"symbol": "RAW", "exchange": "NYSE"},
+        ]
+    )
+    fx = pd.DataFrame(
+        [{"date": "2024-01-02", "currency": "USD", "fx_symbol": "KRW=X", "krw_per_unit": 1300.0}]
+    )
+
+    converted = apply_daily_price_krw_conversion(prices, reports, fx)
+
+    assert converted.loc[converted["symbol"] == "USD", "close"].iloc[0] == 1300.0
+    assert converted.loc[converted["symbol"] == "RAW", "close"].iloc[0] == 13000.0
+
+
+def test_publication_price_keeps_report_quote_when_market_price_is_split_scaled():
+    reports = pd.DataFrame(
+        [
+            {
+                "symbol": "EAF",
+                "publication_date": "2022-05-25",
+                "report_current_price_krw": 10395.0,
+            }
+        ]
+    )
+    prices = pd.DataFrame([{"symbol": "EAF", "date": "2022-05-25", "close": 107184.0}])
+
+    filled = fill_report_publication_prices(reports, prices)
+
+    assert filled.loc[0, "report_current_price_krw"] == 10395.0

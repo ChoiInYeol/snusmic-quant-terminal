@@ -35,6 +35,95 @@ from .schemas import TABLE_DTYPES, TABLE_MODELS
 
 WAREHOUSE_TABLES = ["reports", "fx_rates", "daily_prices"]
 
+COMPANY_SYMBOL_OVERRIDES = {
+    "Bili bili": ("BILI", "NASDAQ", "BILI", "USD"),
+    "Bilibili": ("BILI", "NASDAQ", "BILI", "USD"),
+    "Cyber Agent": ("4751", "TYO", "4751.T", "JPY"),
+    "CyberAgent Inc.": ("4751", "TYO", "4751.T", "JPY"),
+    "쿠쿠홈시스": ("284740", "KRX", "284740.KS", "KRW"),
+    "한화솔루션": ("009830", "KRX", "009830.KS", "KRW"),
+}
+
+KOSDAQ_TICKERS = {
+    "033500",
+    "035900",
+    "036930",
+    "041830",
+    "043650",
+    "044490",
+    "049720",
+    "053030",
+    "054210",
+    "054780",
+    "060150",
+    "067160",
+    "089600",
+    "089860",
+    "089890",
+    "090460",
+    "098120",
+    "099430",
+    "100840",
+    "101160",
+    "101490",
+    "108490",
+    "114810",
+    "119610",
+    "119850",
+    "122640",
+    "131970",
+    "148150",
+    "159010",
+    "166090",
+    "170790",
+    "182360",
+    "189300",
+    "192400",
+    "194480",
+    "196170",
+    "200710",
+    "204620",
+    "211050",
+    "214450",
+    "215000",
+    "218410",
+    "228670",
+    "234300",
+    "237690",
+    "259960",
+    "263750",
+    "280360",
+    "285490",
+    "287410",
+    "293490",
+    "294570",
+    "298020",
+    "310200",
+    "328130",
+    "344820",
+    "348210",
+    "348370",
+    "353810",
+    "356860",
+    "363250",
+    "366030",
+    "368600",
+    "376980",
+    "403870",
+    "408920",
+    "420770",
+    "440110",
+    "453340",
+    "456160",
+    "461300",
+    "472850",
+    "473980",
+    "475960",
+    "476830",
+    "950160",
+    "950170",
+}
+
 
 def build_warehouse(data_dir: Path, warehouse_dir: Path) -> dict[str, int]:
     warehouse_dir.mkdir(parents=True, exist_ok=True)
@@ -181,11 +270,6 @@ def apply_daily_price_krw_conversion(
 ) -> pd.DataFrame:
     if prices.empty:
         return prices
-    if (
-        "display_currency" in prices.columns
-        and prices["display_currency"].astype(str).str.upper().eq("KRW").all()
-    ):
-        return prices
     symbol_meta = (
         reports[["symbol", "exchange"]]
         .dropna(subset=["symbol"])
@@ -198,6 +282,13 @@ def apply_daily_price_krw_conversion(
     frames = []
     for symbol, group in prices.copy().groupby(prices["symbol"].astype(str), sort=False):
         group = group.copy()
+        if (
+            "display_currency" in group.columns
+            and group["display_currency"].dropna().astype(str).str.upper().eq("KRW").all()
+            and group["display_currency"].notna().any()
+        ):
+            frames.append(group)
+            continue
         exchange = str(symbol_meta.get(symbol, {}).get("exchange", ""))
         source_currency = currency_for_symbol(symbol, exchange)
         group["source_currency"] = source_currency
@@ -230,9 +321,15 @@ def read_reports(data_dir: Path) -> pd.DataFrame:
     with csv_path.open(encoding="utf-8", newline="") as handle:
         for row in csv.DictReader(handle):
             metric = metrics.get(row.get("리포트명", ""), {})
-            symbol = metric.get("yfinance_symbol") or infer_yfinance_symbol(
-                row.get("티커", ""), row.get("거래소", "")
-            )
+            company = row.get("종목명", "") or metric.get("company", "")
+            override = COMPANY_SYMBOL_OVERRIDES.get(company)
+            ticker = str(row.get("티커", ""))
+            exchange = str(row.get("거래소", ""))
+            target_currency = row.get("목표가 통화", "")
+            if override:
+                ticker, exchange, symbol, target_currency = override
+            else:
+                symbol = metric.get("yfinance_symbol") or infer_yfinance_symbol(ticker, exchange)
             if not symbol:
                 continue
             target = (
@@ -249,9 +346,9 @@ def read_reports(data_dir: Path) -> pd.DataFrame:
                     "ordinal": int(row.get("순번") or 0),
                     "publication_date": publication,
                     "title": row.get("리포트명", ""),
-                    "company": row.get("종목명", "") or metric.get("company", ""),
-                    "ticker": row.get("티커", ""),
-                    "exchange": row.get("거래소", ""),
+                    "company": company,
+                    "ticker": ticker,
+                    "exchange": exchange,
                     "symbol": symbol,
                     "pdf_filename": row.get("PDF 파일명", ""),
                     "pdf_url": row.get("PDF URL", ""),
@@ -261,7 +358,7 @@ def read_reports(data_dir: Path) -> pd.DataFrame:
                     "bull_target": _float_or_none(row.get("Bull 목표가")),
                     "target_price_local": target,
                     "target_price": target,
-                    "target_currency": row.get("목표가 통화", ""),
+                    "target_currency": target_currency,
                     "price_currency": "",
                     "display_currency": "",
                     "markdown_filename": Path(row.get("PDF 파일명", "")).with_suffix(".md").name
@@ -342,7 +439,14 @@ def fill_report_publication_prices(reports: pd.DataFrame, prices: pd.DataFrame) 
         if symbol_prices.empty:
             publication_prices.append(_float_or_none(row.get("report_current_price_krw")))
         else:
-            publication_prices.append(float(symbol_prices.iloc[0]["close"]))
+            market_close = float(symbol_prices.iloc[0]["close"])
+            quoted_close = _float_or_none(row.get("report_current_price_krw"))
+            if quoted_close and market_close > 0:
+                ratio = market_close / quoted_close
+                if ratio > 4 or ratio < 0.25:
+                    publication_prices.append(quoted_close)
+                    continue
+            publication_prices.append(market_close)
     frame["report_current_price_krw"] = publication_prices
     return frame
 
@@ -478,6 +582,8 @@ def infer_yfinance_symbol(ticker: str, exchange: str) -> str:
     exchange = str(exchange or "").strip().upper()
     if not ticker:
         return ""
+    if exchange == "KRX" and ticker in KOSDAQ_TICKERS:
+        return f"{ticker}.KQ"
     if exchange == "KRX" and ticker.isdigit():
         return f"{ticker}.KS"
     if exchange == "KOSDAQ" and ticker.isdigit():
@@ -500,7 +606,7 @@ def infer_yfinance_symbol(ticker: str, exchange: str) -> str:
 
 
 def stable_report_id(date: str, title: str, symbol: str) -> str:
-    return hashlib.sha1(f"{date}|{title}|{symbol}".encode()).hexdigest()[:16]
+    return hashlib.sha1(f"{date}|{title}".encode()).hexdigest()[:16]
 
 
 def format_date(value: str) -> str:

@@ -24,6 +24,7 @@ matplotlib.use("Agg")  # always headless; CI and CLI use the same backend.
 import matplotlib.pyplot as plt  # noqa: E402
 import matplotlib.ticker as mticker  # noqa: E402
 import pandas as pd  # noqa: E402
+from matplotlib import font_manager  # noqa: E402
 
 from .contracts import SimulationResult  # noqa: E402
 
@@ -34,6 +35,21 @@ PERSONA_COLORS = {
     "smic_follower_v2": "#dc2626",
     "all_weather": "#475569",
 }
+
+
+def _configure_korean_font() -> None:
+    """Use an installed CJK-capable font so Korean labels render in PNGs."""
+    for family in ("AppleGothic", "NanumGothic", "Noto Sans CJK KR", "Noto Sans KR", "Malgun Gothic"):
+        try:
+            font_manager.findfont(family, fallback_to_default=False)
+        except ValueError:
+            continue
+        plt.rcParams["font.family"] = family
+        plt.rcParams["axes.unicode_minus"] = False
+        return
+
+
+_configure_korean_font()
 
 
 def _multiplier_to_pct_label(value: float, _pos: int) -> str:
@@ -87,7 +103,9 @@ def plot_equity_curves(result: SimulationResult, out_path: Path) -> Path:
     # +400%) get readable tick labels instead of disappearing into the gap
     # between +0% and +900%.
     ax.yaxis.set_major_locator(mticker.LogLocator(base=10.0, subs=(1.0, 2.0, 5.0), numticks=12))
-    ax.yaxis.set_minor_locator(mticker.LogLocator(base=10.0, subs=(3.0, 4.0, 6.0, 7.0, 8.0, 9.0), numticks=12))
+    ax.yaxis.set_minor_locator(
+        mticker.LogLocator(base=10.0, subs=(3.0, 4.0, 6.0, 7.0, 8.0, 9.0), numticks=12)
+    )
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(_multiplier_to_pct_label))
     ax.yaxis.set_minor_formatter(mticker.NullFormatter())
     ax.set_title("Persona cumulative return — equity ÷ cumulative deposits (log scale)")

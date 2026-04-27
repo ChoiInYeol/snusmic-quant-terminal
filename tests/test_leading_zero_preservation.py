@@ -32,6 +32,11 @@ def test_read_table_preserves_leading_zero_ticker_roundtrip(tmp_path: Path) -> N
     assert infer_yfinance_symbol(read_back.loc[0, "ticker"], read_back.loc[0, "exchange"]) == "000123.KS"
 
 
+def test_kosdaq_ticker_override_is_deterministic_without_price_metrics() -> None:
+    assert infer_yfinance_symbol("293490", "KRX") == "293490.KQ"
+    assert infer_yfinance_symbol("306200", "KRX") == "306200.KS"
+
+
 def test_raw_read_csv_without_dtype_hint_loses_leading_zero_ticker(tmp_path: Path) -> None:
     write_table(tmp_path, "reports", _report_with_numeric_looking_ticker())
 

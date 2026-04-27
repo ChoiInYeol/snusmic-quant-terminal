@@ -125,10 +125,7 @@ def _per_asset_rebalance_days(
     iterate."""
     out: dict[str, frozenset[date]] = {}
     for sym in target_symbols:
-        sym_days = [
-            d for d in trading_dates
-            if sym in daily_closes.get(d, {}) and daily_closes[d][sym] > 0
-        ]
+        sym_days = [d for d in trading_dates if sym in daily_closes.get(d, {}) and daily_closes[d][sym] > 0]
         if cadence == "monthly":
             first: dict[tuple[int, int], date] = {}
             for d in sym_days:

@@ -377,8 +377,12 @@ def run_check_new(args: argparse.Namespace) -> int:
 
 def run_refresh_market(args: argparse.Namespace) -> int:
     data_dir = Path(args.data_dir)
-    reports = read_extracted_reports_csv(data_dir / "extracted_reports.csv")
-    print(f"Reports loaded: {len(reports)}")
+    warehouse_dir = Path(args.warehouse_dir)
+    counts = build_warehouse(data_dir, warehouse_dir)
+    prices = refresh_price_history(data_dir, warehouse_dir)
+    print(f"Reports loaded: {counts.get('reports', 0)}")
+    print(f"Daily price rows: {len(prices)}")
+    print(f"Symbols: {prices['symbol'].nunique() if not prices.empty else 0}")
     return 0
 
 
@@ -497,9 +501,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     refresh_market = subparsers.add_parser(
         "refresh-market",
-        help="Sanity-check that data/extracted_reports.csv is loadable.",
+        help="Build the warehouse and refresh yfinance OHLCV market data.",
     )
     refresh_market.add_argument("--data-dir", default="data")
+    refresh_market.add_argument("--warehouse-dir", default="data/warehouse")
     refresh_market.set_defaults(func=run_refresh_market)
 
     export_md = subparsers.add_parser(

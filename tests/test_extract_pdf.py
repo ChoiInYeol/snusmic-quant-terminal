@@ -73,6 +73,88 @@ def test_known_overseas_company_mapping_beats_noisy_parentheses():
     assert parsed["target_currency"] == "JPY"
 
 
+def test_known_overseas_company_mapping_beats_page_number_parentheses():
+    parsed = parse_report_text(
+        "Bilibili(NASDAQ: BILI)\n# (075580)\n목표주가: 72.95(USD) 현재주가: 45.90(USD)",
+        fallback_company="Bili bili",
+    )
+
+    assert parsed["ticker"] == "BILI"
+    assert parsed["exchange"] == "NASDAQ"
+    assert parsed["target_currency"] == "USD"
+    assert parsed["base_target"] == 72.95
+
+
+def test_known_japanese_company_mapping_sets_jpy_currency():
+    parsed = parse_report_text(
+        "CyberAgent Inc. (4751.T)\n# (075580)\n목표주가(Bull): 3610엔 현재주가: 2,099엔",
+        fallback_company="Cyber Agent",
+    )
+
+    assert parsed["ticker"] == "4751"
+    assert parsed["exchange"] == "TYO"
+    assert parsed["target_currency"] == "JPY"
+
+
+def test_known_z_holdings_mapping_sets_jpy_currency():
+    parsed = parse_report_text("Z Holdings (4689)\n목표주가: 1,210 JPY", fallback_company="Z-holdings")
+
+    assert parsed["ticker"] == "4689"
+    assert parsed["exchange"] == "TYO"
+    assert parsed["target_currency"] == "JPY"
+
+
+def test_known_korean_company_mapping_beats_bad_pdf_ticker():
+    parsed = parse_report_text(
+        "쿠쿠홈시스(003410)\n## (075580)\n목표주가: 66,500 원", fallback_company="쿠쿠홈시스"
+    )
+
+    assert parsed["ticker"] == "284740"
+    assert parsed["exchange"] == "KRX"
+
+
+def test_known_hanwha_solutions_mapping_beats_bad_pdf_ticker():
+    parsed = parse_report_text(
+        "|한화솔루션 (009380) 2020년 11월 28일|\n현재주가: 49,000 원\n목표주가: 75,000 원",
+        fallback_company="한화솔루션",
+    )
+
+    assert parsed["ticker"] == "009830"
+    assert parsed["exchange"] == "KRX"
+    assert parsed["base_target"] == 75000
+
+
+def test_korean_dot_thousands_target_is_not_decimal_price():
+    text = """
+    카카오게임즈 (293490)
+    목표주가:
+    Bull 151.300 원/ Bear 120,700 원
+    현재주가: 97,900 원 상승여력: 55% / 23%
+    """
+
+    parsed = parse_report_text(text)
+
+    assert parsed["ticker"] == "293490"
+    assert parsed["bull_target"] == 151300
+    assert parsed["base_target"] == 151300
+    assert parsed["base_target"] != 151.3
+
+
+def test_base_case_eps_is_not_used_as_target_price():
+    text = """
+    글로벌텍스프리 (204620)
+    현재주가: 3,800 원 Bull Case: 6,780 원
+    Base Case: 4,925 원
+    2023E Bull Case EPS 302원, Base Case EPS 219원에 Target PER 22.46배를 적용
+    """
+
+    parsed = parse_report_text(text)
+
+    assert parsed["base_target"] == 4925
+    assert parsed["bull_target"] == 6780
+    assert parsed["base_target"] != 219
+
+
 def test_target_price_before_korean_label_beats_following_year_noise():
     text = "8,100원을 Base case 목표주가로 제시한다. 동사는 22년 코스닥으로 이전 상장했다."
 

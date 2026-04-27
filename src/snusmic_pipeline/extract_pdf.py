@@ -26,7 +26,7 @@ _EN_TARGET_PRICE_RE = re.compile(
     re.IGNORECASE,
 )
 _SCENARIO_RE = re.compile(
-    r"\b(Bear|Base|Bull)\b[^0-9$₩¥]{0,80}([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)",
+    r"\b(Bear|Base|Bull)(?:\s*Case)?\b[^0-9$₩¥]{0,80}([$₩¥]?\s*[0-9][0-9,]*(?:\.[0-9]+)?)",
     re.IGNORECASE,
 )
 _CASE_PRICE_RE = re.compile(
@@ -46,6 +46,7 @@ _INVESTMENT_SECTION_RE = re.compile(
 )
 
 KNOWN_EXCHANGES = {
+    "BILI": "NASDAQ",
     "GLNG": "NASDAQ",
     "CAMT": "NASDAQ",
     "LITE": "NASDAQ",
@@ -90,6 +91,7 @@ KNOWN_EXCHANGES = {
     "1211": "HKG",
     "1833": "HKG",
     "4689": "TYO",
+    "4751": "TYO",
     "002340": "SZSE",
     "002714": "SZSE",
     "GTT": "EPA",
@@ -104,6 +106,12 @@ KNOWN_EXCHANGES = {
 }
 
 KNOWN_COMPANY_TICKERS = {
+    "Bili bili": "BILI",
+    "Bilibili": "BILI",
+    "Cyber Agent": "4751",
+    "CyberAgent Inc.": "4751",
+    "쿠쿠홈시스": "284740",
+    "한화솔루션": "009830",
     "Golar LNG": "GLNG",
     "Camtek": "CAMT",
     "Lumentum Holdings Inc": "LITE",
@@ -169,6 +177,27 @@ def parse_money(value: str | None) -> float | None:
         return float(cleaned)
     except ValueError:
         return None
+
+
+def rescale_thousand_decimal_if_needed(
+    value: float | None, raw: str, current_price: float | None, ticker: str
+) -> float | None:
+    """Handle Korean reports that use dots as thousand separators.
+
+    Example: ``151.300 원`` means 151,300 KRW, not 151.3 KRW. Keep normal
+    decimal prices such as USD 97.8 untouched by requiring a Korean numeric
+    ticker, a three-digit decimal group, and a value implausibly below the
+    current price.
+    """
+    if value is None or current_price is None:
+        return value
+    if not (ticker.isdigit() and len(ticker) == 6):
+        return value
+    if current_price <= 1000 or value >= current_price * 0.1:
+        return value
+    if re.search(r"\d+\.\d{3}\b", raw):
+        return value * 1000
+    return value
 
 
 def normalize_rating(value: str | None) -> str:
@@ -336,7 +365,7 @@ def infer_exchange(ticker: str) -> tuple[str, str]:
 def infer_currency(text: str, ticker: str) -> str:
     if ticker.isdigit() and len(ticker) == 6:
         return "KRW"
-    if ticker in {"6857", "4680", "5253", "2124", "5726"}:
+    if ticker in {"6857", "4680", "5253", "2124", "5726", "4751", "4689"}:
         return "JPY"
     if ticker in {"1211", "1833"}:
         return "HKD"
@@ -363,11 +392,14 @@ def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object
                 break
     if single_target is not None and not is_plausible_target_price(single_target, ticker):
         single_target = None
+    single_target = rescale_thousand_decimal_if_needed(single_target, target_raw, current_price, ticker)
 
     scenario_values: dict[str, float] = {}
     for match in _SCENARIO_RE.finditer(text[:15000]):
         scenario = match.group(1).lower()
         if scenario not in scenario_values:
+            if "eps" in match.group(0).lower():
+                continue
             value = parse_money(match.group(2))
             raw_value = match.group(2)
             looks_like_case_number = (
@@ -376,6 +408,7 @@ def parse_report_text(text: str, fallback_company: str = "") -> dict[str, object
                 and value is not None
                 and value <= 5
             )
+            value = rescale_thousand_decimal_if_needed(value, raw_value, current_price, ticker)
             if value is not None and not looks_like_case_number and is_plausible_target_price(value, ticker):
                 scenario_values[scenario] = value
 

@@ -145,7 +145,6 @@ def test_all_weather_skips_rebalance_on_us_holiday_korean_trading_day():
     # should) trade on those dates because they are KR's first-of-month.
     holiday_dates = {ts.date() for ts in holiday_ts}
     us_holiday_trades = [
-        t for t in out.account.trades
-        if t.date in holiday_dates and t.symbol in {"GLD", "QQQ", "SPY"}
+        t for t in out.account.trades if t.date in holiday_dates and t.symbol in {"GLD", "QQQ", "SPY"}
     ]
     assert not us_holiday_trades
