@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PriceEvidenceChart } from '@/components/charts/PriceEvidenceChart';
 import { MetricCard, Panel, TerminalHero } from '@/components/ui/Terminal';
-import { getMarkdownSnippet, getPriceSeries, getReportById, getReportRows } from '@/lib/artifacts';
+import { getMarkdownSnippet, getPriceSeries, getReportById, getReportRows, type PricePoint, type ReportRow } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
 
 type ReportParams = Promise<{ reportId: string }>;
@@ -40,14 +40,20 @@ export default async function ReportDetailPage({ params }: { params: ReportParam
       </section>
       <section className="detail-grid">
         <Panel title="가격 경로 vs 추출 목표가">
-          <PriceEvidenceChart priceSeries={prices} targetPrice={report.targetPriceKrw} publicationDate={report.publicationDate} targetHitDate={report.targetHitDate} />
+          <PriceEvidenceChart priceSeries={prices} targetPrice={report.targetPriceKrw} publicationDate={report.publicationDate} targetHitDate={report.targetHitDate} evidenceMarkers={pathEvidence.markers} />
         </Panel>
         <aside className="grid">
           <Panel title="경로 통계">
+            <p>관측 고점: {pathEvidence.peak ? `${pathEvidence.peak.time} · ${formatKrw(pathEvidence.peak.value)}` : '—'}</p>
+            <p>관측 저점: {pathEvidence.trough ? `${pathEvidence.trough.time} · ${formatKrw(pathEvidence.trough.value)}` : '—'}</p>
             <p>최고 수익률: <span className="good">{formatPercent(report.peakReturn)}</span></p>
             <p>최저 수익률: <span className="bad">{formatPercent(report.troughReturn)}</span></p>
             <p>마지막 종가: {formatKrw(report.lastCloseKrw)} ({report.lastCloseDate})</p>
             {report.pdfUrl ? <p><a href={report.pdfUrl}>원본 PDF 소스 →</a></p> : null}
+          </Panel>
+          <Panel title="한국어 투자 메모">
+            <p>{memo.summary}</p>
+            <ul>{memo.bullets.map((item) => <li key={item.label}><strong>{item.label}</strong>: {item.text}</li>)}</ul>
           </Panel>
           <Panel title="추출 Markdown 증거">
             <div className="markdown-snippet">{snippet}</div>

@@ -1,11 +1,10 @@
 import { MetricCard, Panel, TerminalHero } from '@/components/ui/Terminal';
-import { getDataQuality, getReportRows } from '@/lib/artifacts';
+import { getDataQuality, getReportRows, getWebDataQuality } from '@/lib/artifacts';
 import { formatPercent } from '@/lib/format';
 
 export default function DataQualityPage() {
   const quality = getDataQuality();
   const webQuality = getWebDataQuality();
-  const overview = getOverview();
   const reports = getReportRows();
   const openRows = reports.filter((report) => !report.targetHit && report.lastCloseKrw !== null);
   const coverage = webQuality.coverage ?? {};
@@ -26,40 +25,55 @@ export default function DataQualityPage() {
         <MetricCard label="가격 매칭" value={quality.reportsWithPrices.toLocaleString('ko-KR')} tone="accent" />
         <MetricCard label="목표가 도달률" value={formatPercent(quality.targetHitRate)} tone="good" />
       </section>
-      <Panel title="현재 주의사항">
-        <ul>
-          <li>{quality.missingPriceSymbols.toLocaleString('ko-KR')}개 심볼은 시뮬레이션 집계에서 가격 누락 심볼로 보고됩니다.</li>
-          <li>{openRows.length.toLocaleString('ko-KR')}개 가격 매칭 행은 마지막 종가 기준 추출 목표가에 도달하지 못했습니다.</li>
-          <li>리포트 단위 비교 전에 목표가와 가격은 KRW 기준으로 정규화됩니다.</li>
-          <li>모든 웹 페이지는 커밋된 아티팩트만 읽는 정적 뷰어이며, 시장 데이터 갱신이나 시뮬레이션 변경을 수행하지 않습니다.</li>
-        </ul>
+
+      <section className="grid two-col" style={{ marginTop: '1rem' }}>
+        <Distribution title="투자의견 분포" rows={ratingCounts} />
+        <Distribution title="통화 추출 분포" rows={currencyCounts} />
+      </section>
+      <section className="grid two-col" style={{ marginTop: '1rem' }}>
+        <Distribution title="제외/검토 사유" rows={reasonCounts} translate={translateReason} />
+        <Panel title="현재 주의사항">
+          <ul>
+            <li>{quality.missingPriceSymbols.toLocaleString('ko-KR')}개 심볼은 시뮬레이션 집계에서 가격 누락 심볼로 보고됩니다.</li>
+            <li>{openRows.length.toLocaleString('ko-KR')}개 가격 매칭 행은 마지막 종가 기준 추출 목표가에 도달하지 못했습니다.</li>
+            <li>리포트 단위 비교 전에 목표가와 가격은 KRW 기준으로 정규화됩니다.</li>
+            <li>정적 웹은 커밋된 아티팩트만 읽으며 시장 데이터 갱신이나 시뮬레이션 변경을 수행하지 않습니다.</li>
+          </ul>
+        </Panel>
+      </section>
+
+      <Panel title="커버리지 원본" className="dense-panel">
+        <pre className="markdown-snippet">{JSON.stringify(coverage, null, 2)}</pre>
       </Panel>
-      <Panel title="원본 추출 품질 아티팩트">
-        <pre className="markdown-snippet">{JSON.stringify(quality.extractionQuality, null, 2)}</pre>
-      </Panel>
+      {reviewRows.length ? (
+        <Panel title="검토 샘플" className="dense-panel">
+          <pre className="markdown-snippet">{JSON.stringify(reviewRows, null, 2)}</pre>
+        </Panel>
+      ) : null}
     </>
   );
 }
 
-function Distribution({ title, rows }: { title: string; rows: Record<string, unknown> }) {
+function Distribution({ title, rows, translate = (value: string) => value }: { title: string; rows: Record<string, unknown>; translate?: (value: string) => string }) {
   const entries = Object.entries(rows).sort(([, a], [, b]) => Number(b) - Number(a));
   const total = entries.reduce((sum, [, value]) => sum + Number(value || 0), 0);
   return (
-    <section className="panel">
-      <h2>{title}</h2>
-      <div className="bar-list">
-        {entries.map(([key, value]) => {
-          const count = Number(value || 0);
-          return (
-            <div className="bar-row" key={key}>
-              <span>{key || '누락'}</span>
-              <div className="bar-track"><div className="bar-fill" style={{ width: `${total ? (count / total) * 100 : 0}%` }} /></div>
-              <strong>{count.toLocaleString('ko-KR')}</strong>
-            </div>
-          );
-        })}
-      </div>
-    </section>
+    <Panel title={title}>
+      {entries.length ? (
+        <div className="bar-list">
+          {entries.map(([key, value]) => {
+            const count = Number(value || 0);
+            return (
+              <div className="bar-row" key={key}>
+                <span>{translate(key || '누락')}</span>
+                <div className="bar-track"><div className="bar-fill" style={{ width: `${total ? (count / total) * 100 : 0}%` }} /></div>
+                <strong>{count.toLocaleString('ko-KR')}</strong>
+              </div>
+            );
+          })}
+        </div>
+      ) : <p className="muted">표시할 분포가 없습니다.</p>}
+    </Panel>
   );
 }
 

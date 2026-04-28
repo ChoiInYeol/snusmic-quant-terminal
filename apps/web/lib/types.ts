@@ -1,19 +1,11 @@
 export type PersonaSummary = {
   persona: string;
   label: string;
-  initial_capital_krw: number;
-  total_contributed_krw: number;
-  final_equity_krw: number;
-  final_cash_krw: number;
-  final_holdings_value_krw: number;
-  net_profit_krw: number;
-  money_weighted_return: number;
-  time_weighted_return: number;
-  cagr: number;
-  max_drawdown: number;
-  realized_pnl_krw: number;
-  trade_count: number;
-  open_positions: number;
+  final_equity_krw: number | null;
+  net_profit_krw: number | null;
+  money_weighted_return: number | null;
+  max_drawdown: number | null;
+  trade_count: number | null;
 };
 
 export type ReportRow = {
@@ -24,8 +16,10 @@ export type ReportRow = {
   exchange: string;
   symbol: string;
   title: string;
+  rating: string | null;
   pdf_url: string;
   markdown_filename: string;
+  target_price: number | null;
   target_price_krw: number | null;
   publication_price_krw: number | null;
   entry_price_krw: number | null;
@@ -43,12 +37,13 @@ export type ReportRow = {
 };
 
 export type Overview = {
+  generated_from?: string;
   report_counts: {
-    extracted_reports: number;
-    report_stat_rows: number;
-    price_matched_reports: number;
-    missing_price_symbols: number;
-    web_report_rows: number;
+    extracted_reports?: number;
+    report_stat_rows?: number;
+    price_matched_reports?: number;
+    missing_price_symbols?: number;
+    web_report_rows?: number;
   };
   target_stats: Record<string, number | null>;
   baseline_personas: PersonaSummary[];
@@ -65,18 +60,70 @@ export type PricePoint = {
   volume: number | null;
 };
 
+export type ChartMarker = {
+  type: 'publication' | 'target_hit' | 'peak' | 'trough' | 'latest' | string;
+  date: string;
+  label: string;
+  price_krw: number | null;
+};
+
+export type ReportDetailMetric = {
+  report_id?: string;
+  company?: string;
+  symbol?: string;
+  target_hit?: boolean | null;
+  days_to_target?: number | null;
+  current_return?: number | null;
+  peak_return?: number | null;
+  trough_return?: number | null;
+  target_gap_pct?: number | null;
+  entry_price_krw?: number | null;
+  target_price_krw?: number | null;
+  latest_close_krw?: number | null;
+  price_extremes?: Record<string, ChartMarker>;
+  markers?: ChartMarker[];
+  interpretation?: string[];
+};
+
+export type Insight = {
+  id: string;
+  title: string;
+  sentence: string;
+  metric?: number | string | null;
+  related_report_ids?: string[];
+};
+
+export type DataQuality = {
+  coverage: Record<string, number | string | null>;
+  extraction_quality: Record<string, unknown>;
+  missing_symbols: Array<{ symbol: string }>;
+};
+
+export type Rankings = Record<string, ReportRow[]>;
+
 export type StrategyRun = {
   run_id: string;
+  trial_number?: number;
   label: string;
   family?: string;
   scope?: string;
   sampler?: string;
-  in_sample?: boolean;
   score?: number;
-  metrics: Record<string, number>;
-  parameters?: Record<string, string | number | boolean>;
-  params?: Record<string, string | number | boolean>;
-  baseline_excess?: Record<string, number>;
+  metrics: Record<string, number | null>;
+  parameters?: Record<string, string | number | boolean | null>;
+  params?: Record<string, string | number | boolean | null>;
+  warnings?: string[];
 };
 
-export type TrialRow = StrategyRun & { trial_number: number };
+export type StrategyRunsArtifact = {
+  study_name?: string;
+  scope?: string;
+  best_run_id?: string;
+  disclaimer?: string;
+  runs: StrategyRun[];
+};
+
+export type ParameterImportance = {
+  method?: string;
+  parameters?: Array<{ parameter: string; importance: number }>;
+};
