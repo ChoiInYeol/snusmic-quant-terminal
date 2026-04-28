@@ -1,9 +1,10 @@
 'use client';
 
 import {
+  CandlestickSeries,
   ColorType,
   CrosshairMode,
-  LineSeries,
+  HistogramSeries,
   LineStyle,
   createChart,
   createSeriesMarkers,
@@ -16,7 +17,15 @@ import {
 import { useEffect, useRef, useState } from 'react';
 import { formatKrw, formatPercent } from '@/lib/format';
 
-type PricePoint = { time: string; value: number };
+type PricePoint = {
+  time: string;
+  value: number;
+  open?: number;
+  high?: number;
+  low?: number;
+  close?: number;
+  volume?: number | null;
+};
 
 type EvidenceMarker = {
   time: string;
@@ -29,7 +38,11 @@ type TooltipState = {
   x: number;
   y: number;
   time: string;
+  open: number;
+  high: number;
+  low: number;
   close: number;
+  volume: number | null;
   targetPrice: number | null;
   targetGapPct: number | null;
 };
@@ -65,20 +78,54 @@ export function PriceEvidenceChart({
       },
       grid: { vertLines: { color: '#1f2937' }, horzLines: { color: '#1f2937' } },
       crosshair: { mode: CrosshairMode.Normal },
-      rightPriceScale: { borderColor: '#334155', autoScale: true, scaleMargins: { top: 0.14, bottom: 0.16 } },
+      rightPriceScale: { borderColor: '#334155', autoScale: true, scaleMargins: { top: 0.10, bottom: 0.22 } },
       timeScale: { borderColor: '#334155', timeVisible: true, secondsVisible: false },
     });
-    const closeSeries: ISeriesApi<'Line'> = chart.addSeries(LineSeries, {
-      color: '#60a5fa',
-      lineWidth: 2,
+
+    const candleSeries: ISeriesApi<'Candlestick'> = chart.addSeries(CandlestickSeries, {
+      upColor: '#35f2c2',
+      downColor: '#ff6f91',
+      borderUpColor: '#35f2c2',
+      borderDownColor: '#ff6f91',
+      wickUpColor: '#35f2c2',
+      wickDownColor: '#ff6f91',
       priceLineVisible: false,
       lastValueVisible: true,
-      title: '종가',
+      title: 'OHLC',
     });
-    closeSeries.setData(priceSeries.map((point) => ({ time: point.time as Time, value: point.value })));
+
+    candleSeries.setData(priceSeries.map((point) => {
+      const close = point.close ?? point.value;
+      return {
+        time: point.time as Time,
+        open: point.open ?? close,
+        high: point.high ?? close,
+        low: point.low ?? close,
+        close,
+      };
+    }));
+
+    const volumeSeries = chart.addSeries(HistogramSeries, {
+      color: 'rgba(138, 180, 255, 0.36)',
+      priceFormat: { type: 'volume' },
+      priceScaleId: 'volume',
+      lastValueVisible: false,
+      priceLineVisible: false,
+      title: '거래량',
+    });
+    chart.priceScale('volume').applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
+    volumeSeries.setData(priceSeries.map((point) => {
+      const close = point.close ?? point.value;
+      const open = point.open ?? close;
+      return {
+        time: point.time as Time,
+        value: Math.max(0, point.volume ?? 0),
+        color: close >= open ? 'rgba(53, 242, 194, 0.34)' : 'rgba(255, 111, 145, 0.32)',
+      };
+    }));
 
     if (targetPrice && Number.isFinite(targetPrice)) {
-      closeSeries.createPriceLine({
+      candleSeries.createPriceLine({
         price: targetPrice,
         color: '#f87171',
         lineWidth: 2,
@@ -104,29 +151,39 @@ export function PriceEvidenceChart({
         text: marker.label,
       });
     }
-    createSeriesMarkers(closeSeries, [...markerByKey.values()].sort((a, b) => String(a.time).localeCompare(String(b.time))));
+    createSeriesMarkers(candleSeries, [...markerByKey.values()].sort((a, b) => String(a.time).localeCompare(String(b.time))));
 
-    const priceByTime = new Map(priceSeries.map((point) => [point.time, point.value]));
+    const priceByTime = new Map(priceSeries.map((point) => [point.time, point]));
     const handleCrosshairMove = (params: MouseEventParams<Time>) => {
       if (!params.point || !params.time || params.point.x < 0 || params.point.y < 0) {
         setTooltip(null);
         return;
       }
       const time = String(params.time);
-      const seriesData = params.seriesData.get(closeSeries);
-      const close = typeof seriesData === 'object' && seriesData && 'value' in seriesData
-        ? Number(seriesData.value)
-        : priceByTime.get(time);
-      if (close === undefined || !Number.isFinite(close)) {
+      const seriesData = params.seriesData.get(candleSeries);
+      const fallback = priceByTime.get(time);
+      const closeRaw = typeof seriesData === 'object' && seriesData && 'close' in seriesData ? Number(seriesData.close) : (fallback?.close ?? fallback?.value);
+      const openRaw = typeof seriesData === 'object' && seriesData && 'open' in seriesData ? Number(seriesData.open) : (fallback?.open ?? closeRaw);
+      const highRaw = typeof seriesData === 'object' && seriesData && 'high' in seriesData ? Number(seriesData.high) : (fallback?.high ?? closeRaw);
+      const lowRaw = typeof seriesData === 'object' && seriesData && 'low' in seriesData ? Number(seriesData.low) : (fallback?.low ?? closeRaw);
+      if (closeRaw === undefined || openRaw === undefined || highRaw === undefined || lowRaw === undefined || !Number.isFinite(closeRaw) || !Number.isFinite(openRaw) || !Number.isFinite(highRaw) || !Number.isFinite(lowRaw)) {
         setTooltip(null);
         return;
       }
+      const close = closeRaw;
+      const open = openRaw;
+      const high = highRaw;
+      const low = lowRaw;
       const targetGapPct = targetPrice && Number.isFinite(targetPrice) ? (targetPrice - close) / close : null;
       setTooltip({
-        x: Math.min(params.point.x + 16, Math.max(16, container.clientWidth - 190)),
-        y: Math.max(12, params.point.y - 86),
+        x: Math.min(params.point.x + 16, Math.max(16, container.clientWidth - 240)),
+        y: Math.max(12, params.point.y - 108),
         time,
+        open,
+        high,
+        low,
         close,
+        volume: fallback?.volume ?? null,
         targetPrice,
         targetGapPct,
       });
@@ -144,11 +201,13 @@ export function PriceEvidenceChart({
   }
   return (
     <div className="chart-shell">
-      <div ref={ref} className="chart-box chart-box-fixed" aria-label="목표가 기준선과 발간·목표도달·고점·저점 마커가 포함된 종가 경로" />
+      <div ref={ref} className="chart-box chart-box-fixed" aria-label="목표가 기준선, OHLC 캔들, 거래량, 발간·목표도달·고점·저점 마커가 포함된 가격 경로" />
       {tooltip ? (
         <div className="chart-tooltip" style={{ left: tooltip.x, top: tooltip.y }}>
           <div className="tooltip-date">{tooltip.time}</div>
-          <div>종가 {formatKrw(tooltip.close)}</div>
+          <div>시가 {formatKrw(tooltip.open)} · 고가 {formatKrw(tooltip.high)}</div>
+          <div>저가 {formatKrw(tooltip.low)} · 종가 {formatKrw(tooltip.close)}</div>
+          <div>거래량 {formatVolume(tooltip.volume)}</div>
           <div>목표가 {formatKrw(tooltip.targetPrice)}</div>
           <div className={tooltip.targetGapPct !== null && tooltip.targetGapPct <= 0 ? 'good' : 'warn'}>
             목표까지 {formatPercent(tooltip.targetGapPct)}
@@ -173,4 +232,9 @@ function markerStyle(marker: EvidenceMarker): MarkerStyle {
     default:
       return { color: '#fbbf24', position: 'belowBar', shape: 'arrowUp' };
   }
+}
+
+function formatVolume(value: number | null): string {
+  if (value === null || !Number.isFinite(value)) return '—';
+  return value.toLocaleString('ko-KR', { maximumFractionDigits: 0 });
 }

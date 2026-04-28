@@ -91,7 +91,15 @@ export type PositionEpisodeRow = {
   exitReasons: string;
 };
 
-export type PricePoint = { time: string; value: number };
+export type PricePoint = {
+  time: string;
+  value: number;
+  open?: number;
+  high?: number;
+  low?: number;
+  close?: number;
+  volume?: number | null;
+};
 
 export type ReportTargetDigest = {
   reportId: string;
@@ -310,6 +318,12 @@ function strOrNull(value: unknown): string | null {
   return String(value);
 }
 
+function scaledPrice(value: unknown, scale: number): number | undefined {
+  const parsed = num(value);
+  if (parsed === null || parsed <= 0) return undefined;
+  return parsed * scale;
+}
+
 let reportCache: ReportRow[] | undefined;
 export function getReportRows(): ReportRow[] {
   if (reportCache) return reportCache;
@@ -407,7 +421,21 @@ export function getPriceSeries(symbol: string, startDate?: string, endDate?: str
   const stop = endDate ?? '9999-99-99';
   return artifact.prices
     .filter((point) => (!startDate || String(point.date) >= startDate) && String(point.date) <= stop)
-    .map((point) => ({ time: String(point.date), value: num(point.close_krw ?? point.close) ?? 0 }))
+    .map((point) => {
+      const close = num(point.close);
+      const closeKrw = num(point.close_krw ?? point.close);
+      const scale = close && closeKrw ? closeKrw / close : 1;
+      const value = closeKrw ?? (close ? close * scale : 0);
+      return {
+        time: String(point.date),
+        value,
+        open: scaledPrice(point.open, scale),
+        high: scaledPrice(point.high, scale),
+        low: scaledPrice(point.low, scale),
+        close: value,
+        volume: num(point.volume),
+      };
+    })
     .filter((point) => point.value > 0);
 }
 
