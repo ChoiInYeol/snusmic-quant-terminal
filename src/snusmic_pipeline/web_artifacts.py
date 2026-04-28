@@ -311,14 +311,319 @@ def _build_overview(
     }
 
 
-def _build_rankings(report_stats: dict[str, Any]) -> dict[str, Any]:
+def _build_rankings(report_stats: dict[str, Any], report_rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """Build table-ready rankings with compatibility aliases for older stats keys."""
+
+    rows_with_current = [row for row in report_rows if row.get("current_return") is not None]
+    rows_with_gap = [row for row in report_rows if row.get("target_gap_pct") is not None]
+    rows_with_upside = [row for row in report_rows if row.get("target_upside_at_pub") is not None]
+    hit_rows = [row for row in report_rows if row.get("target_hit") and row.get("days_to_target") is not None]
     return {
-        "top_winners": report_stats.get("top_winners", []),
-        "top_losers": report_stats.get("top_losers", []),
-        "fastest_hits": report_stats.get("fastest_hits", []),
-        "biggest_open_target_gaps": report_stats.get("biggest_open_target_gaps", []),
-        "most_aggressive_targets": report_stats.get("most_aggressive_targets", []),
+        "top_winners": report_stats.get("top_winners") or _rank(rows_with_current, "current_return", True),
+        "top_losers": report_stats.get("top_losers") or _rank(rows_with_current, "current_return", False),
+        "fastest_hits": report_stats.get("fastest_hits")
+        or report_stats.get("fastest_target_hits")
+        or _rank(hit_rows, "days_to_target", False),
+        "slowest_hits": report_stats.get("slowest_target_hits") or _rank(hit_rows, "days_to_target", True),
+        "biggest_open_target_gaps": report_stats.get("biggest_open_target_gaps")
+        or report_stats.get("biggest_target_gaps_below")
+        or _rank(rows_with_gap, "target_gap_pct", True),
+        "biggest_target_overshoots": report_stats.get("biggest_target_overshoots")
+        or _rank(rows_with_gap, "target_gap_pct", False),
+        "most_aggressive_targets": report_stats.get("most_aggressive_targets")
+        or _rank(rows_with_upside, "target_upside_at_pub", True),
+        "best_current_returns": _rank(rows_with_current, "current_return", True),
+        "worst_current_returns": _rank(rows_with_current, "current_return", False),
     }
+
+
+def _rank(rows: list[dict[str, Any]], metric: str, descending: bool, limit: int = 10) -> list[dict[str, Any]]:
+    ranked = sorted(rows, key=lambda row: _number(row.get(metric)) or 0, reverse=descending)
+    return [
+        {
+            "report_id": row.get("report_id"),
+            "date": row.get("date"),
+            "company": row.get("company"),
+            "symbol": row.get("symbol"),
+            "metric": metric,
+            "value": _number(row.get(metric)),
+            "current_return": _number(row.get("current_return")),
+            "target_hit": _bool(row.get("target_hit")),
+            "days_to_target": _number(row.get("days_to_target")),
+            "target_gap_pct": _number(row.get("target_gap_pct")),
+        }
+        for row in ranked[:limit]
+    ]
+
+
+def _build_return_windows(
+    report_rows: list[dict[str, Any]], prices: pd.DataFrame, windows: tuple[int, ...] = (30, 60, 90, 180)
+) -> list[dict[str, Any]]:
+    if prices.empty:
+        return []
+    priced = prices.copy()
+    priced["date"] = pd.to_datetime(priced["date"], errors="coerce")
+    priced["close_krw"] = priced.apply(
+        lambda row: (_number(row.get("close")) or 0) * (_number(row.get("krw_per_unit")) or 1.0), axis=1
+    )
+    by_symbol = {str(symbol): group.sort_values("date") for symbol, group in priced.groupby("symbol", sort=True)}
+    results: list[dict[str, Any]] = []
+    for report in sorted(report_rows, key=lambda row: str(row.get("report_id"))):
+        symbol = str(report.get("symbol") or "")
+        group = by_symbol.get(symbol)
+        entry_price = _number(report.get("entry_price_krw")) or _number(report.get("publication_price_krw"))
+        publication_date = pd.to_datetime(report.get("date"), errors="coerce")
+        if group is None or entry_price in (None, 0) or pd.isna(publication_date):
+            window_values = {f"return_{days}d": None for days in windows}
+            window_values.update({f"price_{days}d_krw": None for days in windows})
+            window_values.update({f"date_{days}d": None for days in windows})
+        else:
+            window_values = {}
+            for days in windows:
+                target_date = publication_date + pd.Timedelta(days=days)
+                candidates = group[group["date"] >= target_date]
+                if candidates.empty:
+                    window_values[f"return_{days}d"] = None
+                    window_values[f"price_{days}d_krw"] = None
+                    window_values[f"date_{days}d"] = None
+                    continue
+                price_row = candidates.iloc[0]
+                price = _number(price_row.get("close_krw"))
+                window_values[f"return_{days}d"] = round((price / entry_price) - 1, 6) if price else None
+                window_values[f"price_{days}d_krw"] = round(price, 4) if price is not None else None
+                window_values[f"date_{days}d"] = price_row["date"].date().isoformat()
+        results.append(
+            {
+                "report_id": report.get("report_id"),
+                "company": report.get("company"),
+                "symbol": symbol,
+                "date": report.get("date"),
+                "entry_price_krw": entry_price,
+                **window_values,
+            }
+        )
+    return results
+
+
+def _build_detail_metrics(
+    report_rows: list[dict[str, Any]],
+    prices: pd.DataFrame,
+    return_windows: list[dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
+    windows_by_id = {str(row.get("report_id")): row for row in return_windows}
+    if prices.empty:
+        return {
+            str(row["report_id"]): _detail_without_prices(row, windows_by_id.get(str(row["report_id"]), {}))
+            for row in report_rows
+        }
+    priced = prices.copy()
+    priced["date"] = pd.to_datetime(priced["date"], errors="coerce")
+    priced["close_krw"] = priced.apply(
+        lambda row: (_number(row.get("close")) or 0) * (_number(row.get("krw_per_unit")) or 1.0), axis=1
+    )
+    by_symbol = {str(symbol): group.sort_values("date") for symbol, group in priced.groupby("symbol", sort=True)}
+    details: dict[str, dict[str, Any]] = {}
+    for report in sorted(report_rows, key=lambda row: str(row.get("report_id"))):
+        report_id = str(report["report_id"])
+        publication_date = pd.to_datetime(report.get("date"), errors="coerce")
+        history = by_symbol.get(str(report.get("symbol") or ""))
+        after_publication = (
+            history[history["date"] >= publication_date].copy()
+            if history is not None and not pd.isna(publication_date)
+            else pd.DataFrame()
+        )
+        entry_price = _number(report.get("entry_price_krw")) or _number(report.get("publication_price_krw"))
+        target_price = _number(report.get("target_price_krw"))
+        markers = [
+            {"date": report.get("date"), "type": "publication", "label": "리포트 발간", "price_krw": entry_price}
+        ]
+        peak = trough = None
+        if not after_publication.empty:
+            peak_row = after_publication.loc[after_publication["close_krw"].idxmax()]
+            trough_row = after_publication.loc[after_publication["close_krw"].idxmin()]
+            last_row = after_publication.iloc[-1]
+            peak = _price_marker(peak_row, "peak", "발간 후 고점")
+            trough = _price_marker(trough_row, "trough", "발간 후 저점")
+            markers.extend([peak, trough, _price_marker(last_row, "latest", "최근 종가")])
+        if report.get("target_hit_date"):
+            markers.append(
+                {
+                    "date": report.get("target_hit_date"),
+                    "type": "target_hit",
+                    "label": "목표가 도달",
+                    "price_krw": target_price,
+                }
+            )
+        details[report_id] = {
+            "report_id": report_id,
+            "company": report.get("company"),
+            "symbol": report.get("symbol"),
+            "target_price_krw": target_price,
+            "entry_price_krw": entry_price,
+            "current_return": _number(report.get("current_return")),
+            "peak_return": _number(report.get("peak_return")),
+            "trough_return": _number(report.get("trough_return")),
+            "target_gap_pct": _number(report.get("target_gap_pct")),
+            "target_hit": _bool(report.get("target_hit")),
+            "days_to_target": _number(report.get("days_to_target")),
+            "return_windows": windows_by_id.get(report_id, {}),
+            "markers": sorted([marker for marker in markers if marker.get("date")], key=lambda marker: str(marker["date"])),
+            "price_extremes": {"peak": peak, "trough": trough},
+        }
+    return details
+
+
+def _detail_without_prices(report: dict[str, Any], windows: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "report_id": report.get("report_id"),
+        "company": report.get("company"),
+        "symbol": report.get("symbol"),
+        "return_windows": windows,
+        "markers": [{"date": report.get("date"), "type": "publication", "label": "리포트 발간"}],
+        "price_extremes": {"peak": None, "trough": None},
+    }
+
+
+def _price_marker(row: pd.Series, marker_type: str, label: str) -> dict[str, Any]:
+    price = _number(row.get("close_krw"))
+    return {
+        "date": row["date"].date().isoformat(),
+        "type": marker_type,
+        "label": label,
+        "price_krw": round(price, 4) if price is not None else None,
+    }
+
+
+def _build_target_hit_distribution(report_rows: list[dict[str, Any]]) -> dict[str, Any]:
+    bins = [
+        ("0-30일", 0, 30),
+        ("31-60일", 31, 60),
+        ("61-90일", 61, 90),
+        ("91-180일", 91, 180),
+        ("181-365일", 181, 365),
+        ("365일+", 366, None),
+    ]
+    hit_rows = [row for row in report_rows if row.get("target_hit") and _number(row.get("days_to_target")) is not None]
+    day_buckets = []
+    for label, lower, upper in bins:
+        count = sum(
+            1
+            for row in hit_rows
+            if (days := _number(row.get("days_to_target"))) is not None
+            and days >= lower
+            and (upper is None or days <= upper)
+        )
+        day_buckets.append({"bucket": label, "count": count})
+
+    upside_buckets = []
+    for label, lower, upper in [
+        ("0-25%", 0, 0.25),
+        ("25-50%", 0.25, 0.5),
+        ("50-100%", 0.5, 1.0),
+        ("100-200%", 1.0, 2.0),
+        ("200%+", 2.0, None),
+    ]:
+        bucket_rows = [
+            row
+            for row in report_rows
+            if (upside := _number(row.get("target_upside_at_pub"))) is not None
+            and upside >= lower
+            and (upper is None or upside < upper)
+        ]
+        hit_count = sum(1 for row in bucket_rows if row.get("target_hit"))
+        returns = [_number(row.get("current_return")) for row in bucket_rows if _number(row.get("current_return")) is not None]
+        upside_buckets.append(
+            {
+                "bucket": label,
+                "count": len(bucket_rows),
+                "target_hit_count": hit_count,
+                "target_hit_rate": round(hit_count / len(bucket_rows), 6) if bucket_rows else None,
+                "avg_current_return": round(sum(returns) / len(returns), 6) if returns else None,
+            }
+        )
+
+    return {
+        "summary": {
+            "total_reports": len(report_rows),
+            "target_hit_count": len(hit_rows),
+            "target_hit_rate": round(len(hit_rows) / len(report_rows), 6) if report_rows else None,
+        },
+        "days_to_target_buckets": day_buckets,
+        "target_upside_buckets": upside_buckets,
+    }
+
+
+def _build_insights(
+    overview: dict[str, Any],
+    rankings: dict[str, Any],
+    target_distribution: dict[str, Any],
+    return_windows: list[dict[str, Any]],
+    data_quality: dict[str, Any],
+) -> list[dict[str, Any]]:
+    counts = overview["report_counts"]
+    stats = overview["target_stats"]
+    hit_summary = target_distribution["summary"]
+    valid_90d = [row for row in return_windows if _number(row.get("return_90d")) is not None]
+    avg_90d = (
+        round(sum(_number(row["return_90d"]) or 0 for row in valid_90d) / len(valid_90d), 6)
+        if valid_90d
+        else None
+    )
+    best = (rankings.get("best_current_returns") or [{}])[0]
+    worst = (rankings.get("worst_current_returns") or [{}])[0]
+    fastest = (rankings.get("fastest_hits") or [{}])[0]
+    quality = data_quality["coverage"]
+    return [
+        {
+            "id": "target-hit-rate",
+            "title": "목표가 도달률",
+            "sentence": f"가격 매칭 리포트 기준 목표가 도달률은 {hit_summary.get('target_hit_rate')}입니다.",
+            "metric": hit_summary.get("target_hit_rate"),
+            "related_report_ids": [],
+        },
+        {
+            "id": "average-days-to-target",
+            "title": "목표가 도달 속도",
+            "sentence": f"목표가에 도달한 리포트의 평균 소요 기간은 {stats.get('avg_days_to_target')}일입니다.",
+            "metric": stats.get("avg_days_to_target"),
+            "related_report_ids": [fastest.get("report_id")] if fastest.get("report_id") else [],
+        },
+        {
+            "id": "average-90d-return",
+            "title": "발간 후 90일 성과",
+            "sentence": f"90일 가격 데이터가 있는 리포트의 평균 90일 수익률은 {avg_90d}입니다.",
+            "metric": avg_90d,
+            "related_report_ids": [],
+        },
+        {
+            "id": "best-current-return",
+            "title": "현재 수익률 상위 리포트",
+            "sentence": f"현재 수익률 최상위 리포트는 {best.get('company')} ({best.get('symbol')})입니다.",
+            "metric": best.get("current_return"),
+            "related_report_ids": [best.get("report_id")] if best.get("report_id") else [],
+        },
+        {
+            "id": "worst-current-return",
+            "title": "하방 리스크 리포트",
+            "sentence": f"현재 수익률 최하위 리포트는 {worst.get('company')} ({worst.get('symbol')})입니다.",
+            "metric": worst.get("current_return"),
+            "related_report_ids": [worst.get("report_id")] if worst.get("report_id") else [],
+        },
+        {
+            "id": "missing-price-coverage",
+            "title": "가격 데이터 커버리지",
+            "sentence": f"전체 {counts['extracted_reports']}개 리포트 중 가격 누락 심볼은 {counts['missing_price_symbols']}개입니다.",
+            "metric": counts["missing_price_symbols"],
+            "related_report_ids": [],
+        },
+        {
+            "id": "performance-coverage",
+            "title": "성과 산출 커버리지",
+            "sentence": f"성과 산출 누락 리포트는 {quality['reports_without_performance']}개입니다.",
+            "metric": quality["reports_without_performance"],
+            "related_report_ids": [],
+        },
+    ]
 
 
 def _build_data_quality(
@@ -340,6 +645,112 @@ def _build_data_quality(
             "reports_without_performance": len(report_ids - performance_ids),
         },
     }
+
+
+def _write_download_csvs(out: Path, report_rows: list[dict[str, Any]], data_quality: dict[str, Any]) -> None:
+    report_columns = [
+        "report_id",
+        "date",
+        "company",
+        "ticker",
+        "exchange",
+        "symbol",
+        "title",
+        "rating",
+        "target_price_krw",
+        "publication_price_krw",
+        "entry_price_krw",
+        "target_upside_at_pub",
+        "target_hit",
+        "target_hit_date",
+        "days_to_target",
+        "last_close_krw",
+        "last_close_date",
+        "current_return",
+        "peak_return",
+        "trough_return",
+        "target_gap_pct",
+        "caveat_flags",
+        "pdf_url",
+    ]
+    report_download_rows = []
+    for row in report_rows:
+        csv_row = {column: row.get(column) for column in report_columns}
+        csv_row["caveat_flags"] = "|".join(row.get("caveat_flags", []))
+        report_download_rows.append(csv_row)
+    _write_csv(out / "table-download-reports.csv", report_download_rows, report_columns)
+
+    strategy_rows = _strategy_download_rows()
+    strategy_columns = sorted({key for row in strategy_rows for key in row}) if strategy_rows else ["run_id"]
+    preferred_strategy_columns = [
+        "run_id",
+        "trial_number",
+        "label",
+        "scope",
+        "sampler",
+        "score",
+        "final_equity_krw",
+        "net_profit_krw",
+        "money_weighted_return",
+        "cagr",
+        "max_drawdown",
+        "trade_count",
+        "win_rate",
+        "hit_rate",
+        "open_positions",
+    ]
+    strategy_columns = [
+        *[column for column in preferred_strategy_columns if column in strategy_columns],
+        *[column for column in strategy_columns if column not in preferred_strategy_columns],
+    ]
+    _write_csv(out / "table-download-strategies.csv", strategy_rows, strategy_columns)
+
+    quality_rows = [
+        {"section": "coverage", "metric": metric, "value": value}
+        for metric, value in data_quality.get("coverage", {}).items()
+    ]
+    quality_rows.extend(
+        {"section": "missing_symbol", "metric": row.get("symbol"), "value": row.get("symbol")}
+        for row in data_quality.get("missing_symbols", [])
+    )
+    _write_csv(out / "data-quality-download.csv", quality_rows, ["section", "metric", "value"])
+
+
+def _strategy_download_rows() -> list[dict[str, Any]]:
+    strategy_path = Path("data/web/strategy-runs.json")
+    trials_path = Path("data/web/optuna-trials.json")
+    if strategy_path.exists():
+        data = _read_json(strategy_path)
+        rows = []
+        for run in data.get("runs", []) if isinstance(data, dict) else []:
+            row = {
+                "run_id": run.get("run_id"),
+                "trial_number": run.get("trial_number"),
+                "label": run.get("label"),
+                "scope": run.get("scope"),
+                "sampler": run.get("sampler"),
+            }
+            row.update(run.get("metrics", {}))
+            row.update({f"param_{key}": value for key, value in run.get("params", {}).items()})
+            rows.append(row)
+        return rows
+    if trials_path.exists():
+        data = _read_json(trials_path)
+        return data.get("trials", []) if isinstance(data, dict) else []
+    return []
+
+
+def _write_csv(path: Path, rows: list[dict[str, Any]], columns: list[str]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    frame = pd.DataFrame(rows, columns=columns)
+    frame = frame.map(_csv_cell) if not frame.empty else frame
+    frame.to_csv(path, index=False, encoding="utf-8")
+
+
+def _csv_cell(value: Any) -> Any:
+    if isinstance(value, (dict, list, tuple)):
+        return json.dumps(_clean(value), ensure_ascii=False, sort_keys=True)
+    return _clean(value)
 
 
 def _write_price_artifacts(prices: pd.DataFrame, symbols: set[str], prices_out: Path) -> None:
