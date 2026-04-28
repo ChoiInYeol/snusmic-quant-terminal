@@ -19,7 +19,11 @@ from snusmic_pipeline.sim.contracts import (
     WeakProphetConfig,
 )
 from snusmic_pipeline.sim.runner import run_simulation
-from snusmic_pipeline.sim.warehouse import apply_daily_price_krw_conversion, fill_report_publication_prices
+from snusmic_pipeline.sim.warehouse import (
+    apply_daily_price_krw_conversion,
+    fill_report_publication_prices,
+    refresh_price_history,
+)
 
 
 @pytest.fixture
@@ -193,3 +197,58 @@ def test_publication_price_keeps_report_quote_when_market_price_is_split_scaled(
     filled = fill_report_publication_prices(reports, prices)
 
     assert filled.loc[0, "report_current_price_krw"] == 10395.0
+
+
+def test_partial_price_refresh_preserves_existing_symbol_history(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    warehouse = tmp_path / "warehouse"
+    warehouse.mkdir()
+    pd.DataFrame(
+        [
+            {
+                "report_id": "r-aaa",
+                "page": 1,
+                "ordinal": 1,
+                "publication_date": "2024-01-02",
+                "title": "AAA",
+                "company": "AAA",
+                "ticker": "AAA",
+                "exchange": "KRX",
+                "symbol": "AAA.KS",
+                "target_price": 120.0,
+                "target_price_krw": 120.0,
+                "target_currency": "KRW",
+            }
+        ]
+    ).to_csv(warehouse / "reports.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "date": "2024-01-02",
+                "symbol": "AAA.KS",
+                "open": 100.0,
+                "high": 100.0,
+                "low": 100.0,
+                "close": 100.0,
+                "volume": 1,
+                "source_currency": "KRW",
+                "display_currency": "KRW",
+                "krw_per_unit": 1.0,
+            }
+        ]
+    ).to_csv(warehouse / "daily_prices.csv", index=False)
+
+    monkeypatch.setattr(
+        "snusmic_pipeline.sim.warehouse.download_fx_rates", lambda *args, **kwargs: pd.DataFrame()
+    )
+
+    def downloader(symbol, start, end):
+        assert symbol == "AAA.KS"
+        return pd.DataFrame(
+            [{"date": "2024-01-03", "open": 101.0, "high": 101.0, "low": 101.0, "close": 101.0, "volume": 2}]
+        )
+
+    refreshed = refresh_price_history(tmp_path, warehouse, downloader=downloader, symbols=["AAA.KS"])
+
+    assert refreshed[refreshed["symbol"] == "AAA.KS"]["date"].tolist() == ["2024-01-02", "2024-01-03"]

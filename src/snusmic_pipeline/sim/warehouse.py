@@ -60,7 +60,6 @@ KOSDAQ_TICKERS = {
     "089600",
     "089860",
     "089890",
-    "090460",
     "098120",
     "099430",
     "100840",
@@ -221,11 +220,9 @@ def refresh_price_history(
     new_prices = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
 
     if symbols:
-        existing = read_table(warehouse_dir, "daily_prices") if not force_full else existing_full
-        if not existing.empty:
+        existing = read_table(warehouse_dir, "daily_prices")
+        if force_full and not existing.empty:
             existing = existing[~existing["symbol"].astype(str).isin(selected_symbols)]
-        else:
-            existing = pd.DataFrame()
         prices = pd.concat([existing, new_prices], ignore_index=True) if not new_prices.empty else existing
     else:
         if force_full:

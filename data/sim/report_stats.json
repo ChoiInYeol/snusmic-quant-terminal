@@ -1,12 +1,12 @@
 {
   "total_reports": 211,
-  "reports_with_prices": 205,
+  "reports_with_prices": 206,
   "target_hit_count": 104,
-  "target_hit_rate": 0.51,
+  "target_hit_rate": 0.5,
   "avg_days_to_target": 345.73,
   "median_days_to_target": 167.5,
   "avg_current_return": 0.78,
-  "median_current_return": 0.16,
+  "median_current_return": 0.15,
   "avg_target_upside_at_pub": 0.99,
   "avg_target_gap_pct": -0.57,
   "top_winners": [

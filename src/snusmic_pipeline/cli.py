@@ -410,7 +410,9 @@ def run_build_warehouse(args: argparse.Namespace) -> int:
 
 def run_refresh_prices(args: argparse.Namespace) -> int:
     symbols = [item.strip() for item in args.symbols.split(",") if item.strip()] if args.symbols else None
-    prices = refresh_price_history(Path(args.data_dir), Path(args.warehouse_dir), symbols=symbols)
+    prices = refresh_price_history(
+        Path(args.data_dir), Path(args.warehouse_dir), symbols=symbols, force_full=args.force_full
+    )
     print(f"Daily price rows: {len(prices)}")
     print(f"Symbols: {prices['symbol'].nunique() if not prices.empty else 0}")
     return 0
@@ -555,6 +557,11 @@ def build_parser() -> argparse.ArgumentParser:
     refresh_prices.add_argument("--warehouse-dir", default="data/warehouse")
     refresh_prices.add_argument(
         "--symbols", default="", help="Optional comma-separated yfinance symbols for a partial refresh."
+    )
+    refresh_prices.add_argument(
+        "--force-full",
+        action="store_true",
+        help="Re-fetch the full available history for selected symbols instead of only new bars.",
     )
     refresh_prices.set_defaults(func=run_refresh_prices)
 
