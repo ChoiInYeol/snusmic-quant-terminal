@@ -175,10 +175,21 @@ function PortfolioHeatmap({ holdings }: { holdings: HoldingRow[] }) {
         const value = Math.max(0, row.marketValueKrw ?? 0);
         const weight = value / total;
         const returnPct = row.unrealizedReturn ?? 0;
+        const area = rect.w * rect.h;
+        const minSide = Math.min(rect.w, rect.h);
+        const maxSide = Math.max(rect.w, rect.h);
+        const aspect = maxSide / Math.max(1, minSide);
+        const sizeClass = minSide < 7 || area < 130
+          ? 'tiny'
+          : minSide < 13 || area < 260 || aspect > 4.2
+            ? 'small'
+            : minSide < 20 || area < 560 || aspect > 2.9
+              ? 'medium'
+              : 'large';
         return (
           <Link
             href={`/reports/${row.symbol}`}
-            className="heatmap-cell"
+            className={`heatmap-cell ${sizeClass}`}
             key={`${row.persona}-${row.symbol}`}
             style={{
               left: `${rect.x}%`,
