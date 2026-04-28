@@ -18,6 +18,7 @@ from .markdown_export import export_markdown
 from .models import DownloadedPdf, ExtractedReport, ReportMeta
 from .opendataloader_fallback import OpenDataLoaderUnavailable, convert_pdfs_to_markdown
 from .sim.warehouse import build_warehouse, refresh_price_history
+from .web_artifacts import ExportInputs, check_web_artifacts, export_web_artifacts
 
 REPORT_HEADERS = [
     "페이지",
@@ -418,6 +419,18 @@ def run_refresh_prices(args: argparse.Namespace) -> int:
     return 0
 
 
+def run_export_web(args: argparse.Namespace) -> int:
+    inputs = ExportInputs(
+        warehouse=Path(args.warehouse),
+        sim=Path(args.sim),
+        out=Path(args.out),
+        extraction_quality=Path(args.extraction_quality),
+    )
+    result = check_web_artifacts(inputs) if args.check else export_web_artifacts(inputs)
+    print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
+    return 0
+
+
 def run_persona_sim(args: argparse.Namespace) -> int:
     """Thin wrapper around ``scripts/run_persona_sim.py``.
 
@@ -564,6 +577,18 @@ def build_parser() -> argparse.ArgumentParser:
         help="Re-fetch the full available history for selected symbols instead of only new bars.",
     )
     refresh_prices.set_defaults(func=run_refresh_prices)
+
+    export_web = subparsers.add_parser(
+        "export-web", help="Export static JSON artifacts for the Next.js web showcase."
+    )
+    export_web.add_argument("--warehouse", default=str(REPO_ROOT / "data" / "warehouse"))
+    export_web.add_argument("--sim", default=str(REPO_ROOT / "data" / "sim"))
+    export_web.add_argument("--out", default=str(REPO_ROOT / "data" / "web"))
+    export_web.add_argument(
+        "--extraction-quality", default=str(REPO_ROOT / "data" / "extraction_quality.json")
+    )
+    export_web.add_argument("--check", action="store_true", help="Verify deterministic artifact output.")
+    export_web.set_defaults(func=run_export_web)
 
     sim = subparsers.add_parser(
         "run-sim", help="Run the persona simulation (delegates to scripts/run_persona_sim.py)."
