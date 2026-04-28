@@ -22,7 +22,7 @@ export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {}
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(25);
   useUrlBackedStrategy(persona, setPersona, personas);
-  const currentRows = sortRows(holdings.filter((row) => persona === 'all' || row.persona === persona), sort, {
+  const currentRows = useMemo(() => sortRows(holdings.filter((row) => persona === 'all' || row.persona === persona), sort, {
     strategy: (row) => personaLabels[row.persona] ?? row.persona,
     market: (row) => marketLabel(targetsBySymbol[row.symbol]?.marketRegion),
     symbol: (row) => row.company || row.symbol,
@@ -34,8 +34,8 @@ export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {}
     stockReturn: (row) => row.unrealizedReturn,
     contribution: (row) => capitalContribution(row.unrealizedPnlKrw, capitalByPersona[row.persona]),
     firstBuy: (row) => row.firstBuyDate,
-  });
-  const visibleRows = pageRows(currentRows, page, pageSize);
+  }), [capitalByPersona, holdings, persona, personaLabels, sort, targetsBySymbol]);
+  const visibleRows = useMemo(() => pageRows(currentRows, page, pageSize), [currentRows, page, pageSize]);
   const updateSort = (key: HoldingSortKey) => {
     setSort((current) => ({ key, direction: current.key === key && current.direction === 'desc' ? 'asc' : 'desc' }));
     setPage(0);
@@ -45,9 +45,9 @@ export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {}
     <div className="grid" style={{ gap: '1rem' }}>
       <section className="panel report-table-panel strategy-filter-panel">
         <h2>전략 선택</h2>
-        <div className="strategy-tabs" role="tablist" aria-label="전략 선택">
+        <div className="strategy-tabs" role="group" aria-label="전략 선택">
           {personas.map((item) => (
-            <button type="button" key={item} role="tab" aria-selected={persona === item} className={persona === item ? 'active' : ''} onClick={() => { setPersona(item); setPage(0); }}>
+            <button type="button" key={item} aria-pressed={persona === item} className={persona === item ? 'active' : ''} onClick={() => { setPersona(item); setPage(0); }}>
               {item === 'all' ? '전체 전략' : personaLabels[item] ?? item}
             </button>
           ))}

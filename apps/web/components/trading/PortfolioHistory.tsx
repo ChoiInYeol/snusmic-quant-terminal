@@ -25,8 +25,8 @@ export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Pr
   const [pageSize, setPageSize] = useState(25);
   useUrlBackedStrategy(persona, setPersona, personas);
 
-  const filtered = monthly.filter((row) => (persona === 'all' || row.persona === persona) && (!month || row.monthEnd === month));
-  const sorted = sortRows(filtered, sort, {
+  const filtered = useMemo(() => monthly.filter((row) => (persona === 'all' || row.persona === persona) && (!month || row.monthEnd === month)), [month, monthly, persona]);
+  const sorted = useMemo(() => sortRows(filtered, sort, {
     month: (row) => row.monthEnd,
     strategy: (row) => personaLabels[row.persona] ?? row.persona,
     market: (row) => marketLabel(targetsBySymbol[row.symbol]?.marketRegion),
@@ -35,9 +35,9 @@ export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Pr
     qty: (row) => row.qty,
     marketValue: (row) => row.marketValueKrw,
     weight: (row) => row.weightInPortfolio,
-  });
-  const rows = pageRows(sorted, page, pageSize);
-  const stacks = buildStacks(monthly, persona);
+  }), [filtered, personaLabels, sort, targetsBySymbol]);
+  const rows = useMemo(() => pageRows(sorted, page, pageSize), [page, pageSize, sorted]);
+  const stacks = useMemo(() => buildStacks(monthly, persona), [monthly, persona]);
   const updateSort = (key: MonthlySortKey) => {
     setSort((current) => ({ key, direction: current.key === key && current.direction === 'desc' ? 'asc' : 'desc' }));
     setPage(0);
@@ -47,9 +47,9 @@ export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Pr
     <div className="grid" style={{ gap: '1rem' }}>
       <section className="panel report-table-panel strategy-filter-panel">
         <h2>전략 선택</h2>
-        <div className="strategy-tabs" role="tablist" aria-label="전략 선택">
+        <div className="strategy-tabs" role="group" aria-label="전략 선택">
           {personas.map((item) => (
-            <button type="button" key={item} role="tab" aria-selected={persona === item} className={persona === item ? 'active' : ''} onClick={() => { setPersona(item); setPage(0); }}>
+            <button type="button" key={item} aria-pressed={persona === item} className={persona === item ? 'active' : ''} onClick={() => { setPersona(item); setPage(0); }}>
               {item === 'all' ? '전체 전략' : personaLabels[item] ?? item}
             </button>
           ))}

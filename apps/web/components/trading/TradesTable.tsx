@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useDeferredValue, useMemo, useState } from 'react';
 import type { PositionEpisodeRow, ReportTargetDigest, TradeRow } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
 import { PaginationControls, SortHeader, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
@@ -31,19 +31,21 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
   const [episodePageSize, setEpisodePageSize] = useState(25);
   const [tradePageSize, setTradePageSize] = useState(50);
   useUrlBackedStrategy(persona, setPersona, personas);
+  const deferredQuery = useDeferredValue(query);
+  const normalizedQuery = deferredQuery.trim().toLowerCase();
 
-  const filteredTrades = trades.filter((trade) => {
+  const filteredTrades = useMemo(() => trades.filter((trade) => {
     if (persona !== 'all' && trade.persona !== persona) return false;
     if (side !== 'all' && trade.side !== side) return false;
     const haystack = `${trade.symbol} ${trade.reason} ${trade.reportId ?? ''}`.toLowerCase();
-    return haystack.includes(query.toLowerCase());
-  });
-  const filteredEpisodes = episodes.filter((episode) => {
+    return haystack.includes(normalizedQuery);
+  }), [normalizedQuery, persona, side, trades]);
+  const filteredEpisodes = useMemo(() => episodes.filter((episode) => {
     if (persona !== 'all' && episode.persona !== persona) return false;
     const haystack = `${episode.symbol} ${episode.company} ${episode.exitReasons}`.toLowerCase();
-    return haystack.includes(query.toLowerCase());
-  });
-  const sortedEpisodes = sortRows(filteredEpisodes, episodeSort, {
+    return haystack.includes(normalizedQuery);
+  }), [episodes, normalizedQuery, persona]);
+  const sortedEpisodes = useMemo(() => sortRows(filteredEpisodes, episodeSort, {
     strategy: (row) => personaLabels[row.persona] ?? row.persona,
     market: (row) => marketLabel(targetsBySymbol[row.symbol]?.marketRegion),
     symbol: (row) => row.company || row.symbol,
@@ -56,8 +58,8 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
     stockReturn: (row) => positionReturn(row),
     contribution: (row) => capitalContribution(row.status === 'closed' ? row.realizedPnlKrw : row.unrealizedPnlKrw, capitalByPersona[row.persona]),
     reason: (row) => row.exitReasons,
-  });
-  const sortedTrades = sortRows(filteredTrades, tradeSort, {
+  }), [capitalByPersona, episodeSort, filteredEpisodes, personaLabels, targetsBySymbol]);
+  const sortedTrades = useMemo(() => sortRows(filteredTrades, tradeSort, {
     date: (row) => row.date,
     strategy: (row) => personaLabels[row.persona] ?? row.persona,
     market: (row) => marketLabel((row.reportId ? targetsByReportId[row.reportId]?.marketRegion : undefined) ?? targetsBySymbol[row.symbol]?.marketRegion),
@@ -69,9 +71,9 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
     gross: (row) => row.grossKrw,
     cash: (row) => row.cashAfterKrw,
     reason: (row) => row.reason,
-  });
-  const episodeRows = pageRows(sortedEpisodes, episodePage, episodePageSize);
-  const tradeRows = pageRows(sortedTrades, tradePage, tradePageSize);
+  }), [filteredTrades, personaLabels, targetsByReportId, targetsBySymbol, tradeSort]);
+  const episodeRows = useMemo(() => pageRows(sortedEpisodes, episodePage, episodePageSize), [episodePage, episodePageSize, sortedEpisodes]);
+  const tradeRows = useMemo(() => pageRows(sortedTrades, tradePage, tradePageSize), [sortedTrades, tradePage, tradePageSize]);
   const updateEpisodeSort = (key: EpisodeSortKey) => {
     setEpisodeSort((current) => ({ key, direction: current.key === key && current.direction === 'desc' ? 'asc' : 'desc' }));
     setEpisodePage(0);
@@ -85,13 +87,12 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
     <div className="grid" style={{ gap: '1rem' }}>
       <section className="panel report-table-panel strategy-filter-panel">
         <h2>전략 선택</h2>
-        <div className="strategy-tabs" role="tablist" aria-label="전략 선택">
+        <div className="strategy-tabs" role="group" aria-label="전략 선택">
           {personas.map((item) => (
             <button
               type="button"
               key={item}
-              role="tab"
-              aria-selected={persona === item}
+              aria-pressed={persona === item}
               className={persona === item ? 'active' : ''}
               onClick={() => { setPersona(item); setEpisodePage(0); setTradePage(0); }}
             >
@@ -185,10 +186,10 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
               <th>근거</th>
             </tr></thead>
             <tbody>
-              {tradeRows.map((trade, index) => {
+              {tradeRows.map((trade) => {
                 const target = (trade.reportId ? targetsByReportId[trade.reportId] : undefined) ?? targetsBySymbol[trade.symbol];
                 return (
-                <tr key={`${trade.persona}-${trade.date}-${trade.symbol}-${trade.side}-${index}`}>
+                <tr key={`${trade.persona}-${trade.date}-${trade.symbol}-${trade.side}-${trade.qty ?? 'q'}-${trade.fillPriceKrw ?? 'p'}-${trade.grossKrw ?? 'g'}-${trade.reportId ?? 'no-report'}-${trade.cashAfterKrw ?? 'cash'}`}>
                   <td>{trade.date}</td>
                   <td>{personaLabels[trade.persona] ?? trade.persona}</td>
                   <td><span className="pill">{marketLabel(target?.marketRegion)}</span></td>

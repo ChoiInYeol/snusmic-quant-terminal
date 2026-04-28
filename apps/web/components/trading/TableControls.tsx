@@ -40,9 +40,12 @@ export function PaginationControls({
   onPageChange: (page: number) => void;
   onPageSizeChange: (size: number) => void;
 }) {
-  const safePage = Math.min(page, Math.max(0, pageCount - 1));
+  const lastPage = Math.max(0, pageCount - 1);
+  const safePage = Math.min(Math.max(0, page), lastPage);
+  const hasPrevious = safePage > 0;
+  const hasNext = pageCount > 0 && safePage < lastPage;
   return (
-    <div className="pagination-bar" aria-label="페이지 이동">
+    <nav className="pagination-bar" aria-label="페이지 이동">
       <span>총 {totalRows.toLocaleString('ko-KR')}행 · {pageCount ? safePage + 1 : 0}/{Math.max(1, pageCount)}쪽</span>
       <label className="page-size-label">
         <span>페이지당</span>
@@ -50,11 +53,11 @@ export function PaginationControls({
           {[10, 25, 50, 100].map((size) => <option key={size} value={size}>{size}</option>)}
         </select>
       </label>
-      <button type="button" onClick={() => onPageChange(0)} disabled={safePage <= 0}>처음</button>
-      <button type="button" onClick={() => onPageChange(safePage - 1)} disabled={safePage <= 0}>이전</button>
-      <button type="button" onClick={() => onPageChange(safePage + 1)} disabled={safePage >= pageCount - 1}>다음</button>
-      <button type="button" onClick={() => onPageChange(pageCount - 1)} disabled={safePage >= pageCount - 1}>끝</button>
-    </div>
+      <button type="button" onClick={() => onPageChange(0)} disabled={!hasPrevious}>처음</button>
+      <button type="button" onClick={() => onPageChange(Math.max(0, safePage - 1))} disabled={!hasPrevious}>이전</button>
+      <button type="button" onClick={() => onPageChange(Math.min(lastPage, safePage + 1))} disabled={!hasNext}>다음</button>
+      <button type="button" onClick={() => onPageChange(lastPage)} disabled={!hasNext}>끝</button>
+    </nav>
   );
 }
 
@@ -69,7 +72,9 @@ export function useUrlBackedStrategy(persona: string, setPersona: (value: string
     const url = new URL(window.location.href);
     if (persona === 'all') url.searchParams.delete('strategy');
     else url.searchParams.set('strategy', persona);
-    window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (nextUrl !== currentUrl) window.history.replaceState(null, '', nextUrl);
   }, [persona]);
 }
 
@@ -87,5 +92,6 @@ export function compare(a: string | number | null | undefined, b: string | numbe
 }
 
 export function pageRows<T>(rows: T[], page: number, pageSize: number): T[] {
-  return rows.slice(page * pageSize, page * pageSize + pageSize);
+  const safePage = Math.max(0, page);
+  return rows.slice(safePage * pageSize, safePage * pageSize + pageSize);
 }

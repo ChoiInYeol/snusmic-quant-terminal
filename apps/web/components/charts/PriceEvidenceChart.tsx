@@ -14,7 +14,7 @@ import {
   type SeriesMarker,
   type Time,
 } from 'lightweight-charts';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { formatKrw, formatPercent } from '@/lib/format';
 
 type PricePoint = {
@@ -47,6 +47,9 @@ type TooltipState = {
   targetGapPct: number | null;
 };
 
+type CandlePoint = { time: Time; open: number; high: number; low: number; close: number };
+type VolumePoint = { time: Time; value: number; color: string };
+
 type Props = {
   priceSeries: PricePoint[];
   targetPrice: number | null;
@@ -64,6 +67,13 @@ export function PriceEvidenceChart({
 }: Props) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [tooltip, setTooltip] = useState<TooltipState | null>(null);
+  const candleData = useMemo(() => priceSeries.map(toCandlePoint), [priceSeries]);
+  const volumeData = useMemo(() => priceSeries.map(toVolumePoint), [priceSeries]);
+  const priceByTime = useMemo(() => new Map(priceSeries.map((point) => [point.time, point])), [priceSeries]);
+  const chartMarkers = useMemo(
+    () => buildMarkers(publicationDate, targetHitDate, evidenceMarkers),
+    [evidenceMarkers, publicationDate, targetHitDate],
+  );
 
   useEffect(() => {
     if (!ref.current || priceSeries.length === 0) return;
@@ -94,16 +104,7 @@ export function PriceEvidenceChart({
       title: 'OHLC',
     });
 
-    candleSeries.setData(priceSeries.map((point) => {
-      const close = point.close ?? point.value;
-      return {
-        time: point.time as Time,
-        open: point.open ?? close,
-        high: point.high ?? close,
-        low: point.low ?? close,
-        close,
-      };
-    }));
+    candleSeries.setData(candleData);
 
     const volumeSeries = chart.addSeries(HistogramSeries, {
       color: 'rgba(138, 180, 255, 0.36)',
@@ -114,15 +115,7 @@ export function PriceEvidenceChart({
       title: '거래량',
     });
     chart.priceScale('volume').applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
-    volumeSeries.setData(priceSeries.map((point) => {
-      const close = point.close ?? point.value;
-      const open = point.open ?? close;
-      return {
-        time: point.time as Time,
-        value: Math.max(0, point.volume ?? 0),
-        color: close >= open ? 'rgba(53, 242, 194, 0.34)' : 'rgba(255, 111, 145, 0.32)',
-      };
-    }));
+    volumeSeries.setData(volumeData);
 
     if (targetPrice && Number.isFinite(targetPrice)) {
       candleSeries.createPriceLine({
@@ -135,25 +128,8 @@ export function PriceEvidenceChart({
       });
     }
 
-    const markerByKey = new Map<string, SeriesMarker<Time>>();
-    const addMarker = (marker: SeriesMarker<Time>) => markerByKey.set(`${String(marker.time)}-${marker.text}`, marker);
-    addMarker({ time: publicationDate as Time, position: 'belowBar', color: '#fbbf24', shape: 'arrowUp', text: '발간' });
-    if (targetHitDate) {
-      addMarker({ time: targetHitDate as Time, position: 'aboveBar', color: '#34d399', shape: 'circle', text: '목표 도달' });
-    }
-    for (const marker of evidenceMarkers) {
-      const markerConfig = markerStyle(marker);
-      addMarker({
-        time: marker.time as Time,
-        position: markerConfig.position,
-        color: markerConfig.color,
-        shape: markerConfig.shape,
-        text: marker.label,
-      });
-    }
-    createSeriesMarkers(candleSeries, [...markerByKey.values()].sort((a, b) => String(a.time).localeCompare(String(b.time))));
+    createSeriesMarkers(candleSeries, chartMarkers);
 
-    const priceByTime = new Map(priceSeries.map((point) => [point.time, point]));
     const handleCrosshairMove = (params: MouseEventParams<Time>) => {
       if (!params.point || !params.time || params.point.x < 0 || params.point.y < 0) {
         setTooltip(null);
@@ -162,18 +138,12 @@ export function PriceEvidenceChart({
       const time = String(params.time);
       const seriesData = params.seriesData.get(candleSeries);
       const fallback = priceByTime.get(time);
-      const closeRaw = typeof seriesData === 'object' && seriesData && 'close' in seriesData ? Number(seriesData.close) : (fallback?.close ?? fallback?.value);
-      const openRaw = typeof seriesData === 'object' && seriesData && 'open' in seriesData ? Number(seriesData.open) : (fallback?.open ?? closeRaw);
-      const highRaw = typeof seriesData === 'object' && seriesData && 'high' in seriesData ? Number(seriesData.high) : (fallback?.high ?? closeRaw);
-      const lowRaw = typeof seriesData === 'object' && seriesData && 'low' in seriesData ? Number(seriesData.low) : (fallback?.low ?? closeRaw);
-      if (closeRaw === undefined || openRaw === undefined || highRaw === undefined || lowRaw === undefined || !Number.isFinite(closeRaw) || !Number.isFinite(openRaw) || !Number.isFinite(highRaw) || !Number.isFinite(lowRaw)) {
+      const hoveredCandle = readCrosshairCandle(seriesData, fallback);
+      if (!hoveredCandle) {
         setTooltip(null);
         return;
       }
-      const close = closeRaw;
-      const open = openRaw;
-      const high = highRaw;
-      const low = lowRaw;
+      const { open, high, low, close } = hoveredCandle;
       const targetGapPct = targetPrice && Number.isFinite(targetPrice) ? (targetPrice - close) / close : null;
       setTooltip({
         x: Math.min(params.point.x + 16, Math.max(16, container.clientWidth - 240)),
@@ -194,7 +164,7 @@ export function PriceEvidenceChart({
       chart.unsubscribeCrosshairMove(handleCrosshairMove);
       chart.remove();
     };
-  }, [evidenceMarkers, priceSeries, publicationDate, targetHitDate, targetPrice]);
+  }, [candleData, chartMarkers, priceByTime, priceSeries.length, targetPrice, volumeData]);
 
   if (priceSeries.length === 0) {
     return <div className="panel chart-box">이 리포트 종목의 가격 경로를 찾을 수 없습니다.</div>;
@@ -219,6 +189,61 @@ export function PriceEvidenceChart({
 }
 
 type MarkerStyle = { color: string; position: 'aboveBar' | 'belowBar'; shape: 'arrowUp' | 'arrowDown' | 'circle' };
+
+function toCandlePoint(point: PricePoint): CandlePoint {
+  const close = point.close ?? point.value;
+  return {
+    time: point.time as Time,
+    open: point.open ?? close,
+    high: point.high ?? close,
+    low: point.low ?? close,
+    close,
+  };
+}
+
+function toVolumePoint(point: PricePoint): VolumePoint {
+  const close = point.close ?? point.value;
+  const open = point.open ?? close;
+  return {
+    time: point.time as Time,
+    value: Math.max(0, point.volume ?? 0),
+    color: close >= open ? 'rgba(53, 242, 194, 0.34)' : 'rgba(255, 111, 145, 0.32)',
+  };
+}
+
+function buildMarkers(publicationDate: string, targetHitDate: string | null, evidenceMarkers: EvidenceMarker[]): SeriesMarker<Time>[] {
+  const markerByKey = new Map<string, SeriesMarker<Time>>();
+  const addMarker = (marker: SeriesMarker<Time>) => markerByKey.set(`${String(marker.time)}-${marker.text}`, marker);
+  addMarker({ time: publicationDate as Time, position: 'belowBar', color: '#fbbf24', shape: 'arrowUp', text: '발간' });
+  if (targetHitDate) {
+    addMarker({ time: targetHitDate as Time, position: 'aboveBar', color: '#34d399', shape: 'circle', text: '목표 도달' });
+  }
+  for (const marker of evidenceMarkers) {
+    const markerConfig = markerStyle(marker);
+    addMarker({
+      time: marker.time as Time,
+      position: markerConfig.position,
+      color: markerConfig.color,
+      shape: markerConfig.shape,
+      text: marker.label,
+    });
+  }
+  return [...markerByKey.values()].sort((a, b) => String(a.time).localeCompare(String(b.time)));
+}
+
+function readCrosshairCandle(seriesData: unknown, fallback: PricePoint | undefined): Omit<CandlePoint, 'time'> | null {
+  const closeRaw = isObjectWithNumber(seriesData, 'close') ? Number(seriesData.close) : (fallback?.close ?? fallback?.value);
+  const openRaw = isObjectWithNumber(seriesData, 'open') ? Number(seriesData.open) : (fallback?.open ?? closeRaw);
+  const highRaw = isObjectWithNumber(seriesData, 'high') ? Number(seriesData.high) : (fallback?.high ?? closeRaw);
+  const lowRaw = isObjectWithNumber(seriesData, 'low') ? Number(seriesData.low) : (fallback?.low ?? closeRaw);
+  if (closeRaw === undefined || openRaw === undefined || highRaw === undefined || lowRaw === undefined) return null;
+  if (!Number.isFinite(closeRaw) || !Number.isFinite(openRaw) || !Number.isFinite(highRaw) || !Number.isFinite(lowRaw)) return null;
+  return { open: openRaw, high: highRaw, low: lowRaw, close: closeRaw };
+}
+
+function isObjectWithNumber(value: unknown, key: 'open' | 'high' | 'low' | 'close'): value is Record<typeof key, number> {
+  return typeof value === 'object' && value !== null && key in value && Number.isFinite(Number((value as Record<typeof key, unknown>)[key]));
+}
 
 function markerStyle(marker: EvidenceMarker): MarkerStyle {
   switch (marker.kind) {
