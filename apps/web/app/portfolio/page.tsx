@@ -1,5 +1,5 @@
 import { PortfolioTables } from '@/components/trading/PortfolioTables';
-import { MetricCard, TerminalHero } from '@/components/ui/Terminal';
+import { MetricCard, TerminalHero, TerminalLink } from '@/components/ui/Terminal';
 import { getCurrentHoldings, getMonthlyHoldings, getPersonaLabel, getSummaryRows } from '@/lib/artifacts';
 import { formatKrw, formatPercent } from '@/lib/format';
 
@@ -16,8 +16,9 @@ export default function PortfolioPage() {
 
   return (
     <>
-      <TerminalHero eyebrow="Portfolio book" title="지금 무엇을 보유하고, 과거엔 무엇을 들고 있었나.">
-        <p>현재 포트폴리오와 월말 스냅샷을 전략별로 확인합니다. 핵심 질문은 성과 설명이 아니라 “현재 어떤 위험을 들고 있는가”입니다.</p>
+      <TerminalHero eyebrow="Portfolio book" title="지금 어떤 위험을 들고 있는가.">
+        <p>현재 보유 포지션만 별도 화면으로 분리했습니다. 과거 월말 스냅샷과 포트폴리오 추이는 전용 히스토리 페이지에서 확인합니다.</p>
+        <TerminalLink href="/portfolio/history">월말 포트폴리오 히스토리 →</TerminalLink>
       </TerminalHero>
       <section className="grid cards bento-metrics" style={{ marginBottom: '1rem' }}>
         <MetricCard label="현재 보유 종목" value={holdings.length.toLocaleString('ko-KR')} detail={`${personas.length}개 전략`} />
@@ -25,7 +26,7 @@ export default function PortfolioPage() {
         <MetricCard label="미실현 손익" value={formatKrw(totalPnl)} detail={formatPercent(totalPnl / Math.max(1, totalValue - totalPnl))} tone={totalPnl >= 0 ? 'good' : 'bad'} />
         <MetricCard label="최신 월말 스냅샷" value={latestMonth || '—'} />
       </section>
-      <PortfolioTables holdings={holdings} monthly={monthly} personaLabels={personaLabels} capitalByPersona={capitalByPersona} />
+      <PortfolioTables holdings={holdings} personaLabels={personaLabels} capitalByPersona={capitalByPersona} />
     </>
   );
 }

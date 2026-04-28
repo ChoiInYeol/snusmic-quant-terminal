@@ -4,19 +4,31 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { PositionEpisodeRow, TradeRow } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
+import { PaginationControls, SortHeader, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
 
 type Props = {
   trades: TradeRow[];
   episodes: PositionEpisodeRow[];
   personaLabels: Record<string, string>;
   capitalByPersona: Record<string, number>;
+  reportSymbolsById: Record<string, string>;
 };
 
-export function TradesTable({ trades, episodes, personaLabels, capitalByPersona = {} }: Props) {
+type EpisodeSortKey = 'strategy' | 'symbol' | 'openDate' | 'closeDate' | 'holdingDays' | 'entry' | 'exit' | 'stockReturn' | 'contribution' | 'reason';
+type TradeSortKey = 'date' | 'strategy' | 'side' | 'symbol' | 'qty' | 'price' | 'gross' | 'cash' | 'reason';
+
+export function TradesTable({ trades, episodes, personaLabels, capitalByPersona = {}, reportSymbolsById }: Props) {
   const personas = useMemo(() => ['all', ...Array.from(new Set(trades.map((trade) => trade.persona))).sort()], [trades]);
   const [persona, setPersona] = useState('all');
   const [query, setQuery] = useState('');
   const [side, setSide] = useState('all');
+  const [episodeSort, setEpisodeSort] = useState<SortState<EpisodeSortKey>>({ key: 'openDate', direction: 'desc' });
+  const [tradeSort, setTradeSort] = useState<SortState<TradeSortKey>>({ key: 'date', direction: 'desc' });
+  const [episodePage, setEpisodePage] = useState(0);
+  const [tradePage, setTradePage] = useState(0);
+  const [episodePageSize, setEpisodePageSize] = useState(25);
+  const [tradePageSize, setTradePageSize] = useState(50);
+  useUrlBackedStrategy(persona, setPersona, personas);
 
   const filteredTrades = trades.filter((trade) => {
     if (persona !== 'all' && trade.persona !== persona) return false;
@@ -29,20 +41,62 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
     const haystack = `${episode.symbol} ${episode.company} ${episode.exitReasons}`.toLowerCase();
     return haystack.includes(query.toLowerCase());
   });
+  const sortedEpisodes = sortRows(filteredEpisodes, episodeSort, {
+    strategy: (row) => personaLabels[row.persona] ?? row.persona,
+    symbol: (row) => row.company || row.symbol,
+    openDate: (row) => row.openDate,
+    closeDate: (row) => row.closeDate ?? '9999-99-99',
+    holdingDays: (row) => row.holdingDays,
+    entry: (row) => row.avgEntryPriceKrw,
+    exit: (row) => row.avgExitPriceKrw ?? row.lastCloseKrw,
+    stockReturn: (row) => positionReturn(row),
+    contribution: (row) => capitalContribution(row.status === 'closed' ? row.realizedPnlKrw : row.unrealizedPnlKrw, capitalByPersona[row.persona]),
+    reason: (row) => row.exitReasons,
+  });
+  const sortedTrades = sortRows(filteredTrades, tradeSort, {
+    date: (row) => row.date,
+    strategy: (row) => personaLabels[row.persona] ?? row.persona,
+    side: (row) => row.side,
+    symbol: (row) => row.symbol,
+    qty: (row) => row.qty,
+    price: (row) => row.fillPriceKrw,
+    gross: (row) => row.grossKrw,
+    cash: (row) => row.cashAfterKrw,
+    reason: (row) => row.reason,
+  });
+  const episodeRows = pageRows(sortedEpisodes, episodePage, episodePageSize);
+  const tradeRows = pageRows(sortedTrades, tradePage, tradePageSize);
+  const updateEpisodeSort = (key: EpisodeSortKey) => {
+    setEpisodeSort((current) => ({ key, direction: current.key === key && current.direction === 'desc' ? 'asc' : 'desc' }));
+    setEpisodePage(0);
+  };
+  const updateTradeSort = (key: TradeSortKey) => {
+    setTradeSort((current) => ({ key, direction: current.key === key && current.direction === 'desc' ? 'asc' : 'desc' }));
+    setTradePage(0);
+  };
 
   return (
     <div className="grid" style={{ gap: '1rem' }}>
-      <section className="panel report-table-panel">
+      <section className="panel report-table-panel strategy-filter-panel">
+        <h2>전략 선택</h2>
+        <div className="strategy-tabs" role="tablist" aria-label="전략 선택">
+          {personas.map((item) => (
+            <button
+              type="button"
+              key={item}
+              role="tab"
+              aria-selected={persona === item}
+              className={persona === item ? 'active' : ''}
+              onClick={() => { setPersona(item); setEpisodePage(0); setTradePage(0); }}
+            >
+              {item === 'all' ? '전체 전략' : personaLabels[item] ?? item}
+            </button>
+          ))}
+        </div>
         <div className="table-toolbar" aria-label="매매 필터">
           <label>
-            <span>전략</span>
-            <select value={persona} onChange={(event) => setPersona(event.target.value)}>
-              {personas.map((item) => <option key={item} value={item}>{item === 'all' ? '전체' : personaLabels[item] ?? item}</option>)}
-            </select>
-          </label>
-          <label>
             <span>매수/매도</span>
-            <select value={side} onChange={(event) => setSide(event.target.value)}>
+            <select value={side} onChange={(event) => { setSide(event.target.value); setTradePage(0); }}>
               <option value="all">전체</option>
               <option value="buy">매수</option>
               <option value="sell">매도</option>
@@ -50,20 +104,32 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
           </label>
           <label>
             <span>검색</span>
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="심볼, 사유, 리포트 ID" />
+            <input value={query} onChange={(event) => { setQuery(event.target.value); setEpisodePage(0); setTradePage(0); }} placeholder="심볼, 사유, 리포트 ID" />
           </label>
-          <button type="button" onClick={() => downloadTrades(filteredTrades)}>CSV 다운로드</button>
+          <button type="button" onClick={() => downloadTrades(sortedTrades)}>CSV 다운로드</button>
         </div>
       </section>
 
       <section className="panel">
         <h2>포지션 단위 매수·매도 요약</h2>
         <p className="muted">언제 열었고, 언제 닫았고, 어떤 사유로 청산됐는지 확인하는 핵심 테이블입니다.</p>
+        <PaginationControls page={episodePage} pageCount={Math.ceil(sortedEpisodes.length / episodePageSize)} totalRows={sortedEpisodes.length} pageSize={episodePageSize} onPageChange={setEpisodePage} onPageSizeChange={(size) => { setEpisodePageSize(size); setEpisodePage(0); }} />
         <div className="table-wrap inset">
           <table>
-            <thead><tr><th>전략</th><th>종목</th><th>매수 시작</th><th>매도/상태</th><th>보유일</th><th>평균 진입</th><th>평균 청산/최근</th><th>종목 수익률</th><th>자본 기여</th><th>매도 기준</th></tr></thead>
+            <thead><tr>
+              <th><SortHeader label="전략" sortKey="strategy" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="종목" sortKey="symbol" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="매수 시작" sortKey="openDate" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="매도/상태" sortKey="closeDate" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="보유일" sortKey="holdingDays" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="평균 진입" sortKey="entry" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="평균 청산/최근" sortKey="exit" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="종목 수익률" sortKey="stockReturn" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="자본 기여" sortKey="contribution" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="매도 기준" sortKey="reason" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+            </tr></thead>
             <tbody>
-              {filteredEpisodes.slice(0, 300).map((episode) => {
+              {episodeRows.map((episode) => {
                 const pnl = episode.status === 'closed' ? episode.realizedPnlKrw : episode.unrealizedPnlKrw;
                 const stockReturn = positionReturn(episode);
                 const contribution = capitalContribution(pnl, capitalByPersona[episode.persona]);
@@ -90,11 +156,23 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
       <section className="panel">
         <h2>체결 원장</h2>
         <p className="muted">실제 buy/sell fill 단위 원장입니다. 리포트 ID가 있는 행은 원문 근거로 이동합니다.</p>
+        <PaginationControls page={tradePage} pageCount={Math.ceil(sortedTrades.length / tradePageSize)} totalRows={sortedTrades.length} pageSize={tradePageSize} onPageChange={setTradePage} onPageSizeChange={(size) => { setTradePageSize(size); setTradePage(0); }} />
         <div className="table-wrap inset">
           <table>
-            <thead><tr><th>일자</th><th>전략</th><th>구분</th><th>심볼</th><th>수량</th><th>체결가</th><th>체결금액</th><th>현금잔고</th><th>사유</th><th>근거</th></tr></thead>
+            <thead><tr>
+              <th><SortHeader label="일자" sortKey="date" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th><SortHeader label="전략" sortKey="strategy" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th><SortHeader label="구분" sortKey="side" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th><SortHeader label="심볼" sortKey="symbol" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th><SortHeader label="수량" sortKey="qty" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th><SortHeader label="체결가" sortKey="price" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th><SortHeader label="체결금액" sortKey="gross" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th><SortHeader label="현금잔고" sortKey="cash" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th><SortHeader label="사유" sortKey="reason" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th>근거</th>
+            </tr></thead>
             <tbody>
-              {filteredTrades.slice(0, 500).map((trade, index) => (
+              {tradeRows.map((trade, index) => (
                 <tr key={`${trade.persona}-${trade.date}-${trade.symbol}-${trade.side}-${index}`}>
                   <td>{trade.date}</td>
                   <td>{personaLabels[trade.persona] ?? trade.persona}</td>
@@ -105,7 +183,7 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
                   <td>{formatKrw(trade.grossKrw)}</td>
                   <td>{formatKrw(trade.cashAfterKrw)}</td>
                   <td>{humanReason(trade.reason)}</td>
-                  <td>{trade.reportId ? <Link href={`/reports/${trade.reportId}`}>리포트</Link> : '—'}</td>
+                  <td>{trade.reportId && reportSymbolsById[trade.reportId] ? <Link href={`/reports/${reportSymbolsById[trade.reportId]}`}>리포트</Link> : '—'}</td>
                 </tr>
               ))}
             </tbody>

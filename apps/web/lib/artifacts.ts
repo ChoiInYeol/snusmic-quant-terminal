@@ -92,6 +92,13 @@ export type PositionEpisodeRow = {
 };
 
 export type PricePoint = { time: string; value: number };
+export type EquityPoint = {
+  persona: string;
+  date: string;
+  equityKrw: number | null;
+  contributedCapitalKrw: number | null;
+  cumulativeReturn: number | null;
+};
 export type SummaryRow = {
   persona: string;
   label?: string;
@@ -183,6 +190,39 @@ export type StrategyRunsArtifact = {
   disclaimer?: string;
   best_run_id?: string;
   runs: StrategyRunArtifact[];
+};
+
+export type StrategyExperimentPosition = {
+  runId: string;
+  symbol: string;
+  company: string;
+  publicationDate: string;
+  exitDate: string | null;
+  status: 'closed' | 'open';
+  weight: number;
+  entryPriceKrw: number | null;
+  targetPriceKrw: number | null;
+  expectedReturn: number | null;
+  realizedReturn: number | null;
+  targetHit: boolean;
+};
+
+export type StrategyExperimentTrade = {
+  runId: string;
+  date: string;
+  side: 'buy' | 'sell';
+  symbol: string;
+  company: string;
+  weight: number;
+  referencePriceKrw: number | null;
+  reason: string;
+};
+
+export type StrategyExperiment = {
+  runId: string;
+  positions: StrategyExperimentPosition[];
+  trades: StrategyExperimentTrade[];
+  cumulativeReturnSeries: PricePoint[];
 };
 
 export type ParameterImportanceArtifact = {
@@ -301,6 +341,22 @@ function fromRawReport(row: RawReport): ReportRow {
 
 export function getReportById(reportId: string): ReportRow | undefined {
   return getReportRows().find((report) => report.reportId === reportId);
+}
+
+export function getReportsBySymbol(symbol: string): ReportRow[] {
+  const normalized = symbol.toUpperCase();
+  return getReportRows()
+    .filter((report) => report.symbol.toUpperCase() === normalized)
+    .sort((a, b) => b.publicationDate.localeCompare(a.publicationDate) || b.reportId.localeCompare(a.reportId));
+}
+
+export function getReportBySymbol(symbol: string): ReportRow | undefined {
+  return getReportsBySymbol(symbol)[0];
+}
+
+export function getReportSymbolById(reportId: string | null | undefined): string | null {
+  if (!reportId) return null;
+  return getReportById(reportId)?.symbol ?? null;
 }
 
 export function getPriceSeries(symbol: string, startDate?: string, endDate?: string | null): PricePoint[] {
@@ -485,4 +541,147 @@ export function getPositionEpisodes(): PositionEpisodeRow[] {
 
 export function getPersonaLabel(persona: string): string {
   return getSummaryRows().find((row) => row.persona === persona)?.label ?? persona;
+}
+
+let equityDailyCache: EquityPoint[] | undefined;
+export function getEquityDaily(): EquityPoint[] {
+  if (equityDailyCache) return equityDailyCache;
+  if (!fs.existsSync(fullPath('data/sim/equity_daily.csv'))) return [];
+  equityDailyCache = parseCsv(readText('data/sim/equity_daily.csv')).map((row) => {
+    const equity = num(row.equity_krw);
+    const contributed = num(row.contributed_capital_krw);
+    return {
+      persona: String(row.persona ?? ''),
+      date: String(row.date ?? ''),
+      equityKrw: equity,
+      contributedCapitalKrw: contributed,
+      cumulativeReturn: equity !== null && contributed !== null && contributed > 0 ? equity / contributed - 1 : null,
+    };
+  });
+  return equityDailyCache;
+}
+
+export function getStrategyExperiment(run: StrategyRunArtifact): StrategyExperiment {
+  const params = run.params ?? {};
+  const selected = selectReportsForRun(getReportRows(), params);
+  const weights = weightsForRun(selected, params);
+  const multiplier = readParam(params, 'target_hit_multiplier', 1);
+  const takeProfit = readParam(params, 'take_profit_pct', Number.POSITIVE_INFINITY);
+  const stopLoss = readParam(params, 'stop_loss_pct', 1);
+  const positions = selected.map((report, index) => {
+    const targetReturn = clamp((report.targetUpsideAtPub ?? 0) * multiplier, -stopLoss, takeProfit);
+    const observedReturn = report.targetHit ? targetReturn : clamp(report.currentReturn ?? 0, -stopLoss, takeProfit);
+    return {
+      runId: run.run_id,
+      symbol: report.symbol,
+      company: report.company,
+      publicationDate: report.publicationDate,
+      exitDate: report.targetHitDate ?? report.lastCloseDate,
+      status: report.targetHit ? 'closed' as const : 'open' as const,
+      weight: weights[index] ?? 0,
+      entryPriceKrw: report.entryPriceKrw,
+      targetPriceKrw: report.targetPriceKrw,
+      expectedReturn: targetReturn,
+      realizedReturn: observedReturn,
+      targetHit: report.targetHit,
+    };
+  });
+  const trades = positions.flatMap((position) => {
+    const out: StrategyExperimentTrade[] = [{
+      runId: run.run_id,
+      date: position.publicationDate,
+      side: 'buy',
+      symbol: position.symbol,
+      company: position.company,
+      weight: position.weight,
+      referencePriceKrw: position.entryPriceKrw,
+      reason: '조건 충족 리포트 발간 후 매수',
+    }];
+    if (position.status === 'closed' && position.exitDate) {
+      out.push({
+        runId: run.run_id,
+        date: position.exitDate,
+        side: 'sell',
+        symbol: position.symbol,
+        company: position.company,
+        weight: position.weight,
+        referencePriceKrw: position.targetPriceKrw,
+        reason: '목표가 도달 청산',
+      });
+    }
+    return out;
+  }).sort((a, b) => b.date.localeCompare(a.date));
+  return {
+    runId: run.run_id,
+    positions,
+    trades,
+    cumulativeReturnSeries: experimentCumulativeSeries(positions),
+  };
+}
+
+function selectReportsForRun(reports: ReportRow[], params: Record<string, unknown>): ReportRow[] {
+  const minUpside = readParam(params, 'min_target_upside_at_pub', 0.05);
+  const maxUpside = readParam(params, 'max_target_upside_at_pub', 5);
+  const maxReportAgeDays = readParam(params, 'max_report_age_days', 1500);
+  const maxPositions = Math.max(1, Math.round(readParam(params, 'max_positions', 30)));
+  const universe = String(params.universe ?? 'all');
+  const requirePublicationPrice = Boolean(params.require_publication_price);
+  return reports
+    .filter((report) => {
+      if (requirePublicationPrice && !report.entryPriceKrw) return false;
+      if ((report.targetUpsideAtPub ?? Number.NaN) < minUpside || (report.targetUpsideAtPub ?? Number.NaN) > maxUpside) return false;
+      if (report.daysToTarget !== null && report.daysToTarget > maxReportAgeDays) return false;
+      if (universe !== 'all') {
+        const domestic = report.symbol.endsWith('.KS') || report.symbol.endsWith('.KQ');
+        if (universe === 'domestic' && !domestic) return false;
+        if (universe === 'overseas' && domestic) return false;
+      }
+      return true;
+    })
+    .sort((a, b) => a.publicationDate.localeCompare(b.publicationDate) || a.reportId.localeCompare(b.reportId))
+    .slice(0, maxPositions);
+}
+
+function weightsForRun(reports: ReportRow[], params: Record<string, unknown>): number[] {
+  if (!reports.length) return [];
+  const weighting = String(params.weighting ?? 'equal');
+  const raw = reports.map((report) => {
+    if (weighting === 'target_upside' || weighting === 'capped_target_upside') {
+      const value = Math.max(0.01, report.targetUpsideAtPub ?? 0.01);
+      return weighting === 'capped_target_upside' ? Math.min(1, value) : value;
+    }
+    if (weighting === 'inverse_volatility') {
+      return 1 / Math.max(0.05, Math.abs(report.troughReturn ?? -0.2));
+    }
+    return 1;
+  });
+  const total = raw.reduce((sum, value) => sum + value, 0);
+  return raw.map((value) => value / Math.max(total, Number.EPSILON));
+}
+
+function experimentCumulativeSeries(positions: StrategyExperimentPosition[]): PricePoint[] {
+  if (!positions.length) return [];
+  const start = positions.reduce((min, position) => position.publicationDate < min ? position.publicationDate : min, positions[0].publicationDate);
+  let cumulative = 0;
+  const points: PricePoint[] = [{ time: start, value: 0 }];
+  for (const position of [...positions].sort((a, b) => (a.exitDate ?? a.publicationDate).localeCompare(b.exitDate ?? b.publicationDate))) {
+    cumulative += position.weight * (position.realizedReturn ?? 0);
+    points.push({ time: position.exitDate ?? position.publicationDate, value: cumulative });
+  }
+  return coalescePricePoints(points);
+}
+
+function coalescePricePoints(points: PricePoint[]): PricePoint[] {
+  const byTime = new Map<string, number>();
+  for (const point of points) byTime.set(point.time, point.value);
+  return [...byTime.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([time, value]) => ({ time, value }));
+}
+
+function readParam(params: Record<string, unknown>, key: string, fallback: number): number {
+  const value = params[key];
+  return typeof value === 'number' && Number.isFinite(value) ? value : fallback;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, value));
 }

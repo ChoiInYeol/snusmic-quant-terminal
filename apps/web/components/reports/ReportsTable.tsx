@@ -60,7 +60,7 @@ export function ReportsTable({ reports }: ReportsTableProps) {
         header: '리포트',
         cell: ({ row }) => (
           <div className="report-title-cell">
-            <Link href={`/reports/${row.original.reportId}`}>{row.original.company}</Link>
+            <Link href={`/reports/${row.original.symbol}`}>{row.original.company}</Link>
             <span className="muted">{row.original.symbol} · {row.original.exchange || '—'}</span>
           </div>
         ),

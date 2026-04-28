@@ -61,12 +61,12 @@ export function PriceEvidenceChart({
       layout: {
         background: { type: ColorType.Solid, color: '#0f172a' },
         textColor: '#cbd5e1',
-        attributionLogo: false,
+        attributionLogo: true,
       },
       grid: { vertLines: { color: '#1f2937' }, horzLines: { color: '#1f2937' } },
       crosshair: { mode: CrosshairMode.Normal },
-      rightPriceScale: { borderColor: '#334155' },
-      timeScale: { borderColor: '#334155', timeVisible: true },
+      rightPriceScale: { borderColor: '#334155', autoScale: true, scaleMargins: { top: 0.14, bottom: 0.16 } },
+      timeScale: { borderColor: '#334155', timeVisible: true, secondsVisible: false },
     });
     const closeSeries: ISeriesApi<'Line'> = chart.addSeries(LineSeries, {
       color: '#60a5fa',
@@ -144,7 +144,7 @@ export function PriceEvidenceChart({
   }
   return (
     <div className="chart-shell">
-      <div ref={ref} className="chart-box" aria-label="목표가 기준선과 발간·목표도달·고점·저점 마커가 포함된 종가 경로" />
+      <div ref={ref} className="chart-box chart-box-fixed" aria-label="목표가 기준선과 발간·목표도달·고점·저점 마커가 포함된 종가 경로" />
       {tooltip ? (
         <div className="chart-tooltip" style={{ left: tooltip.x, top: tooltip.y }}>
           <div className="tooltip-date">{tooltip.time}</div>

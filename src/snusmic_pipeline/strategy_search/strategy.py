@@ -214,16 +214,16 @@ def _excess(value: float, baseline: float | None) -> float | None:
 
 
 def _sample_config(rng: random.Random) -> ParametricSmicFollowerConfig:
-    min_upside = rng.uniform(0.05, 0.60)
-    max_upside = rng.uniform(max(0.20, min_upside), 5.0)
+    min_upside = _sample_step(rng, 0.05, 0.60, 0.01)
+    max_upside = _sample_step(rng, max(0.20, min_upside), 5.0, 0.01)
     return ParametricSmicFollowerConfig(
-        target_hit_multiplier=rng.uniform(0.7, 1.2),
+        target_hit_multiplier=_sample_step(rng, 0.7, 1.2, 0.01),
         min_target_upside_at_pub=min_upside,
         max_target_upside_at_pub=max_upside,
         max_report_age_days=rng.randint(90, 1500),
         time_loss_days=rng.randint(60, 1000),
-        stop_loss_pct=rng.uniform(0.05, 0.50),
-        take_profit_pct=rng.uniform(0.05, 3.0),
+        stop_loss_pct=_sample_step(rng, 0.05, 0.50, 0.01),
+        take_profit_pct=_sample_step(rng, 0.05, 3.0, 0.01),
         rebalance=rng.choice(["monthly", "quarterly"]),
         max_positions=rng.randint(5, 80),
         weighting=rng.choice(["equal", "target_upside", "inverse_volatility", "capped_target_upside"]),
@@ -231,6 +231,13 @@ def _sample_config(rng: random.Random) -> ParametricSmicFollowerConfig:
         exclude_missing_confidence_rows=rng.choice([False, True]),
         require_publication_price=rng.choice([False, True]),
     )
+
+
+def _sample_step(rng: random.Random, low: float, high: float, step: float) -> float:
+    """Sample a discrete decimal grid and return values rounded to 2 decimals."""
+    units_low = round(low / step)
+    units_high = round(high / step)
+    return round(rng.randint(units_low, units_high) * step, 2)
 
 
 def _trial_row(trial_number: int, config: ParametricSmicFollowerConfig, metrics: StrategyMetrics, *, sampler: str) -> dict[str, Any]:

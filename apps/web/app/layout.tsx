@@ -22,6 +22,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <nav className="nav" aria-label="주요 탐색">
               <Link href="/trades">매매내역</Link>
               <Link href="/portfolio">포트폴리오</Link>
+              <Link href="/portfolio/history">월말 히스토리</Link>
               <Link href="/reports">리포트 근거</Link>
               <Link href="/strategies">전략 기준</Link>
             </nav>

@@ -69,15 +69,15 @@ def _run_search(args: argparse.Namespace, report_performance: pd.DataFrame, base
     study = optuna.create_study(direction="maximize", sampler=sampler, study_name=args.study)
 
     def objective(trial: Any) -> float:
-        min_upside = trial.suggest_float("min_target_upside_at_pub", 0.05, 1.5)
+        min_upside = trial.suggest_float("min_target_upside_at_pub", 0.05, 1.5, step=0.01)
         config = ParametricSmicFollowerConfig(
-            target_hit_multiplier=trial.suggest_float("target_hit_multiplier", 0.7, 1.2),
+            target_hit_multiplier=trial.suggest_float("target_hit_multiplier", 0.7, 1.2, step=0.01),
             min_target_upside_at_pub=min_upside,
-            max_target_upside_at_pub=trial.suggest_float("max_target_upside_at_pub", max(0.2, min_upside), 5.0),
+            max_target_upside_at_pub=trial.suggest_float("max_target_upside_at_pub", round(max(0.2, min_upside), 2), 5.0, step=0.01),
             max_report_age_days=trial.suggest_int("max_report_age_days", 90, 1500),
             time_loss_days=trial.suggest_int("time_loss_days", 60, 1000),
-            stop_loss_pct=trial.suggest_float("stop_loss_pct", 0.05, 0.50),
-            take_profit_pct=trial.suggest_float("take_profit_pct", 0.05, 3.0),
+            stop_loss_pct=trial.suggest_float("stop_loss_pct", 0.05, 0.50, step=0.01),
+            take_profit_pct=trial.suggest_float("take_profit_pct", 0.05, 3.0, step=0.01),
             rebalance=trial.suggest_categorical("rebalance", ["monthly", "quarterly"]),
             max_positions=trial.suggest_int("max_positions", 5, 80),
             weighting=trial.suggest_categorical("weighting", ["equal", "target_upside", "inverse_volatility", "capped_target_upside"]),

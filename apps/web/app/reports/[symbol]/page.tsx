@@ -3,25 +3,27 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PriceEvidenceChart } from '@/components/charts/PriceEvidenceChart';
 import { MetricCard, Panel, TerminalHero } from '@/components/ui/Terminal';
-import { getMarkdownSnippet, getPriceSeries, getReportById, getReportRows, type PricePoint, type ReportRow } from '@/lib/artifacts';
+import { getMarkdownSnippet, getPriceSeries, getReportBySymbol, getReportRows, getReportsBySymbol, type PricePoint, type ReportRow } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
 
-type ReportParams = Promise<{ reportId: string }>;
+type ReportParams = Promise<{ symbol: string }>;
 
 export function generateStaticParams() {
-  return getReportRows().map((report) => ({ reportId: report.reportId }));
+  return Array.from(new Set(getReportRows().map((report) => report.symbol))).map((symbol) => ({ symbol }));
 }
 
 export async function generateMetadata({ params }: { params: ReportParams }): Promise<Metadata> {
-  const { reportId } = await params;
-  const report = getReportById(reportId);
+  const { symbol } = await params;
+  const report = getReportBySymbol(decodeURIComponent(symbol));
   return { title: report ? `${report.company} 리포트 증거` : '리포트 증거' };
 }
 
 export default async function ReportDetailPage({ params }: { params: ReportParams }) {
-  const { reportId } = await params;
-  const report = getReportById(reportId);
+  const { symbol } = await params;
+  const reportSymbol = decodeURIComponent(symbol);
+  const report = getReportBySymbol(reportSymbol);
   if (!report) notFound();
+  const siblingReports = getReportsBySymbol(reportSymbol);
   const prices = getPriceSeries(report.symbol, report.publicationDate, report.lastCloseDate);
   const snippet = getMarkdownSnippet(report);
   const pathEvidence = buildPathEvidence(prices, report);
@@ -30,7 +32,7 @@ export default async function ReportDetailPage({ params }: { params: ReportParam
   return (
     <>
       <TerminalHero eyebrow="Report detail" title={report.company}>
-        <p><Link href="/reports">← 리포트 목록</Link> · {report.title} · {report.symbol} · {report.publicationDate} 발간</p>
+        <p><Link href="/reports">← 리포트 목록</Link> · URL 기준 티커 {report.symbol} · 최신 발간 {report.publicationDate}</p>
       </TerminalHero>
       <section className="grid cards" style={{ marginBottom: '1rem' }}>
         <MetricCard label="진입 종가" value={formatKrw(report.entryPriceKrw)} />
@@ -52,6 +54,9 @@ export default async function ReportDetailPage({ params }: { params: ReportParam
             <p><a href={githubBlobUrl(`data/markdown/${report.markdownFilename}`)}>GitHub Markdown →</a></p>
             {report.pdfFilename ? <p><a href={githubBlobUrl(`data/pdfs/${report.pdfFilename}`)}>GitHub PDF →</a></p> : null}
             {report.pdfUrl ? <p><a href={report.pdfUrl}>SNUSMIC 원본 PDF →</a></p> : null}
+          </Panel>
+          <Panel title="동일 티커 리포트">
+            <ul>{siblingReports.map((item) => <li key={item.reportId}>{item.publicationDate} · {item.title}</li>)}</ul>
           </Panel>
           <Panel title="한국어 투자 메모">
             <p>{memo.summary}</p>

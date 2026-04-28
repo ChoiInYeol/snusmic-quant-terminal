@@ -45,7 +45,7 @@ def export_strategy_artifacts(trials_csv: Path, out_dir: Path, *, study_name: st
 
 
 def _strategy_run(study_name: str, row: dict[str, Any]) -> dict[str, Any]:
-    params = {key: _json_safe(row[key]) for key in _PARAMETER_COLUMNS if key in row}
+    params = {key: _param_json_safe(row[key]) for key in _PARAMETER_COLUMNS if key in row}
     metrics = {key: _json_safe(row[key]) for key in _METRIC_COLUMNS if key in row}
     return {
         "run_id": _run_id(study_name, int(row["trial_number"])),
@@ -97,6 +97,13 @@ def _json_safe(value: Any) -> Any:
     if hasattr(value, "item"):
         return value.item()
     return value
+
+
+def _param_json_safe(value: Any) -> Any:
+    safe = _json_safe(value)
+    if isinstance(safe, float):
+        return round(safe, 2)
+    return safe
 
 
 _PARAMETER_COLUMNS = [

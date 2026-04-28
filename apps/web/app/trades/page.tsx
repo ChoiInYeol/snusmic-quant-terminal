@@ -1,6 +1,6 @@
 import { TradesTable } from '@/components/trading/TradesTable';
 import { MetricCard, TerminalHero } from '@/components/ui/Terminal';
-import { getPersonaLabel, getPositionEpisodes, getSummaryRows, getTrades } from '@/lib/artifacts';
+import { getPersonaLabel, getPositionEpisodes, getReportSymbolById, getSummaryRows, getTrades } from '@/lib/artifacts';
 import { formatKrw } from '@/lib/format';
 
 export default function TradesPage() {
@@ -10,6 +10,11 @@ export default function TradesPage() {
   const personas = Array.from(new Set(trades.map((trade) => trade.persona))).sort();
   const personaLabels = Object.fromEntries(personas.map((persona) => [persona, getPersonaLabel(persona)]));
   const capitalByPersona = Object.fromEntries(summaries.map((row) => [row.persona, row.totalContributedKrw ?? row.finalEquityKrw ?? 0]));
+  const reportSymbolsById = Object.fromEntries(
+    Array.from(new Set(trades.map((trade) => trade.reportId).filter((value): value is string => Boolean(value))))
+      .map((reportId) => [reportId, getReportSymbolById(reportId)])
+      .filter((entry): entry is [string, string] => Boolean(entry[1])),
+  );
   const buyCount = trades.filter((trade) => trade.side === 'buy').length;
   const sellCount = trades.filter((trade) => trade.side === 'sell').length;
   const realizedPnl = episodes.reduce((sum, episode) => sum + (episode.realizedPnlKrw ?? 0), 0);
@@ -25,7 +30,7 @@ export default function TradesPage() {
         <MetricCard label="포지션 에피소드" value={episodes.length.toLocaleString('ko-KR')} detail={`현재 보유 ${openEpisodes.toLocaleString('ko-KR')}건`} tone="accent" />
         <MetricCard label="실현 손익 합계" value={formatKrw(realizedPnl)} tone={realizedPnl >= 0 ? 'good' : 'bad'} />
       </section>
-      <TradesTable trades={trades} episodes={episodes} personaLabels={personaLabels} capitalByPersona={capitalByPersona} />
+      <TradesTable trades={trades} episodes={episodes} personaLabels={personaLabels} capitalByPersona={capitalByPersona} reportSymbolsById={reportSymbolsById} />
     </>
   );
 }

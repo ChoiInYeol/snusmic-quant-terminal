@@ -5,43 +5,43 @@
   "parameters": [
     {
       "parameter": "stop_loss_pct",
-      "importance": 0.6007163736256071
-    },
-    {
-      "parameter": "target_hit_multiplier",
-      "importance": 0.3999319758777916
-    },
-    {
-      "parameter": "time_loss_days",
-      "importance": 0.31943477658256453
-    },
-    {
-      "parameter": "exclude_missing_confidence_rows",
-      "importance": 0.3061426926340133
+      "importance": 0.5167975017572254
     },
     {
       "parameter": "max_report_age_days",
-      "importance": 0.19984897191831646
-    },
-    {
-      "parameter": "min_target_upside_at_pub",
-      "importance": 0.11913312920609408
+      "importance": 0.4761358304223079
     },
     {
       "parameter": "max_positions",
-      "importance": 0.11377695258400383
-    },
-    {
-      "parameter": "max_target_upside_at_pub",
-      "importance": 0.11290131347245849
+      "importance": 0.30344794196260855
     },
     {
       "parameter": "take_profit_pct",
-      "importance": 0.1117443296361743
+      "importance": 0.2932937312668074
+    },
+    {
+      "parameter": "min_target_upside_at_pub",
+      "importance": 0.2800517304539389
+    },
+    {
+      "parameter": "max_target_upside_at_pub",
+      "importance": 0.1295743171219637
     },
     {
       "parameter": "require_publication_price",
-      "importance": 0.02915537151793732
+      "importance": 0.10577358813375635
+    },
+    {
+      "parameter": "target_hit_multiplier",
+      "importance": 0.09765479110761498
+    },
+    {
+      "parameter": "exclude_missing_confidence_rows",
+      "importance": 0.04279484854464355
+    },
+    {
+      "parameter": "time_loss_days",
+      "importance": 0.0013399935536833473
     },
     {
       "parameter": "rebalance",

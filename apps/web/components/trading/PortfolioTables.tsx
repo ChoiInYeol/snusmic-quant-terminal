@@ -1,30 +1,54 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { HoldingRow, MonthlyHoldingRow } from '@/lib/artifacts';
+import type { HoldingRow } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
+import { PaginationControls, SortHeader, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
 
 type Props = {
   holdings: HoldingRow[];
-  monthly: MonthlyHoldingRow[];
   personaLabels: Record<string, string>;
   capitalByPersona: Record<string, number>;
 };
 
-export function PortfolioTables({ holdings, monthly, personaLabels, capitalByPersona = {} }: Props) {
+type HoldingSortKey = 'strategy' | 'symbol' | 'qty' | 'avgCost' | 'lastClose' | 'marketValue' | 'stockReturn' | 'contribution' | 'firstBuy';
+
+export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {} }: Props) {
   const personas = useMemo(() => ['all', ...Array.from(new Set(holdings.map((row) => row.persona))).sort()], [holdings]);
-  const months = useMemo(() => Array.from(new Set(monthly.map((row) => row.monthEnd))).sort().reverse(), [monthly]);
   const [persona, setPersona] = useState('all');
-  const [month, setMonth] = useState(months[0] ?? '');
-  const currentRows = holdings.filter((row) => persona === 'all' || row.persona === persona);
-  const monthRows = monthly.filter((row) => row.monthEnd === month && (persona === 'all' || row.persona === persona));
+  const [sort, setSort] = useState<SortState<HoldingSortKey>>({ key: 'marketValue', direction: 'desc' });
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(25);
+  useUrlBackedStrategy(persona, setPersona, personas);
+  const currentRows = sortRows(holdings.filter((row) => persona === 'all' || row.persona === persona), sort, {
+    strategy: (row) => personaLabels[row.persona] ?? row.persona,
+    symbol: (row) => row.company || row.symbol,
+    qty: (row) => row.qty,
+    avgCost: (row) => row.avgCostKrw,
+    lastClose: (row) => row.lastCloseKrw,
+    marketValue: (row) => row.marketValueKrw,
+    stockReturn: (row) => row.unrealizedReturn,
+    contribution: (row) => capitalContribution(row.unrealizedPnlKrw, capitalByPersona[row.persona]),
+    firstBuy: (row) => row.firstBuyDate,
+  });
+  const visibleRows = pageRows(currentRows, page, pageSize);
+  const updateSort = (key: HoldingSortKey) => {
+    setSort((current) => ({ key, direction: current.key === key && current.direction === 'desc' ? 'asc' : 'desc' }));
+    setPage(0);
+  };
 
   return (
     <div className="grid" style={{ gap: '1rem' }}>
-      <section className="panel report-table-panel">
+      <section className="panel report-table-panel strategy-filter-panel">
+        <h2>전략 선택</h2>
+        <div className="strategy-tabs" role="tablist" aria-label="전략 선택">
+          {personas.map((item) => (
+            <button type="button" key={item} role="tab" aria-selected={persona === item} className={persona === item ? 'active' : ''} onClick={() => { setPersona(item); setPage(0); }}>
+              {item === 'all' ? '전체 전략' : personaLabels[item] ?? item}
+            </button>
+          ))}
+        </div>
         <div className="table-toolbar" aria-label="포트폴리오 필터">
-          <label><span>전략</span><select value={persona} onChange={(event) => setPersona(event.target.value)}>{personas.map((item) => <option key={item} value={item}>{item === 'all' ? '전체' : personaLabels[item] ?? item}</option>)}</select></label>
-          <label><span>과거 월말</span><select value={month} onChange={(event) => setMonth(event.target.value)}>{months.map((item) => <option key={item} value={item}>{item}</option>)}</select></label>
           <button type="button" onClick={() => downloadHoldings(currentRows)}>현재 포트폴리오 CSV</button>
         </div>
       </section>
@@ -32,11 +56,22 @@ export function PortfolioTables({ holdings, monthly, personaLabels, capitalByPer
       <section className="panel">
         <h2>현재 보유 포트폴리오</h2>
         <p className="muted">현재 어떤 종목을 얼마나 들고 있는지, 평단·최근가·미실현 손익을 바로 확인합니다.</p>
+        <PaginationControls page={page} pageCount={Math.ceil(currentRows.length / pageSize)} totalRows={currentRows.length} pageSize={pageSize} onPageChange={setPage} onPageSizeChange={(size) => { setPageSize(size); setPage(0); }} />
         <div className="table-wrap inset">
           <table>
-            <thead><tr><th>전략</th><th>종목</th><th>수량</th><th>평단</th><th>최근가</th><th>평가액</th><th>종목 수익률</th><th>자본 기여</th><th>최초 매수</th></tr></thead>
+            <thead><tr>
+              <th><SortHeader label="전략" sortKey="strategy" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="종목" sortKey="symbol" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="수량" sortKey="qty" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="평단" sortKey="avgCost" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="최근가" sortKey="lastClose" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="평가액" sortKey="marketValue" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="종목 수익률" sortKey="stockReturn" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="자본 기여" sortKey="contribution" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="최초 매수" sortKey="firstBuy" sort={sort} onSort={updateSort} /></th>
+            </tr></thead>
             <tbody>
-              {currentRows.slice(0, 300).map((row) => {
+              {visibleRows.map((row) => {
                 const contribution = capitalContribution(row.unrealizedPnlKrw, capitalByPersona[row.persona]);
                 return (
                   <tr key={`${row.persona}-${row.symbol}`}>
@@ -52,27 +87,6 @@ export function PortfolioTables({ holdings, monthly, personaLabels, capitalByPer
                   </tr>
                 );
               })}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section className="panel">
-        <h2>{month} 월말 포트폴리오</h2>
-        <p className="muted">과거 특정 시점에 어떤 포트폴리오였는지 확인합니다.</p>
-        <div className="table-wrap inset">
-          <table>
-            <thead><tr><th>전략</th><th>심볼</th><th>수량</th><th>평가액</th><th>비중</th></tr></thead>
-            <tbody>
-              {monthRows.slice(0, 300).map((row) => (
-                <tr key={`${row.persona}-${row.monthEnd}-${row.symbol}`}>
-                  <td>{personaLabels[row.persona] ?? row.persona}</td>
-                  <td>{row.company || row.symbol}<div className="muted">{row.symbol}</div></td>
-                  <td>{row.qty?.toLocaleString('ko-KR') ?? '—'}</td>
-                  <td>{formatKrw(row.marketValueKrw)}</td>
-                  <td>{formatPercent(row.weightInPortfolio)}</td>
-                </tr>
-              ))}
             </tbody>
           </table>
         </div>
