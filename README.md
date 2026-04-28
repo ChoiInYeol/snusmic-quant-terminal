@@ -569,6 +569,32 @@ cfg = SimulationConfig(
 result = run_simulation(cfg, Path("data/warehouse"))
 ```
 
+
+### 8-5. Next.js / Optuna showcase 준비 상태
+
+공개용 Next.js 쇼케이스는 Python 산출물을 읽는 artifact-first 구조로 검증합니다.
+현재 Python 계산 계층은 `data/warehouse/` 와 `data/sim/` 이 source of truth 이며,
+Optuna 는 로컬 실행 후 `data/optuna/` / `data/web/` 산출물로만 웹에 전달해야 합니다.
+웹 앱이 Optuna 를 직접 실행하거나 canonical warehouse 를 요청 시점에 변경하면 안 됩니다.
+
+통합 브랜치에서 쇼케이스를 ready 로 표시하기 전에는 다음 순서를 확인하세요.
+
+```bash
+uv run pytest -q --durations=10
+uv run ruff check .
+uv run ruff format --check .
+uv run mypy
+uv run python -m snusmic_pipeline run-sim
+
+# apps/web 이 통합된 뒤
+cd apps/web
+npm run typecheck
+npm run build
+```
+
+상세 체크리스트와 worker-5 기준 검증 증거는
+[`docs/showcase-verification.md`](docs/showcase-verification.md) 에 기록합니다.
+
 ---
 
 ## 9. 산출물
