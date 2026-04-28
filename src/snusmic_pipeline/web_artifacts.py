@@ -180,13 +180,13 @@ def _build_report_rows(
     extraction_quality: dict[str, Any],
     missing_symbols: list[str],
 ) -> list[dict[str, Any]]:
-    performance_by_id = {
-        str(row["report_id"]): row for row in report_performance.to_dict(orient="records")
-    }
+    performance_by_id = {str(row["report_id"]): row for row in report_performance.to_dict(orient="records")}
     review_reasons = _review_reasons_by_report(reports, extraction_quality)
     missing = set(missing_symbols)
     rows: list[dict[str, Any]] = []
-    for row in reports.sort_values(["publication_date", "page", "ordinal", "report_id"]).to_dict(orient="records"):
+    for row in reports.sort_values(["publication_date", "page", "ordinal", "report_id"]).to_dict(
+        orient="records"
+    ):
         report_id = str(row["report_id"])
         perf = performance_by_id.get(report_id, {})
         symbol = str(row.get("symbol", ""))
@@ -228,11 +228,15 @@ def _build_report_rows(
     return rows
 
 
-def _review_reasons_by_report(reports: pd.DataFrame, extraction_quality: dict[str, Any]) -> dict[str, list[str]]:
+def _review_reasons_by_report(
+    reports: pd.DataFrame, extraction_quality: dict[str, Any]
+) -> dict[str, list[str]]:
     if not extraction_quality.get("review_rows"):
         return {}
     ids_by_key = {
-        (str(row.get("publication_date", ""))[:10], str(row.get("company", ""))): str(row.get("report_id", ""))
+        (str(row.get("publication_date", ""))[:10], str(row.get("company", ""))): str(
+            row.get("report_id", "")
+        )
         for row in reports.to_dict(orient="records")
     }
     reasons: dict[str, list[str]] = {}
@@ -303,7 +307,9 @@ def _build_data_quality(
     reports: pd.DataFrame,
     report_performance: pd.DataFrame,
 ) -> dict[str, Any]:
-    performance_ids = set(report_performance["report_id"].astype(str)) if not report_performance.empty else set()
+    performance_ids = (
+        set(report_performance["report_id"].astype(str)) if not report_performance.empty else set()
+    )
     report_ids = set(reports["report_id"].astype(str)) if not reports.empty else set()
     return {
         "extraction_quality": extraction_quality,

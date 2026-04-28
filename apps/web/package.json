@@ -1,0 +1,26 @@
+{
+  "name": "snusmic-web",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.20.0",
+  "scripts": {
+    "dev": "next dev",
+    "sync-artifacts": "cd ../.. && uv run python scripts/export_web_artifacts.py --check && if [ -f data/optuna/exports/trials.csv ]; then uv run python scripts/export_optuna_artifacts.py --top 20; fi && rm -rf apps/web/public/artifacts && mkdir -p apps/web/public && cp -R data/web apps/web/public/artifacts",
+    "prebuild": "pnpm sync-artifacts",
+    "build": "next build",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "lightweight-charts": "^5.0.9",
+    "next": "^16.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.9.0"
+  }
+}

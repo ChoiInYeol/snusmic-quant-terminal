@@ -19,3 +19,12 @@ data/sim/trades.csv
 data/sim/personas.json
 data/sim/monthly_holdings.csv
 .omc/
+apps/web/.next/
+apps/web/node_modules/
+apps/web/out/
+apps/web/tsconfig.tsbuildinfo
+apps/web/public/artifacts/
+data/optuna/
+data/web/strategy-runs.json
+data/web/optuna-trials.json
+data/web/parameter-importance.json
