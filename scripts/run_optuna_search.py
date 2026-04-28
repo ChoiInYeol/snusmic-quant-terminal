@@ -26,19 +26,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--study", default="smic-follower-v1")
     parser.add_argument("--trials", type=int, default=20)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument(
-        "--warehouse",
-        type=Path,
-        default=ROOT / "data" / "warehouse",
-        help="Reserved for future full-engine strategy runs.",
-    )
+    parser.add_argument("--warehouse", type=Path, default=ROOT / "data" / "warehouse", help="Reserved for future full-engine strategy runs.")
     parser.add_argument("--sim-dir", type=Path, default=ROOT / "data" / "sim")
     parser.add_argument("--out", type=Path, default=ROOT / "data" / "optuna")
-    parser.add_argument(
-        "--prefer-optuna",
-        action="store_true",
-        help="Use Optuna if installed; otherwise fallback remains deterministic.",
-    )
+    parser.add_argument("--prefer-optuna", action="store_true", help="Use Optuna if installed; otherwise fallback remains deterministic.")
     return parser.parse_args()
 
 
@@ -65,20 +56,14 @@ def main() -> int:
     return 0
 
 
-def _run_search(
-    args: argparse.Namespace, report_performance: pd.DataFrame, baseline_summary: pd.DataFrame | None
-) -> list[dict[str, Any]]:
+def _run_search(args: argparse.Namespace, report_performance: pd.DataFrame, baseline_summary: pd.DataFrame | None) -> list[dict[str, Any]]:
     if not args.prefer_optuna:
-        return run_random_search(
-            report_performance, baseline_summary=baseline_summary, trials=args.trials, seed=args.seed
-        )
+        return run_random_search(report_performance, baseline_summary=baseline_summary, trials=args.trials, seed=args.seed)
     try:
         import optuna  # type: ignore[import-not-found]
     except Exception as exc:  # pragma: no cover - depends on local optional package
         print(f"Optuna unavailable ({exc}); using deterministic random fallback.")
-        return run_random_search(
-            report_performance, baseline_summary=baseline_summary, trials=args.trials, seed=args.seed
-        )
+        return run_random_search(report_performance, baseline_summary=baseline_summary, trials=args.trials, seed=args.seed)
 
     sampler = optuna.samplers.TPESampler(seed=args.seed)
     study = optuna.create_study(direction="maximize", sampler=sampler, study_name=args.study)
@@ -88,22 +73,16 @@ def _run_search(
         config = ParametricSmicFollowerConfig(
             target_hit_multiplier=trial.suggest_float("target_hit_multiplier", 0.7, 1.2),
             min_target_upside_at_pub=min_upside,
-            max_target_upside_at_pub=trial.suggest_float(
-                "max_target_upside_at_pub", max(0.2, min_upside), 5.0
-            ),
+            max_target_upside_at_pub=trial.suggest_float("max_target_upside_at_pub", max(0.2, min_upside), 5.0),
             max_report_age_days=trial.suggest_int("max_report_age_days", 90, 1500),
             time_loss_days=trial.suggest_int("time_loss_days", 60, 1000),
             stop_loss_pct=trial.suggest_float("stop_loss_pct", 0.05, 0.50),
             take_profit_pct=trial.suggest_float("take_profit_pct", 0.05, 3.0),
             rebalance=trial.suggest_categorical("rebalance", ["monthly", "quarterly"]),
             max_positions=trial.suggest_int("max_positions", 5, 80),
-            weighting=trial.suggest_categorical(
-                "weighting", ["equal", "target_upside", "inverse_volatility", "capped_target_upside"]
-            ),
+            weighting=trial.suggest_categorical("weighting", ["equal", "target_upside", "inverse_volatility", "capped_target_upside"]),
             universe=trial.suggest_categorical("universe", ["all", "domestic", "overseas"]),
-            exclude_missing_confidence_rows=trial.suggest_categorical(
-                "exclude_missing_confidence_rows", [False, True]
-            ),
+            exclude_missing_confidence_rows=trial.suggest_categorical("exclude_missing_confidence_rows", [False, True]),
             require_publication_price=trial.suggest_categorical("require_publication_price", [False, True]),
         )
         metrics = evaluate_strategy(config, report_performance, baseline_summary=baseline_summary)

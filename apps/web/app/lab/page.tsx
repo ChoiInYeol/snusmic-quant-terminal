@@ -1,8 +1,14 @@
-import { getOptunaTrials, getParameterImportance } from '@/lib/artifacts';
-import { formatNumber } from '@/lib/format';
-
 export default function LabPage() {
-  const trials = getOptunaTrials();
-  const importance = getParameterImportance();
-  return <><section className="hero"><div className="eyebrow">Research lab</div><h1>Optuna trial diagnostics.</h1><p>Trial scatter/importance placeholders backed by local-only exported artifacts.</p></section><section className="grid cards"><div className="card"><div className="muted">Trials exported</div><div className="metric">{formatNumber(trials.length)}</div></div><div className="card"><div className="muted">Parameters ranked</div><div className="metric">{formatNumber(importance.length)}</div></div></section><section className="panel spaced"><h2>Parameter importance</h2>{importance.length ? <ul>{importance.map((row) => <li key={row.parameter}>{row.parameter}: {formatNumber(row.importance, 3)}</li>)}</ul> : <p>No parameter-importance export yet.</p>}</section></>;
+  return (
+    <main className="mx-auto max-w-5xl space-y-5 p-6">
+      <p className="text-sm font-medium text-amber-700">Research lab</p>
+      <h1 className="text-3xl font-bold text-slate-950">Local strategy search workflow</h1>
+      <p className="text-slate-600">Optuna runs only on the local Python side. The deployed web app reads static JSON exports and never imports Optuna, yfinance, or Python simulation code.</p>
+      <ol className="list-decimal space-y-2 pl-5 text-slate-700">
+        <li>Run <code>uv run python scripts/run_optuna_search.py --trials 100</code>.</li>
+        <li>Export web artifacts with <code>uv run python scripts/export_optuna_artifacts.py</code>.</li>
+        <li>Review /strategies for in-sample winners and risk warning badges.</li>
+      </ol>
+    </main>
+  );
 }

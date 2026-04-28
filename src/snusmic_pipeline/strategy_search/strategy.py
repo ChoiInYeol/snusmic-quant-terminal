@@ -155,16 +155,12 @@ def _select_reports(frame: pd.DataFrame, config: ParametricSmicFollowerConfig) -
         selected = selected[pd.to_numeric(selected["entry_price_krw"], errors="coerce").notna()]
     if "target_upside_at_pub" in selected.columns:
         upside = pd.to_numeric(selected["target_upside_at_pub"], errors="coerce")
-        selected = selected[
-            (upside >= config.min_target_upside_at_pub) & (upside <= config.max_target_upside_at_pub)
-        ]
+        selected = selected[(upside >= config.min_target_upside_at_pub) & (upside <= config.max_target_upside_at_pub)]
     if "days_to_target" in selected.columns:
         days = pd.to_numeric(selected["days_to_target"], errors="coerce")
         selected = selected[days.isna() | (days <= config.max_report_age_days)]
     if config.universe != "all" and "symbol" in selected.columns:
-        is_domestic = selected["symbol"].astype(str).str.endswith(".KS") | selected["symbol"].astype(
-            str
-        ).str.endswith(".KQ")
+        is_domestic = selected["symbol"].astype(str).str.endswith(".KS") | selected["symbol"].astype(str).str.endswith(".KQ")
         selected = selected[is_domestic] if config.universe == "domestic" else selected[~is_domestic]
     if config.exclude_missing_confidence_rows:
         selected = selected.dropna(subset=["target_upside_at_pub", "current_return"])
@@ -175,12 +171,8 @@ def _select_reports(frame: pd.DataFrame, config: ParametricSmicFollowerConfig) -
 
 
 def _strategy_returns(selected: pd.DataFrame, config: ParametricSmicFollowerConfig) -> pd.Series:
-    current = pd.to_numeric(
-        selected.get("current_return", pd.Series(0.0, index=selected.index)), errors="coerce"
-    ).fillna(0.0)
-    upside = pd.to_numeric(
-        selected.get("target_upside_at_pub", pd.Series(0.0, index=selected.index)), errors="coerce"
-    ).fillna(0.0)
+    current = pd.to_numeric(selected.get("current_return", pd.Series(0.0, index=selected.index)), errors="coerce").fillna(0.0)
+    upside = pd.to_numeric(selected.get("target_upside_at_pub", pd.Series(0.0, index=selected.index)), errors="coerce").fillna(0.0)
     target_return = (upside * config.target_hit_multiplier).clip(upper=config.take_profit_pct)
     hit = selected.get("target_hit", pd.Series(False, index=selected.index)).astype(bool)
     returns = current.where(~hit, target_return)
@@ -198,23 +190,11 @@ def _position_weights(selected: pd.DataFrame, config: ParametricSmicFollowerConf
     if config.weighting == "equal":
         raw = pd.Series(1.0, index=selected.index)
     elif config.weighting in {"target_upside", "capped_target_upside"}:
-        raw = (
-            pd.to_numeric(
-                selected.get("target_upside_at_pub", pd.Series(1.0, index=selected.index)), errors="coerce"
-            )
-            .fillna(0.0)
-            .clip(lower=0.01)
-        )
+        raw = pd.to_numeric(selected.get("target_upside_at_pub", pd.Series(1.0, index=selected.index)), errors="coerce").fillna(0.0).clip(lower=0.01)
         if config.weighting == "capped_target_upside":
             raw = raw.clip(upper=1.0)
     else:
-        trough = (
-            pd.to_numeric(
-                selected.get("trough_return", pd.Series(-0.2, index=selected.index)), errors="coerce"
-            )
-            .abs()
-            .fillna(0.2)
-        )
+        trough = pd.to_numeric(selected.get("trough_return", pd.Series(-0.2, index=selected.index)), errors="coerce").abs().fillna(0.2)
         raw = 1.0 / trough.clip(lower=0.05)
     total = float(raw.sum())
     if total <= 0:
@@ -253,13 +233,5 @@ def _sample_config(rng: random.Random) -> ParametricSmicFollowerConfig:
     )
 
 
-def _trial_row(
-    trial_number: int, config: ParametricSmicFollowerConfig, metrics: StrategyMetrics, *, sampler: str
-) -> dict[str, Any]:
-    return {
-        "trial_number": trial_number,
-        "sampler": sampler,
-        "scope": "in-sample",
-        **config.model_dump(mode="json"),
-        **metrics.model_dump(mode="json"),
-    }
+def _trial_row(trial_number: int, config: ParametricSmicFollowerConfig, metrics: StrategyMetrics, *, sampler: str) -> dict[str, Any]:
+    return {"trial_number": trial_number, "sampler": sampler, "scope": "in-sample", **config.model_dump(mode="json"), **metrics.model_dump(mode="json")}

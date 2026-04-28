@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "study_name": "smic-follower-v1",
+  "method": "absolute Pearson correlation with objective score over exported trials",
+  "parameters": [
+    {
+      "parameter": "stop_loss_pct",
+      "importance": 0.6007163736256071
+    },
+    {
+      "parameter": "target_hit_multiplier",
+      "importance": 0.3999319758777916
+    },
+    {
+      "parameter": "time_loss_days",
+      "importance": 0.31943477658256453
+    },
+    {
+      "parameter": "exclude_missing_confidence_rows",
+      "importance": 0.3061426926340133
+    },
+    {
+      "parameter": "max_report_age_days",
+      "importance": 0.19984897191831646
+    },
+    {
+      "parameter": "min_target_upside_at_pub",
+      "importance": 0.11913312920609408
+    },
+    {
+      "parameter": "max_positions",
+      "importance": 0.11377695258400383
+    },
+    {
+      "parameter": "max_target_upside_at_pub",
+      "importance": 0.11290131347245849
+    },
+    {
+      "parameter": "take_profit_pct",
+      "importance": 0.1117443296361743
+    },
+    {
+      "parameter": "require_publication_price",
+      "importance": 0.02915537151793732
+    },
+    {
+      "parameter": "rebalance",
+      "importance": 0.0
+    },
+    {
+      "parameter": "weighting",
+      "importance": 0.0
+    },
+    {
+      "parameter": "universe",
+      "importance": 0.0
+    }
+  ]
+}
