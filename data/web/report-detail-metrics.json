@@ -12,12 +12,6 @@
         "type": "publication"
       },
       {
-        "date": "2021-07-19",
-        "label": "발간 후 저점",
-        "price_krw": 115711513.3594,
-        "type": "trough"
-      },
-      {
         "date": "2022-03-07",
         "label": "목표가 도달",
         "price_krw": 124901.5678527832,
@@ -30,9 +24,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 199.9,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 591927209.0183,
+        "price_krw": 204.8,
         "type": "latest"
       }
     ],
@@ -45,9 +45,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2021-07-19",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 115711513.3594,
+        "price_krw": 199.9,
         "type": "trough"
       }
     },
@@ -102,9 +102,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 2820.0,
+        "price_krw": 2800.0,
         "type": "latest"
       }
     ],
@@ -174,24 +174,24 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-23",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 1225000.0,
+        "price_krw": 1300000.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 1222000.0,
+        "price_krw": 1300000.0,
         "type": "latest"
       }
     ],
     "peak_return": 8.04,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-23",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 1225000.0,
+        "price_krw": 1300000.0,
         "type": "peak"
       },
       "trough": {
@@ -252,15 +252,15 @@
         "type": "peak"
       },
       {
-        "date": "2022-12-28",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 62805421.9154,
+        "price_krw": 114.38,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 252360821.7494,
+        "price_krw": 114.38,
         "type": "latest"
       }
     ],
@@ -273,9 +273,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2022-12-28",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 62805421.9154,
+        "price_krw": 114.38,
         "type": "trough"
       }
     },
@@ -330,9 +330,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 4310.0,
+        "price_krw": 4260.0,
         "type": "latest"
       }
     ],
@@ -408,9 +408,9 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 55300.0,
+        "price_krw": 53800.0,
         "type": "latest"
       }
     ],
@@ -486,9 +486,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 32150.0,
+        "price_krw": 32400.0,
         "type": "latest"
       }
     ],
@@ -558,9 +558,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 24750.0,
+        "price_krw": 24550.0,
         "type": "latest"
       }
     ],
@@ -636,7 +636,7 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
         "price_krw": 63500.0,
         "type": "latest"
@@ -708,9 +708,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 42500.0,
+        "price_krw": 44100.0,
         "type": "latest"
       }
     ],
@@ -780,9 +780,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 63200.0,
+        "price_krw": 60800.0,
         "type": "latest"
       }
     ],
@@ -840,12 +840,6 @@
         "type": "publication"
       },
       {
-        "date": "2021-07-16",
-        "label": "발간 후 저점",
-        "price_krw": 22539808.479,
-        "type": "trough"
-      },
-      {
         "date": "2022-05-23",
         "label": "목표가 도달",
         "price_krw": 42065.72907714843,
@@ -858,9 +852,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 24.58,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 53069801.5161,
+        "price_krw": 24.58,
         "type": "latest"
       }
     ],
@@ -873,9 +873,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2021-07-16",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 22539808.479,
+        "price_krw": 24.58,
         "type": "trough"
       }
     },
@@ -936,9 +936,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 100200.0,
+        "price_krw": 87800.0,
         "type": "latest"
       }
     ],
@@ -1008,9 +1008,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 7070.0,
+        "price_krw": 7150.0,
         "type": "latest"
       }
     ],
@@ -1086,9 +1086,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 78500.0,
+        "price_krw": 75900.0,
         "type": "latest"
       }
     ],
@@ -1158,9 +1158,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 12660.0,
+        "price_krw": 12610.0,
         "type": "latest"
       }
     ],
@@ -1230,9 +1230,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 157200.0,
+        "price_krw": 157800.0,
         "type": "latest"
       }
     ],
@@ -1296,21 +1296,21 @@
         "type": "target_hit"
       },
       {
-        "date": "2025-04-10",
-        "label": "발간 후 저점",
-        "price_krw": 207049647.7882,
-        "type": "trough"
-      },
-      {
         "date": "2026-04-24",
         "label": "발간 후 고점",
         "price_krw": 754722133.4922,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
+        "label": "발간 후 저점",
+        "price_krw": 231.9,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 754722133.4922,
+        "price_krw": 231.9,
         "type": "latest"
       }
     ],
@@ -1323,9 +1323,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-04-10",
+        "date": "2026-04-28",
         "label": "발간 후 저점",
-        "price_krw": 207049647.7882,
+        "price_krw": 231.9,
         "type": "trough"
       }
     },
@@ -1386,9 +1386,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 11250.0,
+        "price_krw": 11010.0,
         "type": "latest"
       }
     ],
@@ -1446,12 +1446,6 @@
         "type": "publication"
       },
       {
-        "date": "2025-04-21",
-        "label": "발간 후 저점",
-        "price_krw": 7220167.4301,
-        "type": "trough"
-      },
-      {
         "date": "2026-01-29",
         "label": "목표가 도달",
         "price_krw": 44981.021639404295,
@@ -1464,9 +1458,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 13.36,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 29305570.1103,
+        "price_krw": 13.36,
         "type": "latest"
       }
     ],
@@ -1479,9 +1479,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-04-21",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 7220167.4301,
+        "price_krw": 13.36,
         "type": "trough"
       }
     },
@@ -1568,12 +1568,6 @@
         "type": "publication"
       },
       {
-        "date": "2023-12-11",
-        "label": "발간 후 저점",
-        "price_krw": 727840175.1013,
-        "type": "trough"
-      },
-      {
         "date": "2024-01-26",
         "label": "목표가 도달",
         "price_krw": 602781.3987304687,
@@ -1586,9 +1580,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
+        "label": "발간 후 저점",
+        "price_krw": 481.0,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 1699108012.057,
+        "price_krw": 481.0,
         "type": "latest"
       }
     ],
@@ -1601,9 +1601,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2023-12-11",
+        "date": "2026-04-28",
         "label": "발간 후 저점",
-        "price_krw": 727840175.1013,
+        "price_krw": 481.0,
         "type": "trough"
       }
     },
@@ -1652,15 +1652,15 @@
         "type": "peak"
       },
       {
-        "date": "2024-05-30",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 26855.5143,
+        "price_krw": 410.1,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 35523.9138,
+        "price_krw": 417.3,
         "type": "latest"
       }
     ],
@@ -1673,9 +1673,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-05-30",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 26855.5143,
+        "price_krw": 410.1,
         "type": "trough"
       }
     },
@@ -1718,21 +1718,21 @@
         "type": "publication"
       },
       {
-        "date": "2026-04-16",
-        "label": "발간 후 저점",
-        "price_krw": 392482458.1766,
-        "type": "trough"
-      },
-      {
         "date": "2026-04-24",
         "label": "발간 후 고점",
         "price_krw": 444621127.1686,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 190.92,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 444621127.1686,
+        "price_krw": 190.92,
         "type": "latest"
       }
     ],
@@ -1745,9 +1745,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-04-16",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 392482458.1766,
+        "price_krw": 190.92,
         "type": "trough"
       }
     },
@@ -1808,9 +1808,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 46200.0,
+        "price_krw": 44700.0,
         "type": "latest"
       }
     ],
@@ -1880,24 +1880,24 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-03",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 191100.0,
+        "price_krw": 197500.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 191000.0,
+        "price_krw": 197500.0,
         "type": "latest"
       }
     ],
     "peak_return": 2.13,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-03",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 191100.0,
+        "price_krw": 197500.0,
         "type": "peak"
       },
       "trough": {
@@ -1958,9 +1958,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 35200.0,
+        "price_krw": 34750.0,
         "type": "latest"
       }
     ],
@@ -2036,9 +2036,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 218000.0,
+        "price_krw": 222000.0,
         "type": "latest"
       }
     ],
@@ -2108,9 +2108,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 530000.0,
+        "price_krw": 517000.0,
         "type": "latest"
       }
     ],
@@ -2180,9 +2180,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 33050.0,
+        "price_krw": 32700.0,
         "type": "latest"
       }
     ],
@@ -2246,15 +2246,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 73200.2754,
+        "price_krw": 857.0,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 73200.2754,
+        "price_krw": 873.0,
         "type": "latest"
       }
     ],
@@ -2267,9 +2267,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 73200.2754,
+        "price_krw": 857.0,
         "type": "trough"
       }
     },
@@ -2324,9 +2324,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 11890.0,
+        "price_krw": 11930.0,
         "type": "latest"
       }
     ],
@@ -2396,9 +2396,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 81400.0,
+        "price_krw": 79000.0,
         "type": "latest"
       }
     ],
@@ -2474,9 +2474,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 18000.0,
+        "price_krw": 17740.0,
         "type": "latest"
       }
     ],
@@ -2534,12 +2534,6 @@
         "type": "publication"
       },
       {
-        "date": "2023-12-18",
-        "label": "발간 후 저점",
-        "price_krw": 944646805.7132,
-        "type": "trough"
-      },
-      {
         "date": "2024-02-08",
         "label": "목표가 도달",
         "price_krw": 965175.5443359376,
@@ -2552,9 +2546,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 868.27,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 1936095080.5,
+        "price_krw": 868.27,
         "type": "latest"
       }
     ],
@@ -2567,9 +2567,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2023-12-18",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 944646805.7132,
+        "price_krw": 868.27,
         "type": "trough"
       }
     },
@@ -2618,15 +2618,15 @@
         "type": "peak"
       },
       {
-        "date": "2023-10-20",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 1476660.5297,
+        "price_krw": 42.26,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 2013373.438,
+        "price_krw": 43.3,
         "type": "latest"
       }
     ],
@@ -2639,9 +2639,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2023-10-20",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 1476660.5297,
+        "price_krw": 42.26,
         "type": "trough"
       }
     },
@@ -2696,9 +2696,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 5840.0,
+        "price_krw": 5500.0,
         "type": "latest"
       }
     ],
@@ -2756,12 +2756,6 @@
         "type": "publication"
       },
       {
-        "date": "2023-10-24",
-        "label": "발간 후 저점",
-        "price_krw": 45355190.7877,
-        "type": "trough"
-      },
-      {
         "date": "2023-12-14",
         "label": "목표가 도달",
         "price_krw": 43735.309047851566,
@@ -2774,9 +2768,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 52.63,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 114002607.5365,
+        "price_krw": 52.63,
         "type": "latest"
       }
     ],
@@ -2789,9 +2789,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2023-10-24",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 45355190.7877,
+        "price_krw": 52.63,
         "type": "trough"
       }
     },
@@ -2846,24 +2846,24 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 167500.0,
+        "price_krw": 168700.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 167500.0,
+        "price_krw": 168700.0,
         "type": "latest"
       }
     ],
     "peak_return": 1.0,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 167500.0,
+        "price_krw": 168700.0,
         "type": "peak"
       },
       "trough": {
@@ -2930,9 +2930,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 4250.0,
+        "price_krw": 4190.0,
         "type": "latest"
       }
     ],
@@ -2990,12 +2990,6 @@
         "type": "publication"
       },
       {
-        "date": "2024-08-05",
-        "label": "발간 후 저점",
-        "price_krw": 19376899.5996,
-        "type": "trough"
-      },
-      {
         "date": "2025-07-15",
         "label": "목표가 도달",
         "price_krw": 67739.54675292969,
@@ -3008,9 +3002,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 64.92,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 133013994.3321,
+        "price_krw": 64.92,
         "type": "latest"
       }
     ],
@@ -3023,9 +3023,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-08-05",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 19376899.5996,
+        "price_krw": 64.92,
         "type": "trough"
       }
     },
@@ -3074,15 +3074,15 @@
         "type": "peak"
       },
       {
-        "date": "2023-11-17",
+        "date": "2026-04-28",
         "label": "발간 후 저점",
-        "price_krw": 60277.7206,
+        "price_krw": 1268.5,
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 105929.4594,
+        "price_krw": 1268.5,
         "type": "latest"
       }
     ],
@@ -3095,9 +3095,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2023-11-17",
+        "date": "2026-04-28",
         "label": "발간 후 저점",
-        "price_krw": 60277.7206,
+        "price_krw": 1268.5,
         "type": "trough"
       }
     },
@@ -3152,9 +3152,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 29300.0,
+        "price_krw": 28400.0,
         "type": "latest"
       }
     ],
@@ -3224,24 +3224,24 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-23",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 54000.0,
+        "price_krw": 55700.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 53600.0,
+        "price_krw": 55700.0,
         "type": "latest"
       }
     ],
     "peak_return": 0.82,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-23",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 54000.0,
+        "price_krw": 55700.0,
         "type": "peak"
       },
       "trough": {
@@ -3296,24 +3296,24 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 1541000.0,
+        "price_krw": 1583000.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 1541000.0,
+        "price_krw": 1583000.0,
         "type": "latest"
       }
     ],
     "peak_return": 0.35,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 1541000.0,
+        "price_krw": 1583000.0,
         "type": "peak"
       },
       "trough": {
@@ -3368,15 +3368,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 118299.1616,
+        "price_krw": 1350.0,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 118299.1616,
+        "price_krw": 1376.0,
         "type": "latest"
       }
     ],
@@ -3389,9 +3389,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 118299.1616,
+        "price_krw": 1350.0,
         "type": "trough"
       }
     },
@@ -3446,9 +3446,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 3850.0,
+        "price_krw": 4020.0,
         "type": "latest"
       }
     ],
@@ -3506,21 +3506,21 @@
         "type": "publication"
       },
       {
-        "date": "2026-03-20",
-        "label": "발간 후 저점",
-        "price_krw": 184139932.3146,
-        "type": "trough"
-      },
-      {
         "date": "2026-04-24",
         "label": "발간 후 고점",
         "price_krw": 269729519.6515,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 124.64,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 269729519.6515,
+        "price_krw": 124.64,
         "type": "latest"
       }
     ],
@@ -3533,9 +3533,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-03-20",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 184139932.3146,
+        "price_krw": 124.64,
         "type": "trough"
       }
     },
@@ -3640,9 +3640,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 35050.0,
+        "price_krw": 33500.0,
         "type": "latest"
       }
     ],
@@ -3718,9 +3718,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 2850.0,
+        "price_krw": 2845.0,
         "type": "latest"
       }
     ],
@@ -3784,15 +3784,15 @@
         "type": "peak"
       },
       {
-        "date": "2025-08-08",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 4718628.9498,
+        "price_krw": 4.31,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 9593303.3886,
+        "price_krw": 4.31,
         "type": "latest"
       }
     ],
@@ -3805,9 +3805,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-08-08",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 4718628.9498,
+        "price_krw": 4.31,
         "type": "trough"
       }
     },
@@ -3868,9 +3868,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 34950.0,
+        "price_krw": 34000.0,
         "type": "latest"
       }
     ],
@@ -3940,15 +3940,15 @@
         "type": "peak"
       },
       {
-        "date": "2024-03-26",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 27365287.9443,
+        "price_krw": 25.22,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 56990354.3471,
+        "price_krw": 25.22,
         "type": "latest"
       }
     ],
@@ -3961,9 +3961,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-03-26",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 27365287.9443,
+        "price_krw": 25.22,
         "type": "trough"
       }
     },
@@ -4018,15 +4018,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-02-12",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 20543993.9762,
+        "price_krw": 13.55,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 29524594.0429,
+        "price_krw": 13.55,
         "type": "latest"
       }
     ],
@@ -4039,9 +4039,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-02-12",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 20543993.9762,
+        "price_krw": 13.55,
         "type": "trough"
       }
     },
@@ -4102,9 +4102,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 252000.0,
+        "price_krw": 248500.0,
         "type": "latest"
       }
     ],
@@ -4180,9 +4180,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 16560.0,
+        "price_krw": 18190.0,
         "type": "latest"
       }
     ],
@@ -4252,9 +4252,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 6160.0,
+        "price_krw": 6730.0,
         "type": "latest"
       }
     ],
@@ -4324,9 +4324,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 98900.0,
+        "price_krw": 100800.0,
         "type": "latest"
       }
     ],
@@ -4402,9 +4402,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 261500.0,
+        "price_krw": 267500.0,
         "type": "latest"
       }
     ],
@@ -4468,21 +4468,21 @@
         "type": "target_hit"
       },
       {
-        "date": "2025-04-04",
-        "label": "발간 후 저점",
-        "price_krw": 38743340.5806,
-        "type": "trough"
-      },
-      {
         "date": "2026-04-07",
         "label": "발간 후 고점",
         "price_krw": 115385786.1054,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 53.6,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 108505079.0492,
+        "price_krw": 53.6,
         "type": "latest"
       }
     ],
@@ -4495,9 +4495,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-04-04",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 38743340.5806,
+        "price_krw": 53.6,
         "type": "trough"
       }
     },
@@ -4552,9 +4552,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 60200.0,
+        "price_krw": 60100.0,
         "type": "latest"
       }
     ],
@@ -4624,9 +4624,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 22950.0,
+        "price_krw": 23700.0,
         "type": "latest"
       }
     ],
@@ -4702,9 +4702,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 223000.0,
+        "price_krw": 250000.0,
         "type": "latest"
       }
     ],
@@ -4762,21 +4762,21 @@
         "type": "publication"
       },
       {
-        "date": "2026-01-29",
-        "label": "발간 후 저점",
-        "price_krw": 70211473.3667,
-        "type": "trough"
-      },
-      {
         "date": "2026-04-02",
         "label": "발간 후 고점",
         "price_krw": 91753879.12,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 37.12,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 79834681.8942,
+        "price_krw": 37.12,
         "type": "latest"
       }
     ],
@@ -4789,9 +4789,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-01-29",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 70211473.3667,
+        "price_krw": 37.12,
         "type": "trough"
       }
     },
@@ -4852,9 +4852,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 252000.0,
+        "price_krw": 248500.0,
         "type": "latest"
       }
     ],
@@ -4930,9 +4930,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 60200.0,
+        "price_krw": 60600.0,
         "type": "latest"
       }
     ],
@@ -5002,9 +5002,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 23600.0,
+        "price_krw": 23350.0,
         "type": "latest"
       }
     ],
@@ -5074,15 +5074,15 @@
         "type": "peak"
       },
       {
-        "date": "2024-02-02",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 15789004.535,
+        "price_krw": 21.71,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 48733103.8399,
+        "price_krw": 21.71,
         "type": "latest"
       }
     ],
@@ -5095,9 +5095,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-02-02",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 15789004.535,
+        "price_krw": 21.71,
         "type": "trough"
       }
     },
@@ -5152,9 +5152,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 16380.0,
+        "price_krw": 16270.0,
         "type": "latest"
       }
     ],
@@ -5224,9 +5224,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 2850.0,
+        "price_krw": 2845.0,
         "type": "latest"
       }
     ],
@@ -5296,9 +5296,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 22900.0,
+        "price_krw": 22800.0,
         "type": "latest"
       }
     ],
@@ -5356,12 +5356,6 @@
         "type": "publication"
       },
       {
-        "date": "2023-11-29",
-        "label": "발간 후 저점",
-        "price_krw": 70105554.4612,
-        "type": "trough"
-      },
-      {
         "date": "2024-02-02",
         "label": "목표가 도달",
         "price_krw": 80262.92066894531,
@@ -5374,9 +5368,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 322.43,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 708458847.2646,
+        "price_krw": 322.43,
         "type": "latest"
       }
     ],
@@ -5389,9 +5389,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2023-11-29",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 70105554.4612,
+        "price_krw": 322.43,
         "type": "trough"
       }
     },
@@ -5452,9 +5452,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 49350.0,
+        "price_krw": 49400.0,
         "type": "latest"
       }
     ],
@@ -5524,24 +5524,24 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-23",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 125700.0,
+        "price_krw": 129800.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 122400.0,
+        "price_krw": 129800.0,
         "type": "latest"
       }
     ],
     "peak_return": 1.01,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-23",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 125700.0,
+        "price_krw": 129800.0,
         "type": "peak"
       },
       "trough": {
@@ -5590,12 +5590,6 @@
         "type": "publication"
       },
       {
-        "date": "2022-07-06",
-        "label": "발간 후 저점",
-        "price_krw": 50161794.4493,
-        "type": "trough"
-      },
-      {
         "date": "2022-08-29",
         "label": "목표가 도달",
         "price_krw": 56315.81296386718,
@@ -5608,9 +5602,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 79.74,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 171650044.1251,
+        "price_krw": 79.74,
         "type": "latest"
       }
     ],
@@ -5623,9 +5623,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2022-07-06",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 50161794.4493,
+        "price_krw": 79.74,
         "type": "trough"
       }
     },
@@ -5668,21 +5668,21 @@
         "type": "publication"
       },
       {
-        "date": "2021-07-19",
-        "label": "발간 후 저점",
-        "price_krw": 86364313.1394,
-        "type": "trough"
-      },
-      {
         "date": "2024-11-25",
         "label": "발간 후 고점",
         "price_krw": 195880928.9658,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 66.0,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 143330086.9331,
+        "price_krw": 66.0,
         "type": "latest"
       }
     ],
@@ -5695,9 +5695,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2021-07-19",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 86364313.1394,
+        "price_krw": 66.0,
         "type": "trough"
       }
     },
@@ -5758,9 +5758,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 171700.0,
+        "price_krw": 168000.0,
         "type": "latest"
       }
     ],
@@ -5836,9 +5836,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 60800.0,
+        "price_krw": 66000.0,
         "type": "latest"
       }
     ],
@@ -5908,9 +5908,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 5840.0,
+        "price_krw": 5780.0,
         "type": "latest"
       }
     ],
@@ -6046,15 +6046,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-03-30",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 124206966.6457,
+        "price_krw": 65.47,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 145169890.4728,
+        "price_krw": 65.47,
         "type": "latest"
       }
     ],
@@ -6067,9 +6067,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-03-30",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 124206966.6457,
+        "price_krw": 65.47,
         "type": "trough"
       }
     },
@@ -6174,9 +6174,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 7240.0,
+        "price_krw": 7290.0,
         "type": "latest"
       }
     ],
@@ -6246,9 +6246,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 12440.0,
+        "price_krw": 12290.0,
         "type": "latest"
       }
     ],
@@ -6306,12 +6306,6 @@
         "type": "publication"
       },
       {
-        "date": "2024-05-29",
-        "label": "발간 후 저점",
-        "price_krw": 38887985.8297,
-        "type": "trough"
-      },
-      {
         "date": "2024-10-09",
         "label": "목표가 도달",
         "price_krw": 55921.981600341795,
@@ -6324,9 +6318,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 143.1,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 313403130.3365,
+        "price_krw": 143.1,
         "type": "latest"
       }
     ],
@@ -6339,9 +6339,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-05-29",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 38887985.8297,
+        "price_krw": 143.1,
         "type": "trough"
       }
     },
@@ -6396,9 +6396,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 59400.0,
+        "price_krw": 56800.0,
         "type": "latest"
       }
     ],
@@ -6468,9 +6468,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 67300.0,
+        "price_krw": 70400.0,
         "type": "latest"
       }
     ],
@@ -6546,9 +6546,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 36450.0,
+        "price_krw": 38450.0,
         "type": "latest"
       }
     ],
@@ -6618,9 +6618,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 10980.0,
+        "price_krw": 11060.0,
         "type": "latest"
       }
     ],
@@ -6690,24 +6690,24 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 52500.0,
+        "price_krw": 56300.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 52500.0,
+        "price_krw": 56300.0,
         "type": "latest"
       }
     ],
     "peak_return": 1.26,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 52500.0,
+        "price_krw": 56300.0,
         "type": "peak"
       },
       "trough": {
@@ -6768,24 +6768,24 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "발간 후 고점",
-        "price_krw": 39700.0,
+        "price_krw": 39900.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 39700.0,
+        "price_krw": 38950.0,
         "type": "latest"
       }
     ],
     "peak_return": 0.68,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "발간 후 고점",
-        "price_krw": 39700.0,
+        "price_krw": 39900.0,
         "type": "peak"
       },
       "trough": {
@@ -6852,9 +6852,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 47850.0,
+        "price_krw": 47600.0,
         "type": "latest"
       }
     ],
@@ -6924,9 +6924,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 23600.0,
+        "price_krw": 23350.0,
         "type": "latest"
       }
     ],
@@ -6996,9 +6996,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 4985.0,
+        "price_krw": 4880.0,
         "type": "latest"
       }
     ],
@@ -7062,24 +7062,24 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 167500.0,
+        "price_krw": 168700.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 167500.0,
+        "price_krw": 168700.0,
         "type": "latest"
       }
     ],
     "peak_return": 0.28,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 167500.0,
+        "price_krw": 168700.0,
         "type": "peak"
       },
       "trough": {
@@ -7140,9 +7140,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 8000.0,
+        "price_krw": 7910.0,
         "type": "latest"
       }
     ],
@@ -7218,9 +7218,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 369000.0,
+        "price_krw": 376500.0,
         "type": "latest"
       }
     ],
@@ -7296,7 +7296,7 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
         "price_krw": 29100.0,
         "type": "latest"
@@ -7368,9 +7368,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 332000.0,
+        "price_krw": 325000.0,
         "type": "latest"
       }
     ],
@@ -7440,9 +7440,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 41600.0,
+        "price_krw": 41550.0,
         "type": "latest"
       }
     ],
@@ -7512,9 +7512,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 22250.0,
+        "price_krw": 21650.0,
         "type": "latest"
       }
     ],
@@ -7590,9 +7590,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 225500.0,
+        "price_krw": 221000.0,
         "type": "latest"
       }
     ],
@@ -7662,9 +7662,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 3450.0,
+        "price_krw": 3495.0,
         "type": "latest"
       }
     ],
@@ -7734,9 +7734,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 5640.0,
+        "price_krw": 5960.0,
         "type": "latest"
       }
     ],
@@ -7812,9 +7812,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 185200.0,
+        "price_krw": 186800.0,
         "type": "latest"
       }
     ],
@@ -7890,9 +7890,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 99000.0,
+        "price_krw": 99900.0,
         "type": "latest"
       }
     ],
@@ -7968,9 +7968,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 3900.0,
+        "price_krw": 3920.0,
         "type": "latest"
       }
     ],
@@ -8040,9 +8040,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 31450.0,
+        "price_krw": 30450.0,
         "type": "latest"
       }
     ],
@@ -8112,9 +8112,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 81800.0,
+        "price_krw": 86500.0,
         "type": "latest"
       }
     ],
@@ -8190,9 +8190,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 21000.0,
+        "price_krw": 22150.0,
         "type": "latest"
       }
     ],
@@ -8268,9 +8268,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 47000.0,
+        "price_krw": 46600.0,
         "type": "latest"
       }
     ],
@@ -8328,12 +8328,6 @@
         "type": "publication"
       },
       {
-        "date": "2025-04-07",
-        "label": "발간 후 저점",
-        "price_krw": 506346.6115,
-        "type": "trough"
-      },
-      {
         "date": "2025-09-18",
         "label": "목표가 도달",
         "price_krw": 135499.53608322144,
@@ -8346,9 +8340,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
+        "label": "발간 후 저점",
+        "price_krw": 29750.0,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 2514604.5607,
+        "price_krw": 29750.0,
         "type": "latest"
       }
     ],
@@ -8361,9 +8361,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-04-07",
+        "date": "2026-04-28",
         "label": "발간 후 저점",
-        "price_krw": 506346.6115,
+        "price_krw": 29750.0,
         "type": "trough"
       }
     },
@@ -8412,15 +8412,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-10",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 93203587.6997,
+        "price_krw": 52.68,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 114155924.4981,
+        "price_krw": 52.68,
         "type": "latest"
       }
     ],
@@ -8433,9 +8433,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-04-10",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 93203587.6997,
+        "price_krw": 52.68,
         "type": "trough"
       }
     },
@@ -8496,9 +8496,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 32300.0,
+        "price_krw": 32500.0,
         "type": "latest"
       }
     ],
@@ -8574,9 +8574,9 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 49350.0,
+        "price_krw": 49400.0,
         "type": "latest"
       }
     ],
@@ -8652,9 +8652,9 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 103000.0,
+        "price_krw": 106700.0,
         "type": "latest"
       }
     ],
@@ -8718,21 +8718,21 @@
         "type": "target_hit"
       },
       {
-        "date": "2024-09-06",
-        "label": "발간 후 저점",
-        "price_krw": 62811004.7158,
-        "type": "trough"
-      },
-      {
         "date": "2025-10-15",
         "label": "발간 후 고점",
         "price_krw": 890865841.4051,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 221.98,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 450381500.2497,
+        "price_krw": 221.98,
         "type": "latest"
       }
     ],
@@ -8745,9 +8745,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-09-06",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 62811004.7158,
+        "price_krw": 221.98,
         "type": "trough"
       }
     },
@@ -8808,9 +8808,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 100500.0,
+        "price_krw": 101800.0,
         "type": "latest"
       }
     ],
@@ -8924,9 +8924,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 16950.0,
+        "price_krw": 17120.0,
         "type": "latest"
       }
     ],
@@ -9002,9 +9002,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 1306000.0,
+        "price_krw": 1238000.0,
         "type": "latest"
       }
     ],
@@ -9062,12 +9062,6 @@
         "type": "publication"
       },
       {
-        "date": "2023-01-19",
-        "label": "발간 후 저점",
-        "price_krw": 42718001.704,
-        "type": "trough"
-      },
-      {
         "date": "2025-10-08",
         "label": "목표가 도달",
         "price_krw": 221076.0499572754,
@@ -9080,9 +9074,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 172.47,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 387477464.2151,
+        "price_krw": 172.47,
         "type": "latest"
       }
     ],
@@ -9095,9 +9095,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2023-01-19",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 42718001.704,
+        "price_krw": 172.47,
         "type": "trough"
       }
     },
@@ -9158,9 +9158,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 29300.0,
+        "price_krw": 28400.0,
         "type": "latest"
       }
     ],
@@ -9224,24 +9224,24 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 154300.0,
+        "price_krw": 183000.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 154300.0,
+        "price_krw": 183000.0,
         "type": "latest"
       }
     ],
     "peak_return": null,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 154300.0,
+        "price_krw": 183000.0,
         "type": "peak"
       },
       "trough": {
@@ -9308,9 +9308,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 57600.0,
+        "price_krw": 57500.0,
         "type": "latest"
       }
     ],
@@ -9386,9 +9386,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 36100.0,
+        "price_krw": 36000.0,
         "type": "latest"
       }
     ],
@@ -9458,9 +9458,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 3420.0,
+        "price_krw": 3630.0,
         "type": "latest"
       }
     ],
@@ -9530,9 +9530,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 348000.0,
+        "price_krw": 326500.0,
         "type": "latest"
       }
     ],
@@ -9602,9 +9602,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 4565.0,
+        "price_krw": 4575.0,
         "type": "latest"
       }
     ],
@@ -9668,21 +9668,21 @@
         "type": "target_hit"
       },
       {
-        "date": "2023-05-31",
-        "label": "발간 후 저점",
-        "price_krw": 43128101.0996,
-        "type": "trough"
-      },
-      {
         "date": "2026-04-24",
         "label": "발간 후 고점",
         "price_krw": 138621042.0964,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 63.18,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 138621042.0964,
+        "price_krw": 63.18,
         "type": "latest"
       }
     ],
@@ -9695,9 +9695,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2023-05-31",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 43128101.0996,
+        "price_krw": 63.18,
         "type": "trough"
       }
     },
@@ -9746,15 +9746,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-10",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 23941210.5337,
+        "price_krw": 12.66,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 27816198.1785,
+        "price_krw": 12.66,
         "type": "latest"
       }
     ],
@@ -9767,9 +9767,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-04-10",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 23941210.5337,
+        "price_krw": 12.66,
         "type": "trough"
       }
     },
@@ -9812,12 +9812,6 @@
         "type": "publication"
       },
       {
-        "date": "2025-11-20",
-        "label": "발간 후 저점",
-        "price_krw": 167728384.4068,
-        "type": "trough"
-      },
-      {
         "date": "2026-02-23",
         "label": "목표가 도달",
         "price_krw": 205977.603515625,
@@ -9830,9 +9824,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 168.01,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 385243397.9622,
+        "price_krw": 168.01,
         "type": "latest"
       }
     ],
@@ -9845,9 +9845,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-11-20",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 167728384.4068,
+        "price_krw": 168.01,
         "type": "trough"
       }
     },
@@ -9902,9 +9902,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 10930.0,
+        "price_krw": 10410.0,
         "type": "latest"
       }
     ],
@@ -9980,9 +9980,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 43200.0,
+        "price_krw": 42450.0,
         "type": "latest"
       }
     ],
@@ -10052,9 +10052,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 274500.0,
+        "price_krw": 276000.0,
         "type": "latest"
       }
     ],
@@ -10124,24 +10124,24 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "발간 후 고점",
-        "price_krw": 76000.0,
+        "price_krw": 88500.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 76000.0,
+        "price_krw": 81100.0,
         "type": "latest"
       }
     ],
     "peak_return": 2.92,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "발간 후 고점",
-        "price_krw": 76000.0,
+        "price_krw": 88500.0,
         "type": "peak"
       },
       "trough": {
@@ -10208,9 +10208,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 209000.0,
+        "price_krw": 206000.0,
         "type": "latest"
       }
     ],
@@ -10280,9 +10280,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 28700.0,
+        "price_krw": 28950.0,
         "type": "latest"
       }
     ],
@@ -10346,15 +10346,15 @@
         "type": "peak"
       },
       {
-        "date": "2025-06-25",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 938352.8728,
+        "price_krw": 5.39,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 12068288.2387,
+        "price_krw": 5.39,
         "type": "latest"
       }
     ],
@@ -10367,9 +10367,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-06-25",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 938352.8728,
+        "price_krw": 5.39,
         "type": "trough"
       }
     },
@@ -10424,9 +10424,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 10190.0,
+        "price_krw": 10140.0,
         "type": "latest"
       }
     ],
@@ -10502,9 +10502,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 60200.0,
+        "price_krw": 60100.0,
         "type": "latest"
       }
     ],
@@ -10574,15 +10574,15 @@
         "type": "peak"
       },
       {
-        "date": "2023-12-20",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 59131597.4458,
+        "price_krw": 85.49,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 187135124.0926,
+        "price_krw": 85.49,
         "type": "latest"
       }
     ],
@@ -10595,9 +10595,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2023-12-20",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 59131597.4458,
+        "price_krw": 85.49,
         "type": "trough"
       }
     },
@@ -10658,9 +10658,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 6180.0,
+        "price_krw": 6370.0,
         "type": "latest"
       }
     ],
@@ -10730,15 +10730,15 @@
         "type": "peak"
       },
       {
-        "date": "2024-08-05",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 10112088.3781,
+        "price_krw": 9.51,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 20632172.6692,
+        "price_krw": 9.51,
         "type": "latest"
       }
     ],
@@ -10751,9 +10751,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-08-05",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 10112088.3781,
+        "price_krw": 9.51,
         "type": "trough"
       }
     },
@@ -10802,15 +10802,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-10",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 45690160.9855,
+        "price_krw": 24.66,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 52587947.6113,
+        "price_krw": 24.66,
         "type": "latest"
       }
     ],
@@ -10823,9 +10823,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-04-10",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 45690160.9855,
+        "price_krw": 24.66,
         "type": "trough"
       }
     },
@@ -10886,9 +10886,9 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 119400.0,
+        "price_krw": 118700.0,
         "type": "latest"
       }
     ],
@@ -10964,9 +10964,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 134900.0,
+        "price_krw": 133900.0,
         "type": "latest"
       }
     ],
@@ -11036,15 +11036,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-10",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 82698105.792,
+        "price_krw": 44.41,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 100269727.3844,
+        "price_krw": 44.41,
         "type": "latest"
       }
     ],
@@ -11057,9 +11057,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-04-10",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 82698105.792,
+        "price_krw": 44.41,
         "type": "trough"
       }
     },
@@ -11114,15 +11114,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-03-30",
+        "date": "2026-04-28",
         "label": "발간 후 저점",
-        "price_krw": 70951.2109,
+        "price_krw": 881.9,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 75873.75,
+        "price_krw": 881.9,
         "type": "latest"
       }
     ],
@@ -11135,9 +11135,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-03-30",
+        "date": "2026-04-28",
         "label": "발간 후 저점",
-        "price_krw": 70951.2109,
+        "price_krw": 881.9,
         "type": "trough"
       }
     },
@@ -11198,9 +11198,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 204000.0,
+        "price_krw": 207000.0,
         "type": "latest"
       }
     ],
@@ -11258,12 +11258,6 @@
         "type": "publication"
       },
       {
-        "date": "2025-12-16",
-        "label": "발간 후 저점",
-        "price_krw": 680828219.2922,
-        "type": "trough"
-      },
-      {
         "date": "2026-02-05",
         "label": "목표가 도달",
         "price_krw": 734437.1303430175,
@@ -11276,9 +11270,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 859.68,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 1931013680.1476,
+        "price_krw": 859.68,
         "type": "latest"
       }
     ],
@@ -11291,9 +11291,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-12-16",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 680828219.2922,
+        "price_krw": 859.68,
         "type": "trough"
       }
     },
@@ -11354,9 +11354,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 422500.0,
+        "price_krw": 447000.0,
         "type": "latest"
       }
     ],
@@ -11420,15 +11420,15 @@
         "type": "peak"
       },
       {
-        "date": "2025-12-17",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 139816507.1663,
+        "price_krw": 112.06,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 241234338.3004,
+        "price_krw": 112.06,
         "type": "latest"
       }
     ],
@@ -11441,9 +11441,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-12-17",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 139816507.1663,
+        "price_krw": 112.06,
         "type": "trough"
       }
     },
@@ -11542,9 +11542,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 9200.0,
+        "price_krw": 9340.0,
         "type": "latest"
       }
     ],
@@ -11614,9 +11614,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 11640.0,
+        "price_krw": 11570.0,
         "type": "latest"
       }
     ],
@@ -11674,21 +11674,21 @@
         "type": "publication"
       },
       {
-        "date": "2025-06-09",
-        "label": "발간 후 저점",
-        "price_krw": 122203.0676,
-        "type": "trough"
-      },
-      {
         "date": "2026-03-02",
         "label": "발간 후 고점",
         "price_krw": 284357.9731,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 2594.0,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 226433.9908,
+        "price_krw": 2597.0,
         "type": "latest"
       }
     ],
@@ -11701,9 +11701,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-06-09",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 122203.0676,
+        "price_krw": 2594.0,
         "type": "trough"
       }
     },
@@ -11752,30 +11752,30 @@
         "type": "target_hit"
       },
       {
-        "date": "2023-07-31",
-        "label": "발간 후 고점",
-        "price_krw": 104800.0,
-        "type": "peak"
-      },
-      {
         "date": "2024-12-09",
         "label": "발간 후 저점",
         "price_krw": 20850.0,
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
+        "label": "발간 후 고점",
+        "price_krw": 105300.0,
+        "type": "peak"
+      },
+      {
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 100900.0,
+        "price_krw": 105300.0,
         "type": "latest"
       }
     ],
     "peak_return": 0.4,
     "price_extremes": {
       "peak": {
-        "date": "2023-07-31",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 104800.0,
+        "price_krw": 105300.0,
         "type": "peak"
       },
       "trough": {
@@ -11830,15 +11830,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-23",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 28178316.0019,
+        "price_krw": 13.93,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 29108447.1089,
+        "price_krw": 13.93,
         "type": "latest"
       }
     ],
@@ -11851,9 +11851,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-04-23",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 28178316.0019,
+        "price_krw": 13.93,
         "type": "trough"
       }
     },
@@ -11908,9 +11908,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 12820.0,
+        "price_krw": 12850.0,
         "type": "latest"
       }
     ],
@@ -11980,9 +11980,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 3800.0,
+        "price_krw": 3885.0,
         "type": "latest"
       }
     ],
@@ -12058,9 +12058,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 5460.0,
+        "price_krw": 5820.0,
         "type": "latest"
       }
     ],
@@ -12130,9 +12130,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 1162.0,
+        "price_krw": 1187.0,
         "type": "latest"
       }
     ],
@@ -12202,9 +12202,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 51000.0,
+        "price_krw": 51500.0,
         "type": "latest"
       }
     ],
@@ -12274,24 +12274,24 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "발간 후 고점",
-        "price_krw": 398500.0,
+        "price_krw": 426000.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 398500.0,
+        "price_krw": 402500.0,
         "type": "latest"
       }
     ],
     "peak_return": 4.0,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "발간 후 고점",
-        "price_krw": 398500.0,
+        "price_krw": 426000.0,
         "type": "peak"
       },
       "trough": {
@@ -12346,15 +12346,15 @@
         "type": "peak"
       },
       {
-        "date": "2024-02-05",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 193216.6408,
+        "price_krw": 8.92,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 393433.9114,
+        "price_krw": 8.93,
         "type": "latest"
       }
     ],
@@ -12367,9 +12367,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-02-05",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 193216.6408,
+        "price_krw": 8.92,
         "type": "trough"
       }
     },
@@ -12424,7 +12424,7 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
         "price_krw": 63500.0,
         "type": "latest"
@@ -12496,9 +12496,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 7900.0,
+        "price_krw": 8850.0,
         "type": "latest"
       }
     ],
@@ -12568,9 +12568,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 2850.0,
+        "price_krw": 2830.0,
         "type": "latest"
       }
     ],
@@ -12634,15 +12634,15 @@
         "type": "peak"
       },
       {
-        "date": "2024-12-06",
+        "date": "2026-04-28",
         "label": "발간 후 저점",
-        "price_krw": 199077.1555,
+        "price_krw": 10.69,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 403067.0228,
+        "price_krw": 10.69,
         "type": "latest"
       }
     ],
@@ -12655,9 +12655,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-12-06",
+        "date": "2026-04-28",
         "label": "발간 후 저점",
-        "price_krw": 199077.1555,
+        "price_krw": 10.69,
         "type": "trough"
       }
     },
@@ -12712,9 +12712,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 252000.0,
+        "price_krw": 248500.0,
         "type": "latest"
       }
     ],
@@ -12790,9 +12790,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 54500.0,
+        "price_krw": 52800.0,
         "type": "latest"
       }
     ],
@@ -12850,21 +12850,21 @@
         "type": "publication"
       },
       {
-        "date": "2022-12-28",
-        "label": "발간 후 저점",
-        "price_krw": 118261960.3617,
-        "type": "trough"
-      },
-      {
         "date": "2026-04-24",
         "label": "발간 후 고점",
         "price_krw": 881488744.0445,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 404.98,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 881488744.0445,
+        "price_krw": 404.98,
         "type": "latest"
       }
     ],
@@ -12877,9 +12877,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2022-12-28",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 118261960.3617,
+        "price_krw": 404.98,
         "type": "trough"
       }
     },
@@ -12928,15 +12928,15 @@
         "type": "peak"
       },
       {
-        "date": "2025-04-10",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 959096.0897,
+        "price_krw": 1.05,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 2255959.351,
+        "price_krw": 1.05,
         "type": "latest"
       }
     ],
@@ -12949,9 +12949,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-04-10",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 959096.0897,
+        "price_krw": 1.05,
         "type": "trough"
       }
     },
@@ -13006,9 +13006,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 2110.0,
+        "price_krw": 2135.0,
         "type": "latest"
       }
     ],
@@ -13072,15 +13072,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-21",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 192515094.0449,
+        "price_krw": 89.08,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 194231535.4335,
+        "price_krw": 89.08,
         "type": "latest"
       }
     ],
@@ -13093,9 +13093,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-04-21",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 192515094.0449,
+        "price_krw": 89.08,
         "type": "trough"
       }
     },
@@ -13138,21 +13138,21 @@
         "type": "publication"
       },
       {
-        "date": "2026-04-20",
-        "label": "발간 후 저점",
-        "price_krw": 112785759.7362,
-        "type": "trough"
-      },
-      {
         "date": "2026-04-22",
         "label": "발간 후 고점",
         "price_krw": 116252309.6664,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 52.83,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 115272957.6246,
+        "price_krw": 52.83,
         "type": "latest"
       }
     ],
@@ -13165,9 +13165,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-04-20",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 112785759.7362,
+        "price_krw": 52.83,
         "type": "trough"
       }
     },
@@ -13222,9 +13222,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 30050.0,
+        "price_krw": 29700.0,
         "type": "latest"
       }
     ],
@@ -13300,9 +13300,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 29700.0,
+        "price_krw": 29750.0,
         "type": "latest"
       }
     ],
@@ -13360,21 +13360,21 @@
         "type": "publication"
       },
       {
-        "date": "2025-04-08",
-        "label": "발간 후 저점",
-        "price_krw": 26836550.673,
-        "type": "trough"
-      },
-      {
         "date": "2026-04-21",
         "label": "발간 후 고점",
         "price_krw": 50427816.7639,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 22.83,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 48864517.7817,
+        "price_krw": 22.83,
         "type": "latest"
       }
     ],
@@ -13387,9 +13387,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-04-08",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 26836550.673,
+        "price_krw": 22.83,
         "type": "trough"
       }
     },
@@ -13450,9 +13450,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 1463000.0,
+        "price_krw": 1395000.0,
         "type": "latest"
       }
     ],
@@ -13528,9 +13528,9 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 119400.0,
+        "price_krw": 118700.0,
         "type": "latest"
       }
     ],
@@ -13600,9 +13600,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 34150.0,
+        "price_krw": 33750.0,
         "type": "latest"
       }
     ],
@@ -13666,24 +13666,24 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 450000.0,
+        "price_krw": 459000.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 450000.0,
+        "price_krw": 459000.0,
         "type": "latest"
       }
     ],
     "peak_return": 5.45,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 450000.0,
+        "price_krw": 459000.0,
         "type": "peak"
       },
       "trough": {
@@ -13744,9 +13744,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 21550.0,
+        "price_krw": 20900.0,
         "type": "latest"
       }
     ],
@@ -13822,9 +13822,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 194800.0,
+        "price_krw": 191900.0,
         "type": "latest"
       }
     ],
@@ -13894,24 +13894,24 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 126000.0,
+        "price_krw": 130500.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 126000.0,
+        "price_krw": 130500.0,
         "type": "latest"
       }
     ],
     "peak_return": 5.82,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 126000.0,
+        "price_krw": 130500.0,
         "type": "peak"
       },
       "trough": {
@@ -13960,12 +13960,6 @@
         "type": "publication"
       },
       {
-        "date": "2023-11-07",
-        "label": "발간 후 저점",
-        "price_krw": 46218117.653,
-        "type": "trough"
-      },
-      {
         "date": "2024-07-16",
         "label": "목표가 도달",
         "price_krw": 63432.44860839844,
@@ -13978,9 +13972,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 168.01,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 385243397.9622,
+        "price_krw": 168.01,
         "type": "latest"
       }
     ],
@@ -13993,9 +13993,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2023-11-07",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 46218117.653,
+        "price_krw": 168.01,
         "type": "trough"
       }
     },
@@ -14050,9 +14050,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 10350.0,
+        "price_krw": 10360.0,
         "type": "latest"
       }
     ],
@@ -14122,9 +14122,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 19740.0,
+        "price_krw": 19140.0,
         "type": "latest"
       }
     ],
@@ -14200,9 +14200,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 104300.0,
+        "price_krw": 102600.0,
         "type": "latest"
       }
     ],
@@ -14278,9 +14278,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 417500.0,
+        "price_krw": 466500.0,
         "type": "latest"
       }
     ],
@@ -14350,9 +14350,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 26500.0,
+        "price_krw": 26800.0,
         "type": "latest"
       }
     ],
@@ -14422,9 +14422,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 17910.0,
+        "price_krw": 17800.0,
         "type": "latest"
       }
     ],
@@ -14494,9 +14494,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 530000.0,
+        "price_krw": 517000.0,
         "type": "latest"
       }
     ],
@@ -14572,9 +14572,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 332000.0,
+        "price_krw": 325000.0,
         "type": "latest"
       }
     ],
@@ -14638,15 +14638,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-02-09",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 31843960.6839,
+        "price_krw": 29.67,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 68401564.5219,
+        "price_krw": 29.67,
         "type": "latest"
       }
     ],
@@ -14659,9 +14659,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2026-02-09",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 31843960.6839,
+        "price_krw": 29.67,
         "type": "trough"
       }
     },
@@ -14722,9 +14722,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 82800.0,
+        "price_krw": 84700.0,
         "type": "latest"
       }
     ],
@@ -14788,15 +14788,15 @@
         "type": "peak"
       },
       {
-        "date": "2025-06-13",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 24341026.2525,
+        "price_krw": 14.31,
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 31539625.9193,
+        "price_krw": 14.31,
         "type": "latest"
       }
     ],
@@ -14809,9 +14809,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2025-06-13",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 24341026.2525,
+        "price_krw": 14.31,
         "type": "trough"
       }
     },
@@ -14866,9 +14866,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 23150.0,
+        "price_krw": 23450.0,
         "type": "latest"
       }
     ],
@@ -14944,9 +14944,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 141000.0,
+        "price_krw": 140100.0,
         "type": "latest"
       }
     ],
@@ -15004,12 +15004,6 @@
         "type": "publication"
       },
       {
-        "date": "2024-05-29",
-        "label": "발간 후 저점",
-        "price_krw": 739874542.6009,
-        "type": "trough"
-      },
-      {
         "date": "2024-11-07",
         "label": "목표가 도달",
         "price_krw": 716359.3534423828,
@@ -15022,9 +15016,15 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
+        "label": "발간 후 저점",
+        "price_krw": 470.99,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 1056183253.6257,
+        "price_krw": 470.99,
         "type": "latest"
       }
     ],
@@ -15037,9 +15037,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-05-29",
+        "date": "2026-04-27",
         "label": "발간 후 저점",
-        "price_krw": 739874542.6009,
+        "price_krw": 470.99,
         "type": "trough"
       }
     },
@@ -15094,9 +15094,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 6020.0,
+        "price_krw": 5910.0,
         "type": "latest"
       }
     ],
@@ -15166,24 +15166,24 @@
         "type": "target_hit"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 81300.0,
+        "price_krw": 81600.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 81300.0,
+        "price_krw": 81600.0,
         "type": "latest"
       }
     ],
     "peak_return": 2.73,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 81300.0,
+        "price_krw": 81600.0,
         "type": "peak"
       },
       "trough": {
@@ -15244,9 +15244,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 50800.0,
+        "price_krw": 51800.0,
         "type": "latest"
       }
     ],
@@ -15316,9 +15316,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 73200.0,
+        "price_krw": 72700.0,
         "type": "latest"
       }
     ],
@@ -15394,9 +15394,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 513000.0,
+        "price_krw": 555000.0,
         "type": "latest"
       }
     ],
@@ -15466,9 +15466,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 121400.0,
+        "price_krw": 122100.0,
         "type": "latest"
       }
     ],
@@ -15538,9 +15538,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 16430.0,
+        "price_krw": 16470.0,
         "type": "latest"
       }
     ],
@@ -15598,21 +15598,21 @@
         "type": "publication"
       },
       {
-        "date": "2024-02-02",
-        "label": "발간 후 저점",
-        "price_krw": 1663406.9207,
-        "type": "trough"
-      },
-      {
         "date": "2025-03-20",
         "label": "발간 후 고점",
         "price_krw": 4968654.4065,
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
+        "label": "발간 후 저점",
+        "price_krw": 103.7,
+        "type": "trough"
+      },
+      {
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 3612965.599,
+        "price_krw": 103.7,
         "type": "latest"
       }
     ],
@@ -15625,9 +15625,9 @@
         "type": "peak"
       },
       "trough": {
-        "date": "2024-02-02",
+        "date": "2026-04-28",
         "label": "발간 후 저점",
-        "price_krw": 1663406.9207,
+        "price_krw": 103.7,
         "type": "trough"
       }
     },
@@ -15682,9 +15682,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 53400.0,
+        "price_krw": 53700.0,
         "type": "latest"
       }
     ],
@@ -15754,24 +15754,24 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 73400.0,
+        "price_krw": 76300.0,
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 73400.0,
+        "price_krw": 76300.0,
         "type": "latest"
       }
     ],
     "peak_return": 1.25,
     "price_extremes": {
       "peak": {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "발간 후 고점",
-        "price_krw": 73400.0,
+        "price_krw": 76300.0,
         "type": "peak"
       },
       "trough": {
@@ -15838,9 +15838,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 153400.0,
+        "price_krw": 150600.0,
         "type": "latest"
       }
     ],
@@ -15910,9 +15910,9 @@
         "type": "trough"
       },
       {
-        "date": "2026-04-24",
+        "date": "2026-04-27",
         "label": "최근 종가",
-        "price_krw": 57200.0,
+        "price_krw": 54000.0,
         "type": "latest"
       }
     ],
@@ -15988,9 +15988,9 @@
         "type": "peak"
       },
       {
-        "date": "2026-04-27",
+        "date": "2026-04-28",
         "label": "최근 종가",
-        "price_krw": 141400.0,
+        "price_krw": 141200.0,
         "type": "latest"
       }
     ],
