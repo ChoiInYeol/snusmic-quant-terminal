@@ -1,0 +1,116 @@
+{
+  "baseline_personas": [
+    {
+      "cagr": 1.68,
+      "final_cash_krw": 7330.6,
+      "final_equity_krw": 18085004830.6,
+      "final_holdings_value_krw": 18084997500.0,
+      "initial_capital_krw": 10000000.0,
+      "label": "Prophet",
+      "max_drawdown": 0.39,
+      "money_weighted_return": 2.66,
+      "net_profit_krw": 17985004830.6,
+      "open_positions": 1,
+      "persona": "oracle",
+      "realized_pnl_krw": 10987428753.61,
+      "time_weighted_return": 844.89,
+      "total_contributed_krw": 100000000.0,
+      "trade_count": 490
+    },
+    {
+      "cagr": 0.89,
+      "final_cash_krw": 6001520.65,
+      "final_equity_krw": 2900887213.82,
+      "final_holdings_value_krw": 2894885693.17,
+      "initial_capital_krw": 10000000.0,
+      "label": "Weak Prophet (6M look-ahead)",
+      "max_drawdown": 0.22,
+      "money_weighted_return": 1.49,
+      "net_profit_krw": 2800887213.82,
+      "open_positions": 23,
+      "persona": "weak_oracle",
+      "realized_pnl_krw": 1712993176.46,
+      "time_weighted_return": 117.63,
+      "total_contributed_krw": 100000000.0,
+      "trade_count": 1122
+    },
+    {
+      "cagr": 0.06,
+      "final_cash_krw": 2430765.34,
+      "final_equity_krw": 137459656.41,
+      "final_holdings_value_krw": 135028891.07,
+      "initial_capital_krw": 10000000.0,
+      "label": "SMIC Follower (1/N)",
+      "max_drawdown": 0.15,
+      "money_weighted_return": 0.12,
+      "net_profit_krw": 37459656.41,
+      "open_positions": 104,
+      "persona": "smic_follower",
+      "realized_pnl_krw": 29957450.56,
+      "time_weighted_return": 0.27,
+      "total_contributed_krw": 100000000.0,
+      "trade_count": 4070
+    },
+    {
+      "cagr": 0.12,
+      "final_cash_krw": 42102.79,
+      "final_equity_krw": 178884221.95,
+      "final_holdings_value_krw": 178842119.16,
+      "initial_capital_krw": 10000000.0,
+      "label": "SMIC Follower v2 (with stop-loss)",
+      "max_drawdown": 0.19,
+      "money_weighted_return": 0.23,
+      "net_profit_krw": 78884221.95,
+      "open_positions": 17,
+      "persona": "smic_follower_v2",
+      "realized_pnl_krw": 71582917.51,
+      "time_weighted_return": 0.92,
+      "total_contributed_krw": 100000000.0,
+      "trade_count": 1969
+    },
+    {
+      "cagr": 0.15,
+      "final_cash_krw": 753209.21,
+      "final_equity_krw": 206630075.38,
+      "final_holdings_value_krw": 205876866.17,
+      "initial_capital_krw": 10000000.0,
+      "label": "All-Weather (25/25/25/25)",
+      "max_drawdown": 0.09,
+      "money_weighted_return": 0.28,
+      "net_profit_krw": 106630075.38,
+      "open_positions": 4,
+      "persona": "all_weather",
+      "realized_pnl_krw": 12075962.96,
+      "time_weighted_return": 1.78,
+      "total_contributed_krw": 100000000.0,
+      "trade_count": 182
+    }
+  ],
+  "generated_from": {
+    "sim_report_stats": "data/sim/report_stats.json",
+    "sim_summary": "data/sim/summary.csv",
+    "warehouse_daily_prices": "data/warehouse/daily_prices.csv",
+    "warehouse_reports": "data/warehouse/reports.csv"
+  },
+  "report_counts": {
+    "extracted_reports": 216,
+    "missing_price_symbols": 5,
+    "price_matched_reports": 206,
+    "report_stat_rows": 211,
+    "web_report_rows": 216
+  },
+  "simulation_window": {
+    "price_end": "2026-04-28",
+    "price_start": "2018-08-03",
+    "report_end": "2026-04-16",
+    "report_start": "2020-10-31"
+  },
+  "target_stats": {
+    "avg_current_return": 0.78,
+    "avg_days_to_target": 345.73,
+    "median_current_return": 0.15,
+    "median_days_to_target": 167.5,
+    "target_hit_count": 104,
+    "target_hit_rate": 0.5
+  }
+}

@@ -1,0 +1,455 @@
+{
+  "coverage": {
+    "report_performance_rows": 211,
+    "reports_without_performance": 5,
+    "warehouse_reports": 216
+  },
+  "extraction_quality": {
+    "currency_counts": {
+      "HKD": 2,
+      "JPY": 7,
+      "KRW": 158,
+      "USD": 49
+    },
+    "page_status_counts": {
+      "1": {
+        "ok": 12
+      },
+      "10": {
+        "ok": 12
+      },
+      "11": {
+        "ok": 12
+      },
+      "12": {
+        "ok": 12
+      },
+      "13": {
+        "ok": 12
+      },
+      "14": {
+        "ok": 12
+      },
+      "15": {
+        "ok": 12
+      },
+      "16": {
+        "ok": 12
+      },
+      "17": {
+        "ok": 12
+      },
+      "18": {
+        "ok": 12
+      },
+      "2": {
+        "ok": 12
+      },
+      "3": {
+        "ok": 12
+      },
+      "4": {
+        "ok": 12
+      },
+      "5": {
+        "ok": 12
+      },
+      "6": {
+        "ok": 12
+      },
+      "7": {
+        "ok": 12
+      },
+      "8": {
+        "ok": 12
+      },
+      "9": {
+        "ok": 12
+      }
+    },
+    "rating_counts": {
+      "Attention": 1,
+      "Buy": 179,
+      "Hold": 2,
+      "Sell": 3,
+      "Strong Buy": 19,
+      "missing": 12
+    },
+    "reason_counts": {
+      "missing_rating": 12,
+      "non_buy_rating:Attention": 1,
+      "non_buy_rating:Hold": 2,
+      "non_buy_rating:Sell": 3,
+      "note_case_target_ambiguous": 3
+    },
+    "review_rows": [
+      {
+        "base_target": 238.0,
+        "company": "Sensient Technologies Corp",
+        "date": "2025-12-01T02:52:50",
+        "note": "markdown reextract",
+        "ordinal": 12,
+        "page": 1,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=238",
+        "ticker": "SXT",
+        "title": "Equity Research, Sensient Technologies Corp"
+      },
+      {
+        "base_target": 54.6,
+        "company": "IMAX Corp",
+        "date": "2025-12-01T02:51:23",
+        "note": "markdown reextract",
+        "ordinal": 1,
+        "page": 2,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=54.6",
+        "ticker": "IMAX",
+        "title": "Equity Research, IMAX Corp"
+      },
+      {
+        "base_target": 120700.0,
+        "company": "풍산",
+        "date": "2025-11-11T04:39:51",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Non-buy rating: Hold",
+        "ordinal": 8,
+        "page": 2,
+        "rating": "Hold",
+        "reasons": [
+          "non_buy_rating:Hold"
+        ],
+        "status": "ok",
+        "target_detail": "rating=Hold; base=120700",
+        "ticker": "103140",
+        "title": "Equity Research, 풍산"
+      },
+      {
+        "base_target": 103.28,
+        "company": "Doximity",
+        "date": "2025-05-25T07:47:14",
+        "note": "markdown reextract; Case target prices parsed; base target uses median case value; review scenario semantics",
+        "ordinal": 8,
+        "page": 3,
+        "rating": "Buy",
+        "reasons": [
+          "note_case_target_ambiguous"
+        ],
+        "status": "ok",
+        "target_detail": "rating=Buy; base=103.28; case_1=75.4; case_2=131.16",
+        "ticker": "DOCS",
+        "title": "Equity Research, Doximity"
+      },
+      {
+        "base_target": 37.92,
+        "company": "Sportradar",
+        "date": "2025-05-25T07:46:55",
+        "note": "markdown reextract",
+        "ordinal": 9,
+        "page": 3,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=37.92",
+        "ticker": "SRAD",
+        "title": "Equity Research, Sportradar"
+      },
+      {
+        "base_target": 12300.0,
+        "company": "펄어비스",
+        "date": "2025-05-11T10:26:05",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Non-buy rating: Sell",
+        "ordinal": 3,
+        "page": 4,
+        "rating": "Sell",
+        "reasons": [
+          "non_buy_rating:Sell"
+        ],
+        "status": "ok",
+        "target_detail": "rating=Sell; base=12300",
+        "ticker": "263750",
+        "title": "Equity Research, 펄어비스"
+      },
+      {
+        "base_target": 24.34,
+        "company": "Grindr Inc.",
+        "date": "2024-11-21T06:51:53",
+        "note": "markdown reextract",
+        "ordinal": 5,
+        "page": 5,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=24.34",
+        "ticker": "GRND",
+        "title": "Equity Research, Grindr Inc."
+      },
+      {
+        "base_target": 600500.0,
+        "company": "크래프톤",
+        "date": "2024-10-17T07:28:56",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX",
+        "ordinal": 3,
+        "page": 6,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "bull=2019; base=600500",
+        "ticker": "259960",
+        "title": "Equity Research, 크래프톤"
+      },
+      {
+        "base_target": 745.2,
+        "company": "Eli Lilly & Co.",
+        "date": "2023-11-22T03:40:16",
+        "note": "markdown reextract",
+        "ordinal": 8,
+        "page": 8,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=745.2",
+        "ticker": "LLY",
+        "title": "Equity Research, Eli Lilly & Co."
+      },
+      {
+        "base_target": 34600.0,
+        "company": "파두",
+        "date": "2023-11-12T08:39:23",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Non-buy rating: Hold",
+        "ordinal": 12,
+        "page": 8,
+        "rating": "Hold",
+        "reasons": [
+          "non_buy_rating:Hold"
+        ],
+        "status": "ok",
+        "target_detail": "rating=Hold; bear=12600; base=34600; bull=63700",
+        "ticker": "440110",
+        "title": "Equity Research, 파두"
+      },
+      {
+        "base_target": 26300.0,
+        "company": "LX인터내셔널",
+        "date": "2023-11-12T08:38:32",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Case target prices parsed; base target uses median case value; review scenario semantics",
+        "ordinal": 1,
+        "page": 9,
+        "rating": "Strong Buy",
+        "reasons": [
+          "note_case_target_ambiguous"
+        ],
+        "status": "ok",
+        "target_detail": "rating=Strong Buy; base=26300; case_1=2014",
+        "ticker": "001120",
+        "title": "Equity Research, LX인터내셔널"
+      },
+      {
+        "base_target": 122700.0,
+        "company": "루닛",
+        "date": "2023-05-25T03:51:41",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Case target prices parsed; base target uses median case value; review scenario semantics",
+        "ordinal": 5,
+        "page": 10,
+        "rating": "Buy",
+        "reasons": [
+          "note_case_target_ambiguous"
+        ],
+        "status": "ok",
+        "target_detail": "rating=Buy; base=122700; case_1=64900; case_2=122700; case_3=175800",
+        "ticker": "328130",
+        "title": "Equity Research, 루닛"
+      },
+      {
+        "base_target": 44.66,
+        "company": "Scorpio Tankers Inc.",
+        "date": "2022-05-25T18:42:47",
+        "note": "markdown reextract",
+        "ordinal": 11,
+        "page": 13,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=44.66",
+        "ticker": "STNG",
+        "title": "Equity Research, Scorpio Tankers Inc."
+      },
+      {
+        "base_target": 37400.0,
+        "company": "공구우먼",
+        "date": "2022-04-16T16:01:43",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Non-buy rating: Attention",
+        "ordinal": 8,
+        "page": 14,
+        "rating": "Attention",
+        "reasons": [
+          "non_buy_rating:Attention"
+        ],
+        "status": "ok",
+        "target_detail": "rating=Attention; base=37400",
+        "ticker": "366030",
+        "title": "Equity Research, 공구우먼"
+      },
+      {
+        "base_target": 174900.0,
+        "company": "엔켐",
+        "date": "2021-12-13T02:49:28",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX",
+        "ordinal": 1,
+        "page": 15,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=174900",
+        "ticker": "348370",
+        "title": "Equity Research, 엔켐"
+      },
+      {
+        "base_target": 372000.0,
+        "company": "엔씨소프트",
+        "date": "2021-11-03T13:53:53",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX; Non-buy rating: Sell",
+        "ordinal": 1,
+        "page": 16,
+        "rating": "Sell",
+        "reasons": [
+          "non_buy_rating:Sell"
+        ],
+        "status": "ok",
+        "target_detail": "rating=Sell; base=372000",
+        "ticker": "036570",
+        "title": "equity Research, 엔씨소프트"
+      },
+      {
+        "base_target": 40400.0,
+        "company": "시그넷이브이",
+        "date": "2021-06-06T14:13:36",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX",
+        "ordinal": 8,
+        "page": 16,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=40400",
+        "ticker": "075580",
+        "title": "Equity Research, 시그넷이브이"
+      },
+      {
+        "base_target": 137.0,
+        "company": "West Fraser Timber. Co. Ltd",
+        "date": "2021-05-31T08:01:21",
+        "note": "markdown reextract",
+        "ordinal": 1,
+        "page": 17,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=137",
+        "ticker": "WFG",
+        "title": "Equity Research, West Fraser Timber. Co. Ltd"
+      },
+      {
+        "base_target": 108000.0,
+        "company": "케이씨씨글라스",
+        "date": "2021-05-06T09:31:42",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX",
+        "ordinal": 8,
+        "page": 17,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=108000",
+        "ticker": "344820",
+        "title": "Equity Research, 케이씨씨글라스"
+      },
+      {
+        "base_target": 146000.0,
+        "company": "국도화학",
+        "date": "2021-04-15T03:11:45",
+        "note": "markdown reextract; Korean numeric ticker; exchange prefix inferred as KRX",
+        "ordinal": 10,
+        "page": 17,
+        "rating": "",
+        "reasons": [
+          "missing_rating"
+        ],
+        "status": "ok",
+        "target_detail": "base=146000",
+        "ticker": "007690",
+        "title": "Equity Research, 국도화학"
+      },
+      {
+        "base_target": 38.325,
+        "company": "Chewy",
+        "date": "2020-12-05T13:35:55",
+        "note": "markdown reextract; No explicit Base target; base target uses median scenario value; Non-buy rating: Sell",
+        "ordinal": 11,
+        "page": 18,
+        "rating": "Sell",
+        "reasons": [
+          "non_buy_rating:Sell"
+        ],
+        "status": "ok",
+        "target_detail": "rating=Sell; bear=25.05; bull=51.6; base=38.325",
+        "ticker": "CHWY",
+        "title": "Equity Research, Chewy"
+      }
+    ],
+    "status_counts": {
+      "ok": 216
+    },
+    "summary": {
+      "case_target_without_explicit_base": 0,
+      "current_equals_base_target": 0,
+      "missing_base_target": 0,
+      "missing_rating": 12,
+      "non_buy_rating": 6,
+      "ok": 216,
+      "review_flagged_rows": 21,
+      "status_needs_review": 0
+    },
+    "total_reports": 216
+  },
+  "missing_symbols": [
+    {
+      "symbol": "003410.KS"
+    },
+    {
+      "symbol": "010620.KS"
+    },
+    {
+      "symbol": "287410.KQ"
+    },
+    {
+      "symbol": "NETI"
+    },
+    {
+      "symbol": "VTNR"
+    }
+  ]
+}
