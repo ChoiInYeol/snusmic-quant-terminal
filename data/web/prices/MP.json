@@ -16158,6 +16158,17 @@
       "open": 60.06999969482422,
       "source_currency": "",
       "volume": 6211000.0
+    },
+    {
+      "close": 61.67499923706055,
+      "close_krw": 61.675,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 63.62990188598633,
+      "low": 60.45750045776367,
+      "open": 63.0,
+      "source_currency": "",
+      "volume": 2140400.0
     }
   ],
   "symbol": "MP"

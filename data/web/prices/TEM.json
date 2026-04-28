@@ -5136,6 +5136,17 @@
       "open": 51.70000076293945,
       "source_currency": "",
       "volume": 2717300.0
+    },
+    {
+      "close": 51.22029876708984,
+      "close_krw": 51.2203,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 51.90999984741211,
+      "low": 50.3765983581543,
+      "open": 51.40999984741211,
+      "source_currency": "",
+      "volume": 1732454.0
     }
   ],
   "symbol": "TEM"

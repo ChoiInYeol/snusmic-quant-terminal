@@ -2980,6 +2980,17 @@
       "open": 109.87000274658205,
       "source_currency": "",
       "volume": 24889700.0
+    },
+    {
+      "close": 106.47000122070312,
+      "close_krw": 106.47,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 110.0,
+      "low": 103.0500030517578,
+      "open": 103.62000274658205,
+      "source_currency": "",
+      "volume": 19266502.0
     }
   ],
   "symbol": "CRWV"

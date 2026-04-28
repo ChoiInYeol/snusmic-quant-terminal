@@ -15388,6 +15388,17 @@
       "open": 141.25,
       "source_currency": "",
       "volume": 31180200.0
+    },
+    {
+      "close": 142.02999877929688,
+      "close_krw": 142.03,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 143.85000610351562,
+      "low": 140.42010498046875,
+      "open": 142.2899932861328,
+      "source_currency": "",
+      "volume": 14319459.0
     }
   ],
   "symbol": "PLTR"

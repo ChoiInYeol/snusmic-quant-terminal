@@ -21361,6 +21361,17 @@
       "open": 325.989990234375,
       "source_currency": "",
       "volume": 5436800.0
+    },
+    {
+      "close": 300.2099914550781,
+      "close_krw": 300.21,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 314.510009765625,
+      "low": 293.8800048828125,
+      "open": 307.19500732421875,
+      "source_currency": "",
+      "volume": 5186410.0
     }
   ],
   "symbol": "VRT"

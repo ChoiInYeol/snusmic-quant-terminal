@@ -21361,6 +21361,17 @@
       "open": 210.72000122070312,
       "source_currency": "",
       "volume": 1035200.0
+    },
+    {
+      "close": 206.0,
+      "close_krw": 206.0,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 215.5850067138672,
+      "low": 202.0099945068359,
+      "open": 209.0,
+      "source_currency": "",
+      "volume": 564260.0
     }
   ],
   "symbol": "LEU"

@@ -13364,6 +13364,17 @@
       "open": 23.950000762939453,
       "source_currency": "",
       "volume": 3071400.0
+    },
+    {
+      "close": 24.65999984741211,
+      "close_krw": 24.66,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 25.38999938964844,
+      "low": 24.481700897216797,
+      "open": 24.739999771118164,
+      "source_currency": "",
+      "volume": 514292.0
     }
   ],
   "symbol": "DOCS"

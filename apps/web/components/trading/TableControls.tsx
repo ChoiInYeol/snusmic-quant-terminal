@@ -73,10 +73,13 @@ export function useUrlBackedStrategy(persona: string, setPersona: (value: string
     const query = new URLSearchParams(window.location.search);
     const requested = query.get('strategy');
     if (requested && validPersonas.includes(requested)) {
-      setPersona(requested);
+      if (requested !== persona) setPersona(requested);
       return;
     }
-    if (!validPersonas.includes(persona)) setPersona(defaultPersonaFor(validPersonas));
+    if (!validPersonas.includes(persona)) {
+      const fallback = defaultPersonaFor(validPersonas);
+      if (fallback && fallback !== persona) setPersona(fallback);
+    }
   }, [persona, setPersona, validPersonas]);
 
   useEffect(() => {

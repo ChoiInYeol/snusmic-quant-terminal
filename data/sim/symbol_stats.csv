@@ -1,50 +1,50 @@
 persona,symbol,company,episodes,total_buy_fills,total_sell_fills,total_holding_days,total_realized_pnl_krw,is_currently_held,current_qty,current_unrealized_pnl_krw
-all_weather,069500.KS,KOSPI 200 (069500.KS),1,51,12,1927,8815660.8,True,595,31932298.92
-all_weather,GLD,Gold (GLD),1,39,11,1927,2977955.83,True,74,27367077.48
-all_weather,QQQ,NASDAQ-100 (QQQ),1,35,1,1927,282346.33,True,56,19190932.87
-all_weather,SPY,S&P 500 (SPY),1,33,0,1927,0.0,True,49,16063803.15
-oracle,440110.KQ,파두,1,4,3,182,1026981775.53,False,0,
-oracle,322000.KS,현대에너지솔루션,1,5,2,182,597140682.98,False,0,
-oracle,LITE,Lumentum Holdings Inc,1,2,1,59,471376686.19,False,0,
-oracle,189300.KQ,인텔리안테크,1,4,3,182,382402741.99,False,0,
-oracle,FLNC,Fluence Energy Inc.,1,1,6,185,331600980.75,False,0,
-oracle,010950.KS,S-OIL,1,6,2,212,241843558.19,False,0,
-oracle,475960.KQ,토모큐브,1,5,2,182,221422137.29,False,0,
+all_weather,069500.KS,KOSPI 200 (069500.KS),1,51,12,1940,8815660.8,True,595,31932298.92
+all_weather,GLD,Gold (GLD),1,39,11,1940,2977955.83,True,74,27367077.48
+all_weather,QQQ,NASDAQ-100 (QQQ),1,35,1,1940,282346.33,True,56,19190932.87
+all_weather,SPY,S&P 500 (SPY),1,33,0,1940,0.0,True,49,16063803.15
+oracle,440110.KQ,파두,1,4,3,182,802625437.46,False,0,
+oracle,322000.KS,현대에너지솔루션,1,5,2,182,476998853.11,False,0,
+oracle,LITE,Lumentum Holdings Inc,1,2,1,59,359208992.2,False,0,
+oracle,FLNC,Fluence Energy Inc.,1,1,6,185,309732798.6,False,0,
+oracle,189300.KQ,인텔리안테크,1,5,2,182,308727349.51,False,0,
 oracle,MP,MP Materials,1,4,3,179,201133511.63,False,0,
+oracle,010950.KS,S-OIL,1,6,2,212,182266189.18,False,0,
+oracle,475960.KQ,토모큐브,1,5,2,182,169029898.11,False,0,
 oracle,100840.KQ,SNT에너지,1,2,4,151,142880805.5,False,0,
-oracle,131970.KQ,두산테스나,1,4,3,185,141964635.29,False,0,
-oracle,068270.KS,셀트리온,1,5,2,182,136710492.03,False,0,
 oracle,044490.KQ,태웅,1,3,4,180,136280874.7,False,0,
-oracle,005850.KS,에스엘,1,4,3,185,135461638.69,False,0,
 oracle,278470.KS,에이피알,1,3,4,182,133338317.79,False,0,
-oracle,950160.KQ,코오롱티슈진,1,4,1,121,124132649.68,False,0,
-oracle,012330.KS,현대모비스,1,3,4,185,119857288.06,False,0,
+oracle,131970.KQ,두산테스나,1,3,4,185,133290149.66,False,0,
 oracle,PLTR,Palantir Technologies Inc.,1,5,1,151,116090463.0,False,0,
+oracle,005850.KS,에스엘,1,4,3,185,114122723.43,False,0,
 oracle,6857.T,Advantest Corporation,1,3,4,183,112627400.71,False,0,
+oracle,068270.KS,셀트리온,1,4,3,182,107609017.13,False,0,
+oracle,012330.KS,현대모비스,1,3,4,185,101643598.65,False,0,
 oracle,032350.KS,롯데관광개발,1,3,4,183,96791207.71,False,0,
 oracle,006260.KS,LS,1,4,3,185,95674964.91,False,0,
 oracle,356860.KQ,티엘비,1,3,4,179,95239717.23,False,0,
 oracle,ANET,Arista Networks,1,3,4,186,91711778.29,False,0,
 oracle,310200.KQ,애니플러스,1,3,4,179,90607164.78,False,0,
+oracle,950160.KQ,코오롱티슈진,1,4,1,121,90347176.75,False,0,
 oracle,LIF,Life360 Inc,1,2,4,154,87099420.56,False,0,
 oracle,052690.KS,한전기술,1,3,4,180,81643448.25,False,0,
 oracle,015760.KS,한국전력,1,2,5,180,78992209.57,False,0,
-oracle,005380.KS,현대차,1,5,2,185,78557183.3,False,0,
-oracle,012450.KS,한화에어로스페이스,1,4,3,185,75634009.33,False,0,
+oracle,005380.KS,현대차,1,4,3,185,77844266.06,False,0,
 oracle,119850.KQ,지엔씨에너지,1,4,2,154,75483308.67,False,0,
 oracle,101490.KQ,에스앤에스텍,1,2,2,91,67980016.41,False,0,
+oracle,012450.KS,한화에어로스페이스,1,4,3,185,64926732.73,False,0,
 oracle,GRND,Grindr Inc.,1,3,4,182,64824469.91,False,0,
 oracle,042660.KS,한화오션,1,3,4,186,64202216.92,False,0,
-oracle,114810.KQ,아이원스,1,4,3,182,62278633.61,False,0,
+oracle,114810.KQ,아이원스,1,4,3,182,64141760.41,False,0,
 oracle,267260.KS,HD현대일렉트릭,1,4,2,152,60957535.88,False,0,
 oracle,211050.KQ,인카금융서비스,1,3,4,181,59272701.08,False,0,
 oracle,192820.KS,코스맥스,1,5,1,153,58225695.49,False,0,
 oracle,352820.KS,하이브,1,4,2,154,51834464.17,False,0,
-oracle,103140.KS,풍산,1,2,1,63,50212321.6,False,0,
 oracle,ISRG,Intuitive Surgical,1,5,2,182,50168056.73,False,0,
 oracle,005720.KS,넥센,1,4,3,180,49126039.92,False,0,
 oracle,001530.KS,DI동일,1,4,3,183,43861197.44,False,0,
 oracle,023160.KS,태광,1,4,3,183,43798128.12,False,0,
+oracle,103140.KS,풍산,1,1,2,63,41635847.18,False,0,
 oracle,204620.KQ,글로벌텍스프리,1,3,1,92,41206391.58,False,0,
 oracle,950170.KQ,JTC,1,4,3,179,39838695.39,False,0,
 oracle,196170.KQ,알테오젠,1,1,1,28,39622425.63,False,0,
@@ -90,400 +90,404 @@ oracle,348210.KQ,넥스틴,1,5,1,152,3706355.93,False,0,
 oracle,004250.KS,NPC,1,1,1,33,3424229.14,False,0,
 oracle,166090.KQ,하나머티리얼즈,1,1,1,59,3086972.3,False,0,
 oracle,461300.KQ,아이스크림미디어,1,2,2,92,2983059.54,False,0,
+oracle,298020.KQ,효성티앤씨,1,5,1,176,2240075.1,True,4661,709061151.38
 oracle,BAC,Bank of America Corp.,1,3,4,183,1700524.0,False,0,
-oracle,375500.KS,DL이앤씨,1,5,1,163,-772295.11,True,117349,4653964661.17
+oracle,090460.KS,비에이치,1,5,1,176,-333701.54,True,84762,1357188833.44
+oracle,005290.KS,동진쎄미켐,1,5,1,176,-370752.19,True,38564,419832710.53
+oracle,375500.KS,DL이앤씨,1,5,1,176,-391296.19,True,25647,1269463812.51
 oracle,067160.KQ,아프리카TV,1,2,5,184,-1204890.59,False,0,
-smic_follower,ANET,Arista Networks,4,11,15,953,2639078.91,False,0,
-smic_follower,440110.KQ,파두,6,16,12,640,1525967.21,False,0,
-smic_follower,475960.KQ,토모큐브,1,5,4,266,1244522.75,False,0,
-smic_follower,200710.KQ,에이디테크놀로지,7,13,14,710,1234983.37,True,24,66393.39
-smic_follower,100840.KQ,SNT에너지,8,12,17,615,1121012.3,False,0,
-smic_follower,PLTR,Palantir Technologies Inc.,2,2,3,99,1097483.96,False,0,
-smic_follower,078350.KS,한양디지텍,5,13,8,559,1054214.57,True,40,-74804.79
-smic_follower,189300.KQ,인텔리안테크,11,19,14,1071,1021203.33,False,0,
-smic_follower,1211.HK,BYD,7,16,9,645,1021100.72,True,62,119914.71
-smic_follower,SBLK,Star Bulk Carriers,1,5,7,356,956584.58,False,0,
-smic_follower,GLW,Corning,3,16,17,1223,914738.21,False,0,
-smic_follower,348370.KQ,엔켐,6,10,8,488,873276.54,False,0,
-smic_follower,114810.KQ,아이원스,9,21,17,914,848350.58,False,0,
-smic_follower,023160.KS,태광,7,15,11,647,827658.58,False,0,
-smic_follower,122640.KQ,예스티,8,9,14,471,783424.28,True,60,527204.31
-smic_follower,SE,SEA ltd.,1,2,5,164,752017.87,False,0,
-smic_follower,EAF,GrafTech International Ltd.,4,24,18,1325,736855.12,True,123,20025.64
-smic_follower,005850.KS,에스엘,12,28,19,1263,718825.64,False,0,
-smic_follower,322000.KS,현대에너지솔루션,9,23,13,913,703781.49,False,0,
-smic_follower,131970.KQ,두산테스나,6,13,10,633,693832.9,False,0,
-smic_follower,489790.KS,한화비전,2,6,2,287,668880.53,True,16,76013.67
-smic_follower,356860.KQ,티엘비,3,4,5,172,655540.86,False,0,
-smic_follower,285490.KQ,노바텍,14,31,26,1411,646713.26,True,56,27204.57
-smic_follower,375500.KS,DL이앤씨,7,15,9,673,639093.41,False,0,
-smic_follower,010950.KS,S-OIL,10,17,12,951,629766.8,True,11,49792.67
-smic_follower,GRND,Grindr Inc.,1,3,3,157,613393.84,False,0,
-smic_follower,237690.KQ,에스티팜,12,19,13,1106,606099.15,True,8,-43194.65
-smic_follower,298020.KQ,효성티앤씨,13,18,13,1230,604157.97,True,3,299219.91
-smic_follower,352820.KS,하이브,13,17,12,1169,593838.3,True,4,-136752.79
-smic_follower,054210.KQ,이랜텍,10,20,19,951,581418.24,True,118,26336.09
-smic_follower,FLNC,Fluence Energy Inc.,3,9,11,546,575419.27,False,0,
-smic_follower,210980.KS,SK디앤디,8,21,12,833,572543.16,True,94,-17721.72
-smic_follower,328130.KQ,루닛,1,1,3,98,565226.17,False,0,
-smic_follower,089890.KQ,코세스,1,2,2,85,546217.95,False,0,
-smic_follower,032350.KS,롯데관광개발,4,11,5,384,543339.15,False,0,
-smic_follower,052690.KS,한전기술,4,6,5,283,540947.87,False,0,
-smic_follower,009830.KS,한화솔루션,14,33,20,1441,539106.98,True,33,158418.92
-smic_follower,004020.KS,현대제철,13,29,19,1381,532005.65,True,34,150514.25
-smic_follower,017960.KS,한국카본,2,3,2,105,520227.95,True,30,297697.48
-smic_follower,119850.KQ,지엔씨에너지,1,3,3,135,501342.49,False,0,
-smic_follower,035900.KQ,JYP Ent.,8,12,8,620,498607.98,True,19,-42579.37
-smic_follower,005290.KS,동진쎄미켐,7,17,9,648,491709.97,True,25,202964.22
-smic_follower,950170.KQ,JTC,7,12,12,583,489605.31,False,0,
-smic_follower,ISRG,Intuitive Surgical,2,2,3,128,467692.16,False,0,
-smic_follower,170790.KQ,파이오링크,14,30,26,1411,460888.72,True,132,404435.96
-smic_follower,002714.SZ,Muyuan foods co ltd,13,27,21,1172,452597.07,True,137,-11978.66
-smic_follower,456160.KQ,지투지바이오,2,3,1,105,450866.33,True,16,-71192.57
-smic_follower,068270.KS,셀트리온,9,13,9,884,446090.07,False,0,
-smic_follower,000150.KS,두산,2,2,1,105,441328.63,True,1,244276.47
-smic_follower,042660.KS,한화오션,2,3,4,195,438770.98,False,0,
-smic_follower,041830.KQ,인바디,11,24,14,1075,431882.66,True,42,15994.56
-smic_follower,006650.KS,대한유화,14,23,16,1441,421309.4,True,9,179216.01
-smic_follower,166090.KQ,하나머티리얼즈,2,2,2,29,415736.08,False,0,
-smic_follower,101490.KQ,에스앤에스텍,1,1,2,85,414772.26,False,0,
-smic_follower,012330.KS,현대모비스,3,4,3,340,406439.61,False,0,
-smic_follower,098120.KQ,마이크로컨텍솔,2,4,2,133,378514.04,True,42,219698.65
-smic_follower,005380.KS,현대차,4,6,4,458,373264.66,False,0,
-smic_follower,LIF,Life360 Inc,2,3,2,92,372859.3,False,0,
-smic_follower,029460.KS,케이씨,4,11,5,366,372846.61,False,0,
-smic_follower,6857.T,Advantest Corporation,1,5,4,227,364245.6,False,0,
-smic_follower,001530.KS,DI동일,4,8,7,351,353672.4,False,0,
-smic_follower,950160.KQ,코오롱티슈진,2,3,2,105,322308.05,True,11,-41475.86
-smic_follower,461300.KQ,아이스크림미디어,1,3,1,83,317051.85,False,0,
-smic_follower,012450.KS,한화에어로스페이스,1,1,1,130,294431.41,False,0,
-smic_follower,294570.KQ,쿠콘,12,25,20,1106,289073.37,True,43,48660.32
-smic_follower,006260.KS,LS,7,9,7,517,281584.72,False,0,
-smic_follower,009970.KS,영원무역홀딩스,5,8,5,457,280220.7,False,0,
-smic_follower,204620.KQ,글로벌텍스프리,1,3,1,77,279602.19,False,0,
-smic_follower,267260.KS,HD현대일렉트릭,2,2,2,122,271873.95,False,0,
-smic_follower,OPEN,Opendoor,3,30,23,1536,260566.14,True,181,-138951.5
-smic_follower,001060.KS,JW중외제약,1,2,1,47,256507.22,False,0,
-smic_follower,067160.KQ,아프리카TV,8,16,9,779,246418.68,True,20,-14790.49
-smic_follower,007210.KS,벽산,11,29,16,1075,245488.53,True,675,215192.61
-smic_follower,015760.KS,한국전력,3,4,3,144,243809.21,False,0,
-smic_follower,025980.KS,아난티,7,17,11,648,241120.91,True,175,58692.28
-smic_follower,082740.KS,한화엔진,1,1,1,13,239474.02,False,0,
-smic_follower,036930.KQ,주성엔지니어링,6,8,8,363,229533.0,False,0,
-smic_follower,101160.KQ,월덱스,1,2,2,118,225751.09,False,0,
-smic_follower,033500.KQ,동성화인텍,1,1,1,20,224535.0,False,0,
-smic_follower,218410.KQ,RFHIC,1,1,2,35,220297.25,False,0,
-smic_follower,004250.KS,NPC,1,1,1,20,209228.23,False,0,
-smic_follower,103140.KS,풍산,1,1,1,39,209165.95,False,0,
-smic_follower,VRT,Vertiv Holdings Co.,1,2,2,63,201043.74,False,0,
-smic_follower,310200.KQ,애니플러스,11,23,21,1075,200900.54,True,458,22093.14
-smic_follower,348210.KQ,넥스틴,2,2,2,51,193480.97,False,0,
-smic_follower,211050.KQ,인카금융서비스,2,4,3,150,191185.0,False,0,
-smic_follower,LITE,Lumentum Holdings Inc,1,1,1,34,176938.79,False,0,
-smic_follower,408920.KQ,메쎄이상,8,21,12,801,174437.82,True,390,112293.78
-smic_follower,280360.KQ,롯데웰푸드,8,14,8,801,173661.63,True,10,259.56
-smic_follower,ROKU,Roku,1,1,1,1,164353.42,False,0,
-smic_follower,032640.KS,LG유플러스,13,34,20,1322,160538.45,True,79,129542.17
-smic_follower,159010.KQ,아스플로,8,21,11,833,154825.09,True,224,547993.28
-smic_follower,STNG,Scorpio Tankers Inc.,1,1,2,89,150863.4,False,0,
-smic_follower,4680.T,Round One Corp,1,1,1,17,148455.24,False,0,
-smic_follower,002340.SZ,"GEM Co., Ltd.",9,28,19,1167,143090.74,True,723,-210804.6
-smic_follower,000660.KS,SK하이닉스,2,2,2,122,142426.51,False,0,
-smic_follower,003030.KS,세아제강지주,1,1,1,18,140177.07,False,0,
-smic_follower,196170.KQ,알테오젠,1,1,1,4,138423.69,False,0,
-smic_follower,294870.KS,HDC현대산업개발,4,11,6,439,136681.9,True,58,120993.13
-smic_follower,047810.KS,한국항공우주,7,11,7,490,136468.66,False,0,
-smic_follower,316140.KS,우리금융지주,4,9,7,334,126229.3,False,0,
-smic_follower,007660.KS,이수페타시스,1,2,1,60,120082.13,False,0,
-smic_follower,028050.KS,삼성엔지니어링,3,4,4,142,118572.42,False,0,
-smic_follower,1833.HK,Ping An Healthcare & Technology,15,32,25,1284,108666.7,True,532,-40985.46
-smic_follower,420770.KQ,기가비스,1,1,1,22,102757.16,False,0,
-smic_follower,353810.KQ,이지바이오,2,2,2,54,100757.34,False,0,
-smic_follower,278470.KS,에이피알,4,7,5,273,97442.47,False,0,
-smic_follower,TSM,TSMC,2,6,8,586,96367.94,False,0,
-smic_follower,108490.KQ,로보티즈,2,3,1,133,95988.32,True,4,-18694.28
-smic_follower,CLBT,Cellebrite DI,2,7,3,287,95225.07,True,60,-125702.94
-smic_follower,148150.KQ,세경하이테크,13,32,19,1169,92968.89,True,278,104833.99
-smic_follower,112610.KS,씨에스윈드,4,11,4,439,92443.27,True,19,4913.21
-smic_follower,001040.KS,CJ,1,1,1,2,80199.86,False,0,
-smic_follower,099430.KQ,바이오플러스,10,23,17,981,73039.45,True,236,88874.56
-smic_follower,248070.KS,솔루엠,13,32,21,1352,71886.71,True,74,219721.45
-smic_follower,BESI.AS,BE Semiconductor Industries N.V.,1,1,1,69,66270.81,False,0,
-smic_follower,000640.KS,동아쏘시오홀딩스,11,20,11,1075,65779.04,True,13,3095.47
-smic_follower,NE,Noble Corporation PLC,2,4,4,193,63468.9,False,0,
-smic_follower,4751.T,Cyber Agent,7,34,25,1599,60249.6,True,97,-36747.85
-smic_follower,271560.KS,오리온,3,4,3,215,57391.84,False,0,
-smic_follower,016380.KS,KG스틸,5,14,6,531,54690.9,True,228,53912.22
-smic_follower,476830.KQ,알지노믹스,1,1,1,3,54669.75,False,0,
-smic_follower,049720.KQ,고려신용정보,2,7,3,258,52996.42,True,121,-806.26
-smic_follower,090460.KS,비에이치,7,14,12,648,46996.03,True,56,108399.11
-smic_follower,BAC,Bank of America Corp.,1,4,3,196,45567.79,False,0,
-smic_follower,044490.KQ,태웅,8,13,10,523,37771.1,False,0,
-smic_follower,017650.KS,대림제지,13,32,21,1381,35372.04,True,143,52105.89
-smic_follower,007690.KS,국도화학,13,28,19,1381,35206.34,True,34,109707.62
-smic_follower,366030.KQ,공구우먼,1,1,1,4,31103.51,False,0,
-smic_follower,192400.KQ,쿠쿠홀딩스,4,5,4,245,24785.94,False,0,
-smic_follower,005720.KS,넥센,4,8,5,251,23542.51,False,0,
-smic_follower,LLY,Eli Lilly & Co.,1,1,1,3,20693.11,False,0,
-smic_follower,005490.KS,포스코홀딩스,2,2,2,59,18890.77,False,0,
-smic_follower,LONN.SW,Lonza Group AG,2,2,2,35,10891.87,False,0,
-smic_follower,119610.KQ,인터로조,12,26,17,1105,7647.44,True,64,51675.78
-smic_follower,453340.KQ,현대그린푸드,8,21,11,801,464.6,True,77,-10046.9
-smic_follower,403870.KQ,HPSP,2,3,4,121,-6005.5,False,0,
-smic_follower,472850.KQ,폰드그룹,2,6,3,258,-14533.42,True,235,57944.91
-smic_follower,192820.KS,코스맥스,3,3,3,90,-33137.57,False,0,
-smic_follower,IRMD,Iradimed Corporation,1,2,1,135,-38216.55,True,9,-86749.75
-smic_follower,IMAX,IMAX Corp,1,4,1,135,-43599.07,True,22,-93030.66
-smic_follower,234300.KQ,에스트래픽,4,11,5,408,-48032.46,True,369,82217.81
-smic_follower,000210.KS,DL,11,25,13,1075,-49671.41,True,19,22024.33
-smic_follower,376980.KQ,원티드랩,13,31,18,1139,-71586.64,True,365,39343.26
-smic_follower,053030.KQ,바이넥스,13,30,22,1322,-72420.35,True,105,-3952.03
-smic_follower,LEVI,Levi Strauss & Co,2,9,5,469,-99855.09,True,44,62097.39
-smic_follower,006060.KS,화승인더,7,16,10,648,-106752.45,True,380,56192.22
-smic_follower,089860.KQ,롯데렌탈,12,26,14,1105,-127985.2,True,40,45193.91
-smic_follower,CRWV,Coreweave,1,3,1,163,-135736.09,True,11,577844.32
-smic_follower,182360.KQ,큐브엔터,8,22,11,833,-138788.85,True,120,-21207.39
-smic_follower,2124.T,JAC recruitment Co. Ltd,2,3,2,104,-149127.84,True,153,-54873.41
-smic_follower,SXT,Sensient Technologies Corp,1,3,1,135,-153676.74,True,10,-84946.59
-smic_follower,GTT.PA,Gaztransport&technigaz,1,3,8,427,-155008.52,False,0,
-smic_follower,214450.KQ,파마리서치,3,3,2,74,-164910.18,True,3,-44110.42
-smic_follower,043650.KQ,국순당,11,28,17,1075,-167143.93,True,300,41192.61
-smic_follower,194480.KQ,데브시스터즈,13,33,16,1322,-220613.83,True,45,-194292.77
-smic_follower,284740.KS,쿠쿠홈시스,13,33,17,1352,-251918.1,True,52,27800.54
-smic_follower,WFG,West Fraser Timber. Co. Ltd,4,18,22,1662,-254901.39,True,13,10570.3
-smic_follower,259960.KQ,크래프톤,4,7,3,439,-278974.16,True,4,-72681.28
-smic_follower,MP,MP Materials,3,15,16,898,-283917.46,False,0,
-smic_follower,363280.KS,티와이홀딩스,11,31,15,1075,-306728.83,True,457,38038.42
-smic_follower,344820.KQ,케이씨씨글라스,13,32,17,1352,-318039.71,True,49,155994.1
-smic_follower,008730.KS,율촌화학,5,14,7,559,-329475.04,True,50,79193.91
-smic_follower,089600.KQ,나스미디어,10,26,13,981,-367541.86,True,107,22739.39
-smic_follower,TEM,Tempus AI Inc,2,7,2,287,-375964.03,True,18,-8102.69
-smic_follower,SRAD,Sportradar,2,6,2,287,-384315.75,True,50,-214058.71
-smic_follower,036420.KS,제이콘텐트리,13,31,20,1322,-394054.27,True,208,-32004.53
-smic_follower,215000.KQ,골프존,11,23,11,1075,-409082.17,True,24,8823.03
-smic_follower,054780.KQ,키이스트,13,29,20,1139,-415005.06,True,477,166143.78
-smic_follower,363250.KQ,진시스템,8,20,14,833,-444545.3,True,178,-118287.68
-smic_follower,473980.KQ,노머스,2,9,2,287,-457210.21,True,66,3159.82
-smic_follower,018290.KS,브이티,4,12,4,408,-575435.39,True,79,31589.87
-smic_follower,ESTA,Establishment Labs Holdings,1,3,1,135,-577886.64,True,15,-141212.58
-smic_follower,060150.KQ,인선이엔티,13,35,21,1351,-581763.73,True,299,61984.33
-smic_follower,DOCS,Doximity,2,8,2,287,-660969.97,True,37,-311878.32
-smic_follower,293490.KQ,카카오게임즈,13,27,16,1139,-680913.66,True,99,-17631.89
-smic_follower,WOLF,Wolfspeed,1,5,2,196,-691289.41,True,51,214738.04
-smic_follower,228670.KQ,레이,8,20,12,833,-722188.77,True,236,1287753.02
-smic_follower,368600.KQ,아이씨에이치,10,29,12,981,-1091798.5,True,1393,801560.25
-smic_follower,4689.T,Z-holdings,7,27,26,1416,-1143434.72,True,332,151447.93
-smic_follower,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",4,13,10,590,-1248520.3,True,50,-121834.43
-smic_follower,5253.T,Cover Corp,4,10,6,408,-1544896.97,True,95,-133170.53
-smic_follower,INMD,Inmode,4,28,21,1507,-2262161.79,True,61,60030.65
-smic_follower,FNKO,Funko Inc.,2,10,7,469,-2549537.07,True,259,-103367.37
-smic_follower,CHGG,Chegg,4,26,24,1507,-3197597.34,True,1149,630416.77
-smic_follower_v2,GRND,Grindr Inc.,1,4,3,157,8252071.14,False,0,
-smic_follower_v2,PLTR,Palantir Technologies Inc.,2,3,3,99,7167452.59,False,0,
-smic_follower_v2,475960.KQ,토모큐브,1,6,4,266,5759534.52,False,0,
-smic_follower_v2,009830.KS,한화솔루션,3,9,7,414,5750645.21,False,0,
-smic_follower_v2,1211.HK,BYD,7,15,9,500,3224593.39,False,0,
-smic_follower_v2,ISRG,Intuitive Surgical,2,3,3,128,3156843.89,False,0,
-smic_follower_v2,356860.KQ,티엘비,3,4,5,172,2821025.14,False,0,
-smic_follower_v2,000150.KS,두산,2,4,1,105,2719017.96,True,8,1954211.73
-smic_follower_v2,GLW,Corning,2,9,5,477,2685802.39,False,0,
-smic_follower_v2,032350.KS,롯데관광개발,4,11,6,384,2575466.33,False,0,
-smic_follower_v2,017960.KS,한국카본,2,4,1,105,2516334.89,True,216,2143421.87
-smic_follower_v2,052690.KS,한전기술,4,8,6,283,2430704.55,False,0,
-smic_follower_v2,456160.KQ,지투지바이오,2,4,1,105,2311804.12,True,117,-520595.68
-smic_follower_v2,ANET,Arista Networks,2,9,6,430,2277286.66,False,0,
-smic_follower_v2,119850.KQ,지엔씨에너지,1,3,3,135,2142556.68,False,0,
-smic_follower_v2,122640.KQ,예스티,8,10,13,471,1938814.0,True,437,3839804.71
-smic_follower_v2,023160.KS,태광,6,13,12,580,1895288.66,False,0,
-smic_follower_v2,012330.KS,현대모비스,3,8,5,340,1833693.11,False,0,
-smic_follower_v2,005380.KS,현대차,4,10,7,458,1800571.16,False,0,
-smic_follower_v2,012450.KS,한화에어로스페이스,1,3,1,221,1792365.1,False,0,
-smic_follower_v2,101490.KQ,에스앤에스텍,1,2,2,85,1778064.04,False,0,
-smic_follower_v2,042660.KS,한화오션,2,5,4,195,1714249.28,False,0,
-smic_follower_v2,029460.KS,케이씨,4,11,6,366,1713065.23,False,0,
-smic_follower_v2,LIF,Life360 Inc,2,3,3,92,1559870.71,False,0,
-smic_follower_v2,100840.KQ,SNT에너지,6,12,12,551,1535052.69,False,0,
-smic_follower_v2,LITE,Lumentum Holdings Inc,1,2,1,34,1480282.03,False,0,
-smic_follower_v2,461300.KQ,아이스크림미디어,1,2,2,83,1441952.6,False,0,
-smic_follower_v2,950160.KQ,코오롱티슈진,2,3,2,105,1406588.0,True,81,-305413.18
-smic_follower_v2,SBLK,Star Bulk Carriers,1,8,5,356,1405589.14,False,0,
-smic_follower_v2,035900.KQ,JYP Ent.,8,13,11,620,1215674.47,True,141,-315983.78
-smic_follower_v2,089890.KQ,코세스,1,2,2,85,1153539.89,False,0,
-smic_follower_v2,006260.KS,LS,6,8,7,532,1149897.71,False,0,
-smic_follower_v2,015760.KS,한국전력,3,5,3,144,1142817.87,False,0,
-smic_follower_v2,010950.KS,S-OIL,8,17,8,629,1131572.69,True,79,357601.92
-smic_follower_v2,101160.KQ,월덱스,1,2,3,118,1007862.0,False,0,
-smic_follower_v2,001530.KS,DI동일,3,9,6,384,1006372.52,False,0,
-smic_follower_v2,328130.KQ,루닛,1,2,2,98,1004081.44,False,0,
-smic_follower_v2,082740.KS,한화엔진,1,1,1,13,980346.78,False,0,
-smic_follower_v2,103140.KS,풍산,1,2,1,39,943460.97,False,0,
-smic_follower_v2,211050.KQ,인카금융서비스,2,4,3,150,921124.6,False,0,
-smic_follower_v2,218410.KQ,RFHIC,1,1,2,35,918498.08,False,0,
-smic_follower_v2,033500.KQ,동성화인텍,1,1,1,20,903897.32,False,0,
-smic_follower_v2,090460.KS,비에이치,5,14,10,580,868491.16,False,0,
-smic_follower_v2,294870.KS,HDC현대산업개발,4,12,6,439,842089.17,True,416,867812.77
-smic_follower_v2,SE,SEA ltd.,1,2,5,164,752017.87,False,0,
-smic_follower_v2,950170.KQ,JTC,5,13,10,562,661205.64,False,0,
-smic_follower_v2,267260.KS,HD현대일렉트릭,2,3,3,122,602175.01,False,0,
-smic_follower_v2,4680.T,Round One Corp,1,1,1,17,591261.37,False,0,
-smic_follower_v2,453340.KQ,현대그린푸드,6,15,9,554,579538.99,False,0,
-smic_follower_v2,047810.KS,한국항공우주,6,14,8,523,569273.63,False,0,
-smic_follower_v2,204620.KQ,글로벌텍스프리,1,3,1,77,494411.32,False,0,
-smic_follower_v2,196170.KQ,알테오젠,1,1,1,4,484482.93,False,0,
-smic_follower_v2,009970.KS,영원무역홀딩스,5,8,6,457,479312.47,False,0,
-smic_follower_v2,016380.KS,KG스틸,5,15,7,531,442914.26,True,1637,387080.26
-smic_follower_v2,114810.KQ,아이원스,6,11,10,487,434705.99,False,0,
-smic_follower_v2,166090.KQ,하나머티리얼즈,2,2,2,29,415736.08,False,0,
-smic_follower_v2,001060.KS,JW중외제약,1,2,1,47,410313.45,False,0,
-smic_follower_v2,VRT,Vertiv Holdings Co.,1,2,2,63,407334.63,False,0,
-smic_follower_v2,237690.KQ,에스티팜,7,13,7,522,374009.2,False,0,
-smic_follower_v2,001040.KS,CJ,1,1,1,2,336839.43,False,0,
-smic_follower_v2,049720.KQ,고려신용정보,2,6,4,258,329086.17,True,870,-5797.04
-smic_follower_v2,200710.KQ,에이디테크놀로지,2,4,4,192,327277.01,False,0,
-smic_follower_v2,170790.KQ,파이오링크,5,10,11,506,324850.95,False,0,
-smic_follower_v2,000660.KS,SK하이닉스,2,3,3,122,320450.74,False,0,
-smic_follower_v2,004250.KS,NPC,1,1,1,20,305795.11,False,0,
-smic_follower_v2,348210.KQ,넥스틴,2,2,2,51,293668.46,False,0,
-smic_follower_v2,003030.KS,세아제강지주,1,1,1,18,280354.13,False,0,
-smic_follower_v2,271560.KS,오리온,3,6,4,215,279523.07,False,0,
-smic_follower_v2,476830.KQ,알지노믹스,1,1,1,3,264237.11,False,0,
-smic_follower_v2,316140.KS,우리금융지주,4,10,6,334,257700.6,False,0,
-smic_follower_v2,STNG,Scorpio Tankers Inc.,1,1,3,89,243806.21,False,0,
-smic_follower_v2,054780.KQ,키이스트,7,11,10,431,227622.04,False,0,
-smic_follower_v2,108490.KQ,로보티즈,2,2,2,133,217116.72,True,33,-154227.81
-smic_follower_v2,LLY,Eli Lilly & Co.,1,1,1,69,216517.9,False,0,
-smic_follower_v2,041830.KQ,인바디,6,11,9,528,204922.87,False,0,
-smic_follower_v2,BESI.AS,BE Semiconductor Industries N.V.,1,2,1,69,181631.34,False,0,
-smic_follower_v2,028050.KS,삼성엔지니어링,3,4,4,142,180311.97,False,0,
-smic_follower_v2,007660.KS,이수페타시스,1,2,1,60,171162.83,False,0,
-smic_follower_v2,ROKU,Roku,1,1,1,1,164353.42,False,0,
-smic_follower_v2,210980.KS,SK디앤디,3,8,5,357,163892.74,False,0,
-smic_follower_v2,NE,Noble Corporation PLC,2,4,4,193,158777.84,False,0,
-smic_follower_v2,420770.KQ,기가비스,1,1,1,22,154135.75,False,0,
-smic_follower_v2,067160.KQ,아프리카TV,8,20,13,779,150473.84,True,146,-107970.59
-smic_follower_v2,005720.KS,넥센,4,8,5,251,146550.1,False,0,
-smic_follower_v2,353810.KQ,이지바이오,2,2,2,54,100757.34,False,0,
-smic_follower_v2,LONN.SW,Lonza Group AG,2,2,2,33,79062.74,False,0,
-smic_follower_v2,192400.KQ,쿠쿠홀딩스,4,8,5,245,77186.49,False,0,
-smic_follower_v2,366030.KQ,공구우먼,1,1,1,4,61589.07,False,0,
-smic_follower_v2,285490.KQ,노바텍,4,10,8,416,58135.88,False,0,
-smic_follower_v2,068270.KS,셀트리온,6,12,9,551,57883.86,False,0,
-smic_follower_v2,005490.KS,포스코홀딩스,2,2,2,59,37781.54,False,0,
-smic_follower_v2,CHGG,Chegg,1,4,3,153,30952.59,False,0,
-smic_follower_v2,348370.KQ,엔켐,3,4,3,166,26183.38,False,0,
-smic_follower_v2,192820.KS,코스맥스,2,3,2,97,24076.34,False,0,
-smic_follower_v2,189300.KQ,인텔리안테크,6,9,8,438,9373.54,False,0,
-smic_follower_v2,403870.KQ,HPSP,2,3,4,121,-10277.13,False,0,
-smic_follower_v2,006650.KS,대한유화,2,3,3,182,-14650.93,False,0,
-smic_follower_v2,018290.KS,브이티,3,6,4,221,-18287.56,False,0,
-smic_follower_v2,BAC,Bank of America Corp.,1,5,3,196,-18965.52,False,0,
-smic_follower_v2,148150.KQ,세경하이테크,3,5,4,181,-30081.71,False,0,
-smic_follower_v2,002714.SZ,Muyuan foods co ltd,7,13,11,522,-30946.07,False,0,
-smic_follower_v2,WOLF,Wolfspeed,1,1,1,1,-40402.99,False,0,
-smic_follower_v2,375500.KS,DL이앤씨,5,15,8,588,-56300.39,False,0,
-smic_follower_v2,376980.KQ,원티드랩,3,5,3,151,-75422.05,False,0,
-smic_follower_v2,DOCS,Doximity,2,4,2,128,-88636.55,False,0,
-smic_follower_v2,000640.KS,동아쏘시오홀딩스,6,11,6,553,-90622.76,False,0,
-smic_follower_v2,280360.KQ,롯데웰푸드,4,7,5,478,-94080.12,False,0,
-smic_follower_v2,043650.KQ,국순당,6,13,9,500,-95383.4,False,0,
-smic_follower_v2,006060.KS,화승인더,5,15,9,580,-106876.5,False,0,
-smic_follower_v2,368600.KQ,아이씨에이치,3,7,5,264,-113440.75,False,0,
-smic_follower_v2,352820.KS,하이브,5,9,6,417,-118312.24,False,0,
-smic_follower_v2,036930.KQ,주성엔지니어링,3,5,3,148,-144098.16,False,0,
-smic_follower_v2,017650.KS,대림제지,1,2,2,106,-148884.79,False,0,
-smic_follower_v2,036420.KS,제이콘텐트리,1,2,1,49,-155634.14,False,0,
-smic_follower_v2,002340.SZ,"GEM Co., Ltd.",5,12,9,489,-170582.34,False,0,
-smic_follower_v2,005850.KS,에스엘,1,2,1,48,-171820.39,False,0,
-smic_follower_v2,119610.KQ,인터로조,7,12,10,530,-172380.47,False,0,
-smic_follower_v2,284740.KS,쿠쿠홈시스,1,3,1,80,-177473.95,False,0,
-smic_follower_v2,363280.KS,티와이홀딩스,1,3,1,80,-182086.9,False,0,
-smic_follower_v2,007210.KS,벽산,1,3,1,84,-185090.15,False,0,
-smic_follower_v2,1833.HK,Ping An Healthcare & Technology,2,3,2,74,-186452.26,False,0,
-smic_follower_v2,SRAD,Sportradar,2,5,4,194,-186632.28,False,0,
-smic_follower_v2,234300.KQ,에스트래픽,4,12,5,408,-187875.49,True,2651,590675.93
-smic_follower_v2,322000.KS,현대에너지솔루션,1,2,1,35,-195462.7,False,0,
-smic_follower_v2,TEM,Tempus AI Inc,2,5,2,138,-203367.37,False,0,
-smic_follower_v2,228670.KQ,레이,1,3,1,74,-214489.17,False,0,
-smic_follower_v2,408920.KQ,메쎄이상,1,3,1,84,-216466.03,False,0,
-smic_follower_v2,TSM,TSMC,2,8,10,586,-222813.49,False,0,
-smic_follower_v2,159010.KQ,아스플로,1,4,1,112,-230492.52,False,0,
-smic_follower_v2,053030.KQ,바이넥스,1,3,1,118,-232283.17,False,0,
-smic_follower_v2,WFG,West Fraser Timber. Co. Ltd,1,8,4,377,-233023.14,False,0,
-smic_follower_v2,344820.KQ,케이씨씨글라스,6,12,8,520,-239665.47,False,0,
-smic_follower_v2,131970.KQ,두산테스나,1,2,1,56,-244234.55,False,0,
-smic_follower_v2,440110.KQ,파두,2,4,5,220,-260336.17,False,0,
-smic_follower_v2,248070.KS,솔루엠,1,4,3,203,-266806.06,False,0,
-smic_follower_v2,032640.KS,LG유플러스,6,15,8,494,-284748.79,False,0,
-smic_follower_v2,278470.KS,에이피알,1,2,1,38,-320639.75,False,0,
-smic_follower_v2,004020.KS,현대제철,1,4,2,191,-337141.79,False,0,
-smic_follower_v2,060150.KQ,인선이엔티,1,5,3,211,-338638.75,False,0,
-smic_follower_v2,363250.KQ,진시스템,2,4,2,156,-340507.86,False,0,
-smic_follower_v2,294570.KQ,쿠콘,5,8,7,328,-342108.27,False,0,
-smic_follower_v2,007690.KS,국도화학,1,4,4,211,-344466.63,False,0,
-smic_follower_v2,182360.KQ,큐브엔터,3,7,6,344,-355985.33,False,0,
-smic_follower_v2,078350.KS,한양디지텍,1,2,1,45,-357369.33,False,0,
-smic_follower_v2,IRMD,Iradimed Corporation,1,4,1,135,-363325.09,True,62,-645157.06
-smic_follower_v2,008730.KS,율촌화학,1,2,1,56,-365089.55,False,0,
-smic_follower_v2,IMAX,IMAX Corp,1,4,1,135,-397827.64,True,154,-699063.95
-smic_follower_v2,000210.KS,DL,4,8,5,297,-411863.31,False,0,
-smic_follower_v2,293490.KQ,카카오게임즈,6,9,7,342,-419804.55,False,0,
-smic_follower_v2,089600.KQ,나스미디어,5,11,8,477,-426259.38,False,0,
-smic_follower_v2,215000.KQ,골프존,6,10,6,528,-466407.75,False,0,
-smic_follower_v2,005290.KS,동진쎄미켐,2,4,2,143,-486516.71,False,0,
-smic_follower_v2,089860.KQ,롯데렌탈,7,16,9,530,-491519.95,False,0,
-smic_follower_v2,GTT.PA,Gaztransport&technigaz,1,5,6,385,-509674.52,False,0,
-smic_follower_v2,099430.KQ,바이오플러스,5,12,8,456,-521776.26,False,0,
-smic_follower_v2,298020.KQ,효성티앤씨,2,4,2,131,-538562.63,False,0,
-smic_follower_v2,FLNC,Fluence Energy Inc.,1,2,1,29,-556479.38,False,0,
-smic_follower_v2,025980.KS,아난티,2,5,3,185,-560575.23,False,0,
-smic_follower_v2,044490.KQ,태웅,4,8,7,339,-584610.31,False,0,
-smic_follower_v2,OPEN,Opendoor,1,2,1,36,-606056.19,False,0,
-smic_follower_v2,194480.KQ,데브시스터즈,2,4,2,101,-623498.42,False,0,
-smic_follower_v2,INMD,Inmode,1,2,1,43,-653607.96,False,0,
-smic_follower_v2,EAF,GrafTech International Ltd.,1,2,2,93,-681880.37,False,0,
-smic_follower_v2,259960.KQ,크래프톤,3,7,3,301,-712289.95,False,0,
-smic_follower_v2,2124.T,JAC recruitment Co. Ltd,2,3,2,104,-718519.68,True,1094,-339929.47
-smic_follower_v2,054210.KQ,이랜텍,5,13,8,488,-732423.31,False,0,
-smic_follower_v2,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",1,3,1,63,-752356.46,False,0,
-smic_follower_v2,4689.T,Z-holdings,2,3,4,133,-826547.71,False,0,
-smic_follower_v2,112610.KS,씨에스윈드,1,2,1,32,-836672.49,False,0,
-smic_follower_v2,489790.KS,한화비전,1,4,4,191,-965679.87,False,0,
-smic_follower_v2,SXT,Sensient Technologies Corp,1,4,1,135,-1018333.96,True,65,-557548.24
-smic_follower_v2,472850.KQ,폰드그룹,1,3,2,108,-1133776.43,False,0,
-smic_follower_v2,MP,MP Materials,2,3,2,74,-1138051.2,False,0,
-smic_follower_v2,310200.KQ,애니플러스,7,14,12,653,-1174388.64,False,0,
-smic_follower_v2,473980.KQ,노머스,1,6,1,158,-1202727.49,False,0,
-smic_follower_v2,214450.KQ,파마리서치,2,3,2,35,-1236748.63,False,0,
-smic_follower_v2,CLBT,Cellebrite DI,2,7,3,233,-1247414.58,False,0,
-smic_follower_v2,LEVI,Levi Strauss & Co,1,4,2,123,-1272434.37,False,0,
-smic_follower_v2,098120.KQ,마이크로컨텍솔,1,2,1,29,-1469730.98,False,0,
-smic_follower_v2,CRWV,Coreweave,1,2,1,29,-1939608.61,False,0,
-smic_follower_v2,5253.T,Cover Corp,2,3,3,94,-2023097.24,False,0,
-smic_follower_v2,4751.T,Cyber Agent,3,14,11,669,-2664677.32,False,0,
-smic_follower_v2,6857.T,Advantest Corporation,1,2,1,57,-3451346.79,False,0,
-smic_follower_v2,FNKO,Funko Inc.,1,3,2,95,-3764638.87,False,0,
-smic_follower_v2,ESTA,Establishment Labs Holdings,1,4,1,116,-7236009.73,False,0,
+smic_follower,ANET,Arista Networks,4,11,15,953,2745636.92,False,0,
+smic_follower,440110.KQ,파두,6,16,12,640,1561948.47,False,0,
+smic_follower,200710.KQ,에이디테크놀로지,7,13,14,723,1307553.33,True,25,126659.78
+smic_follower,475960.KQ,토모큐브,1,5,4,266,1256271.62,False,0,
+smic_follower,100840.KQ,SNT에너지,8,12,16,615,1219677.97,False,0,
+smic_follower,009830.KS,한화솔루션,2,6,3,269,1142427.68,False,0,
+smic_follower,078350.KS,한양디지텍,5,13,8,572,1095006.33,True,43,74384.85
+smic_follower,1211.HK,BYD,7,16,10,658,1058889.71,True,67,-1211090.17
+smic_follower,SBLK,Star Bulk Carriers,1,6,7,356,1052816.25,False,0,
+smic_follower,GLW,Corning,3,15,18,1218,997312.91,False,0,
+smic_follower,PLTR,Palantir Technologies Inc.,2,2,3,99,978605.25,False,0,
+smic_follower,189300.KQ,인텔리안테크,11,19,15,1071,960451.2,False,0,
+smic_follower,348370.KQ,엔켐,6,10,9,486,912845.3,False,0,
+smic_follower,114810.KQ,아이원스,9,21,17,914,898750.73,False,0,
+smic_follower,005290.KS,동진쎄미켐,7,17,10,656,882819.2,False,0,
+smic_follower,023160.KS,태광,7,15,11,646,864351.74,False,0,
+smic_follower,122640.KQ,예스티,8,9,14,483,847112.37,True,65,519138.0
+smic_follower,SE,SEA ltd.,1,2,5,164,832835.39,False,0,
+smic_follower,005850.KS,에스엘,12,29,19,1263,822224.0,False,0,
+smic_follower,285490.KQ,노바텍,14,31,26,1424,780251.34,True,61,57083.55
+smic_follower,352820.KS,하이브,13,19,13,1182,740402.9,True,4,-164752.79
+smic_follower,489790.KS,한화비전,2,5,2,300,726114.96,True,17,184464.52
+smic_follower,356860.KQ,티엘비,3,4,5,165,688148.53,False,0,
+smic_follower,322000.KS,현대에너지솔루션,9,23,15,912,664850.06,False,0,
+smic_follower,131970.KQ,두산테스나,6,13,11,633,664536.88,False,0,
+smic_follower,328130.KQ,루닛,1,1,3,98,663499.09,False,0,
+smic_follower,237690.KQ,에스티팜,12,19,13,1119,639247.79,True,8,126405.35
+smic_follower,010950.KS,S-OIL,10,16,12,964,634102.97,True,11,62992.67
+smic_follower,ISRG,Intuitive Surgical,2,2,2,108,632468.64,False,0,
+smic_follower,194480.KQ,데브시스터즈,6,22,5,690,627642.11,True,49,-184613.23
+smic_follower,GRND,Grindr Inc.,1,3,3,157,623005.15,False,0,
+smic_follower,210980.KS,SK디앤디,8,20,12,846,622322.58,True,101,-28131.43
+smic_follower,054210.KQ,이랜텍,10,21,19,964,590023.47,True,127,269644.78
+smic_follower,FLNC,Fluence Energy Inc.,3,9,11,545,564516.7,False,0,
+smic_follower,EAF,GrafTech International Ltd.,4,24,18,1338,563106.92,True,132,-1488987.83
+smic_follower,090460.KS,비에이치,7,14,12,650,558678.67,False,0,
+smic_follower,017960.KS,한국카본,2,3,2,118,550287.95,True,32,339943.98
+smic_follower,032350.KS,롯데관광개발,4,11,5,380,546388.69,False,0,
+smic_follower,950170.KQ,JTC,7,14,13,576,535819.15,False,0,
+smic_follower,006650.KS,대한유화,1,1,1,15,529234.82,False,0,
+smic_follower,170790.KQ,파이오링크,14,31,28,1424,522000.89,True,142,239115.05
+smic_follower,089890.KQ,코세스,1,2,2,85,521776.15,False,0,
+smic_follower,004020.KS,현대제철,13,29,19,1394,516924.74,True,37,315494.92
+smic_follower,036420.KS,제이콘텐트리,1,3,2,144,504294.72,False,0,
+smic_follower,456160.KQ,지투지바이오,2,3,1,118,475747.39,True,17,46757.89
+smic_follower,041830.KQ,인바디,11,24,14,1088,471005.71,True,45,8137.03
+smic_follower,002714.SZ,Muyuan foods co ltd,13,27,21,1185,468333.41,True,147,-1468224.08
+smic_follower,119850.KQ,지엔씨에너지,1,3,3,135,465268.44,False,0,
+smic_follower,375500.KS,DL이앤씨,7,14,10,673,460222.92,False,0,
+smic_follower,042660.KS,한화오션,2,3,4,195,459467.53,False,0,
+smic_follower,005380.KS,현대차,4,5,5,458,457517.83,False,0,
+smic_follower,068270.KS,셀트리온,9,13,10,858,448970.69,False,0,
+smic_follower,000150.KS,두산,2,2,1,118,441328.63,True,1,469276.47
+smic_follower,035900.KQ,JYP Ent.,8,12,8,633,435368.47,True,21,7538.59
+smic_follower,267260.KS,HD현대일렉트릭,1,1,1,117,427040.11,False,0,
+smic_follower,012330.KS,현대모비스,3,3,3,339,424310.69,False,0,
+smic_follower,101490.KQ,에스앤에스텍,1,1,3,73,424138.32,False,0,
+smic_follower,298020.KQ,효성티앤씨,13,18,13,1303,421767.95,True,3,350219.91
+smic_follower,098120.KQ,마이크로컨텍솔,2,4,2,146,413369.16,True,45,242141.41
+smic_follower,6857.T,Advantest Corporation,1,4,4,227,404578.76,False,0,
+smic_follower,166090.KQ,하나머티리얼즈,2,2,2,29,347871.62,False,0,
+smic_follower,001530.KS,DI동일,4,8,7,351,338270.52,False,0,
+smic_follower,006260.KS,LS,7,9,7,517,338252.52,False,0,
+smic_follower,029460.KS,케이씨,4,10,5,366,329743.49,False,0,
+smic_follower,108490.KQ,로보티즈,1,1,1,88,321000.77,False,0,
+smic_follower,LIF,Life360 Inc,2,3,2,92,315589.22,False,0,
+smic_follower,950160.KQ,코오롱티슈진,2,3,2,118,310587.73,True,12,-22446.4
+smic_follower,461300.KQ,아이스크림미디어,1,3,1,83,308002.36,False,0,
+smic_follower,204620.KQ,글로벌텍스프리,1,3,1,76,307946.38,False,0,
+smic_follower,009970.KS,영원무역홀딩스,5,7,5,457,301038.28,False,0,
+smic_follower,012450.KS,한화에어로스페이스,1,1,1,130,285453.46,False,0,
+smic_follower,001060.KS,JW중외제약,1,2,1,47,282673.22,False,0,
+smic_follower,007210.KS,벽산,11,29,17,1088,274614.87,True,725,213007.8
+smic_follower,294570.KQ,쿠콘,12,26,20,1119,270226.63,True,47,102536.86
+smic_follower,025980.KS,아난티,7,17,11,661,258119.35,True,187,8486.9
+smic_follower,067160.KQ,아프리카TV,8,17,9,791,256649.11,True,21,-15530.02
+smic_follower,015760.KS,한국전력,3,4,3,144,254638.68,False,0,
+smic_follower,348210.KQ,넥스틴,2,2,2,51,245306.85,False,0,
+smic_follower,004250.KS,NPC,1,1,1,20,240273.99,False,0,
+smic_follower,218410.KQ,RFHIC,1,1,2,33,237525.81,False,0,
+smic_follower,103140.KS,풍산,1,1,1,39,230411.5,False,0,
+smic_follower,052690.KS,한전기술,1,1,1,45,223397.12,False,0,
+smic_follower,VRT,Vertiv Holdings Co.,1,2,2,63,212571.84,False,0,
+smic_follower,473980.KQ,노머스,1,3,1,80,209292.4,False,0,
+smic_follower,033500.KQ,동성화인텍,1,1,1,20,206194.36,False,0,
+smic_follower,082740.KS,한화엔진,1,1,1,12,195657.4,False,0,
+smic_follower,036930.KQ,주성엔지니어링,6,8,9,362,195608.46,False,0,
+smic_follower,211050.KQ,인카금융서비스,2,4,3,150,194669.5,False,0,
+smic_follower,002340.SZ,"GEM Co., Ltd.",11,28,19,1122,191643.54,True,776,-1587079.47
+smic_follower,280360.KQ,롯데웰푸드,8,14,8,814,179908.48,True,11,89385.52
+smic_follower,099430.KQ,바이오플러스,1,1,1,22,177096.12,False,0,
+smic_follower,000660.KS,SK하이닉스,1,1,1,114,175274.75,False,0,
+smic_follower,LITE,Lumentum Holdings Inc,1,1,1,34,174872.3,False,0,
+smic_follower,003030.KS,세아제강지주,1,1,1,14,172727.46,False,0,
+smic_follower,STNG,Scorpio Tankers Inc.,1,1,3,70,170533.91,False,0,
+smic_follower,101160.KQ,월덱스,1,1,1,10,169921.05,False,0,
+smic_follower,OPEN,Opendoor,4,30,23,1520,159569.15,True,195,-1533333.32
+smic_follower,4680.T,Round One Corp,1,1,1,14,158936.52,False,0,
+smic_follower,408920.KQ,메쎄이상,8,21,12,814,156533.27,True,419,187683.83
+smic_follower,047810.KS,한국항공우주,7,10,7,490,151541.12,False,0,
+smic_follower,294870.KS,HDC현대산업개발,4,11,6,452,149979.73,True,62,141737.48
+smic_follower,159010.KQ,아스플로,8,21,12,846,147593.66,True,240,1167935.66
+smic_follower,032640.KS,LG유플러스,13,33,19,1335,145217.07,True,84,61301.04
+smic_follower,316140.KS,우리금융지주,4,9,7,334,142409.04,False,0,
+smic_follower,148150.KQ,세경하이테크,13,32,19,1182,136929.39,True,299,124713.1
+smic_follower,007660.KS,이수페타시스,1,2,1,60,135774.42,False,0,
+smic_follower,028050.KS,삼성엔지니어링,3,4,4,127,132707.97,False,0,
+smic_follower,TSM,TSMC,2,7,9,586,131700.61,False,0,
+smic_follower,196170.KQ,알테오젠,1,1,1,2,127432.44,False,0,
+smic_follower,ROKU,Roku,1,1,1,1,104425.18,False,0,
+smic_follower,112610.KS,씨에스윈드,4,11,5,452,99022.48,True,20,179171.8
+smic_follower,BESI.AS,BE Semiconductor Industries N.V.,1,1,1,54,89599.12,False,0,
+smic_follower,000640.KS,동아쏘시오홀딩스,11,20,11,1088,85725.08,True,14,77533.58
+smic_follower,CLBT,Cellebrite DI,2,8,3,300,82626.44,True,65,-1334583.89
+smic_follower,NE,Noble Corporation PLC,2,4,4,192,78726.5,False,0,
+smic_follower,016380.KS,KG스틸,5,14,6,544,63409.99,True,244,311455.53
+smic_follower,005490.KS,포스코홀딩스,2,2,2,59,61940.06,False,0,
+smic_follower,353810.KQ,이지바이오,1,1,1,22,60002.38,False,0,
+smic_follower,420770.KQ,기가비스,1,1,1,22,59662.96,False,0,
+smic_follower,049720.KQ,고려신용정보,2,7,3,271,58386.82,True,130,-15166.22
+smic_follower,248070.KS,솔루엠,13,33,21,1365,53645.82,True,80,202336.7
+smic_follower,BAC,Bank of America Corp.,1,5,3,196,46954.79,False,0,
+smic_follower,1833.HK,Ping An Healthcare & Technology,13,32,25,1358,45373.18,True,571,-1313820.9
+smic_follower,271560.KS,오리온,3,3,3,215,45147.13,False,0,
+smic_follower,001040.KS,CJ,1,1,1,2,39280.32,False,0,
+smic_follower,044490.KQ,태웅,8,14,10,522,23472.0,False,0,
+smic_follower,005720.KS,넥센,4,8,5,246,13438.34,False,0,
+smic_follower,017650.KS,대림제지,13,36,21,1394,11854.21,True,154,105394.04
+smic_follower,366030.KQ,공구우먼,1,1,1,1,7518.37,False,0,
+smic_follower,453340.KQ,현대그린푸드,8,20,10,814,1632.8,True,82,11440.7
+smic_follower,192400.KQ,쿠쿠홀딩스,4,7,5,246,-975.49,False,0,
+smic_follower,4751.T,Cyber Agent,7,31,24,1612,-3796.7,True,104,-1165883.66
+smic_follower,119610.KQ,인터로조,12,24,16,1118,-5856.05,True,69,159212.95
+smic_follower,310200.KQ,애니플러스,4,10,8,457,-10257.27,True,492,65553.24
+smic_follower,192820.KS,코스맥스,2,3,2,88,-11172.42,False,0,
+smic_follower,472850.KQ,폰드그룹,2,7,3,271,-13277.33,True,253,173703.25
+smic_follower,007690.KS,국도화학,13,26,18,1394,-22471.13,True,37,210037.71
+smic_follower,IRMD,Iradimed Corporation,1,3,1,148,-32579.99,True,10,-1461073.26
+smic_follower,IMAX,IMAX Corp,1,4,1,148,-40248.42,True,23,-1347607.02
+smic_follower,234300.KQ,에스트래픽,4,11,6,421,-47863.43,True,396,205053.75
+smic_follower,376980.KQ,원티드랩,13,31,18,1152,-69165.45,True,392,242173.58
+smic_follower,GTT.PA,Gaztransport&technigaz,1,4,8,427,-75494.64,False,0,
+smic_follower,000210.KS,DL,11,24,14,1088,-79847.93,True,21,158742.68
+smic_follower,LEVI,Levi Strauss & Co,2,10,5,482,-89158.73,True,47,-1470706.86
+smic_follower,403870.KQ,HPSP,2,3,4,121,-94421.78,False,0,
+smic_follower,006060.KS,화승인더,7,17,10,661,-98261.71,True,408,90932.7
+smic_follower,053030.KQ,바이넥스,13,29,21,1335,-101253.55,True,113,-21203.14
+smic_follower,278470.KS,에이피알,4,6,5,274,-109749.78,False,0,
+smic_follower,CRWV,Coreweave,1,4,1,176,-130434.13,True,12,-1459224.12
+smic_follower,182360.KQ,큐브엔터,8,21,11,846,-136847.58,True,128,418.78
+smic_follower,SXT,Sensient Technologies Corp,1,4,1,148,-141200.67,True,10,-1430504.84
+smic_follower,2124.T,JAC recruitment Co. Ltd,2,3,2,117,-154776.54,True,164,-1233195.2
+smic_follower,089860.KQ,롯데렌탈,12,26,15,1118,-168364.54,True,43,117383.45
+smic_follower,043650.KQ,국순당,11,29,16,1088,-186056.5,True,322,37773.4
+smic_follower,214450.KQ,파마리서치,3,3,2,87,-206281.41,True,4,47186.11
+smic_follower,WFG,West Fraser Timber. Co. Ltd,4,20,21,1675,-241320.57,True,14,-1330152.64
+smic_follower,LLY,Eli Lilly & Co.,1,1,1,3,-246460.92,False,0,
+smic_follower,259960.KQ,크래프톤,4,6,3,452,-277187.41,True,5,69148.4
+smic_follower,284740.KS,쿠쿠홈시스,13,35,17,1365,-313403.53,True,56,49539.04
+smic_follower,476830.KQ,알지노믹스,1,1,1,3,-317482.61,False,0,
+smic_follower,008730.KS,율촌화학,5,14,7,572,-344971.37,True,53,105145.54
+smic_follower,363280.KS,티와이홀딩스,11,31,15,1088,-348918.53,True,491,55598.41
+smic_follower,SRAD,Sportradar,2,5,2,300,-362552.47,True,54,-1599302.41
+smic_follower,344820.KQ,케이씨씨글라스,13,31,18,1365,-363829.25,True,52,188944.76
+smic_follower,LONN.SW,Lonza Group AG,2,2,2,35,-369691.59,False,0,
+smic_follower,TEM,Tempus AI Inc,2,7,2,300,-392406.29,True,19,-1594841.03
+smic_follower,089600.KQ,나스미디어,10,25,13,994,-400675.21,True,115,47439.53
+smic_follower,054780.KQ,키이스트,13,29,20,1152,-432294.71,True,513,101732.93
+smic_follower,215000.KQ,골프존,11,24,13,1088,-440351.26,True,26,43358.28
+smic_follower,363250.KQ,진시스템,8,20,14,846,-490221.11,True,191,-283546.67
+smic_follower,MP,MP Materials,3,16,17,894,-550892.12,False,0,
+smic_follower,ESTA,Establishment Labs Holdings,1,3,1,148,-554581.33,True,16,-1713417.18
+smic_follower,018290.KS,브이티,4,12,4,421,-593472.4,True,85,130039.11
+smic_follower,DOCS,Doximity,2,7,2,300,-661100.8,True,39,-1710085.75
+smic_follower,WOLF,Wolfspeed,1,5,2,209,-673289.07,True,55,-1695730.16
+smic_follower,060150.KQ,인선이엔티,13,35,21,1364,-675619.33,True,322,137592.35
+smic_follower,293490.KQ,카카오게임즈,13,27,17,1152,-751396.66,True,107,-19056.69
+smic_follower,228670.KQ,레이,8,20,12,846,-806653.45,True,253,907404.89
+smic_follower,368600.KQ,아이씨에이치,10,29,12,994,-1139073.84,True,1496,440452.52
+smic_follower,4689.T,Z-holdings,7,27,25,1429,-1244872.16,True,357,-1126451.24
+smic_follower,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",4,13,10,603,-1254809.84,True,54,-1359612.83
+smic_follower,5253.T,Cover Corp,4,10,6,421,-1568338.09,True,102,-1389706.95
+smic_follower,INMD,Inmode,4,28,22,1520,-2473419.83,True,65,-1297405.86
+smic_follower,FNKO,Funko Inc.,2,9,7,482,-2582580.01,True,278,-1723371.15
+smic_follower,CHGG,Chegg,4,24,24,1520,-3438176.2,True,1234,-1305101.24
+smic_follower_v2,GRND,Grindr Inc.,1,4,3,157,8051489.56,False,0,
+smic_follower_v2,PLTR,Palantir Technologies Inc.,2,3,3,99,6103250.71,False,0,
+smic_follower_v2,475960.KQ,토모큐브,1,6,4,266,6019214.62,False,0,
+smic_follower_v2,009830.KS,한화솔루션,2,7,5,269,5676531.4,False,0,
+smic_follower_v2,ISRG,Intuitive Surgical,2,3,2,108,4212397.16,False,0,
+smic_follower_v2,1211.HK,BYD,7,15,9,500,3417452.13,False,0,
+smic_follower_v2,000150.KS,두산,2,4,1,118,3161347.24,True,8,3754211.73
+smic_follower_v2,356860.KQ,티엘비,3,4,5,165,2981752.97,False,0,
+smic_follower_v2,032350.KS,롯데관광개발,4,11,6,380,2685362.91,False,0,
+smic_follower_v2,GLW,Corning,2,10,5,477,2674738.13,False,0,
+smic_follower_v2,017960.KS,한국카본,2,4,1,118,2653907.52,True,230,2443347.37
+smic_follower_v2,456160.KQ,지투지바이오,2,4,1,118,2513324.41,True,124,341057.57
+smic_follower_v2,ANET,Arista Networks,2,8,6,430,2393917.45,False,0,
+smic_follower_v2,119850.KQ,지엔씨에너지,1,3,3,135,2166090.3,False,0,
+smic_follower_v2,023160.KS,태광,6,13,12,580,2118408.62,False,0,
+smic_follower_v2,122640.KQ,예스티,8,10,13,483,2012530.69,True,464,3705846.65
+smic_follower_v2,005380.KS,현대차,4,9,7,458,1960473.11,False,0,
+smic_follower_v2,042660.KS,한화오션,2,4,4,195,1824669.46,False,0,
+smic_follower_v2,101490.KQ,에스앤에스텍,1,1,3,73,1818676.12,False,0,
+smic_follower_v2,012330.KS,현대모비스,3,8,5,339,1800080.36,False,0,
+smic_follower_v2,012450.KS,한화에어로스페이스,1,3,1,221,1747475.3,False,0,
+smic_follower_v2,100840.KQ,SNT에너지,6,12,12,551,1717890.81,False,0,
+smic_follower_v2,029460.KS,케이씨,4,11,6,366,1665506.32,False,0,
+smic_follower_v2,SBLK,Star Bulk Carriers,1,7,5,356,1523796.72,False,0,
+smic_follower_v2,461300.KQ,아이스크림미디어,1,3,1,83,1484352.01,False,0,
+smic_follower_v2,LITE,Lumentum Holdings Inc,1,2,1,34,1461683.57,False,0,
+smic_follower_v2,950160.KQ,코오롱티슈진,2,3,2,118,1427037.79,True,87,-162736.38
+smic_follower_v2,LIF,Life360 Inc,2,3,3,92,1370226.02,False,0,
+smic_follower_v2,006260.KS,LS,6,9,8,532,1276794.66,False,0,
+smic_follower_v2,108490.KQ,로보티즈,1,1,3,88,1269926.45,False,0,
+smic_follower_v2,015760.KS,한국전력,3,5,3,144,1216625.59,False,0,
+smic_follower_v2,035900.KQ,JYP Ent.,8,13,12,633,1193224.98,True,150,53847.04
+smic_follower_v2,010950.KS,S-OIL,8,16,9,642,1145042.51,True,83,475308.34
+smic_follower_v2,089890.KQ,코세스,1,2,2,85,1070232.99,False,0,
+smic_follower_v2,328130.KQ,루닛,1,2,2,98,1067881.9,False,0,
+smic_follower_v2,218410.KQ,RFHIC,1,1,2,33,989816.6,False,0,
+smic_follower_v2,211050.KQ,인카금융서비스,2,4,3,150,972200.86,False,0,
+smic_follower_v2,103140.KS,풍산,1,2,1,39,935281.06,False,0,
+smic_follower_v2,294870.KS,HDC현대산업개발,4,12,6,452,926425.73,True,442,1010451.07
+smic_follower_v2,473980.KQ,노머스,1,3,1,80,923230.03,False,0,
+smic_follower_v2,267260.KS,HD현대일렉트릭,1,2,2,117,867354.3,False,0,
+smic_follower_v2,090460.KS,비에이치,5,14,10,580,857034.71,False,0,
+smic_follower_v2,033500.KQ,동성화인텍,1,1,1,20,854233.76,False,0,
+smic_follower_v2,001530.KS,DI동일,3,9,6,384,834097.75,False,0,
+smic_follower_v2,SE,SEA ltd.,1,2,5,164,832835.39,False,0,
+smic_follower_v2,082740.KS,한화엔진,1,1,1,12,816170.87,False,0,
+smic_follower_v2,950170.KQ,JTC,5,12,11,562,776610.89,False,0,
+smic_follower_v2,101160.KQ,월덱스,1,1,1,10,746758.28,False,0,
+smic_follower_v2,453340.KQ,현대그린푸드,6,14,10,554,658794.25,False,0,
+smic_follower_v2,4680.T,Round One Corp,1,1,1,14,638268.88,False,0,
+smic_follower_v2,036420.KS,제이콘텐트리,1,2,2,144,637631.16,False,0,
+smic_follower_v2,052690.KS,한전기술,1,2,1,45,597426.76,False,0,
+smic_follower_v2,047810.KS,한국항공우주,6,13,8,523,580520.96,False,0,
+smic_follower_v2,016380.KS,KG스틸,5,15,7,544,553289.88,True,1737,2217205.97
+smic_follower_v2,006650.KS,대한유화,1,1,1,15,529234.82,False,0,
+smic_follower_v2,204620.KQ,글로벌텍스프리,1,3,1,76,526763.71,False,0,
+smic_follower_v2,009970.KS,영원무역홀딩스,5,8,6,457,493471.14,False,0,
+smic_follower_v2,114810.KQ,아이원스,6,11,12,487,483820.52,False,0,
+smic_follower_v2,000660.KS,SK하이닉스,1,2,2,114,437675.86,False,0,
+smic_follower_v2,001060.KS,JW중외제약,1,2,1,47,430165.56,False,0,
+smic_follower_v2,VRT,Vertiv Holdings Co.,1,2,2,63,427036.3,False,0,
+smic_follower_v2,049720.KQ,고려신용정보,2,7,3,271,390419.47,True,923,-107680.2
+smic_follower_v2,170790.KQ,파이오링크,5,11,10,506,373425.67,False,0,
+smic_follower_v2,166090.KQ,하나머티리얼즈,2,2,2,29,347871.62,False,0,
+smic_follower_v2,237690.KQ,에스티팜,7,11,8,522,346045.58,False,0,
+smic_follower_v2,196170.KQ,알테오젠,1,1,1,2,339819.85,False,0,
+smic_follower_v2,348210.KQ,넥스틴,2,2,2,51,326492.67,False,0,
+smic_follower_v2,004250.KS,NPC,1,1,1,20,312856.76,False,0,
+smic_follower_v2,099430.KQ,바이오플러스,1,1,1,22,286264.96,False,0,
+smic_follower_v2,316140.KS,우리금융지주,4,10,6,334,281230.19,False,0,
+smic_follower_v2,003030.KS,세아제강지주,1,1,1,14,276363.93,False,0,
+smic_follower_v2,STNG,Scorpio Tankers Inc.,1,1,3,70,255813.1,False,0,
+smic_follower_v2,271560.KS,오리온,3,7,4,215,243541.21,False,0,
+smic_follower_v2,054780.KQ,키이스트,7,11,9,431,236561.75,False,0,
+smic_follower_v2,210980.KS,SK디앤디,3,8,5,356,235709.79,False,0,
+smic_follower_v2,041830.KQ,인바디,6,11,7,528,228993.88,False,0,
+smic_follower_v2,LLY,Eli Lilly & Co.,1,1,1,67,205018.2,False,0,
+smic_follower_v2,028050.KS,삼성엔지니어링,3,4,4,127,194447.52,False,0,
+smic_follower_v2,007660.KS,이수페타시스,1,2,1,60,181342.51,False,0,
+smic_follower_v2,001040.KS,CJ,1,1,1,2,180689.49,False,0,
+smic_follower_v2,BESI.AS,BE Semiconductor Industries N.V.,1,2,1,54,174792.54,False,0,
+smic_follower_v2,NE,Noble Corporation PLC,2,4,4,192,165136.76,False,0,
+smic_follower_v2,285490.KQ,노바텍,4,10,8,416,135355.29,False,0,
+smic_follower_v2,067160.KQ,아프리카TV,8,20,13,791,127940.62,True,155,-114626.31
+smic_follower_v2,005720.KS,넥센,4,8,5,246,119887.72,False,0,
+smic_follower_v2,ROKU,Roku,1,1,1,1,104425.18,False,0,
+smic_follower_v2,420770.KQ,기가비스,1,1,1,22,99438.27,False,0,
+smic_follower_v2,068270.KS,셀트리온,6,12,9,551,77873.07,False,0,
+smic_follower_v2,200710.KQ,에이디테크놀로지,2,4,5,213,76084.26,False,0,
+smic_follower_v2,353810.KQ,이지바이오,1,1,1,22,60002.38,False,0,
+smic_follower_v2,CHGG,Chegg,1,4,3,153,41188.52,False,0,
+smic_follower_v2,005490.KS,포스코홀딩스,2,2,2,59,33791.33,False,0,
+smic_follower_v2,348370.KQ,엔켐,3,4,3,166,19668.54,False,0,
+smic_follower_v2,192820.KS,코스맥스,2,3,2,88,13412.96,False,0,
+smic_follower_v2,366030.KQ,공구우먼,1,1,1,1,12905.86,False,0,
+smic_follower_v2,189300.KQ,인텔리안테크,6,9,8,438,11679.42,False,0,
+smic_follower_v2,BAC,Bank of America Corp.,1,5,3,196,-16951.29,False,0,
+smic_follower_v2,148150.KQ,세경하이테크,3,5,4,181,-26897.95,False,0,
+smic_follower_v2,002714.SZ,Muyuan foods co ltd,7,13,11,522,-36946.95,False,0,
+smic_follower_v2,LONN.SW,Lonza Group AG,2,2,2,33,-45634.1,False,0,
+smic_follower_v2,WOLF,Wolfspeed,1,1,1,1,-50167.04,False,0,
+smic_follower_v2,192400.KQ,쿠쿠홀딩스,4,8,5,246,-56739.91,False,0,
+smic_follower_v2,006060.KS,화승인더,5,15,9,580,-71204.96,False,0,
+smic_follower_v2,376980.KQ,원티드랩,3,5,3,151,-74872.04,False,0,
+smic_follower_v2,280360.KQ,롯데웰푸드,4,9,8,478,-99954.05,False,0,
+smic_follower_v2,043650.KQ,국순당,6,13,9,500,-109559.57,False,0,
+smic_follower_v2,368600.KQ,아이씨에이치,3,7,5,264,-118581.45,False,0,
+smic_follower_v2,000640.KS,동아쏘시오홀딩스,6,10,6,553,-124798.2,False,0,
+smic_follower_v2,DOCS,Doximity,2,5,2,128,-130331.07,False,0,
+smic_follower_v2,018290.KS,브이티,3,7,4,222,-140484.54,False,0,
+smic_follower_v2,036930.KQ,주성엔지니어링,3,5,3,148,-147743.49,False,0,
+smic_follower_v2,403870.KQ,HPSP,2,3,3,121,-155861.77,False,0,
+smic_follower_v2,017650.KS,대림제지,1,2,2,106,-164156.7,False,0,
+smic_follower_v2,322000.KS,현대에너지솔루션,1,2,1,33,-187636.64,False,0,
+smic_follower_v2,234300.KQ,에스트래픽,4,12,5,421,-188437.13,True,2813,1456606.56
+smic_follower_v2,440110.KQ,파두,2,4,5,220,-189555.54,False,0,
+smic_follower_v2,002340.SZ,"GEM Co., Ltd.",5,12,9,489,-191616.8,False,0,
+smic_follower_v2,363280.KS,티와이홀딩스,1,3,1,80,-194503.15,False,0,
+smic_follower_v2,007210.KS,벽산,1,3,1,84,-195679.94,False,0,
+smic_follower_v2,284740.KS,쿠쿠홈시스,1,2,1,80,-199036.03,False,0,
+smic_follower_v2,005850.KS,에스엘,1,2,1,48,-200038.08,False,0,
+smic_follower_v2,SRAD,Sportradar,2,5,4,194,-201595.29,False,0,
+smic_follower_v2,1833.HK,Ping An Healthcare & Technology,2,3,2,74,-206499.02,False,0,
+smic_follower_v2,WFG,West Fraser Timber. Co. Ltd,1,9,4,377,-208398.54,False,0,
+smic_follower_v2,119610.KQ,인터로조,7,12,10,530,-212249.41,False,0,
+smic_follower_v2,TEM,Tempus AI Inc,2,5,2,138,-221766.82,False,0,
+smic_follower_v2,344820.KQ,케이씨씨글라스,6,12,9,520,-229617.4,False,0,
+smic_follower_v2,228670.KQ,레이,1,3,1,74,-232375.77,False,0,
+smic_follower_v2,408920.KQ,메쎄이상,1,3,1,84,-234628.96,False,0,
+smic_follower_v2,TSM,TSMC,2,8,9,586,-244093.86,False,0,
+smic_follower_v2,159010.KQ,아스플로,1,4,1,112,-250675.63,False,0,
+smic_follower_v2,053030.KQ,바이넥스,1,3,1,118,-256106.13,False,0,
+smic_follower_v2,131970.KQ,두산테스나,1,2,1,56,-257892.08,False,0,
+smic_follower_v2,248070.KS,솔루엠,1,4,3,204,-280002.06,False,0,
+smic_follower_v2,032640.KS,LG유플러스,6,15,8,494,-304801.79,False,0,
+smic_follower_v2,078350.KS,한양디지텍,1,2,1,45,-352045.39,False,0,
+smic_follower_v2,008730.KS,율촌화학,1,2,1,53,-365304.21,False,0,
+smic_follower_v2,363250.KQ,진시스템,2,4,2,156,-368907.24,False,0,
+smic_follower_v2,294570.KQ,쿠콘,5,8,6,328,-369588.73,False,0,
+smic_follower_v2,004020.KS,현대제철,1,4,2,191,-374742.25,False,0,
+smic_follower_v2,060150.KQ,인선이엔티,1,5,3,211,-385774.39,False,0,
+smic_follower_v2,007690.KS,국도화학,1,4,4,211,-391352.85,False,0,
+smic_follower_v2,000210.KS,DL,4,7,5,297,-438781.48,False,0,
+smic_follower_v2,293490.KQ,카카오게임즈,6,9,7,342,-459449.82,False,0,
+smic_follower_v2,GTT.PA,Gaztransport&technigaz,1,5,6,371,-468929.79,False,0,
+smic_follower_v2,375500.KS,DL이앤씨,2,5,3,217,-480395.58,False,0,
+smic_follower_v2,215000.KQ,골프존,6,12,7,528,-514257.39,False,0,
+smic_follower_v2,089600.KQ,나스미디어,5,11,8,484,-518214.02,False,0,
+smic_follower_v2,089860.KQ,롯데렌탈,7,16,8,530,-530291.74,False,0,
+smic_follower_v2,182360.KQ,큐브엔터,3,7,7,370,-537159.73,False,0,
+smic_follower_v2,298020.KQ,효성티앤씨,2,4,2,127,-540811.86,False,0,
+smic_follower_v2,025980.KS,아난티,2,5,3,185,-582024.69,False,0,
+smic_follower_v2,044490.KQ,태웅,4,8,7,339,-596388.45,False,0,
+smic_follower_v2,FLNC,Fluence Energy Inc.,1,2,1,29,-598354.39,False,0,
+smic_follower_v2,005290.KS,동진쎄미켐,2,4,3,151,-608195.67,False,0,
+smic_follower_v2,278470.KS,에이피알,1,2,2,60,-630280.65,False,0,
+smic_follower_v2,194480.KQ,데브시스터즈,2,4,3,99,-631213.36,False,0,
+smic_follower_v2,352820.KS,하이브,5,8,7,402,-646814.4,False,0,
+smic_follower_v2,OPEN,Opendoor,1,2,1,36,-659843.52,False,0,
+smic_follower_v2,310200.KQ,애니플러스,3,6,7,311,-704601.39,False,0,
+smic_follower_v2,EAF,GrafTech International Ltd.,1,2,2,93,-719388.95,False,0,
+smic_follower_v2,054210.KQ,이랜텍,5,12,9,488,-720279.68,False,0,
+smic_follower_v2,INMD,Inmode,1,2,1,43,-722692.65,False,0,
+smic_follower_v2,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",1,3,1,63,-753085.79,False,0,
+smic_follower_v2,4689.T,Z-holdings,2,3,4,133,-892917.02,False,0,
+smic_follower_v2,259960.KQ,크래프톤,3,7,4,302,-961423.64,False,0,
+smic_follower_v2,112610.KS,씨에스윈드,1,2,1,32,-985100.72,False,0,
+smic_follower_v2,489790.KS,한화비전,1,4,4,191,-1046272.07,False,0,
+smic_follower_v2,MP,MP Materials,2,3,2,74,-1206317.86,False,0,
+smic_follower_v2,CLBT,Cellebrite DI,2,7,3,233,-1306229.25,False,0,
+smic_follower_v2,476830.KQ,알지노믹스,1,1,1,3,-1315285.11,False,0,
+smic_follower_v2,LEVI,Levi Strauss & Co,1,4,2,123,-1341990.94,False,0,
+smic_follower_v2,472850.KQ,폰드그룹,1,3,2,112,-1353529.12,False,0,
+smic_follower_v2,214450.KQ,파마리서치,2,3,2,35,-1386965.23,False,0,
+smic_follower_v2,098120.KQ,마이크로컨텍솔,1,2,1,29,-1591268.63,False,0,
+smic_follower_v2,CRWV,Coreweave,1,2,1,29,-2074375.05,False,0,
+smic_follower_v2,5253.T,Cover Corp,2,3,3,94,-2082442.84,False,0,
+smic_follower_v2,4751.T,Cyber Agent,3,14,11,669,-2793246.33,False,0,
+smic_follower_v2,6857.T,Advantest Corporation,1,2,1,57,-3533986.34,False,0,
+smic_follower_v2,FNKO,Funko Inc.,1,3,2,95,-3858499.82,False,0,
+smic_follower_v2,ESTA,Establishment Labs Holdings,1,4,1,116,-7204749.41,False,0,
+smic_follower_v2,2124.T,JAC recruitment Co. Ltd,2,3,3,116,-9449211.67,False,0,
+smic_follower_v2,IMAX,IMAX Corp,1,4,2,147,-9971719.66,False,0,
+smic_follower_v2,IRMD,Iradimed Corporation,1,4,2,147,-10041545.25,False,0,
+smic_follower_v2,SXT,Sensient Technologies Corp,1,4,2,147,-10875830.22,False,0,
 weak_oracle,PLTR,Palantir Technologies Inc.,1,1,6,213,83467891.06,False,0,
 weak_oracle,OPEN,Opendoor,2,7,4,422,77517696.63,False,0,
+weak_oracle,000660.KS,SK하이닉스,3,4,5,189,76489097.85,False,0,
 weak_oracle,SE,SEA ltd.,4,12,12,699,71511732.07,False,0,
 weak_oracle,042660.KS,한화오션,1,5,5,365,65373214.88,False,0,
-weak_oracle,278470.KS,에이피알,1,5,6,499,64730448.33,True,757,173674275.19
 weak_oracle,032350.KS,롯데관광개발,3,5,4,243,63483169.54,False,0,
-weak_oracle,LLY,Eli Lilly & Co.,2,5,6,336,52227991.77,False,0,
-weak_oracle,GLW,Corning,5,8,11,526,48698055.63,False,0,
-weak_oracle,000660.KS,SK하이닉스,2,3,4,157,46487790.78,False,0,
-weak_oracle,GTT.PA,Gaztransport&technigaz,4,14,10,802,44498751.79,True,623,46314157.41
-weak_oracle,009970.KS,영원무역홀딩스,4,13,14,856,41895412.19,False,0,
+weak_oracle,GTT.PA,Gaztransport&technigaz,4,12,10,639,59950991.42,False,0,
+weak_oracle,278470.KS,에이피알,1,6,5,512,55472384.4,True,1669,409484046.31
+weak_oracle,GLW,Corning,6,9,12,558,49777502.29,False,0,
+weak_oracle,STNG,Scorpio Tankers Inc.,4,11,10,675,47109956.17,False,0,
 weak_oracle,075580.KS,시그넷이브이,4,9,7,514,40284411.92,False,0,
 weak_oracle,FLNC,Fluence Energy Inc.,1,3,3,216,36932281.45,False,0,
 weak_oracle,1833.HK,Ping An Healthcare & Technology,3,4,5,332,32787644.37,False,0,
 weak_oracle,CHWY,Chewy,6,11,9,580,32686977.17,False,0,
 weak_oracle,100840.KQ,SNT에너지,2,8,8,546,31710584.62,False,0,
+weak_oracle,LLY,Eli Lilly & Co.,2,4,5,276,28957402.18,False,0,
+weak_oracle,001530.KS,DI동일,3,8,8,514,27849577.3,False,0,
 weak_oracle,MP,MP Materials,1,4,3,273,27023193.13,False,0,
-weak_oracle,001530.KS,DI동일,2,7,7,486,26254316.42,False,0,
+weak_oracle,TS,Tenaris S.A.,3,3,3,188,25696594.3,False,0,
 weak_oracle,267260.KS,HD현대일렉트릭,1,3,3,215,24976745.6,False,0,
 weak_oracle,166090.KQ,하나머티리얼즈,4,6,9,363,24217076.65,False,0,
-weak_oracle,STNG,Scorpio Tankers Inc.,4,13,10,838,23733381.57,True,2656,87974341.68
+weak_oracle,009970.KS,영원무역홀딩스,4,13,12,796,24016505.57,False,0,
 weak_oracle,002714.SZ,Muyuan foods co ltd,2,5,5,395,23268034.72,False,0,
 weak_oracle,047810.KS,한국항공우주,2,3,2,118,23026766.77,False,0,
 weak_oracle,352820.KS,하이브,3,4,6,274,22137746.48,False,0,
@@ -491,64 +495,62 @@ weak_oracle,BILI,Bili bili,7,10,9,421,22048610.42,False,0,
 weak_oracle,015760.KS,한국전력,1,4,5,303,21734061.02,False,0,
 weak_oracle,356860.KQ,티엘비,1,2,3,153,20855318.94,False,0,
 weak_oracle,LEU,Centrus Energy Corp,3,4,4,210,19673830.18,False,0,
-weak_oracle,LONN.SW,Lonza Group AG,2,4,3,271,19439491.23,False,0,
+weak_oracle,BESI.AS,BE Semiconductor Industries N.V.,2,2,2,63,19377096.18,False,0,
+weak_oracle,005380.KS,현대차,2,3,3,126,18686770.82,False,0,
 weak_oracle,007660.KS,이수페타시스,2,4,4,243,17961245.36,False,0,
-weak_oracle,122640.KQ,예스티,5,11,6,531,17794692.29,True,1465,15584583.72
-weak_oracle,CHGG,Chegg,6,8,11,399,17242449.92,False,0,
+weak_oracle,LONN.SW,Lonza Group AG,1,3,2,243,17881030.9,False,0,
+weak_oracle,122640.KQ,예스티,4,10,6,428,17794692.29,False,0,
+weak_oracle,CHGG,Chegg,6,8,10,367,17628914.18,False,0,
 weak_oracle,211050.KQ,인카금융서비스,1,3,2,151,17111499.33,False,0,
 weak_oracle,1211.HK,BYD,1,6,4,396,16634642.2,False,0,
 weak_oracle,089890.KQ,코세스,1,3,2,179,15408286.54,False,0,
-weak_oracle,131970.KQ,두산테스나,1,2,2,93,14634464.76,False,0,
 weak_oracle,010950.KS,S-OIL,4,7,4,244,14450002.55,False,0,
 weak_oracle,4689.T,Z-holdings,3,4,5,248,14353879.24,False,0,
 weak_oracle,BAC,Bank of America Corp.,2,6,6,334,13907914.49,False,0,
-weak_oracle,353810.KQ,이지바이오,7,10,6,495,13587539.75,True,38670,84927694.51
+weak_oracle,440110.KQ,파두,3,3,3,206,13561958.04,True,2428,146496259.38
 weak_oracle,214450.KQ,파마리서치,1,5,4,366,13336836.14,False,0,
-weak_oracle,NE,Noble Corporation PLC,3,5,4,345,13078250.42,True,5816,161933476.65
-weak_oracle,472850.KQ,폰드그룹,1,3,1,196,13034904.33,True,3785,3088417.19
+weak_oracle,271560.KS,오리온,2,2,2,59,13178187.85,False,0,
+weak_oracle,131970.KQ,두산테스나,1,3,1,209,13056131.04,True,1063,88920518.48
 weak_oracle,EAF,GrafTech International Ltd.,2,5,2,213,12832268.87,False,0,
-weak_oracle,440110.KQ,파두,2,2,2,62,12524106.01,False,0,
-weak_oracle,GRND,Grindr Inc.,2,2,3,95,11760305.85,False,0,
-weak_oracle,228670.KQ,레이,1,1,2,60,11525885.3,False,0,
+weak_oracle,089860.KQ,롯데렌탈,2,2,2,58,11812026.26,False,0,
+weak_oracle,GRND,Grindr Inc.,1,1,2,63,11474398.2,False,0,
 weak_oracle,012330.KS,현대모비스,1,2,2,92,11154566.77,False,0,
 weak_oracle,032640.KS,LG유플러스,6,7,7,452,11125523.95,False,0,
 weak_oracle,950170.KQ,JTC,2,6,4,339,10131512.49,False,0,
 weak_oracle,376980.KQ,원티드랩,1,1,3,94,9680396.99,False,0,
-weak_oracle,005380.KS,현대차,1,2,2,94,9548824.17,False,0,
 weak_oracle,310200.KQ,애니플러스,3,4,6,303,9422930.75,False,0,
-weak_oracle,322000.KS,현대에너지솔루션,4,6,7,470,9366566.83,True,574,62694684.45
-weak_oracle,036930.KQ,주성엔지니어링,2,2,3,121,8722640.12,False,0,
+weak_oracle,036930.KQ,주성엔지니어링,3,5,3,297,8722640.12,True,5442,541365728.71
 weak_oracle,ANET,Arista Networks,2,5,6,306,8351633.34,False,0,
 weak_oracle,280360.KQ,롯데웰푸드,2,3,7,330,8282985.61,False,0,
 weak_oracle,453340.KQ,현대그린푸드,2,2,3,93,8184437.44,False,0,
 weak_oracle,148150.KQ,세경하이테크,1,3,2,154,8123746.7,False,0,
 weak_oracle,294570.KQ,쿠콘,1,4,2,273,8062512.08,False,0,
 weak_oracle,006650.KS,대한유화,5,5,5,216,8058486.97,False,0,
-weak_oracle,003030.KS,세아제강지주,6,8,7,470,8027834.23,True,117,11070255.75
+weak_oracle,003030.KS,세아제강지주,5,7,7,367,8027834.23,False,0,
 weak_oracle,CLBT,Cellebrite DI,1,2,1,92,7917703.64,False,0,
 weak_oracle,237690.KQ,에스티팜,2,4,6,277,7829128.71,False,0,
 weak_oracle,316140.KS,우리금융지주,2,6,6,395,7078402.22,False,0,
 weak_oracle,475960.KQ,토모큐브,1,2,3,121,7036597.2,False,0,
+weak_oracle,263750.KQ,펄어비스,2,4,4,299,6909191.38,True,1773,46128328.11
 weak_oracle,403870.KQ,HPSP,2,5,2,214,6553261.95,False,0,
-weak_oracle,BESI.AS,BE Semiconductor Industries N.V.,2,3,3,226,6420630.52,True,763,124946759.71
 weak_oracle,6857.T,Advantest Corporation,1,1,1,29,6311230.41,False,0,
+weak_oracle,353810.KQ,이지바이오,5,8,5,364,6009094.82,False,0,
 weak_oracle,005850.KS,에스엘,4,5,5,243,6008167.79,False,0,
-weak_oracle,TS,Tenaris S.A.,3,5,3,351,5757020.17,True,3833,123820331.01
+weak_oracle,028050.KS,삼성엔지니어링,4,6,5,446,5999664.12,True,15876,492630166.73
+weak_oracle,NE,Noble Corporation PLC,3,3,4,182,5818423.44,False,0,
 weak_oracle,348370.KQ,엔켐,2,4,5,244,5680245.76,False,0,
+weak_oracle,298020.KQ,효성티앤씨,3,4,6,359,5619053.76,True,773,240686234.61
 weak_oracle,004020.KS,현대제철,1,3,1,151,5605901.79,False,0,
-weak_oracle,INMD,Inmode,4,7,6,273,5177425.11,False,0,
-weak_oracle,000210.KS,DL,4,7,4,349,5059947.27,True,519,13322075.86
+weak_oracle,322000.KS,현대에너지솔루션,4,7,6,483,5438417.59,True,1708,243626088.29
+weak_oracle,000210.KS,DL,3,5,4,214,5059947.27,False,0,
 weak_oracle,204620.KQ,글로벌텍스프리,1,2,2,92,4965610.02,False,0,
 weak_oracle,366030.KQ,공구우먼,3,5,4,273,4941783.56,False,0,
-weak_oracle,028050.KS,삼성엔지니어링,4,6,5,433,4881118.62,True,3517,94385893.04
-weak_oracle,263750.KQ,펄어비스,2,3,5,286,4806992.43,True,905,19461049.53
+weak_oracle,INMD,Inmode,4,6,5,213,4634590.11,False,0,
 weak_oracle,035900.KQ,JYP Ent.,3,7,7,489,4400236.43,False,0,
-weak_oracle,271560.KS,오리온,2,2,2,194,4147504.6,True,555,21164993.0
-weak_oracle,ROKU,Roku,4,5,5,210,4036704.28,False,0,
 weak_oracle,009830.KS,한화솔루션,2,4,2,244,3748940.55,False,0,
 weak_oracle,099430.KQ,바이오플러스,1,1,2,59,3505962.95,False,0,
+weak_oracle,001120.KS,LX인터내셔널,1,2,2,209,3281826.43,True,12046,304654512.38
 weak_oracle,025980.KS,아난티,1,1,1,62,3059037.57,False,0,
-weak_oracle,FNKO,Funko Inc.,1,2,1,163,2978716.62,True,2721,3478449.98
 weak_oracle,017650.KS,대림제지,1,1,2,61,2919388.33,False,0,
 weak_oracle,192820.KS,코스맥스,3,4,3,185,2823235.54,False,0,
 weak_oracle,328130.KQ,루닛,2,4,3,152,2811010.85,False,0,
@@ -556,23 +558,25 @@ weak_oracle,WFG,West Fraser Timber. Co. Ltd,3,6,3,183,2741255.47,False,0,
 weak_oracle,067160.KQ,아프리카TV,1,4,2,184,2672675.9,False,0,
 weak_oracle,119610.KQ,인터로조,1,2,4,212,2658124.27,False,0,
 weak_oracle,4680.T,Round One Corp,1,2,1,62,2598151.4,False,0,
+weak_oracle,408920.KQ,메쎄이상,3,3,3,121,2537728.89,False,0,
+weak_oracle,ROKU,Roku,3,4,4,178,2490204.0,False,0,
 weak_oracle,033500.KQ,동성화인텍,1,1,1,32,2471531.36,False,0,
+weak_oracle,017960.KS,한국카본,1,1,1,32,2411932.18,False,0,
 weak_oracle,218410.KQ,RFHIC,1,1,1,32,2286437.13,False,0,
 weak_oracle,006260.KS,LS,3,3,3,122,2275259.55,False,0,
 weak_oracle,4751.T,Cyber Agent,2,2,2,91,2232290.31,False,0,
 weak_oracle,041830.KQ,인바디,4,6,5,244,1955387.7,False,0,
 weak_oracle,196170.KQ,알테오젠,1,1,1,28,1942275.77,False,0,
 weak_oracle,194480.KQ,데브시스터즈,4,9,5,365,1891422.77,False,0,
-weak_oracle,408920.KQ,메쎄이상,2,2,2,93,1890315.0,False,0,
 weak_oracle,248070.KS,솔루엠,2,2,4,183,1855830.8,False,0,
 weak_oracle,348210.KQ,넥스틴,1,1,1,121,1710288.19,False,0,
 weak_oracle,210980.KS,SK디앤디,2,2,5,185,1667674.4,False,0,
-weak_oracle,285490.KQ,노바텍,5,7,9,558,1650913.39,True,277,148424.46
+weak_oracle,285490.KQ,노바텍,4,6,9,455,1650913.39,False,0,
 weak_oracle,052690.KS,한전기술,1,1,1,32,1600483.31,False,0,
 weak_oracle,005490.KS,포스코홀딩스,1,1,2,150,1559924.81,False,0,
 weak_oracle,036420.KS,제이콘텐트리,3,6,3,211,1559246.17,False,0,
+weak_oracle,375500.KS,DL이앤씨,2,2,2,64,1489823.46,False,0,
 weak_oracle,TSM,TSMC,3,5,5,305,1479273.73,False,0,
-weak_oracle,017960.KS,한국카본,1,1,1,32,1449720.33,False,0,
 weak_oracle,170790.KQ,파이오링크,3,5,5,272,1400036.7,False,0,
 weak_oracle,VRT,Vertiv Holdings Co.,1,1,2,62,1380780.78,False,0,
 weak_oracle,SBLK,Star Bulk Carriers,7,10,9,429,1315506.89,False,0,
@@ -584,7 +588,6 @@ weak_oracle,363250.KQ,진시스템,1,1,1,60,905708.97,False,0,
 weak_oracle,006060.KS,화승인더,1,1,1,60,879161.21,False,0,
 weak_oracle,001060.KS,JW중외제약,2,4,2,122,846900.47,False,0,
 weak_oracle,082740.KS,한화엔진,1,1,1,62,733251.06,False,0,
-weak_oracle,298020.KQ,효성티앤씨,3,4,5,211,732545.75,False,0,
 weak_oracle,004250.KS,NPC,1,1,1,121,720312.14,False,0,
 weak_oracle,044490.KQ,태웅,2,2,2,61,701465.25,False,0,
 weak_oracle,054780.KQ,키이스트,1,3,2,153,657199.17,False,0,
@@ -592,22 +595,17 @@ weak_oracle,053030.KQ,바이넥스,2,2,3,120,544140.24,False,0,
 weak_oracle,284740.KS,쿠쿠홈시스,1,2,1,89,412939.46,False,0,
 weak_oracle,068270.KS,셀트리온,2,2,2,58,400402.88,False,0,
 weak_oracle,089600.KQ,나스미디어,1,2,1,92,328388.31,False,0,
-weak_oracle,001120.KS,LX인터내셔널,1,1,3,196,281840.93,True,674,12084607.8
 weak_oracle,036570.KS,엔씨소프트,1,2,1,62,183437.54,False,0,
 weak_oracle,043650.KQ,국순당,1,1,1,30,148226.85,False,0,
 weak_oracle,5726.T,"OSAKA Titanium Technologies Co.,Ltd.",1,1,1,29,22951.54,False,0,
-weak_oracle,CRWV,Coreweave,1,1,1,135,20654.93,True,35,2148698.14
-weak_oracle,950160.KQ,코오롱티슈진,1,2,0,135,0.0,True,309,5895892.45
-weak_oracle,476830.KQ,알지노믹스,1,1,0,103,0.0,True,102,5600053.85
+weak_oracle,LITE,Lumentum Holdings Inc,1,1,0,116,0.0,True,36,-20051045.97
 weak_oracle,344820.KQ,케이씨씨글라스,1,1,1,30,-30607.93,False,0,
-weak_oracle,420770.KQ,기가비스,1,1,1,62,-33696.67,False,0,
-weak_oracle,089860.KQ,롯데렌탈,1,1,1,30,-81450.51,False,0,
-weak_oracle,IMAX,IMAX Corp,1,1,1,135,-125046.59,True,1497,640967.82
 weak_oracle,008730.KS,율촌화학,2,2,2,88,-185283.31,False,0,
 weak_oracle,007690.KS,국도화학,1,1,2,59,-240310.18,False,0,
-weak_oracle,023160.KS,태광,2,3,1,195,-272280.31,True,572,13499973.91
+weak_oracle,472850.KQ,폰드그룹,1,1,1,33,-267307.62,False,0,
+weak_oracle,023160.KS,태광,2,3,1,208,-272280.31,True,965,23622382.11
 weak_oracle,054210.KQ,이랜텍,1,1,1,30,-335049.25,False,0,
-weak_oracle,375500.KS,DL이앤씨,2,2,4,124,-431908.61,False,0,
+weak_oracle,420770.KQ,기가비스,3,3,2,206,-952342.97,True,3311,243621368.97
 weak_oracle,029460.KS,케이씨,1,1,1,32,-1185835.63,False,0,
 weak_oracle,078350.KS,한양디지텍,1,2,1,60,-2033420.96,False,0,
 weak_oracle,002340.SZ,"GEM Co., Ltd.",3,5,5,271,-8007160.02,False,0,

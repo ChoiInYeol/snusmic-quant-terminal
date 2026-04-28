@@ -21361,6 +21361,17 @@
       "open": 66.47000122070312,
       "source_currency": "",
       "volume": 280300.0
+    },
+    {
+      "close": 64.2750015258789,
+      "close_krw": 64.275,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 66.20999908447266,
+      "low": 63.959999084472656,
+      "open": 64.75,
+      "source_currency": "",
+      "volume": 93787.0
     }
   ],
   "symbol": "ESTA"

@@ -21361,6 +21361,17 @@
       "open": 63.529998779296875,
       "source_currency": "",
       "volume": 1029100.0
+    },
+    {
+      "close": 63.189998626708984,
+      "close_krw": 63.19,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 63.5099983215332,
+      "low": 62.79249954223633,
+      "open": 63.22999954223633,
+      "source_currency": "",
+      "volume": 790996.0
     }
   ],
   "symbol": "TS"

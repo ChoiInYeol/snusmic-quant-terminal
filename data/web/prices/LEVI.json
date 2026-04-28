@@ -19634,6 +19634,17 @@
       "open": 22.260000228881836,
       "source_currency": "",
       "volume": 3280800.0
+    },
+    {
+      "close": 22.31999969482422,
+      "close_krw": 22.32,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 23.010000228881836,
+      "low": 22.059999465942383,
+      "open": 22.84000015258789,
+      "source_currency": "",
+      "volume": 1038020.0
     }
   ],
   "symbol": "LEVI"

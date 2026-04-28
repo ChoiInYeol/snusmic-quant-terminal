@@ -21361,6 +21361,17 @@
       "open": 855.7449951171875,
       "source_currency": "",
       "volume": 5276700.0
+    },
+    {
+      "close": 792.6799926757812,
+      "close_krw": 792.68,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 842.0,
+      "low": 780.47998046875,
+      "open": 813.780029296875,
+      "source_currency": "",
+      "volume": 3904337.0
     }
   ],
   "symbol": "LITE"

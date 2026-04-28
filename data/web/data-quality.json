@@ -1,7 +1,7 @@
 {
   "coverage": {
-    "report_performance_rows": 211,
-    "reports_without_performance": 5,
+    "report_performance_rows": 216,
+    "reports_without_performance": 0,
     "warehouse_reports": 216
   },
   "extraction_quality": {

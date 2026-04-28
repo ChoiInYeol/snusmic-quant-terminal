@@ -1594,6 +1594,17 @@
       "open": 32.16999816894531,
       "source_currency": "",
       "volume": 4878000.0
+    },
+    {
+      "close": 25.450000762939453,
+      "close_krw": 25.45,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 28.959999084472656,
+      "low": 25.260000228881836,
+      "open": 27.899999618530273,
+      "source_currency": "",
+      "volume": 2456702.0
     }
   ],
   "symbol": "WOLF"

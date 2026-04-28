@@ -21361,6 +21361,17 @@
       "open": 78.5999984741211,
       "source_currency": "",
       "volume": 1013600.0
+    },
+    {
+      "close": 80.94000244140625,
+      "close_krw": 80.94,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 81.2300033569336,
+      "low": 79.20999908447266,
+      "open": 80.76000213623047,
+      "source_currency": "",
+      "volume": 452071.0
     }
   ],
   "symbol": "STNG"

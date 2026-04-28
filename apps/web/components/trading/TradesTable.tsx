@@ -22,7 +22,7 @@ type TradeSortKey = 'date' | 'strategy' | 'market' | 'side' | 'symbol' | 'target
 export function TradesTable({ trades, episodes, personaLabels, capitalByPersona = {}, reportSymbolsById, targetsBySymbol, targetsByReportId }: Props) {
   const personas = useMemo(() => Array.from(new Set(trades.map((trade) => trade.persona))).sort(), [trades]);
   const [persona, setPersona] = useState(() => defaultPersonaFor(personas));
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(() => initialUrlQuery());
   const [side, setSide] = useState('all');
   const [episodeSort, setEpisodeSort] = useState<SortState<EpisodeSortKey>>({ key: 'openDate', direction: 'desc' });
   const [tradeSort, setTradeSort] = useState<SortState<TradeSortKey>>({ key: 'date', direction: 'desc' });
@@ -31,6 +31,8 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
   const [episodePageSize, setEpisodePageSize] = useState(25);
   const [tradePageSize, setTradePageSize] = useState(50);
   useUrlBackedStrategy(persona, setPersona, personas);
+
+
   const deferredQuery = useDeferredValue(query);
   const normalizedQuery = deferredQuery.trim().toLowerCase();
 
@@ -254,4 +256,10 @@ function capitalContribution(pnl: number | null, capital: number | undefined): n
 
 function marketLabel(region: 'domestic' | 'overseas' | undefined): string {
   return region === 'domestic' ? '국내' : '해외';
+}
+
+function initialUrlQuery(): string {
+  if (typeof window === 'undefined') return '';
+  const params = new URLSearchParams(window.location.search);
+  return params.get('q') ?? params.get('symbol') ?? '';
 }

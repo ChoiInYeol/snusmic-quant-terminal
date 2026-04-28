@@ -18985,6 +18985,17 @@
       "open": 25.709999084472656,
       "source_currency": "",
       "volume": 7503900.0
+    },
+    {
+      "close": 25.565000534057617,
+      "close_krw": 25.565,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 25.915000915527344,
+      "low": 25.2450008392334,
+      "open": 25.489999771118164,
+      "source_currency": "",
+      "volume": 3013311.0
     }
   ],
   "symbol": "CHWY"

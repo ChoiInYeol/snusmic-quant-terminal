@@ -2,8 +2,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PriceEvidenceChart } from '@/components/charts/PriceEvidenceChart';
+import { SymbolPersonaTrades } from '@/components/reports/SymbolPersonaTrades';
 import { MetricCard, Panel, TerminalHero } from '@/components/ui/Terminal';
-import { getMarkdownSnippet, getPriceSeries, getReportBySymbol, getReportRows, getReportsBySymbol, type PricePoint, type ReportRow } from '@/lib/artifacts';
+import { getMarkdownSnippet, getPositionEpisodes, getPriceSeries, getReportBySymbol, getReportRows, getReportsBySymbol, getSummaryRows, getTrades, type PricePoint, type ReportRow } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
 
 type ReportParams = Promise<{ symbol: string }>;
@@ -29,6 +30,9 @@ export default async function ReportDetailPage({ params }: { params: ReportParam
   const pathEvidence = buildPathEvidence(prices, report);
   const scenarioRows = buildScenarioRows(prices, report);
   const memo = buildKoreanInvestmentMemo(report);
+  const personaLabels = Object.fromEntries(getSummaryRows().map((row) => [row.persona, row.label ?? row.persona]));
+  const symbolEpisodes = getPositionEpisodes().filter((row) => row.symbol === report.symbol);
+  const symbolTrades = getTrades().filter((row) => row.symbol === report.symbol);
 
   return (
     <>
@@ -41,6 +45,7 @@ export default async function ReportDetailPage({ params }: { params: ReportParam
         <MetricCard label="현재 수익률" value={formatPercent(report.currentReturn)} tone={(report.currentReturn ?? 0) >= 0 ? 'good' : 'bad'} />
         <MetricCard label="목표 상태" value={targetStatusValue(report)} detail={targetStatusDetail(report)} tone={report.targetHit ? 'good' : 'warn'} />
       </section>
+      <SymbolPersonaTrades symbol={report.symbol} episodes={symbolEpisodes} trades={symbolTrades} personaLabels={personaLabels} />
       <section className="detail-grid">
         <Panel title="가격 경로 vs 추출 목표가">
           <PriceEvidenceChart priceSeries={prices} targetPrice={report.targetPriceKrw} publicationDate={report.publicationDate} targetHitDate={report.targetHitDate} evidenceMarkers={pathEvidence.markers} />

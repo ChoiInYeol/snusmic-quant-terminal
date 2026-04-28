@@ -21361,6 +21361,17 @@
       "open": 52.630001068115234,
       "source_currency": "",
       "volume": 638400.0
+    },
+    {
+      "close": 52.52000045776367,
+      "close_krw": 52.52,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 53.665000915527344,
+      "low": 52.47999954223633,
+      "open": 53.36000061035156,
+      "source_currency": "",
+      "volume": 1119512.0
     }
   ],
   "symbol": "GLNG"

@@ -12396,6 +12396,17 @@
       "open": 13.43000030517578,
       "source_currency": "",
       "volume": 5200100.0
+    },
+    {
+      "close": 12.104999542236328,
+      "close_krw": 12.105,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 12.949899673461914,
+      "low": 11.944499969482422,
+      "open": 12.760000228881836,
+      "source_currency": "",
+      "volume": 3487574.0
     }
   ],
   "symbol": "FLNC"

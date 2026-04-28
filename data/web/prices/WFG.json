@@ -21361,6 +21361,17 @@
       "open": 65.30999755859375,
       "source_currency": "",
       "volume": 67300.0
+    },
+    {
+      "close": 64.34950256347656,
+      "close_krw": 64.3495,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 66.3499984741211,
+      "low": 64.32499694824219,
+      "open": 66.43000030517578,
+      "source_currency": "",
+      "volume": 58161.0
     }
   ],
   "symbol": "WFG"

@@ -21361,6 +21361,17 @@
       "open": 176.72000122070312,
       "source_currency": "",
       "volume": 6778100.0
+    },
+    {
+      "close": 162.89500427246094,
+      "close_krw": 162.895,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 167.82000732421875,
+      "low": 162.25,
+      "open": 166.47999572753906,
+      "source_currency": "",
+      "volume": 4294702.0
     }
   ],
   "symbol": "ANET"

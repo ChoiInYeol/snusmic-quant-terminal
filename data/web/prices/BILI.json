@@ -21361,6 +21361,17 @@
       "open": 21.59000015258789,
       "source_currency": "",
       "volume": 2006900.0
+    },
+    {
+      "close": 21.329999923706055,
+      "close_krw": 21.33,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 21.350000381469727,
+      "low": 20.989999771118164,
+      "open": 21.270000457763672,
+      "source_currency": "",
+      "volume": 902514.0
     }
   ],
   "symbol": "BILI"

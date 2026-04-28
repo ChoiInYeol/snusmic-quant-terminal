@@ -37,6 +37,11 @@ export default function Home() {
   const v1 = personas.find((row) => row.persona === 'smic_follower');
   const allWeather = personas.find((row) => row.persona === 'all_weather');
   const reportStats = buildReportStats(reports);
+  const realizedPnl = episodes
+    .filter((row) => row.persona === DEFAULT_PERSONA && row.status === 'closed')
+    .reduce((sum, row) => sum + (row.realizedPnlKrw ?? 0), 0);
+  const totalCapital = v2?.totalContributedKrw ?? v2?.cumulativeDepositsKrw ?? null;
+  const realizedContribution = totalCapital && totalCapital > 0 ? realizedPnl / totalCapital : null;
   const recentWinningEpisodes = episodes
     .filter((row) => row.persona === DEFAULT_PERSONA && row.status === 'closed' && (row.realizedPnlKrw ?? 0) > 0)
     .sort((a, b) => (b.closeDate ?? '').localeCompare(a.closeDate ?? ''))
@@ -66,6 +71,7 @@ export default function Home() {
       <section className="grid cards bento-metrics" style={{ marginBottom: '1rem' }}>
         <MetricCard label={`${defaultLabel} 평가액`} value={formatKrw(portfolio.marketValue)} detail={`${holdings.length.toLocaleString('ko-KR')}개 보유 · 집중도 ${formatPercent(portfolio.top5Weight)}`} tone="accent" />
         <MetricCard label="현재 미실현 손익" value={formatKrw(portfolio.unrealizedPnl)} detail={formatPercent(portfolio.unrealizedReturn)} tone={portfolio.unrealizedPnl >= 0 ? 'good' : 'bad'} />
+        <MetricCard label="실현손익/투입금" value={formatKrw(realizedPnl)} detail={`투입금 대비 ${formatPercent(realizedContribution)}`} tone={realizedPnl >= 0 ? 'good' : 'bad'} />
         <MetricCard label="전략 누적 손익" value={formatKrw(v2?.netProfitKrw)} detail={`MWR ${formatPercent(v2?.moneyWeightedReturn ?? v2?.irr)} · MDD ${formatPercent(v2?.maxDrawdown)}`} tone={(v2?.netProfitKrw ?? 0) >= 0 ? 'good' : 'bad'} />
         <MetricCard label="리포트 목표 터치율" value={formatPercent(reportStats.hitRate)} detail={`${reportStats.hitCount.toLocaleString('ko-KR')}건 / ${reportStats.count.toLocaleString('ko-KR')}건`} tone="good" />
       </section>
@@ -106,7 +112,7 @@ export default function Home() {
         <Panel title="최근 이익 실현 포지션">
           <div className="table-wrap inset compact-table">
             <table>
-              <thead><tr><th>청산일</th><th>종목</th><th>보유</th><th>평균 진입/청산</th><th>실현손익</th><th>사유</th></tr></thead>
+              <thead><tr><th>청산일</th><th>종목</th><th>보유</th><th>평균 진입/청산</th><th>실현손익</th><th>사유</th><th>전문</th></tr></thead>
               <tbody>{recentWinningEpisodes.map((episode) => (
                 <tr key={`${episode.persona}-${episode.symbol}-${episode.openDate}-${episode.closeDate}`}>
                   <td>{episode.closeDate ?? '—'}</td>
@@ -115,6 +121,7 @@ export default function Home() {
                   <td>{formatKrw(episode.avgEntryPriceKrw)}<div className="muted">→ {formatKrw(episode.avgExitPriceKrw)}</div></td>
                   <td className="good">{formatKrw(episode.realizedPnlKrw)}<div>{formatPercent(positionReturn(episode.avgEntryPriceKrw, episode.avgExitPriceKrw))}</div></td>
                   <td>{humanReason(episode.exitReasons)}</td>
+                  <td><Link className="mini-link" href={`/reports/${episode.symbol}#persona-trades`}>매매</Link><Link className="mini-link secondary" href={`/trades?strategy=${DEFAULT_PERSONA}&q=${episode.symbol}`}>원장</Link></td>
                 </tr>
               ))}</tbody>
             </table>
@@ -124,7 +131,7 @@ export default function Home() {
         <Panel title="현재 열려 있는 큰 포지션">
           <div className="table-wrap inset compact-table">
             <table>
-              <thead><tr><th>종목</th><th>목표가</th><th>평균 진입</th><th>최근가</th><th>미실현 손익</th></tr></thead>
+              <thead><tr><th>종목</th><th>목표가</th><th>평균 진입</th><th>최근가</th><th>미실현 손익</th><th>전문</th></tr></thead>
               <tbody>{openPositions.map((episode) => {
                 const target = targetsBySymbol[episode.symbol];
                 return (
@@ -134,6 +141,7 @@ export default function Home() {
                     <td>{formatKrw(episode.avgEntryPriceKrw)}</td>
                     <td>{formatKrw(episode.lastCloseKrw)}</td>
                     <td className={(episode.unrealizedPnlKrw ?? 0) >= 0 ? 'good' : 'bad'}>{formatKrw(episode.unrealizedPnlKrw)}</td>
+                    <td><Link className="mini-link" href={`/reports/${episode.symbol}#persona-trades`}>매매</Link><Link className="mini-link secondary" href={`/trades?strategy=${DEFAULT_PERSONA}&q=${episode.symbol}`}>원장</Link></td>
                   </tr>
                 );
               })}</tbody>
@@ -159,9 +167,11 @@ export default function Home() {
 function PortfolioHeatmap({ holdings }: { holdings: HoldingRow[] }) {
   const total = holdings.reduce((sum, row) => sum + Math.max(0, row.marketValueKrw ?? 0), 0);
   if (!holdings.length || total <= 0) return <div className="empty-chart">현재 보유 포지션이 없습니다.</div>;
+  const rects = buildTreemap(holdings.slice(0, 32));
   return (
     <div className="portfolio-heatmap">
-      {holdings.slice(0, 28).map((row) => {
+      {rects.map((rect) => {
+        const { row } = rect;
         const value = Math.max(0, row.marketValueKrw ?? 0);
         const weight = value / total;
         const returnPct = row.unrealizedReturn ?? 0;
@@ -171,10 +181,13 @@ function PortfolioHeatmap({ holdings }: { holdings: HoldingRow[] }) {
             className="heatmap-cell"
             key={`${row.persona}-${row.symbol}`}
             style={{
-              flexGrow: Math.max(1, Math.round(weight * 1000)),
-              flexBasis: `${Math.max(11, Math.min(36, weight * 125))}%`,
+              left: `${rect.x}%`,
+              top: `${rect.y}%`,
+              width: `${rect.w}%`,
+              height: `${rect.h}%`,
               background: returnColor(returnPct),
             }}
+            title={`${row.company || row.symbol} · 비중 ${formatPercent(weight)} · 평가금 ${formatKrw(value)}`}
           >
             <strong>{row.company || row.symbol}</strong>
             <span>{row.symbol}</span>
@@ -192,33 +205,81 @@ function DistributionGrid({ stats }: { stats: DistributionStat[] }) {
     <div className="distribution-grid">
       {stats.map((stat) => (
         <article className="distribution-card" key={stat.label}>
-          <div className="muted">{stat.label}</div>
-          <div className="distribution-main">평균 {formatStat(stat.mean, stat.kind)}</div>
+          <div className="distribution-card-head">
+            <div>
+              <div className="muted">{stat.label}</div>
+              <div className="distribution-main">평균 {formatStat(stat.mean, stat.kind)}</div>
+            </div>
+            <span className={stat.skewness !== null && Math.abs(stat.skewness) > 1 ? 'pill warn' : 'pill'}>{skewLabel(stat.skewness)}</span>
+          </div>
+          <DistributionCurve stat={stat} />
           <div>중앙값 {formatStat(stat.median, stat.kind)} · P25/P75 {formatStat(stat.p25, stat.kind)} / {formatStat(stat.p75, stat.kind)}</div>
-          <div className={stat.skewness !== null && Math.abs(stat.skewness) > 1 ? 'warn' : ''}>왜도 {formatNumber(stat.skewness, 2)} · {skewLabel(stat.skewness)}</div>
+          <div className={stat.skewness !== null && Math.abs(stat.skewness) > 1 ? 'warn' : ''}>왜도 {formatNumber(stat.skewness, 2)} · 첨도 {formatNumber(stat.kurtosis, 2)} · 표준편차 {formatStat(stat.stdDev, stat.kind)}</div>
         </article>
       ))}
     </div>
   );
 }
 
+function DistributionCurve({ stat }: { stat: DistributionStat }) {
+  if (!stat.histogram.length || stat.min === null || stat.max === null || stat.max <= stat.min) {
+    return <div className="empty-chart small">표본 부족</div>;
+  }
+  const range = stat.max - stat.min;
+  const maxCount = Math.max(1, ...stat.histogram.map((bin) => bin.count));
+  const sd = stat.stdDev !== null && stat.stdDev > 0 ? stat.stdDev : range / 6;
+  const mu = stat.mean ?? (stat.min + stat.max) / 2;
+  const curvePoints = Array.from({ length: 58 }, (_, index) => {
+    const x = stat.min! + (range * index) / 57;
+    const density = Math.exp(-0.5 * ((x - mu) / sd) ** 2);
+    return { x: ((x - stat.min!) / range) * 100, y: 84 - density * 70 };
+  });
+  const path = curvePoints.map((point, index) => `${index === 0 ? 'M' : 'L'}${point.x.toFixed(2)},${point.y.toFixed(2)}`).join(' ');
+  const meanX = Math.max(0, Math.min(100, ((mu - stat.min) / range) * 100));
+  return (
+    <svg className="distribution-curve" viewBox="0 0 100 92" role="img" aria-label={`${stat.label} 평균·왜도·첨도 분포 곡선`}>
+      {stat.histogram.map((bin) => {
+        const x = ((bin.start - stat.min!) / range) * 100;
+        const w = Math.max(1.2, ((bin.end - bin.start) / range) * 100 - 0.45);
+        const h = (bin.count / maxCount) * 58;
+        return <rect key={`${bin.start}-${bin.end}`} x={x} y={84 - h} width={w} height={h} rx="1.4" />;
+      })}
+      <path d={path} />
+      <line x1={meanX} x2={meanX} y1="12" y2="86" />
+    </svg>
+  );
+}
+
 function Histogram({ bins }: { bins: HistogramBin[] }) {
   const max = Math.max(1, ...bins.map((bin) => bin.count));
   return (
-    <div className="histogram" aria-label="현재 수익률 분포 히스토그램">
+    <div className="histogram histogram-vertical" aria-label="현재 수익률 분포 히스토그램">
       {bins.map((bin) => (
-        <div className="histogram-row" key={bin.label}>
-          <span>{bin.label}</span>
-          <div className="histogram-track"><div style={{ width: `${(bin.count / max) * 100}%` }} /></div>
+        <div className="histogram-column" key={bin.label}>
+          <div className="histogram-track"><div style={{ height: `${(bin.count / max) * 100}%` }} /></div>
           <strong>{bin.count}</strong>
+          <span>{bin.label}</span>
         </div>
       ))}
     </div>
   );
 }
 
-type DistributionStat = { label: string; kind: 'percent' | 'days'; mean: number | null; median: number | null; p25: number | null; p75: number | null; skewness: number | null };
-type HistogramBin = { label: string; count: number };
+type DistributionStat = {
+  label: string;
+  kind: 'percent' | 'days';
+  mean: number | null;
+  median: number | null;
+  p25: number | null;
+  p75: number | null;
+  stdDev: number | null;
+  skewness: number | null;
+  kurtosis: number | null;
+  min: number | null;
+  max: number | null;
+  histogram: HistogramBin[];
+};
+type HistogramBin = { label: string; count: number; start: number; end: number };
 
 function summarizeHoldings(rows: HoldingRow[]) {
   const marketValue = rows.reduce((sum, row) => sum + (row.marketValueKrw ?? 0), 0);
@@ -251,7 +312,7 @@ function buildReportStats(reports: ReportRow[]) {
       distribution('발간 후 고점 수익률', peakReturns, 'percent'),
       distribution('발간 후 저점 수익률', troughReturns, 'percent'),
     ],
-    currentReturnHistogram: histogram(currentReturns, [-1, -0.5, -0.25, 0, 0.25, 0.5, 1, 2, Number.POSITIVE_INFINITY]),
+    currentReturnHistogram: histogram(currentReturns, [-1, -0.75, -0.5, -0.25, -0.1, 0, 0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 5, Number.POSITIVE_INFINITY]),
   };
 }
 
@@ -267,6 +328,8 @@ function buildReturnSeries(equity: ReturnType<typeof getEquityDaily>, personas: 
 
 function distribution(label: string, values: number[], kind: 'percent' | 'days'): DistributionStat {
   const sorted = [...values].sort((a, b) => a - b);
+  const min = sorted[0] ?? null;
+  const max = sorted.at(-1) ?? null;
   return {
     label,
     kind,
@@ -274,7 +337,12 @@ function distribution(label: string, values: number[], kind: 'percent' | 'days')
     median: percentile(sorted, 0.5),
     p25: percentile(sorted, 0.25),
     p75: percentile(sorted, 0.75),
+    stdDev: stdDev(sorted),
     skewness: skewness(sorted),
+    kurtosis: kurtosis(sorted),
+    min,
+    max,
+    histogram: autoHistogram(sorted, 16),
   };
 }
 
@@ -282,7 +350,21 @@ function histogram(values: number[], edges: number[]): HistogramBin[] {
   return edges.slice(0, -1).map((start, index) => {
     const end = edges[index + 1];
     const count = values.filter((value) => value >= start && value < end).length;
-    return { label: `${formatHistogramEdge(start)}~${formatHistogramEdge(end)}`, count };
+    return { label: `${formatHistogramEdge(start)}~${formatHistogramEdge(end)}`, count, start, end };
+  });
+}
+
+function autoHistogram(values: number[], targetBins: number): HistogramBin[] {
+  if (!values.length) return [];
+  const min = values[0];
+  const max = values.at(-1) ?? min;
+  if (min === max) return [{ label: formatHistogramEdge(min), count: values.length, start: min - 0.5, end: min + 0.5 }];
+  const step = (max - min) / targetBins;
+  return Array.from({ length: targetBins }, (_, index) => {
+    const start = min + step * index;
+    const end = index === targetBins - 1 ? max + Number.EPSILON : start + step;
+    const count = values.filter((value) => value >= start && value < end).length;
+    return { label: `${formatHistogramEdge(start)}~${formatHistogramEdge(end)}`, count, start, end };
   });
 }
 
@@ -309,6 +391,54 @@ function returnColor(value: number): string {
   }
   const alpha = 0.20 + Math.min(Math.abs(capped) / 0.6, 1) * 0.58;
   return `linear-gradient(135deg, rgba(255, 111, 145, ${alpha}), rgba(138, 180, 255, ${Math.max(0.12, alpha - 0.2)}))`;
+}
+
+type TreemapRect = { row: HoldingRow; x: number; y: number; w: number; h: number; value: number };
+
+function buildTreemap(rows: HoldingRow[]): TreemapRect[] {
+  const items = rows
+    .map((row) => ({ row, value: Math.max(0, row.marketValueKrw ?? 0) }))
+    .filter((item) => item.value > 0)
+    .sort((a, b) => b.value - a.value);
+  const rects: TreemapRect[] = [];
+  layoutTreemap(items, 0, 0, 100, 100, rects);
+  return rects;
+}
+
+function layoutTreemap(
+  items: Array<{ row: HoldingRow; value: number }>,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  rects: TreemapRect[],
+) {
+  if (!items.length || w <= 0 || h <= 0) return;
+  if (items.length === 1) {
+    rects.push({ ...items[0], x, y, w, h });
+    return;
+  }
+  const total = items.reduce((sum, item) => sum + item.value, 0);
+  let running = 0;
+  let splitIndex = 0;
+  for (; splitIndex < items.length - 1; splitIndex += 1) {
+    if (running + items[splitIndex].value > total / 2 && splitIndex > 0) break;
+    running += items[splitIndex].value;
+  }
+  splitIndex = Math.min(splitIndex, items.length - 2);
+  const first = items.slice(0, splitIndex + 1);
+  const second = items.slice(splitIndex + 1);
+  const firstValue = first.reduce((sum, item) => sum + item.value, 0);
+  const ratio = firstValue / total;
+  if (w >= h) {
+    const firstW = w * ratio;
+    layoutTreemap(first, x, y, firstW, h, rects);
+    layoutTreemap(second, x + firstW, y, w - firstW, h, rects);
+  } else {
+    const firstH = h * ratio;
+    layoutTreemap(first, x, y, w, firstH, rects);
+    layoutTreemap(second, x, y + firstH, w, h - firstH, rects);
+  }
 }
 
 function positionReturn(entry: number | null, exit: number | null): number | null {
@@ -352,10 +482,25 @@ function skewness(values: number[]): number | null {
   if (values.length < 3) return null;
   const avg = mean(values);
   if (avg === null) return null;
-  const variance = values.reduce((sum, value) => sum + (value - avg) ** 2, 0) / values.length;
-  const sd = Math.sqrt(variance);
-  if (sd === 0) return 0;
+  const sd = stdDev(values);
+  if (!sd) return 0;
   return values.reduce((sum, value) => sum + ((value - avg) / sd) ** 3, 0) / values.length;
+}
+
+function stdDev(values: number[]): number | null {
+  if (!values.length) return null;
+  const avg = mean(values);
+  if (avg === null) return null;
+  const variance = values.reduce((sum, value) => sum + (value - avg) ** 2, 0) / values.length;
+  return Math.sqrt(variance);
+}
+
+function kurtosis(values: number[]): number | null {
+  if (values.length < 4) return null;
+  const avg = mean(values);
+  const sd = stdDev(values);
+  if (avg === null || !sd) return 0;
+  return values.reduce((sum, value) => sum + ((value - avg) / sd) ** 4, 0) / values.length - 3;
 }
 
 function isNumber(value: number | null | undefined): value is number {

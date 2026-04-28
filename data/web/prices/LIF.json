@@ -5202,6 +5202,17 @@
       "open": 45.11000061035156,
       "source_currency": "",
       "volume": 475800.0
+    },
+    {
+      "close": 42.61000061035156,
+      "close_krw": 42.61,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 44.084999084472656,
+      "low": 42.34000015258789,
+      "open": 43.849998474121094,
+      "source_currency": "",
+      "volume": 171022.0
     }
   ],
   "symbol": "LIF"

@@ -302,6 +302,13 @@ tr:hover td { background: rgba(215,255,79,.045); }
   gap: .5rem;
   margin: .85rem 0 1rem;
 }
+.strategy-tabs.compact {
+  margin: .65rem 0;
+}
+.strategy-tabs.compact button {
+  padding: .38rem .6rem;
+  font-size: .76rem;
+}
 .strategy-tabs button {
   border-color: var(--line-strong);
   background: rgba(255,255,255,.04);
@@ -403,6 +410,21 @@ select:focus-visible { border-color: rgba(215,255,79,.62); box-shadow: 0 0 0 4px
 .param { border: 1px solid var(--line); border-radius: 16px; padding: .8rem; background: rgba(0,0,0,.2); }
 .param dt { color: var(--muted); font-size: .78rem; }
 .param dd { margin: .25rem 0 0; font-weight: 900; word-break: break-word; }
+.anchor-section {
+  scroll-margin-top: 5.5rem;
+  margin-bottom: 1rem;
+}
+.section-headline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.section-headline p { margin: .2rem 0 0; }
+.compact-stat-row {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  margin: .75rem 0 1rem;
+}
 .bar-list { display: grid; gap: .7rem; }
 .bar-row { display: grid; grid-template-columns: minmax(95px, .65fr) minmax(110px, 1fr) auto; gap: .75rem; align-items: center; color: var(--muted); }
 .bar-track { height: .55rem; border-radius: 999px; background: rgba(255,255,255,.075); overflow: hidden; }
@@ -508,21 +530,23 @@ select:focus-visible {
 .dashboard-main-panel { min-height: 520px; }
 .panel-caption { color: var(--muted); font-size: .82rem; margin-bottom: .75rem; }
 .portfolio-heatmap {
-  display: flex;
-  flex-wrap: wrap;
-  align-content: stretch;
-  gap: .45rem;
-  min-height: 430px;
+  position: relative;
+  min-height: 450px;
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,.045), rgba(255,255,255,.018)),
+    rgba(0,0,0,.18);
+  border: 1px solid rgba(255,255,255,.08);
+  overflow: hidden;
 }
 .heatmap-cell {
-  min-width: 9.5rem;
-  min-height: 7.2rem;
+  position: absolute;
   display: grid;
   align-content: space-between;
   gap: .2rem;
-  padding: .72rem;
+  padding: clamp(.38rem, .85vw, .72rem);
   border: 1px solid rgba(255,255,255,.14);
-  border-radius: 15px;
+  border-radius: 0;
   color: var(--ink);
   text-decoration: none;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 12px 30px rgba(0,0,0,.18);
@@ -530,7 +554,8 @@ select:focus-visible {
   transition: transform .16s ease, border-color .16s ease, filter .16s ease;
 }
 .heatmap-cell:hover {
-  transform: translateY(-2px);
+  z-index: 2;
+  transform: translateY(-2px) scale(1.01);
   border-color: rgba(255,255,255,.34);
   filter: saturate(1.15) brightness(1.05);
 }
@@ -596,12 +621,41 @@ select:focus-visible {
   font-size: .8rem;
   line-height: 1.5;
 }
+.distribution-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: .65rem;
+}
 .distribution-main {
   margin: .35rem 0;
   color: var(--ink);
   font-size: 1.02rem;
   font-weight: 950;
   letter-spacing: -.03em;
+}
+.distribution-curve {
+  width: 100%;
+  height: 118px;
+  margin: .5rem 0 .6rem;
+  overflow: visible;
+}
+.distribution-curve rect {
+  fill: rgba(53,242,194,.28);
+  stroke: rgba(53,242,194,.24);
+  stroke-width: .18;
+}
+.distribution-curve path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.8;
+  vector-effect: non-scaling-stroke;
+}
+.distribution-curve line {
+  stroke: rgba(255,255,255,.36);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  vector-effect: non-scaling-stroke;
 }
 .histogram { display: grid; gap: .52rem; margin: .75rem 0 1rem; }
 .histogram-row {
@@ -625,6 +679,63 @@ select:focus-visible {
   background: linear-gradient(90deg, var(--bad), var(--warn), var(--good));
 }
 .histogram-row strong { color: var(--ink); text-align: right; }
+.histogram-vertical {
+  min-height: 260px;
+  grid-template-columns: repeat(auto-fit, minmax(34px, 1fr));
+  align-items: end;
+  gap: .42rem;
+  padding: .8rem .5rem .25rem;
+}
+.histogram-column {
+  min-width: 0;
+  display: grid;
+  grid-template-rows: minmax(150px, 1fr) auto auto;
+  gap: .36rem;
+  align-items: end;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .66rem;
+  text-align: center;
+}
+.histogram-column .histogram-track {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: flex-end;
+  border-radius: 10px 10px 4px 4px;
+  background: rgba(255,255,255,.065);
+}
+.histogram-column .histogram-track div {
+  width: 100%;
+  min-height: 2px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, var(--good), var(--warn), var(--bad));
+}
+.histogram-column span {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  justify-self: center;
+  white-space: nowrap;
+}
+.histogram-column strong { color: var(--ink); font-size: .72rem; }
+.mini-link {
+  display: inline-flex;
+  margin: 0 .28rem .28rem 0;
+  padding: .24rem .48rem;
+  border: 1px solid rgba(215,255,79,.32);
+  border-radius: 999px;
+  color: var(--accent);
+  text-decoration: none;
+  font-size: .72rem;
+  font-weight: 900;
+}
+.mini-link.secondary {
+  border-color: rgba(138,180,255,.30);
+  color: var(--accent-3);
+}
+.mini-link:hover {
+  background: rgba(255,255,255,.06);
+}
 
 @media (max-width: 980px) {
   .dashboard-hero-grid,

@@ -21361,6 +21361,17 @@
       "open": 88.56999969482422,
       "source_currency": "",
       "volume": 108300.0
+    },
+    {
+      "close": 85.23999786376953,
+      "close_krw": 85.24,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 90.25,
+      "low": 85.23999786376953,
+      "open": 89.16999816894531,
+      "source_currency": "",
+      "volume": 70508.0
     }
   ],
   "symbol": "IRMD"

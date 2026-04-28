@@ -13485,6 +13485,17 @@
       "open": 52.0,
       "source_currency": "",
       "volume": 3227200.0
+    },
+    {
+      "close": 51.75,
+      "close_krw": 51.75,
+      "date": "2026-04-28",
+      "display_currency": "",
+      "high": 54.56999969482422,
+      "low": 51.720001220703125,
+      "open": 54.56999969482422,
+      "source_currency": "",
+      "volume": 1077887.0
     }
   ],
   "symbol": "NE"
