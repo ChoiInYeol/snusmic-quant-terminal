@@ -14,7 +14,7 @@ export default function InsightsPage() {
 
   return (
     <>
-      <section className="hero">
+      <section className="hero terminal-frame editorial-hero">
         <div className="eyebrow">핵심 인사이트</div>
         <h1>추천 리포트는 맞았는가, 투자 전략은 견뎠는가.</h1>
         <p>
@@ -23,7 +23,7 @@ export default function InsightsPage() {
         </p>
       </section>
 
-      <section className="grid cards" style={{ marginBottom: '1rem' }}>
+      <section className="grid cards bento-metrics" style={{ marginBottom: '1rem' }}>
         <div className="card"><div className="muted">목표가 도달</div><div className="metric good">{overview.target_stats?.target_hit_count ?? '—'}</div><p>{formatPercent(overview.target_stats?.target_hit_rate)} of matched reports</p></div>
         <div className="card"><div className="muted">중앙 현재 수익률</div><div className="metric">{formatPercent(overview.target_stats?.median_current_return)}</div><p>평균 {formatPercent(overview.target_stats?.avg_current_return)}</p></div>
         <div className="card"><div className="muted">중앙 목표 도달일</div><div className="metric">{formatDays(overview.target_stats?.median_days_to_target)}</div><p>평균 {formatDays(overview.target_stats?.avg_days_to_target)}</p></div>
@@ -60,12 +60,13 @@ type RankingRow = {
   report_id: string;
   company: string;
   symbol: string;
-  publication_date: string;
+  publication_date?: string;
+  date?: string;
   entry_price_krw: number | null;
   target_price_krw: number | null;
   current_return: number | null;
   target_upside_at_pub: number | null;
-  target_hit: boolean;
+  target_hit: boolean | null;
 };
 
 function RankingSection({ title, rows, metric }: { title: string; rows: RankingRow[]; metric: 'current' | 'upside' }) {
@@ -81,11 +82,11 @@ function RankingSection({ title, rows, metric }: { title: string; rows: RankingR
               return (
                 <tr key={row.report_id}>
                   <td><Link href={`/reports/${row.report_id}`}>{row.company}</Link><div className="muted">{row.symbol}</div></td>
-                  <td>{row.publication_date}</td>
+                  <td>{row.publication_date ?? row.date ?? '—'}</td>
                   <td>{formatKrw(row.entry_price_krw)}</td>
                   <td>{formatKrw(row.target_price_krw)}</td>
                   <td className={(value ?? 0) >= 0 ? 'good' : 'bad'}>{formatPercent(value)}</td>
-                  <td>{row.target_hit ? <span className="pill good">hit</span> : <span className="pill">open</span>}</td>
+                  <td>{(row.target_upside_at_pub ?? 0) <= 0 ? <span className="pill warn">비실행</span> : row.target_hit ? <span className="pill good">hit</span> : <span className="pill">open</span>}</td>
                 </tr>
               );
             })}

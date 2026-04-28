@@ -33,11 +33,70 @@ export type ReportRow = {
   caveatFlags: string[];
 };
 
+
+export type HoldingRow = {
+  persona: string;
+  symbol: string;
+  company: string;
+  qty: number | null;
+  avgCostKrw: number | null;
+  lastCloseKrw: number | null;
+  marketValueKrw: number | null;
+  unrealizedPnlKrw: number | null;
+  unrealizedReturn: number | null;
+  holdingDays: number | null;
+  firstBuyDate: string | null;
+};
+
+export type MonthlyHoldingRow = {
+  persona: string;
+  monthEnd: string;
+  symbol: string;
+  company: string;
+  qty: number | null;
+  marketValueKrw: number | null;
+  weightInPortfolio: number | null;
+};
+
+export type TradeRow = {
+  persona: string;
+  date: string;
+  symbol: string;
+  side: 'buy' | 'sell' | string;
+  qty: number | null;
+  fillPriceKrw: number | null;
+  grossKrw: number | null;
+  cashAfterKrw: number | null;
+  reason: string;
+  reportId: string | null;
+};
+
+export type PositionEpisodeRow = {
+  persona: string;
+  symbol: string;
+  company: string;
+  openDate: string;
+  closeDate: string | null;
+  holdingDays: number | null;
+  buyFills: number | null;
+  sellFills: number | null;
+  totalQtyBought: number | null;
+  totalQtySold: number | null;
+  avgEntryPriceKrw: number | null;
+  avgExitPriceKrw: number | null;
+  realizedPnlKrw: number | null;
+  unrealizedPnlKrw: number | null;
+  lastCloseKrw: number | null;
+  status: string;
+  exitReasons: string;
+};
+
 export type PricePoint = { time: string; value: number };
 export type SummaryRow = {
   persona: string;
   label?: string;
   finalEquityKrw: number | null;
+  totalContributedKrw: number | null;
   cumulativeDepositsKrw?: number | null;
   netProfitKrw: number | null;
   irr?: number | null;
@@ -58,6 +117,7 @@ export type WebPersona = {
   persona: string;
   label: string;
   final_equity_krw: number;
+  total_contributed_krw?: number;
   net_profit_krw: number;
   money_weighted_return: number;
   cagr: number;
@@ -266,6 +326,7 @@ export function getSummaryRows(): SummaryRow[] {
       persona: row.persona,
       label: row.label,
       finalEquityKrw: num(row.final_equity_krw),
+      totalContributedKrw: num(row.total_contributed_krw),
       netProfitKrw: num(row.net_profit_krw),
       moneyWeightedReturn: num(row.money_weighted_return),
       maxDrawdown: num(row.max_drawdown),
@@ -277,6 +338,7 @@ export function getSummaryRows(): SummaryRow[] {
     persona: row.persona,
     label: row.label,
     finalEquityKrw: num(row.final_equity_krw),
+    totalContributedKrw: num(row.total_contributed_krw),
     cumulativeDepositsKrw: num(row.cumulative_deposits_krw),
     netProfitKrw: num(row.net_profit_krw),
     irr: num(row.irr),
@@ -340,4 +402,87 @@ export function getDownloadHref(fileName: string): string {
 
 export function readDownloadCsv(fileName: string): string {
   return readText(`data/web/${fileName}`);
+}
+
+let holdingsCache: HoldingRow[] | undefined;
+export function getCurrentHoldings(): HoldingRow[] {
+  if (holdingsCache) return holdingsCache;
+  const raw = readJson<RawReport[]>('data/web/current-holdings.json', []);
+  holdingsCache = raw.map((row) => ({
+    persona: String(row.persona ?? ''),
+    symbol: String(row.symbol ?? ''),
+    company: String(row.company ?? row.symbol ?? ''),
+    qty: num(row.qty),
+    avgCostKrw: num(row.avg_cost_krw ?? row.avgCostKrw),
+    lastCloseKrw: num(row.last_close_krw ?? row.lastCloseKrw),
+    marketValueKrw: num(row.market_value_krw ?? row.marketValueKrw),
+    unrealizedPnlKrw: num(row.unrealized_pnl_krw ?? row.unrealizedPnlKrw),
+    unrealizedReturn: num(row.unrealized_return ?? row.unrealizedReturn),
+    holdingDays: num(row.holding_days ?? row.holdingDays),
+    firstBuyDate: strOrNull(row.first_buy_date ?? row.firstBuyDate),
+  })).sort((a, b) => (b.marketValueKrw ?? 0) - (a.marketValueKrw ?? 0));
+  return holdingsCache;
+}
+
+let monthlyHoldingsCache: MonthlyHoldingRow[] | undefined;
+export function getMonthlyHoldings(): MonthlyHoldingRow[] {
+  if (monthlyHoldingsCache) return monthlyHoldingsCache;
+  const raw = readJson<RawReport[]>('data/web/monthly-holdings.json', []);
+  monthlyHoldingsCache = raw.map((row) => ({
+    persona: String(row.persona ?? ''),
+    monthEnd: String(row.month_end ?? row.monthEnd ?? ''),
+    symbol: String(row.symbol ?? ''),
+    company: String(row.company ?? row.symbol ?? ''),
+    qty: num(row.qty),
+    marketValueKrw: num(row.market_value_krw ?? row.marketValueKrw),
+    weightInPortfolio: num(row.weight_in_portfolio ?? row.weightInPortfolio),
+  })).sort((a, b) => b.monthEnd.localeCompare(a.monthEnd) || (b.marketValueKrw ?? 0) - (a.marketValueKrw ?? 0));
+  return monthlyHoldingsCache;
+}
+
+let tradesCache: TradeRow[] | undefined;
+export function getTrades(): TradeRow[] {
+  if (tradesCache) return tradesCache;
+  tradesCache = parseCsv(readText('data/sim/trades.csv')).map((row) => ({
+    persona: String(row.persona ?? ''),
+    date: String(row.date ?? ''),
+    symbol: String(row.symbol ?? ''),
+    side: String(row.side ?? ''),
+    qty: num(row.qty),
+    fillPriceKrw: num(row.fill_price_krw),
+    grossKrw: num(row.gross_krw),
+    cashAfterKrw: num(row.cash_after_krw),
+    reason: String(row.reason ?? ''),
+    reportId: strOrNull(row.report_id),
+  })).sort((a, b) => b.date.localeCompare(a.date));
+  return tradesCache;
+}
+
+let positionEpisodesCache: PositionEpisodeRow[] | undefined;
+export function getPositionEpisodes(): PositionEpisodeRow[] {
+  if (positionEpisodesCache) return positionEpisodesCache;
+  positionEpisodesCache = parseCsv(readText('data/sim/position_episodes.csv')).map((row) => ({
+    persona: String(row.persona ?? ''),
+    symbol: String(row.symbol ?? ''),
+    company: String(row.company ?? row.symbol ?? ''),
+    openDate: String(row.open_date ?? ''),
+    closeDate: strOrNull(row.close_date),
+    holdingDays: num(row.holding_days),
+    buyFills: num(row.buy_fills),
+    sellFills: num(row.sell_fills),
+    totalQtyBought: num(row.total_qty_bought),
+    totalQtySold: num(row.total_qty_sold),
+    avgEntryPriceKrw: num(row.avg_entry_price_krw),
+    avgExitPriceKrw: num(row.avg_exit_price_krw),
+    realizedPnlKrw: num(row.realized_pnl_krw),
+    unrealizedPnlKrw: num(row.unrealized_pnl_krw),
+    lastCloseKrw: num(row.last_close_krw),
+    status: String(row.status ?? ''),
+    exitReasons: String(row.exit_reasons ?? ''),
+  })).sort((a, b) => b.openDate.localeCompare(a.openDate));
+  return positionEpisodesCache;
+}
+
+export function getPersonaLabel(persona: string): string {
+  return getSummaryRows().find((row) => row.persona === persona)?.label ?? persona;
 }

@@ -141,10 +141,11 @@ class FollowerState:
                 target_value = float(target) if target is not None else None
             except (TypeError, ValueError):
                 target_value = None
-            if target_value is None or target_value <= 0:
+            symbol = str(record["symbol"])
+            close = board.asof(day, symbol)
+            if target_value is None or target_value <= 0 or (close is not None and target_value <= close):
                 self._absorbed_ids.add(report_id)
                 continue
-            symbol = str(record["symbol"])
             pub_date = record["_pub"]
             # If a previous stop-out was earlier than this report's publication,
             # the new report restores eligibility.

@@ -153,6 +153,281 @@ def test_prophet_beats_smic_follower_on_synthetic_universe(fake_warehouse: Path)
     assert by_name["oracle"].net_profit_krw >= by_name["smic_follower"].net_profit_krw
 
 
+def test_split_scaled_report_target_is_aligned_to_market_price_units(tmp_path: Path):
+    warehouse = tmp_path / "wh"
+    warehouse.mkdir()
+    pd.DataFrame(
+        [
+            {
+                "date": "2024-01-02",
+                "symbol": "SPLIT.KS",
+                "open": 100.0,
+                "high": 100.0,
+                "low": 100.0,
+                "close": 100.0,
+                "volume": 1,
+                "source_currency": "KRW",
+                "display_currency": "KRW",
+                "krw_per_unit": 1.0,
+            },
+            {
+                "date": "2024-01-03",
+                "symbol": "SPLIT.KS",
+                "open": 160.0,
+                "high": 160.0,
+                "low": 160.0,
+                "close": 160.0,
+                "volume": 1,
+                "source_currency": "KRW",
+                "display_currency": "KRW",
+                "krw_per_unit": 1.0,
+            },
+        ]
+    ).to_csv(warehouse / "daily_prices.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "report_id": "r-split",
+                "page": 1,
+                "ordinal": 1,
+                "publication_date": "2024-01-02",
+                "title": "Split scale",
+                "company": "SplitCo",
+                "ticker": "SPLIT",
+                "exchange": "KRX",
+                "symbol": "SPLIT.KS",
+                "report_current_price_krw": 1000.0,
+                "target_price": 1500.0,
+                "target_price_krw": 1500.0,
+            }
+        ]
+    ).to_csv(warehouse / "reports.csv", index=False)
+
+    result = run_simulation(
+        SimulationConfig(
+            start_date=date(2024, 1, 2),
+            end_date=date(2024, 1, 3),
+            savings_plan=SavingsPlan(initial_capital_krw=1_000_000, monthly_contribution_krw=0),
+            fees=BrokerageFees(commission_bps=0, sell_tax_bps=0, slippage_bps=0),
+            personas=(SmicFollowerConfig(),),
+        ),
+        warehouse,
+    )
+
+    perf = result.report_performance[0]
+    assert perf.target_price_krw == pytest.approx(150.0)
+    assert perf.target_upside_at_pub == pytest.approx(0.5)
+    assert perf.target_hit is True
+    assert perf.target_hit_date == date(2024, 1, 3)
+    assert any(trade.reason == "target_hit" for trade in result.trades)
+
+
+
+def test_current_price_scale_mismatch_does_not_expand_plausible_target(tmp_path: Path):
+    warehouse = tmp_path / "wh"
+    warehouse.mkdir()
+    pd.DataFrame(
+        [
+            {
+                "date": "2024-01-02",
+                "symbol": "UNIT.KQ",
+                "open": 9210.0,
+                "high": 9210.0,
+                "low": 9210.0,
+                "close": 9210.0,
+                "volume": 1,
+                "source_currency": "KRW",
+                "display_currency": "KRW",
+                "krw_per_unit": 1.0,
+            },
+            {
+                "date": "2024-01-03",
+                "symbol": "UNIT.KQ",
+                "open": 10000.0,
+                "high": 10000.0,
+                "low": 10000.0,
+                "close": 10000.0,
+                "volume": 1,
+                "source_currency": "KRW",
+                "display_currency": "KRW",
+                "krw_per_unit": 1.0,
+            },
+        ]
+    ).to_csv(warehouse / "daily_prices.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "report_id": "r-unit",
+                "page": 1,
+                "ordinal": 1,
+                "publication_date": "2024-01-02",
+                "title": "Unit mismatch",
+                "company": "UnitCo",
+                "ticker": "UNIT",
+                "exchange": "KRX",
+                "symbol": "UNIT.KQ",
+                "report_current_price_krw": 9.6,
+                "target_price": 18600.0,
+                "target_price_krw": 18600.0,
+            }
+        ]
+    ).to_csv(warehouse / "reports.csv", index=False)
+
+    result = run_simulation(
+        SimulationConfig(
+            start_date=date(2024, 1, 2),
+            end_date=date(2024, 1, 3),
+            savings_plan=SavingsPlan(initial_capital_krw=1_000_000, monthly_contribution_krw=0),
+            fees=BrokerageFees(commission_bps=0, sell_tax_bps=0, slippage_bps=0),
+            personas=(SmicFollowerConfig(),),
+        ),
+        warehouse,
+    )
+
+    perf = result.report_performance[0]
+    assert perf.target_price_krw == pytest.approx(18600.0)
+    assert perf.target_upside_at_pub == pytest.approx(18600.0 / 9210.0 - 1.0)
+    assert perf.target_hit is False
+
+
+def test_downside_target_uses_first_close_at_or_below_target(tmp_path: Path):
+    warehouse = tmp_path / "wh"
+    warehouse.mkdir()
+    pd.DataFrame(
+        [
+            {
+                "date": "2024-01-05",
+                "symbol": "IPO.KQ",
+                "open": 117000.0,
+                "high": 117000.0,
+                "low": 117000.0,
+                "close": 117000.0,
+                "volume": 1,
+                "source_currency": "KRW",
+                "display_currency": "KRW",
+                "krw_per_unit": 1.0,
+            },
+            {
+                "date": "2024-01-08",
+                "symbol": "IPO.KQ",
+                "open": 152100.0,
+                "high": 152100.0,
+                "low": 152100.0,
+                "close": 152100.0,
+                "volume": 1,
+                "source_currency": "KRW",
+                "display_currency": "KRW",
+                "krw_per_unit": 1.0,
+            },
+        ]
+    ).to_csv(warehouse / "daily_prices.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "report_id": "r-ipo",
+                "page": 1,
+                "ordinal": 1,
+                "publication_date": "2024-01-02",
+                "title": "Already above target",
+                "company": "IpoCo",
+                "ticker": "IPO",
+                "exchange": "KRX",
+                "symbol": "IPO.KQ",
+                "target_price": 105000.0,
+                "target_price_krw": 105000.0,
+            }
+        ]
+    ).to_csv(warehouse / "reports.csv", index=False)
+
+    result = run_simulation(
+        SimulationConfig(
+            start_date=date(2024, 1, 2),
+            end_date=date(2024, 1, 8),
+            savings_plan=SavingsPlan(initial_capital_krw=1_000_000, monthly_contribution_krw=0),
+            fees=BrokerageFees(commission_bps=0, sell_tax_bps=0, slippage_bps=0),
+            personas=(SmicFollowerConfig(),),
+        ),
+        warehouse,
+    )
+
+    perf = result.report_performance[0]
+    assert perf.entry_price_krw == pytest.approx(117000.0)
+    assert perf.target_upside_at_pub == pytest.approx(105000.0 / 117000.0 - 1.0)
+    assert perf.target_hit is False
+    assert perf.target_hit_date is None
+    assert perf.days_to_target is None
+    assert perf.target_gap_pct == pytest.approx(105000.0 / 152100.0 - 1.0)
+    assert not result.trades
+
+
+def test_downside_target_is_hit_when_close_falls_to_bearish_target(tmp_path: Path):
+    warehouse = tmp_path / "wh"
+    warehouse.mkdir()
+    pd.DataFrame(
+        [
+            {
+                "date": "2024-01-02",
+                "symbol": "SELL.KQ",
+                "open": 100.0,
+                "high": 100.0,
+                "low": 100.0,
+                "close": 100.0,
+                "volume": 1,
+                "source_currency": "KRW",
+                "display_currency": "KRW",
+                "krw_per_unit": 1.0,
+            },
+            {
+                "date": "2024-01-03",
+                "symbol": "SELL.KQ",
+                "open": 75.0,
+                "high": 75.0,
+                "low": 75.0,
+                "close": 75.0,
+                "volume": 1,
+                "source_currency": "KRW",
+                "display_currency": "KRW",
+                "krw_per_unit": 1.0,
+            },
+        ]
+    ).to_csv(warehouse / "daily_prices.csv", index=False)
+    pd.DataFrame(
+        [
+            {
+                "report_id": "r-sell",
+                "page": 1,
+                "ordinal": 1,
+                "publication_date": "2024-01-02",
+                "title": "Bearish target",
+                "company": "SellCo",
+                "ticker": "SELL",
+                "exchange": "KRX",
+                "symbol": "SELL.KQ",
+                "target_price": 80.0,
+                "target_price_krw": 80.0,
+            }
+        ]
+    ).to_csv(warehouse / "reports.csv", index=False)
+
+    result = run_simulation(
+        SimulationConfig(
+            start_date=date(2024, 1, 2),
+            end_date=date(2024, 1, 3),
+            savings_plan=SavingsPlan(initial_capital_krw=1_000_000, monthly_contribution_krw=0),
+            fees=BrokerageFees(commission_bps=0, sell_tax_bps=0, slippage_bps=0),
+            personas=(SmicFollowerConfig(),),
+        ),
+        warehouse,
+    )
+
+    perf = result.report_performance[0]
+    assert perf.target_price_krw == pytest.approx(80.0)
+    assert perf.target_upside_at_pub == pytest.approx(-0.2)
+    assert perf.target_hit is True
+    assert perf.target_hit_date == date(2024, 1, 3)
+    assert perf.target_gap_pct == pytest.approx(80.0 / 75.0 - 1.0)
+    assert not result.trades
+
 def test_krw_price_conversion_is_idempotent_for_cached_rows():
     prices = pd.DataFrame(
         [

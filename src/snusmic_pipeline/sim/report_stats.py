@@ -20,6 +20,7 @@ import pandas as pd
 
 from .contracts import ReportPerformance, ReportStats
 from .market import PriceBoard
+from .target_adjustment import adjusted_target_price_krw
 
 # How many reports to include in each ranked list inside ReportStats.
 TOP_K = 10
@@ -46,24 +47,25 @@ def compute_report_performance(
         if not symbol:
             continue
         pub_day: date = record["_pub"]
-        target = _coerce_float(
-            record.get("target_price_krw") or record.get("target_price") or record.get("base_target_krw")
-        )
+        target = adjusted_target_price_krw(record, board, pub_day, end_date)
         entry_price = _first_close_on_or_after(board, pub_day, end_date, symbol)
         last_close, last_close_date = _last_close_in_window(board, pub_day, end_date, symbol)
         peak_close = _max_close_after(board, pub_day, end_date, symbol)
         trough_close = _min_close_after(board, pub_day, end_date, symbol)
 
-        target_hit_date: date | None = None
-        days_to_target: int | None = None
-        if target is not None and entry_price is not None:
-            target_hit_date = _first_close_at_or_above(board, pub_day, end_date, symbol, target)
-            if target_hit_date is not None:
-                days_to_target = (target_hit_date - pub_day).days
-
         target_upside_at_pub = (
             (target / entry_price - 1.0) if (target is not None and entry_price and entry_price > 0) else None
         )
+        target_direction = _target_direction(target, entry_price)
+        target_hit_date: date | None = None
+        days_to_target: int | None = None
+        if target_direction == "upside" and target is not None:
+            target_hit_date = _first_close_at_or_above(board, pub_day, end_date, symbol, target)
+        elif target_direction == "downside" and target is not None:
+            target_hit_date = _first_close_at_or_below(board, pub_day, end_date, symbol, target)
+        if target_hit_date is not None:
+            days_to_target = (target_hit_date - pub_day).days
+
         current_return = (
             (last_close / entry_price - 1.0) if (last_close and entry_price and entry_price > 0) else None
         )
@@ -73,7 +75,12 @@ def compute_report_performance(
         trough_return = (
             (trough_close / entry_price - 1.0) if (trough_close and entry_price and entry_price > 0) else None
         )
-        target_gap_pct = (last_close / target - 1.0) if (last_close and target and target > 0) else None
+        if target_direction == "upside" and last_close and target and target > 0:
+            target_gap_pct = last_close / target - 1.0
+        elif target_direction == "downside" and last_close and target and target > 0:
+            target_gap_pct = target / last_close - 1.0
+        else:
+            target_gap_pct = None
 
         out.append(
             ReportPerformance(
@@ -240,3 +247,28 @@ def _first_close_at_or_above(
     if above.empty:
         return None
     return above.index[0].date()
+
+
+def _target_direction(target: float | None, entry_price: float | None) -> str | None:
+    if target is None or entry_price is None or entry_price <= 0:
+        return None
+    if target > entry_price:
+        return "upside"
+    if target < entry_price:
+        return "downside"
+    return None
+
+
+def _first_close_at_or_below(
+    board: PriceBoard, start: date, end: date, symbol: str, threshold: float
+) -> date | None:
+    if board.is_empty or symbol not in board.close.columns:
+        return None
+    col = board.close[symbol]
+    ts_start = pd.Timestamp(start)
+    ts_end = pd.Timestamp(end)
+    series = col.loc[(col.index >= ts_start) & (col.index <= ts_end)].dropna()
+    below = series[series <= threshold]
+    if below.empty:
+        return None
+    return below.index[0].date()

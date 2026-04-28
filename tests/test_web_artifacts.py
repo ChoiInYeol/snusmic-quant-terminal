@@ -90,3 +90,50 @@ def test_extended_web_artifacts_support_insights_and_downloads(tmp_path: Path) -
     assert (out / "table-download-reports.csv").read_text(encoding="utf-8").startswith("report_id,date")
     assert (out / "table-download-strategies.csv").read_text(encoding="utf-8").startswith("run_id")
     assert (out / "data-quality-download.csv").read_text(encoding="utf-8").startswith("section,metric,value")
+
+
+def test_reports_artifact_uses_adjusted_target_price_when_price_scale_changed(tmp_path: Path) -> None:
+    out = tmp_path / "web"
+    export_web_artifacts(
+        ExportInputs(
+            warehouse=Path("data/warehouse"),
+            sim=Path("data/sim"),
+            out=out,
+            extraction_quality=Path("data/extraction_quality.json"),
+        )
+    )
+
+    reports = json.loads((out / "reports.json").read_text(encoding="utf-8"))
+    ezbio = next(row for row in reports if row["symbol"] == "353810.KQ")
+    assert ezbio["company"] == "이지바이오"
+    assert ezbio["entry_price_krw"] == 5379.95
+    assert ezbio["target_price_krw"] == 7231.49
+    assert ezbio["target_price"] == 7231.49
+    assert ezbio["target_upside_at_pub"] == 0.34
+    assert "price_scale_adjusted_target" in ezbio["caveat_flags"]
+
+    csv_text = (out / "table-download-reports.csv").read_text(encoding="utf-8")
+    assert "7e687ca6a743eff4" in csv_text
+    assert "7231.49" in csv_text
+    assert "103500" not in next(line for line in csv_text.splitlines() if "7e687ca6a743eff4" in line)
+
+
+def test_reports_artifact_marks_target_below_entry_as_non_actionable(tmp_path: Path) -> None:
+    out = tmp_path / "web"
+    export_web_artifacts(
+        ExportInputs(
+            warehouse=Path("data/warehouse"),
+            sim=Path("data/sim"),
+            out=out,
+            extraction_quality=Path("data/extraction_quality.json"),
+        )
+    )
+
+    reports = json.loads((out / "reports.json").read_text(encoding="utf-8"))
+    rznomics = next(row for row in reports if row["symbol"] == "476830.KQ")
+    assert rznomics["company"] == "알지노믹스"
+    assert rznomics["target_upside_at_pub"] == -0.1
+    assert rznomics["target_hit"] is False
+    assert rznomics["target_hit_date"] is None
+    assert rznomics["days_to_target"] is None
+    assert "target_below_entry_price" in rznomics["caveat_flags"]

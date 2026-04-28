@@ -216,6 +216,20 @@ def _build_report_rows(
         if not perf:
             caveats.append("missing_report_performance")
         caveats.extend(review_reasons.get(report_id, []))
+        raw_target_price_krw = _number(row.get("target_price_krw"))
+        perf_target_price_krw = _number(perf.get("target_price_krw"))
+        target_price_krw = perf_target_price_krw if perf_target_price_krw is not None else raw_target_price_krw
+        raw_target_price = _number(row.get("target_price"))
+        target_price = target_price_krw if target_price_krw is not None else raw_target_price
+        if (
+            raw_target_price_krw is not None
+            and target_price_krw is not None
+            and not math.isclose(raw_target_price_krw, target_price_krw, rel_tol=1e-9, abs_tol=0.01)
+        ):
+            caveats.append("price_scale_adjusted_target")
+        target_upside_at_pub = _number(perf.get("target_upside_at_pub"))
+        if target_upside_at_pub is not None and target_upside_at_pub <= 0:
+            caveats.append("target_below_entry_price")
         rows.append(
             {
                 "report_id": report_id,
@@ -228,11 +242,11 @@ def _build_report_rows(
                 "rating": row.get("rating"),
                 "pdf_url": row.get("pdf_url"),
                 "markdown_filename": row.get("markdown_filename"),
-                "target_price": _number(row.get("target_price")),
-                "target_price_krw": _number(row.get("target_price_krw")),
+                "target_price": target_price,
+                "target_price_krw": target_price_krw,
                 "publication_price_krw": _number(row.get("report_current_price_krw")),
                 "entry_price_krw": _number(perf.get("entry_price_krw")),
-                "target_upside_at_pub": _number(perf.get("target_upside_at_pub")),
+                "target_upside_at_pub": target_upside_at_pub,
                 "target_hit": _bool(perf.get("target_hit")),
                 "target_hit_date": perf.get("target_hit_date") or None,
                 "days_to_target": _number(perf.get("days_to_target")),

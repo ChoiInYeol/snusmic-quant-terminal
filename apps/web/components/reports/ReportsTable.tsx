@@ -13,7 +13,7 @@ import {
 } from '@tanstack/react-table';
 import { useMemo, useState } from 'react';
 import type { ReportRow } from '@/lib/artifacts';
-import { formatDays, formatKrw, formatMultiple, formatPercent } from '@/lib/format';
+import { formatDays, formatKrw, formatPercent } from '@/lib/format';
 
 type HitFilter = 'all' | 'hit' | 'open';
 type ReturnFilter = 'all' | 'positive' | 'negative';
@@ -79,7 +79,7 @@ export function ReportsTable({ reports }: ReportsTableProps) {
       {
         accessorKey: 'targetUpsideAtPub',
         header: '제시 상승여력',
-        cell: ({ getValue }) => formatMultiple(getValue<number | null>(), 2),
+        cell: ({ getValue }) => formatPercent(getValue<number | null>()),
       },
       {
         accessorKey: 'currentReturn',
@@ -102,12 +102,23 @@ export function ReportsTable({ reports }: ReportsTableProps) {
       {
         accessorKey: 'targetHit',
         header: '목표 달성',
-        cell: ({ row }) =>
-          row.original.targetHit ? (
+        cell: ({ row }) => {
+          if (isBearishReport(row.original)) {
+            return row.original.targetHit ? (
+              <span className="pill good">매도 적중 · {formatDays(row.original.daysToTarget)}</span>
+            ) : (
+              <span className="pill warn">매도 의견 · 미달성</span>
+            );
+          }
+          if ((row.original.targetUpsideAtPub ?? 0) <= 0) {
+            return <span className="pill warn">이미 초과/비실행</span>;
+          }
+          return row.original.targetHit ? (
             <span className="pill good">달성 · {formatDays(row.original.daysToTarget)}</span>
           ) : (
             <span className="pill">미달성</span>
-          ),
+          );
+        },
       },
       {
         accessorKey: 'lastCloseDate',
@@ -265,4 +276,8 @@ function escapeCsv(value: string | number | boolean | null): string {
   const text = String(value);
   if (!/[",\n\r]/.test(text)) return text;
   return `"${text.replaceAll('"', '""')}"`;
+}
+
+function isBearishReport(report: ReportRow): boolean {
+  return (report.targetUpsideAtPub ?? 0) < 0 && report.caveatFlags.some((flag) => /non_buy_rating:.*(sell|reduce|underperform|매도)/i.test(flag));
 }

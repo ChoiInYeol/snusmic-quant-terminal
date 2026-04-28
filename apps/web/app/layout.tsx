@@ -3,33 +3,32 @@ import Link from 'next/link';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'SNUSMIC 퀀트 터미널',
-  description: 'SNUSMIC 리포트 근거, 가격 경로, 데이터 품질, 전략 방법론을 정적 아티팩트로 탐색하는 한국어 터미널입니다.',
+  title: 'SNUSMIC 매매 대시보드',
+  description: 'SNUSMIC 리포트 기반 전략의 매매내역, 현재 포트폴리오, 과거 포트폴리오, 원문 근거를 제공하는 한국어 투자 대시보드입니다.',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="ko">
+    <html lang="ko" data-scroll-behavior="smooth">
       <body>
         <div className="site-shell">
           <header className="topbar">
-            <Link className="brand" href="/" aria-label="SNUSMIC 퀀트 터미널 홈">
+            <Link className="brand" href="/" aria-label="SNUSMIC 매매 대시보드 홈">
               <span>
-                SNUSMIC Quant
-                <span className="brand-kicker">Korean evidence terminal</span>
+                SNUSMIC Ledger
+                <span className="brand-kicker">trades · portfolio · evidence</span>
               </span>
             </Link>
             <nav className="nav" aria-label="주요 탐색">
-              <Link href="/reports">리포트</Link>
-              <Link href="/strategies">전략</Link>
-              <Link href="/data-quality">데이터 품질</Link>
-              <Link href="/methodology">방법론</Link>
-              <Link href="/lab">연구실</Link>
+              <Link href="/trades">매매내역</Link>
+              <Link href="/portfolio">포트폴리오</Link>
+              <Link href="/reports">리포트 근거</Link>
+              <Link href="/strategies">전략 기준</Link>
             </nav>
           </header>
           <main>{children}</main>
           <footer className="footer-note">
-            정적 내보내기 호환: 배포된 웹은 커밋된 CSV/JSON/Markdown 아티팩트만 읽고, 시장 데이터·PDF·Optuna 작업을 실행하지 않습니다.
+            이 화면은 커밋된 CSV/JSON/Markdown/PDF 아티팩트만 표시합니다. 원문은 GitHub 또는 SNUSMIC PDF 링크로 확인할 수 있습니다.
           </footer>
         </div>
       </body>

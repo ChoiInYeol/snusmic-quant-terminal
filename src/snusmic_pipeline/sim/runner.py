@@ -40,6 +40,7 @@ from .personas import (
 )
 from .report_stats import aggregate_report_stats, compute_report_performance
 from .savings import build_cash_flow_schedule
+from .target_adjustment import align_report_targets_to_market_scale
 from .warehouse import read_table
 
 
@@ -63,6 +64,7 @@ def run_simulation(
     cashflows = build_cash_flow_schedule(trading_dates, config.savings_plan)
     reports = read_table(warehouse_dir, "reports")
     reports = _prepare_reports(reports, config.start_date, config.end_date)
+    reports = align_report_targets_to_market_scale(reports, board, config.end_date)
 
     benchmark_board: PriceBoard | None = None
     if any(isinstance(p, AllWeatherConfig) for p in config.personas):

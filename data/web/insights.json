@@ -8,11 +8,11 @@
   },
   {
     "id": "average-days-to-target",
-    "metric": 345.73,
+    "metric": 372.58,
     "related_report_ids": [
-      "4a28ed5fae713919"
+      "5d0752b834ca2cb9"
     ],
-    "sentence": "목표가에 도달한 리포트의 평균 소요 기간은 345.73일입니다.",
+    "sentence": "목표가에 도달한 리포트의 평균 소요 기간은 372.58일입니다.",
     "title": "목표가 도달 속도"
   },
   {

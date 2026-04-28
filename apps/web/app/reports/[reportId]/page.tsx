@@ -36,7 +36,7 @@ export default async function ReportDetailPage({ params }: { params: ReportParam
         <MetricCard label="진입 종가" value={formatKrw(report.entryPriceKrw)} />
         <MetricCard label="추출 목표가" value={formatKrw(report.targetPriceKrw)} detail={`${formatPercent(report.targetUpsideAtPub)} 발간 시점 업사이드`} tone="accent" />
         <MetricCard label="현재 수익률" value={formatPercent(report.currentReturn)} tone={(report.currentReturn ?? 0) >= 0 ? 'good' : 'bad'} />
-        <MetricCard label="목표 상태" value={report.targetHit ? '도달' : '진행'} detail={report.targetHit ? `${report.targetHitDate} · ${formatDays(report.daysToTarget)}` : `격차 ${formatPercent(report.targetGapPct)}`} tone={report.targetHit ? 'good' : 'warn'} />
+        <MetricCard label="목표 상태" value={targetStatusValue(report)} detail={targetStatusDetail(report)} tone={report.targetHit ? 'good' : 'warn'} />
       </section>
       <section className="detail-grid">
         <Panel title="가격 경로 vs 추출 목표가">
@@ -49,7 +49,9 @@ export default async function ReportDetailPage({ params }: { params: ReportParam
             <p>최고 수익률: <span className="good">{formatPercent(report.peakReturn)}</span></p>
             <p>최저 수익률: <span className="bad">{formatPercent(report.troughReturn)}</span></p>
             <p>마지막 종가: {formatKrw(report.lastCloseKrw)} ({report.lastCloseDate})</p>
-            {report.pdfUrl ? <p><a href={report.pdfUrl}>원본 PDF 소스 →</a></p> : null}
+            <p><a href={githubBlobUrl(`data/markdown/${report.markdownFilename}`)}>GitHub Markdown →</a></p>
+            {report.pdfFilename ? <p><a href={githubBlobUrl(`data/pdfs/${report.pdfFilename}`)}>GitHub PDF →</a></p> : null}
+            {report.pdfUrl ? <p><a href={report.pdfUrl}>SNUSMIC 원본 PDF →</a></p> : null}
           </Panel>
           <Panel title="한국어 투자 메모">
             <p>{memo.summary}</p>
@@ -83,9 +85,15 @@ function buildPathEvidence(prices: PricePoint[], report: ReportRow): PathEvidenc
 }
 
 function buildKoreanInvestmentMemo(report: ReportRow) {
-  const targetSentence = report.targetHit
-    ? `목표가는 ${formatDays(report.daysToTarget)} 만에 도달해 리포트의 단기 가격 근거가 실제 거래 경로에서 확인됐습니다.`
-    : `아직 목표가에는 도달하지 못했고 현재 목표가까지 ${formatPercent(report.targetGapPct)}의 갭이 남아 있습니다.`;
+  const targetSentence = isBearishReport(report)
+    ? report.targetHit
+      ? `매도/회피 의견의 하락 목표가는 ${formatDays(report.daysToTarget)} 만에 도달했습니다.`
+      : `매도/회피 의견이지만 아직 하락 목표가에는 도달하지 않았습니다.`
+    : (report.targetUpsideAtPub ?? 0) <= 0
+      ? '첫 거래 가능 가격이 목표가를 이미 넘어선 비실행 케이스라 목표가 달성 통계에서는 제외했습니다.'
+      : report.targetHit
+        ? `목표가는 ${formatDays(report.daysToTarget)} 만에 도달해 리포트의 단기 가격 근거가 실제 거래 경로에서 확인됐습니다.`
+        : `아직 목표가에는 도달하지 못했고 현재 목표가까지 ${formatPercent(report.targetGapPct)}의 갭이 남아 있습니다.`;
   const riskTone = (report.troughReturn ?? 0) < -0.2
     ? '발간 이후 하방 변동성이 컸으므로 분할 진입과 손실 제한 기준을 먼저 확인해야 합니다.'
     : '관측 저점 기준 하방 훼손은 제한적이지만, 목표가 미도달 상태라면 시간 비용을 함께 점검해야 합니다.';
@@ -98,4 +106,26 @@ function buildKoreanInvestmentMemo(report: ReportRow) {
       { label: '현재 판단', text: `마지막 종가는 ${formatKrw(report.lastCloseKrw)}(${report.lastCloseDate ?? '날짜 없음'})이고 현재 수익률은 ${formatPercent(report.currentReturn)}입니다.` },
     ],
   };
+}
+
+function targetStatusValue(report: ReportRow): string {
+  if (isBearishReport(report)) return report.targetHit ? '매도 적중' : '매도 의견';
+  if ((report.targetUpsideAtPub ?? 0) <= 0) return '비실행';
+  return report.targetHit ? '도달' : '진행';
+}
+
+function targetStatusDetail(report: ReportRow): string {
+  if (isBearishReport(report)) {
+    return report.targetHit ? `${report.targetHitDate} · ${formatDays(report.daysToTarget)}` : '하락 목표가 미도달';
+  }
+  if ((report.targetUpsideAtPub ?? 0) <= 0) return '첫 거래 가능 가격이 목표가 이상';
+  return report.targetHit ? `${report.targetHitDate} · ${formatDays(report.daysToTarget)}` : `격차 ${formatPercent(report.targetGapPct)}`;
+}
+
+function isBearishReport(report: ReportRow): boolean {
+  return (report.targetUpsideAtPub ?? 0) < 0 && report.caveatFlags.some((flag) => /non_buy_rating:.*(sell|reduce|underperform|매도)/i.test(flag));
+}
+
+function githubBlobUrl(path: string): string {
+  return `https://github.com/ChoiInYeol/snusmic-quant-terminal/blob/main/${encodeURI(path)}`;
 }
