@@ -173,3 +173,150 @@ export function getDataQuality(): DataQuality {
     extractionQuality,
   };
 }
+
+export type WebPersona = {
+  persona: string;
+  label: string;
+  final_equity_krw: number;
+  net_profit_krw: number;
+  money_weighted_return: number;
+  cagr: number;
+  max_drawdown: number;
+  trade_count: number;
+  open_positions: number;
+};
+
+export type WebReportRankingRow = {
+  report_id: string;
+  symbol: string;
+  company: string;
+  publication_date: string;
+  entry_price_krw: number | null;
+  target_price_krw: number | null;
+  target_upside_at_pub: number | null;
+  target_hit: boolean;
+  target_hit_date: string | null;
+  days_to_target: number | null;
+  last_close_krw: number | null;
+  last_close_date: string | null;
+  current_return: number | null;
+  peak_return: number | null;
+  trough_return: number | null;
+  target_gap_pct: number | null;
+};
+
+export type WebOverview = {
+  baseline_personas: WebPersona[];
+  generated_from?: Record<string, string>;
+  report_counts?: Record<string, number>;
+  simulation_window?: Record<string, string | null>;
+  target_stats?: Record<string, number | null>;
+};
+
+export type WebReportRankings = {
+  top_winners?: WebReportRankingRow[];
+  top_losers?: WebReportRankingRow[];
+  most_aggressive_targets?: WebReportRankingRow[];
+  fastest_hits?: WebReportRankingRow[];
+  biggest_open_target_gaps?: WebReportRankingRow[];
+};
+
+export type StrategyRunArtifact = {
+  run_id: string;
+  trial_number?: number;
+  label: string;
+  scope?: string;
+  sampler?: string;
+  params?: Record<string, unknown>;
+  metrics: Record<string, number | null | undefined>;
+  warnings?: string[];
+};
+
+export type StrategyRunsArtifact = {
+  schema_version?: number;
+  study_name?: string;
+  scope?: string;
+  disclaimer?: string;
+  best_run_id?: string;
+  runs: StrategyRunArtifact[];
+};
+
+export type ParameterImportanceArtifact = {
+  schema_version?: number;
+  study_name?: string;
+  method?: string;
+  parameters?: { parameter: string; importance: number }[];
+};
+
+export type WebDataQuality = {
+  coverage?: Record<string, number>;
+  extraction_quality?: Record<string, unknown>;
+  missing_symbols?: { symbol: string; company?: string; reason?: string }[];
+};
+
+function readJsonIfExists<T>(relativePath: string, fallback: T): T {
+  const fullPath = path.join(repoRoot, relativePath);
+  if (!fs.existsSync(fullPath)) return fallback;
+  return JSON.parse(fs.readFileSync(fullPath, 'utf8')) as T;
+}
+
+export function getOverview(): WebOverview {
+  return readJsonIfExists<WebOverview>('data/web/overview.json', {
+    baseline_personas: [],
+    report_counts: {
+      extracted_reports: getDataQuality().extractedReports,
+      price_matched_reports: getDataQuality().reportsWithPrices,
+      report_stat_rows: getDataQuality().totalReports,
+      missing_price_symbols: getDataQuality().missingPriceSymbols,
+    },
+    target_stats: {
+      target_hit_rate: getDataQuality().targetHitRate,
+      target_hit_count: getReportRows().filter((report) => report.targetHit).length,
+    },
+  });
+}
+
+export function getReportRankings(): WebReportRankings {
+  return readJsonIfExists<WebReportRankings>('data/web/report-rankings.json', {
+    top_winners: [...getReportRows()].sort((a, b) => (b.currentReturn ?? -Infinity) - (a.currentReturn ?? -Infinity)).slice(0, 10).map(toRankingRow),
+    top_losers: [...getReportRows()].sort((a, b) => (a.currentReturn ?? Infinity) - (b.currentReturn ?? Infinity)).slice(0, 10).map(toRankingRow),
+    most_aggressive_targets: [...getReportRows()].sort((a, b) => (b.targetUpsideAtPub ?? -Infinity) - (a.targetUpsideAtPub ?? -Infinity)).slice(0, 10).map(toRankingRow),
+  });
+}
+
+export function getStrategyRuns(): StrategyRunsArtifact {
+  return readJsonIfExists<StrategyRunsArtifact>('data/web/strategy-runs.json',
+    readJsonIfExists<StrategyRunsArtifact>('apps/web/public/artifacts/strategy-runs.json', { runs: [], study_name: 'No local export yet' }),
+  );
+}
+
+export function getParameterImportance(): ParameterImportanceArtifact {
+  return readJsonIfExists<ParameterImportanceArtifact>('data/web/parameter-importance.json',
+    readJsonIfExists<ParameterImportanceArtifact>('apps/web/public/artifacts/parameter-importance.json', { parameters: [] }),
+  );
+}
+
+export function getWebDataQuality(): WebDataQuality {
+  return readJsonIfExists<WebDataQuality>('data/web/data-quality.json', {});
+}
+
+function toRankingRow(report: ReportRow): WebReportRankingRow {
+  return {
+    report_id: report.reportId,
+    symbol: report.symbol,
+    company: report.company,
+    publication_date: report.publicationDate,
+    entry_price_krw: report.entryPriceKrw,
+    target_price_krw: report.targetPriceKrw,
+    target_upside_at_pub: report.targetUpsideAtPub,
+    target_hit: report.targetHit,
+    target_hit_date: report.targetHitDate,
+    days_to_target: report.daysToTarget,
+    last_close_krw: report.lastCloseKrw,
+    last_close_date: report.lastCloseDate,
+    current_return: report.currentReturn,
+    peak_return: report.peakReturn,
+    trough_return: report.troughReturn,
+    target_gap_pct: report.targetGapPct,
+  };
+}

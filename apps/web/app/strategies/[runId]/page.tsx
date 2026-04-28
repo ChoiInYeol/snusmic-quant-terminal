@@ -1,32 +1,33 @@
-import { StrategySummary } from "../../../components/strategies/StrategySummary";
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { StrategySummary } from '@/components/strategies/StrategySummary';
+import { getStrategyRuns } from '@/lib/artifacts';
 
-async function loadStrategyRuns() {
-  try {
-    return (await import("../../../public/artifacts/strategy-runs.json")).default;
-  } catch {
-    return { runs: [] };
-  }
-}
-
-export async function generateStaticParams() {
-  const data = await loadStrategyRuns();
-  return data.runs.map((run: { run_id: string }) => ({ runId: run.run_id }));
+export function generateStaticParams() {
+  return getStrategyRuns().runs.map((run) => ({ runId: run.run_id }));
 }
 
 export default async function StrategyDetailPage({ params }: { params: Promise<{ runId: string }> }) {
   const { runId } = await params;
-  const data = await loadStrategyRuns();
-  const run = data.runs.find((item: any) => item.run_id === runId);
-  if (!run) {
-    return <main className="mx-auto max-w-4xl p-6"><h1 className="text-2xl font-bold">Strategy not found</h1></main>;
-  }
+  const data = getStrategyRuns();
+  const run = data.runs.find((item) => item.run_id === runId);
+  if (!run) notFound();
   return (
-    <main className="mx-auto max-w-4xl space-y-6 p-6">
-      <StrategySummary run={run} />
-      <section className="rounded-2xl border border-slate-200 bg-white p-5">
-        <h2 className="text-lg font-semibold">Parameters</h2>
-        <pre className="mt-3 overflow-auto rounded-xl bg-slate-950 p-4 text-sm text-slate-50">{JSON.stringify(run.params, null, 2)}</pre>
+    <>
+      <section className="hero">
+        <div className="eyebrow"><Link href="/strategies">← 전략 리더보드</Link></div>
+        <h1>{run.label}</h1>
+        <p>파라미터와 점수를 그대로 공개해 재현성과 과최적화 위험을 함께 보여줍니다.</p>
       </section>
-    </main>
+      <StrategySummary run={run} />
+      <section className="panel" style={{ marginTop: '1rem' }}>
+        <h2>원본 파라미터</h2>
+        <pre className="markdown-snippet">{JSON.stringify(run.params ?? {}, null, 2)}</pre>
+      </section>
+      <section className="panel" style={{ marginTop: '1rem' }}>
+        <h2>원본 지표</h2>
+        <pre className="markdown-snippet">{JSON.stringify(run.metrics, null, 2)}</pre>
+      </section>
+    </>
   );
 }

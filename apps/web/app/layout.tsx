@@ -15,9 +15,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <header className="topbar">
             <Link className="brand" href="/">SNUSMIC Quant</Link>
             <nav className="nav" aria-label="Primary navigation">
-              <Link href="/reports">Reports</Link>
-              <Link href="/data-quality">Data quality</Link>
-              <Link href="/methodology">Methodology</Link>
+              <Link href="/reports">리포트</Link>
+              <Link href="/insights">인사이트</Link>
+              <Link href="/strategies">전략</Link>
+              <Link href="/data-quality">데이터 품질</Link>
+              <Link href="/methodology">방법론</Link>
             </nav>
           </header>
           <main>{children}</main>

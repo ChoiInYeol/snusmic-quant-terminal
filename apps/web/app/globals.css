@@ -45,3 +45,22 @@ tr:hover td { background: rgba(96,165,250,.06); }
 .chart-box { min-height: 420px; }
 .markdown-snippet { max-height: 360px; overflow: auto; white-space: pre-wrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .82rem; color: #cbd5e1; }
 @media (max-width: 860px) { .detail-grid { grid-template-columns: 1fr; } .topbar { align-items: flex-start; flex-direction: column; } }
+.dashboard-hero { max-width: 920px; }
+.action-row { display: flex; flex-wrap: wrap; gap: .75rem; }
+.button { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; border: 1px solid rgba(96,165,250,.65); background: rgba(96,165,250,.18); color: var(--text); padding: .72rem 1rem; font-weight: 800; text-decoration: none; }
+.button.secondary { border-color: var(--line); background: rgba(255,255,255,.04); color: var(--muted); }
+.two-col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.split-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.score-badge { flex: 0 0 auto; border-radius: 999px; border: 1px solid rgba(96,165,250,.55); background: rgba(96,165,250,.14); padding: .45rem .75rem; color: var(--accent); font-weight: 800; }
+.metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .8rem; margin: 1rem 0; }
+.metric-grid.compact dd { margin: .25rem 0 0; font-size: 1.05rem; font-weight: 800; }
+.tag-row { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .85rem; }
+.warning-list { margin: .9rem 0 0; padding-left: 1.2rem; color: var(--warn); }
+.bar-list { display: grid; gap: .75rem; }
+.bar-row { display: grid; grid-template-columns: minmax(140px, .8fr) minmax(160px, 1fr) auto; align-items: center; gap: .8rem; color: var(--muted); }
+.bar-track { height: .62rem; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.08); border: 1px solid var(--line); }
+.bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--good)); }
+.table-wrap.inset { margin-top: .9rem; }
+.small-metric { font-size: 1.25rem; }
+.strategy-card + .strategy-card { margin-top: 1rem; }
+@media (max-width: 760px) { .two-col { grid-template-columns: 1fr; } .split-header { flex-direction: column; } .bar-row { grid-template-columns: 1fr; gap: .35rem; } }
