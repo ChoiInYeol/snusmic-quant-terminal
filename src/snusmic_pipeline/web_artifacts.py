@@ -717,6 +717,17 @@ def _write_download_csvs(out: Path, report_rows: list[dict[str, Any]], data_qual
 
 
 def _strategy_download_rows() -> list[dict[str, Any]]:
+    trials_csv = Path("data/optuna/exports/trials.csv")
+    if trials_csv.exists():
+        rows = _records(pd.read_csv(trials_csv, keep_default_na=False))
+        return [
+            {
+                "run_id": f"smic-follower-v1-trial-{row.get('trial_number')}",
+                "label": f"smic-follower-v1 trial {row.get('trial_number')}",
+                **row,
+            }
+            for row in rows
+        ]
     strategy_path = Path("data/web/strategy-runs.json")
     trials_path = Path("data/web/optuna-trials.json")
     if strategy_path.exists():

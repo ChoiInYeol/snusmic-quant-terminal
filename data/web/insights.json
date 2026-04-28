@@ -1,0 +1,57 @@
+[
+  {
+    "id": "target-hit-rate",
+    "metric": 0.481481,
+    "related_report_ids": [],
+    "sentence": "가격 매칭 리포트 기준 목표가 도달률은 0.481481입니다.",
+    "title": "목표가 도달률"
+  },
+  {
+    "id": "average-days-to-target",
+    "metric": 345.73,
+    "related_report_ids": [
+      "4a28ed5fae713919"
+    ],
+    "sentence": "목표가에 도달한 리포트의 평균 소요 기간은 345.73일입니다.",
+    "title": "목표가 도달 속도"
+  },
+  {
+    "id": "average-90d-return",
+    "metric": 319.132166,
+    "related_report_ids": [],
+    "sentence": "90일 가격 데이터가 있는 리포트의 평균 90일 수익률은 319.132166입니다.",
+    "title": "발간 후 90일 성과"
+  },
+  {
+    "id": "best-current-return",
+    "metric": 20.5,
+    "related_report_ids": [
+      "fea27bf20d0f8d88"
+    ],
+    "sentence": "현재 수익률 최상위 리포트는 이수페타시스 (007660.KS)입니다.",
+    "title": "현재 수익률 상위 리포트"
+  },
+  {
+    "id": "worst-current-return",
+    "metric": -0.95,
+    "related_report_ids": [
+      "cefde513c9366947"
+    ],
+    "sentence": "현재 수익률 최하위 리포트는 Chegg (CHGG)입니다.",
+    "title": "하방 리스크 리포트"
+  },
+  {
+    "id": "missing-price-coverage",
+    "metric": 5,
+    "related_report_ids": [],
+    "sentence": "전체 216개 리포트 중 가격 누락 심볼은 5개입니다.",
+    "title": "가격 데이터 커버리지"
+  },
+  {
+    "id": "performance-coverage",
+    "metric": 5,
+    "related_report_ids": [],
+    "sentence": "성과 산출 누락 리포트는 5개입니다.",
+    "title": "성과 산출 커버리지"
+  }
+]

@@ -1,0 +1,70 @@
+{
+  "days_to_target_buckets": [
+    {
+      "bucket": "0-30일",
+      "count": 14
+    },
+    {
+      "bucket": "31-60일",
+      "count": 8
+    },
+    {
+      "bucket": "61-90일",
+      "count": 9
+    },
+    {
+      "bucket": "91-180일",
+      "count": 23
+    },
+    {
+      "bucket": "181-365일",
+      "count": 15
+    },
+    {
+      "bucket": "365일+",
+      "count": 35
+    }
+  ],
+  "summary": {
+    "target_hit_count": 104,
+    "target_hit_rate": 0.481481,
+    "total_reports": 216
+  },
+  "target_upside_buckets": [
+    {
+      "avg_current_return": 0.559286,
+      "bucket": "0-25%",
+      "count": 14,
+      "target_hit_count": 13,
+      "target_hit_rate": 0.928571
+    },
+    {
+      "avg_current_return": 1.047031,
+      "bucket": "25-50%",
+      "count": 64,
+      "target_hit_count": 44,
+      "target_hit_rate": 0.6875
+    },
+    {
+      "avg_current_return": 0.507733,
+      "bucket": "50-100%",
+      "count": 75,
+      "target_hit_count": 27,
+      "target_hit_rate": 0.36
+    },
+    {
+      "avg_current_return": 0.665,
+      "bucket": "100-200%",
+      "count": 24,
+      "target_hit_count": 7,
+      "target_hit_rate": 0.291667
+    },
+    {
+      "avg_current_return": 1.29,
+      "bucket": "200%+",
+      "count": 21,
+      "target_hit_count": 5,
+      "target_hit_rate": 0.238095
+    }
+  ]
+}

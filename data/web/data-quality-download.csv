@@ -1,0 +1,9 @@
+section,metric,value
+coverage,warehouse_reports,216
+coverage,report_performance_rows,211
+coverage,reports_without_performance,5
+missing_symbol,003410.KS,003410.KS
+missing_symbol,010620.KS,010620.KS
+missing_symbol,287410.KQ,287410.KQ
+missing_symbol,NETI,NETI
+missing_symbol,VTNR,VTNR
