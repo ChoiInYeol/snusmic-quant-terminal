@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import type { PositionEpisodeRow, TradeRow } from '@/lib/artifacts';
+import type { PositionEpisodeRow, ReportTargetDigest, TradeRow } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
 import { PaginationControls, SortHeader, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
 
@@ -12,12 +12,14 @@ type Props = {
   personaLabels: Record<string, string>;
   capitalByPersona: Record<string, number>;
   reportSymbolsById: Record<string, string>;
+  targetsBySymbol: Record<string, ReportTargetDigest>;
+  targetsByReportId: Record<string, ReportTargetDigest>;
 };
 
-type EpisodeSortKey = 'strategy' | 'symbol' | 'openDate' | 'closeDate' | 'holdingDays' | 'entry' | 'exit' | 'stockReturn' | 'contribution' | 'reason';
-type TradeSortKey = 'date' | 'strategy' | 'side' | 'symbol' | 'qty' | 'price' | 'gross' | 'cash' | 'reason';
+type EpisodeSortKey = 'strategy' | 'market' | 'symbol' | 'target' | 'openDate' | 'closeDate' | 'holdingDays' | 'entry' | 'exit' | 'stockReturn' | 'contribution' | 'reason';
+type TradeSortKey = 'date' | 'strategy' | 'market' | 'side' | 'symbol' | 'target' | 'qty' | 'price' | 'gross' | 'cash' | 'reason';
 
-export function TradesTable({ trades, episodes, personaLabels, capitalByPersona = {}, reportSymbolsById }: Props) {
+export function TradesTable({ trades, episodes, personaLabels, capitalByPersona = {}, reportSymbolsById, targetsBySymbol, targetsByReportId }: Props) {
   const personas = useMemo(() => ['all', ...Array.from(new Set(trades.map((trade) => trade.persona))).sort()], [trades]);
   const [persona, setPersona] = useState('all');
   const [query, setQuery] = useState('');
@@ -43,7 +45,9 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
   });
   const sortedEpisodes = sortRows(filteredEpisodes, episodeSort, {
     strategy: (row) => personaLabels[row.persona] ?? row.persona,
+    market: (row) => marketLabel(targetsBySymbol[row.symbol]?.marketRegion),
     symbol: (row) => row.company || row.symbol,
+    target: (row) => targetsBySymbol[row.symbol]?.targetPriceKrw,
     openDate: (row) => row.openDate,
     closeDate: (row) => row.closeDate ?? '9999-99-99',
     holdingDays: (row) => row.holdingDays,
@@ -56,8 +60,10 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
   const sortedTrades = sortRows(filteredTrades, tradeSort, {
     date: (row) => row.date,
     strategy: (row) => personaLabels[row.persona] ?? row.persona,
+    market: (row) => marketLabel((row.reportId ? targetsByReportId[row.reportId]?.marketRegion : undefined) ?? targetsBySymbol[row.symbol]?.marketRegion),
     side: (row) => row.side,
     symbol: (row) => row.symbol,
+    target: (row) => (row.reportId ? targetsByReportId[row.reportId]?.targetPriceKrw : undefined) ?? targetsBySymbol[row.symbol]?.targetPriceKrw,
     qty: (row) => row.qty,
     price: (row) => row.fillPriceKrw,
     gross: (row) => row.grossKrw,
@@ -118,7 +124,9 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
           <table>
             <thead><tr>
               <th><SortHeader label="전략" sortKey="strategy" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="시장" sortKey="market" sort={episodeSort} onSort={updateEpisodeSort} /></th>
               <th><SortHeader label="종목" sortKey="symbol" sort={episodeSort} onSort={updateEpisodeSort} /></th>
+              <th><SortHeader label="목표가" sortKey="target" sort={episodeSort} onSort={updateEpisodeSort} /></th>
               <th><SortHeader label="매수 시작" sortKey="openDate" sort={episodeSort} onSort={updateEpisodeSort} /></th>
               <th><SortHeader label="매도/상태" sortKey="closeDate" sort={episodeSort} onSort={updateEpisodeSort} /></th>
               <th><SortHeader label="보유일" sortKey="holdingDays" sort={episodeSort} onSort={updateEpisodeSort} /></th>
@@ -133,10 +141,13 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
                 const pnl = episode.status === 'closed' ? episode.realizedPnlKrw : episode.unrealizedPnlKrw;
                 const stockReturn = positionReturn(episode);
                 const contribution = capitalContribution(pnl, capitalByPersona[episode.persona]);
+                const target = targetsBySymbol[episode.symbol];
                 return (
                   <tr key={`${episode.persona}-${episode.symbol}-${episode.openDate}-${episode.closeDate ?? 'open'}`}>
                     <td>{personaLabels[episode.persona] ?? episode.persona}</td>
-                    <td><strong>{episode.company || episode.symbol}</strong><div className="muted">{episode.symbol}</div></td>
+                    <td><span className="pill">{marketLabel(target?.marketRegion)}</span></td>
+                    <td><strong><Link href={`/reports/${episode.symbol}`}>{episode.company || episode.symbol}</Link></strong><div className="muted">{episode.symbol}</div></td>
+                    <td>{formatKrw(target?.targetPriceKrw)}<div className="muted">{target?.publicationDate ?? '—'}</div></td>
                     <td>{episode.openDate}<div className="muted">{episode.buyFills ?? 0}회 매수</div></td>
                     <td>{episode.closeDate ?? <span className="pill good">보유중</span>}<div className="muted">{episode.status}</div></td>
                     <td>{formatDays(episode.holdingDays)}</td>
@@ -162,8 +173,10 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
             <thead><tr>
               <th><SortHeader label="일자" sortKey="date" sort={tradeSort} onSort={updateTradeSort} /></th>
               <th><SortHeader label="전략" sortKey="strategy" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th><SortHeader label="시장" sortKey="market" sort={tradeSort} onSort={updateTradeSort} /></th>
               <th><SortHeader label="구분" sortKey="side" sort={tradeSort} onSort={updateTradeSort} /></th>
               <th><SortHeader label="심볼" sortKey="symbol" sort={tradeSort} onSort={updateTradeSort} /></th>
+              <th><SortHeader label="목표가" sortKey="target" sort={tradeSort} onSort={updateTradeSort} /></th>
               <th><SortHeader label="수량" sortKey="qty" sort={tradeSort} onSort={updateTradeSort} /></th>
               <th><SortHeader label="체결가" sortKey="price" sort={tradeSort} onSort={updateTradeSort} /></th>
               <th><SortHeader label="체결금액" sortKey="gross" sort={tradeSort} onSort={updateTradeSort} /></th>
@@ -172,12 +185,16 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
               <th>근거</th>
             </tr></thead>
             <tbody>
-              {tradeRows.map((trade, index) => (
+              {tradeRows.map((trade, index) => {
+                const target = (trade.reportId ? targetsByReportId[trade.reportId] : undefined) ?? targetsBySymbol[trade.symbol];
+                return (
                 <tr key={`${trade.persona}-${trade.date}-${trade.symbol}-${trade.side}-${index}`}>
                   <td>{trade.date}</td>
                   <td>{personaLabels[trade.persona] ?? trade.persona}</td>
+                  <td><span className="pill">{marketLabel(target?.marketRegion)}</span></td>
                   <td><span className={`pill ${trade.side === 'buy' ? 'good' : 'warn'}`}>{trade.side === 'buy' ? '매수' : '매도'}</span></td>
-                  <td>{trade.symbol}</td>
+                  <td><Link href={`/reports/${trade.symbol}`}>{trade.symbol}</Link></td>
+                  <td>{formatKrw(target?.targetPriceKrw)}<div className="muted">{target?.publicationDate ?? '—'}</div></td>
                   <td>{trade.qty?.toLocaleString('ko-KR') ?? '—'}</td>
                   <td>{formatKrw(trade.fillPriceKrw)}</td>
                   <td>{formatKrw(trade.grossKrw)}</td>
@@ -185,7 +202,8 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
                   <td>{humanReason(trade.reason)}</td>
                   <td>{trade.reportId && reportSymbolsById[trade.reportId] ? <Link href={`/reports/${reportSymbolsById[trade.reportId]}`}>리포트</Link> : '—'}</td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -231,4 +249,8 @@ function positionReturn(episode: PositionEpisodeRow): number | null {
 function capitalContribution(pnl: number | null, capital: number | undefined): number | null {
   if (pnl === null || pnl === undefined || !capital || capital <= 0) return null;
   return pnl / capital;
+}
+
+function marketLabel(region: 'domestic' | 'overseas' | undefined): string {
+  return region === 'domestic' ? '국내' : '해외';
 }

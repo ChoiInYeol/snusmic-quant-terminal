@@ -1,6 +1,6 @@
 import { PortfolioTables } from '@/components/trading/PortfolioTables';
 import { MetricCard, TerminalHero, TerminalLink } from '@/components/ui/Terminal';
-import { getCurrentHoldings, getMonthlyHoldings, getPersonaLabel, getSummaryRows } from '@/lib/artifacts';
+import { getCurrentHoldings, getLatestReportTargetsBySymbol, getMonthlyHoldings, getPersonaLabel, getSummaryRows } from '@/lib/artifacts';
 import { formatKrw, formatPercent } from '@/lib/format';
 
 export default function PortfolioPage() {
@@ -12,6 +12,7 @@ export default function PortfolioPage() {
   const capitalByPersona = Object.fromEntries(summaries.map((row) => [row.persona, row.totalContributedKrw ?? row.finalEquityKrw ?? 0]));
   const totalValue = holdings.reduce((sum, row) => sum + (row.marketValueKrw ?? 0), 0);
   const totalPnl = holdings.reduce((sum, row) => sum + (row.unrealizedPnlKrw ?? 0), 0);
+  const targetsBySymbol = getLatestReportTargetsBySymbol();
   const latestMonth = monthly.reduce((latest, row) => row.monthEnd > latest ? row.monthEnd : latest, '');
 
   return (
@@ -26,7 +27,7 @@ export default function PortfolioPage() {
         <MetricCard label="미실현 손익" value={formatKrw(totalPnl)} detail={formatPercent(totalPnl / Math.max(1, totalValue - totalPnl))} tone={totalPnl >= 0 ? 'good' : 'bad'} />
         <MetricCard label="최신 월말 스냅샷" value={latestMonth || '—'} />
       </section>
-      <PortfolioTables holdings={holdings} personaLabels={personaLabels} capitalByPersona={capitalByPersona} />
+      <PortfolioTables holdings={holdings} personaLabels={personaLabels} capitalByPersona={capitalByPersona} targetsBySymbol={targetsBySymbol} />
     </>
   );
 }

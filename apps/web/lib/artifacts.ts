@@ -92,6 +92,17 @@ export type PositionEpisodeRow = {
 };
 
 export type PricePoint = { time: string; value: number };
+
+export type ReportTargetDigest = {
+  reportId: string;
+  symbol: string;
+  company: string;
+  exchange: string;
+  marketRegion: 'domestic' | 'overseas';
+  publicationDate: string;
+  targetPriceKrw: number | null;
+  targetUpsideAtPub: number | null;
+};
 export type EquityPoint = {
   persona: string;
   date: string;
@@ -357,6 +368,38 @@ export function getReportBySymbol(symbol: string): ReportRow | undefined {
 export function getReportSymbolById(reportId: string | null | undefined): string | null {
   if (!reportId) return null;
   return getReportById(reportId)?.symbol ?? null;
+}
+
+export function getReportTargetDigests(): ReportTargetDigest[] {
+  return getReportRows().map((report) => ({
+    reportId: report.reportId,
+    symbol: report.symbol,
+    company: report.company,
+    exchange: report.exchange,
+    marketRegion: marketRegionForSymbol(report.symbol, report.exchange),
+    publicationDate: report.publicationDate,
+    targetPriceKrw: report.targetPriceKrw,
+    targetUpsideAtPub: report.targetUpsideAtPub,
+  }));
+}
+
+export function getLatestReportTargetsBySymbol(): Record<string, ReportTargetDigest> {
+  const out: Record<string, ReportTargetDigest> = {};
+  for (const report of getReportTargetDigests()) {
+    const previous = out[report.symbol];
+    if (!previous || report.publicationDate > previous.publicationDate) out[report.symbol] = report;
+  }
+  return out;
+}
+
+export function getReportTargetsById(): Record<string, ReportTargetDigest> {
+  return Object.fromEntries(getReportTargetDigests().map((report) => [report.reportId, report]));
+}
+
+export function marketRegionForSymbol(symbol: string, exchange?: string): 'domestic' | 'overseas' {
+  const upperExchange = (exchange ?? '').toUpperCase();
+  if (symbol.endsWith('.KS') || symbol.endsWith('.KQ') || upperExchange === 'KRX' || upperExchange === 'KOSPI' || upperExchange === 'KOSDAQ') return 'domestic';
+  return 'overseas';
 }
 
 export function getPriceSeries(symbol: string, startDate?: string, endDate?: string | null): PricePoint[] {

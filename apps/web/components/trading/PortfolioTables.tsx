@@ -1,7 +1,8 @@
 'use client';
 
+import Link from 'next/link';
 import { useMemo, useState } from 'react';
-import type { HoldingRow } from '@/lib/artifacts';
+import type { HoldingRow, ReportTargetDigest } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
 import { PaginationControls, SortHeader, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
 
@@ -9,11 +10,12 @@ type Props = {
   holdings: HoldingRow[];
   personaLabels: Record<string, string>;
   capitalByPersona: Record<string, number>;
+  targetsBySymbol: Record<string, ReportTargetDigest>;
 };
 
-type HoldingSortKey = 'strategy' | 'symbol' | 'qty' | 'avgCost' | 'lastClose' | 'marketValue' | 'stockReturn' | 'contribution' | 'firstBuy';
+type HoldingSortKey = 'strategy' | 'market' | 'symbol' | 'target' | 'qty' | 'avgCost' | 'lastClose' | 'marketValue' | 'stockReturn' | 'contribution' | 'firstBuy';
 
-export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {} }: Props) {
+export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {}, targetsBySymbol }: Props) {
   const personas = useMemo(() => ['all', ...Array.from(new Set(holdings.map((row) => row.persona))).sort()], [holdings]);
   const [persona, setPersona] = useState('all');
   const [sort, setSort] = useState<SortState<HoldingSortKey>>({ key: 'marketValue', direction: 'desc' });
@@ -22,7 +24,9 @@ export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {}
   useUrlBackedStrategy(persona, setPersona, personas);
   const currentRows = sortRows(holdings.filter((row) => persona === 'all' || row.persona === persona), sort, {
     strategy: (row) => personaLabels[row.persona] ?? row.persona,
+    market: (row) => marketLabel(targetsBySymbol[row.symbol]?.marketRegion),
     symbol: (row) => row.company || row.symbol,
+    target: (row) => targetsBySymbol[row.symbol]?.targetPriceKrw,
     qty: (row) => row.qty,
     avgCost: (row) => row.avgCostKrw,
     lastClose: (row) => row.lastCloseKrw,
@@ -49,19 +53,21 @@ export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {}
           ))}
         </div>
         <div className="table-toolbar" aria-label="포트폴리오 필터">
-          <button type="button" onClick={() => downloadHoldings(currentRows)}>현재 포트폴리오 CSV</button>
+          <button type="button" onClick={() => downloadHoldings(currentRows, targetsBySymbol)}>현재 포트폴리오 CSV</button>
         </div>
       </section>
 
       <section className="panel">
         <h2>현재 보유 포트폴리오</h2>
-        <p className="muted">현재 어떤 종목을 얼마나 들고 있는지, 평단·최근가·미실현 손익을 바로 확인합니다.</p>
+        <p className="muted">현재 어떤 종목을 얼마나 들고 있는지, 목표가·시장구분·평단·최근가·미실현 손익을 바로 확인합니다.</p>
         <PaginationControls page={page} pageCount={Math.ceil(currentRows.length / pageSize)} totalRows={currentRows.length} pageSize={pageSize} onPageChange={setPage} onPageSizeChange={(size) => { setPageSize(size); setPage(0); }} />
         <div className="table-wrap inset">
           <table>
             <thead><tr>
               <th><SortHeader label="전략" sortKey="strategy" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="시장" sortKey="market" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="종목" sortKey="symbol" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="목표가" sortKey="target" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="수량" sortKey="qty" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="평단" sortKey="avgCost" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="최근가" sortKey="lastClose" sort={sort} onSort={updateSort} /></th>
@@ -73,10 +79,13 @@ export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {}
             <tbody>
               {visibleRows.map((row) => {
                 const contribution = capitalContribution(row.unrealizedPnlKrw, capitalByPersona[row.persona]);
+                const target = targetsBySymbol[row.symbol];
                 return (
                   <tr key={`${row.persona}-${row.symbol}`}>
                     <td>{personaLabels[row.persona] ?? row.persona}</td>
-                    <td><strong>{row.company || row.symbol}</strong><div className="muted">{row.symbol}</div></td>
+                    <td><span className="pill">{marketLabel(target?.marketRegion)}</span></td>
+                    <td><strong><Link href={`/reports/${row.symbol}`}>{row.company || row.symbol}</Link></strong><div className="muted">{row.symbol}</div></td>
+                    <td>{formatKrw(target?.targetPriceKrw)}<div className="muted">{target?.publicationDate ?? '—'}</div></td>
                     <td>{row.qty?.toLocaleString('ko-KR') ?? '—'}</td>
                     <td>{formatKrw(row.avgCostKrw)}</td>
                     <td>{formatKrw(row.lastCloseKrw)}</td>
@@ -95,9 +104,12 @@ export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {}
   );
 }
 
-function downloadHoldings(rows: HoldingRow[]) {
-  const headers = ['persona', 'symbol', 'company', 'qty', 'avg_cost_krw', 'last_close_krw', 'market_value_krw', 'unrealized_pnl_krw', 'unrealized_return', 'first_buy_date'];
-  const csv = [headers.join(','), ...rows.map((row) => [row.persona, row.symbol, row.company, row.qty ?? '', row.avgCostKrw ?? '', row.lastCloseKrw ?? '', row.marketValueKrw ?? '', row.unrealizedPnlKrw ?? '', row.unrealizedReturn ?? '', row.firstBuyDate ?? ''].map(csvEscape).join(','))].join('\n');
+function downloadHoldings(rows: HoldingRow[], targetsBySymbol: Record<string, ReportTargetDigest>) {
+  const headers = ['persona', 'market_region', 'symbol', 'company', 'target_price_krw', 'target_publication_date', 'qty', 'avg_cost_krw', 'last_close_krw', 'market_value_krw', 'unrealized_pnl_krw', 'unrealized_return', 'first_buy_date'];
+  const csv = [headers.join(','), ...rows.map((row) => {
+    const target = targetsBySymbol[row.symbol];
+    return [row.persona, target?.marketRegion ?? '', row.symbol, row.company, target?.targetPriceKrw ?? '', target?.publicationDate ?? '', row.qty ?? '', row.avgCostKrw ?? '', row.lastCloseKrw ?? '', row.marketValueKrw ?? '', row.unrealizedPnlKrw ?? '', row.unrealizedReturn ?? '', row.firstBuyDate ?? ''].map(csvEscape).join(',');
+  })].join('\n');
   const blob = new Blob([`\ufeff${csv}`], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -117,4 +129,8 @@ function csvEscape(value: unknown): string {
 function capitalContribution(pnl: number | null, capital: number | undefined): number | null {
   if (pnl === null || pnl === undefined || !capital || capital <= 0) return null;
   return pnl / capital;
+}
+
+function marketLabel(region: 'domestic' | 'overseas' | undefined): string {
+  return region === 'domestic' ? '국내' : '해외';
 }

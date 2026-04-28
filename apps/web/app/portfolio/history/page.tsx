@@ -1,11 +1,12 @@
 import { PortfolioHistory } from '@/components/trading/PortfolioHistory';
 import { MetricCard, TerminalHero, TerminalLink } from '@/components/ui/Terminal';
-import { getMonthlyHoldings, getPersonaLabel } from '@/lib/artifacts';
+import { getLatestReportTargetsBySymbol, getMonthlyHoldings, getPersonaLabel } from '@/lib/artifacts';
 
 export default function PortfolioHistoryPage() {
   const monthly = getMonthlyHoldings();
   const personas = Array.from(new Set(monthly.map((row) => row.persona))).sort();
   const months = Array.from(new Set(monthly.map((row) => row.monthEnd))).sort();
+  const targetsBySymbol = getLatestReportTargetsBySymbol();
   const personaLabels = Object.fromEntries(personas.map((persona) => [persona, getPersonaLabel(persona)]));
   const latestMonth = months.at(-1) ?? '—';
   const firstMonth = months[0] ?? '—';
@@ -21,7 +22,7 @@ export default function PortfolioHistoryPage() {
         <MetricCard label="기간" value={`${firstMonth} ~ ${latestMonth}`} />
         <MetricCard label="전략 수" value={personas.length.toLocaleString('ko-KR')} />
       </section>
-      <PortfolioHistory monthly={monthly} personaLabels={personaLabels} />
+      <PortfolioHistory monthly={monthly} personaLabels={personaLabels} targetsBySymbol={targetsBySymbol} />
     </>
   );
 }

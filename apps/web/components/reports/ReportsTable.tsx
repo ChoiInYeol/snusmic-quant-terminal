@@ -27,6 +27,7 @@ const csvHeaders: Array<[string, (report: ReportRow) => string | number | boolea
   ['기업명', (report) => report.company],
   ['심볼', (report) => report.symbol],
   ['거래소', (report) => report.exchange],
+  ['시장구분', (report) => marketLabel(marketRegionForSymbol(report.symbol, report.exchange))],
   ['게시일', (report) => report.publicationDate],
   ['진입가(KRW)', (report) => report.entryPriceKrw],
   ['목표가(KRW)', (report) => report.targetPriceKrw],
@@ -64,6 +65,12 @@ export function ReportsTable({ reports }: ReportsTableProps) {
             <span className="muted">{row.original.symbol} · {row.original.exchange || '—'}</span>
           </div>
         ),
+      },
+      {
+        id: 'marketRegion',
+        header: '시장',
+        accessorFn: (report) => marketLabel(marketRegionForSymbol(report.symbol, report.exchange)),
+        cell: ({ row }) => <span className="pill">{marketLabel(marketRegionForSymbol(row.original.symbol, row.original.exchange))}</span>,
       },
       { accessorKey: 'publicationDate', header: '게시일' },
       {
@@ -280,4 +287,14 @@ function escapeCsv(value: string | number | boolean | null): string {
 
 function isBearishReport(report: ReportRow): boolean {
   return (report.targetUpsideAtPub ?? 0) < 0 && report.caveatFlags.some((flag) => /non_buy_rating:.*(sell|reduce|underperform|매도)/i.test(flag));
+}
+
+function marketLabel(region: 'domestic' | 'overseas'): string {
+  return region === 'domestic' ? '국내' : '해외';
+}
+
+function marketRegionForSymbol(symbol: string, exchange?: string): 'domestic' | 'overseas' {
+  const upperExchange = (exchange ?? '').toUpperCase();
+  if (symbol.endsWith('.KS') || symbol.endsWith('.KQ') || upperExchange === 'KRX' || upperExchange === 'KOSPI' || upperExchange === 'KOSDAQ') return 'domestic';
+  return 'overseas';
 }

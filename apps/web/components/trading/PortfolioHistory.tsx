@@ -1,20 +1,21 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { MonthlyHoldingRow } from '@/lib/artifacts';
+import type { MonthlyHoldingRow, ReportTargetDigest } from '@/lib/artifacts';
 import { formatKrw, formatPercent } from '@/lib/format';
 import { PaginationControls, SortHeader, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
 
 type Props = {
   monthly: MonthlyHoldingRow[];
   personaLabels: Record<string, string>;
+  targetsBySymbol: Record<string, ReportTargetDigest>;
 };
 
-type MonthlySortKey = 'month' | 'strategy' | 'symbol' | 'qty' | 'marketValue' | 'weight';
+type MonthlySortKey = 'month' | 'strategy' | 'market' | 'symbol' | 'target' | 'qty' | 'marketValue' | 'weight';
 
 const STACK_COLORS = ['#d7ff4f', '#35f2c2', '#8ab4ff', '#ffd166', '#ff6f91', '#b892ff', '#7ee787', '#fca5a5', '#cbd5e1'];
 
-export function PortfolioHistory({ monthly, personaLabels }: Props) {
+export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Props) {
   const personas = useMemo(() => ['all', ...Array.from(new Set(monthly.map((row) => row.persona))).sort()], [monthly]);
   const months = useMemo(() => Array.from(new Set(monthly.map((row) => row.monthEnd))).sort().reverse(), [monthly]);
   const [persona, setPersona] = useState('all');
@@ -28,7 +29,9 @@ export function PortfolioHistory({ monthly, personaLabels }: Props) {
   const sorted = sortRows(filtered, sort, {
     month: (row) => row.monthEnd,
     strategy: (row) => personaLabels[row.persona] ?? row.persona,
+    market: (row) => marketLabel(targetsBySymbol[row.symbol]?.marketRegion),
     symbol: (row) => row.company || row.symbol,
+    target: (row) => targetsBySymbol[row.symbol]?.targetPriceKrw,
     qty: (row) => row.qty,
     marketValue: (row) => row.marketValueKrw,
     weight: (row) => row.weightInPortfolio,
@@ -58,7 +61,7 @@ export function PortfolioHistory({ monthly, personaLabels }: Props) {
               {months.map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
           </label>
-          <button type="button" onClick={() => downloadMonthly(sorted)}>현재 보기 CSV</button>
+          <button type="button" onClick={() => downloadMonthly(sorted, targetsBySymbol)}>현재 보기 CSV</button>
         </div>
       </section>
 
@@ -93,22 +96,29 @@ export function PortfolioHistory({ monthly, personaLabels }: Props) {
             <thead><tr>
               <th><SortHeader label="월말" sortKey="month" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="전략" sortKey="strategy" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="시장" sortKey="market" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="심볼" sortKey="symbol" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="목표가" sortKey="target" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="수량" sortKey="qty" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="평가액" sortKey="marketValue" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="비중" sortKey="weight" sort={sort} onSort={updateSort} /></th>
             </tr></thead>
             <tbody>
-              {rows.map((row) => (
+              {rows.map((row) => {
+                const target = targetsBySymbol[row.symbol];
+                return (
                 <tr key={`${row.persona}-${row.monthEnd}-${row.symbol}`}>
                   <td>{row.monthEnd}</td>
                   <td>{personaLabels[row.persona] ?? row.persona}</td>
-                  <td>{row.company || row.symbol}<div className="muted">{row.symbol}</div></td>
+                  <td><span className="pill">{marketLabel(target?.marketRegion)}</span></td>
+                  <td>{row.company || row.symbol}<div className="muted"><a href={`/reports/${row.symbol}`}>{row.symbol}</a></div></td>
+                  <td>{formatKrw(target?.targetPriceKrw)}<div className="muted">{target?.publicationDate ?? '—'}</div></td>
                   <td>{row.qty?.toLocaleString('ko-KR') ?? '—'}</td>
                   <td>{formatKrw(row.marketValueKrw)}</td>
                   <td>{formatPercent(row.weightInPortfolio)}</td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>
@@ -134,9 +144,12 @@ function buildStacks(rows: MonthlyHoldingRow[], persona: string) {
   });
 }
 
-function downloadMonthly(rows: MonthlyHoldingRow[]) {
-  const headers = ['month_end', 'persona', 'symbol', 'company', 'qty', 'market_value_krw', 'weight_in_portfolio'];
-  const csv = [headers.join(','), ...rows.map((row) => [row.monthEnd, row.persona, row.symbol, row.company, row.qty ?? '', row.marketValueKrw ?? '', row.weightInPortfolio ?? ''].map(csvEscape).join(','))].join('\n');
+function downloadMonthly(rows: MonthlyHoldingRow[], targetsBySymbol: Record<string, ReportTargetDigest>) {
+  const headers = ['month_end', 'persona', 'market_region', 'symbol', 'company', 'target_price_krw', 'target_publication_date', 'qty', 'market_value_krw', 'weight_in_portfolio'];
+  const csv = [headers.join(','), ...rows.map((row) => {
+    const target = targetsBySymbol[row.symbol];
+    return [row.monthEnd, row.persona, target?.marketRegion ?? '', row.symbol, row.company, target?.targetPriceKrw ?? '', target?.publicationDate ?? '', row.qty ?? '', row.marketValueKrw ?? '', row.weightInPortfolio ?? ''].map(csvEscape).join(',');
+  })].join('\n');
   const blob = new Blob([`\ufeff${csv}`], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -151,4 +164,8 @@ function downloadMonthly(rows: MonthlyHoldingRow[]) {
 function csvEscape(value: unknown): string {
   const text = String(value ?? '');
   return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+}
+
+function marketLabel(region: 'domestic' | 'overseas' | undefined): string {
+  return region === 'domestic' ? '국내' : '해외';
 }

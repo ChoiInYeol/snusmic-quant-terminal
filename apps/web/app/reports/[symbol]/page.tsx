@@ -24,9 +24,10 @@ export default async function ReportDetailPage({ params }: { params: ReportParam
   const report = getReportBySymbol(reportSymbol);
   if (!report) notFound();
   const siblingReports = getReportsBySymbol(reportSymbol);
-  const prices = getPriceSeries(report.symbol, report.publicationDate, report.lastCloseDate);
+  const prices = getPriceSeries(report.symbol, oneYearBefore(report.publicationDate), report.lastCloseDate);
   const snippet = getMarkdownSnippet(report);
   const pathEvidence = buildPathEvidence(prices, report);
+  const scenarioRows = buildScenarioRows(prices, report);
   const memo = buildKoreanInvestmentMemo(report);
 
   return (
@@ -46,6 +47,7 @@ export default async function ReportDetailPage({ params }: { params: ReportParam
         </Panel>
         <aside className="grid">
           <Panel title="경로 통계">
+            <p className="muted">차트는 발간 전 1년 가격까지 포함합니다. 통계는 발간 이후만 계산합니다.</p>
             <p>관측 고점: {pathEvidence.peak ? `${pathEvidence.peak.time} · ${formatKrw(pathEvidence.peak.value)}` : '—'}</p>
             <p>관측 저점: {pathEvidence.trough ? `${pathEvidence.trough.time} · ${formatKrw(pathEvidence.trough.value)}` : '—'}</p>
             <p>최고 수익률: <span className="good">{formatPercent(report.peakReturn)}</span></p>
@@ -54,6 +56,22 @@ export default async function ReportDetailPage({ params }: { params: ReportParam
             <p><a href={githubBlobUrl(`data/markdown/${report.markdownFilename}`)}>GitHub Markdown →</a></p>
             {report.pdfFilename ? <p><a href={githubBlobUrl(`data/pdfs/${report.pdfFilename}`)}>GitHub PDF →</a></p> : null}
             {report.pdfUrl ? <p><a href={report.pdfUrl}>SNUSMIC 원본 PDF →</a></p> : null}
+          </Panel>
+          <Panel title="시점별 매수 수익률">
+            <div className="table-wrap inset compact-table">
+              <table>
+                <thead><tr><th>시점</th><th>일자</th><th>매수가</th><th>현재까지</th><th>목표까지</th></tr></thead>
+                <tbody>{scenarioRows.map((row) => (
+                  <tr key={row.label}>
+                    <td>{row.label}</td>
+                    <td>{row.point?.time ?? '—'}</td>
+                    <td>{formatKrw(row.point?.value)}</td>
+                    <td className={(row.currentReturn ?? 0) >= 0 ? 'good' : 'bad'}>{formatPercent(row.currentReturn)}</td>
+                    <td className={(row.targetReturn ?? 0) >= 0 ? 'good' : 'bad'}>{formatPercent(row.targetReturn)}</td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
           </Panel>
           <Panel title="동일 티커 리포트">
             <ul>{siblingReports.map((item) => <li key={item.reportId}>{item.publicationDate} · {item.title}</li>)}</ul>
@@ -78,8 +96,10 @@ type PathEvidence = {
 };
 
 function buildPathEvidence(prices: PricePoint[], report: ReportRow): PathEvidence {
-  const peak = prices.reduce<PricePoint | null>((best, point) => (!best || point.value > best.value ? point : best), null);
-  const trough = prices.reduce<PricePoint | null>((best, point) => (!best || point.value < best.value ? point : best), null);
+  const postPublication = prices.filter((point) => point.time >= report.publicationDate);
+  const observed = postPublication.length ? postPublication : prices;
+  const peak = observed.reduce<PricePoint | null>((best, point) => (!best || point.value > best.value ? point : best), null);
+  const trough = observed.reduce<PricePoint | null>((best, point) => (!best || point.value < best.value ? point : best), null);
   const markers: PathEvidence['markers'] = [
     { time: report.publicationDate, kind: 'publication', label: '발간', value: report.entryPriceKrw },
   ];
@@ -87,6 +107,40 @@ function buildPathEvidence(prices: PricePoint[], report: ReportRow): PathEvidenc
   if (peak) markers.push({ time: peak.time, kind: 'peak', label: '관측 고점', value: peak.value });
   if (trough) markers.push({ time: trough.time, kind: 'trough', label: '관측 저점', value: trough.value });
   return { peak, trough, markers };
+}
+
+
+
+type ScenarioRow = { label: string; point: PricePoint | null; currentReturn: number | null; targetReturn: number | null };
+
+function buildScenarioRows(prices: PricePoint[], report: ReportRow): ScenarioRow[] {
+  const postPublication = prices.filter((point) => point.time >= report.publicationDate);
+  if (!postPublication.length) {
+    return ['발간 후 저점', '25% 경과', '75% 경과', '발간 후 고점', '현재가'].map((label) => ({ label, point: null, currentReturn: null, targetReturn: null }));
+  }
+  const low = postPublication.reduce((best, point) => point.value < best.value ? point : best, postPublication[0]);
+  const high = postPublication.reduce((best, point) => point.value > best.value ? point : best, postPublication[0]);
+  const q25 = postPublication[Math.floor((postPublication.length - 1) * 0.25)] ?? null;
+  const q75 = postPublication[Math.floor((postPublication.length - 1) * 0.75)] ?? null;
+  const current = postPublication.at(-1) ?? null;
+  return [
+    { label: '발간 후 저점', point: low },
+    { label: '25% 경과', point: q25 },
+    { label: '75% 경과', point: q75 },
+    { label: '발간 후 고점', point: high },
+    { label: '현재가', point: current },
+  ].map((row) => ({
+    ...row,
+    currentReturn: row.point && current ? current.value / row.point.value - 1 : null,
+    targetReturn: row.point && report.targetPriceKrw ? report.targetPriceKrw / row.point.value - 1 : null,
+  }));
+}
+
+function oneYearBefore(date: string): string {
+  const [year, month, day] = date.split('-').map(Number);
+  if (!year || !month || !day) return date;
+  const value = new Date(Date.UTC(year - 1, month - 1, day));
+  return value.toISOString().slice(0, 10);
 }
 
 function buildKoreanInvestmentMemo(report: ReportRow) {
