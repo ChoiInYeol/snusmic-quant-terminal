@@ -1,7 +1,4 @@
-import Link from 'next/link';
-import { notFound } from 'next/navigation';
-import { StrategySummary } from '@/components/strategies/StrategySummary';
-import { getStrategyRuns } from '@/lib/artifacts';
+import { StrategySummary, type StrategyRun } from "../../../components/strategies/StrategySummary";
 
 export function generateStaticParams() {
   return getStrategyRuns().runs.map((run) => ({ runId: run.run_id }));
@@ -9,9 +6,11 @@ export function generateStaticParams() {
 
 export default async function StrategyDetailPage({ params }: { params: Promise<{ runId: string }> }) {
   const { runId } = await params;
-  const data = getStrategyRuns();
-  const run = data.runs.find((item) => item.run_id === runId);
-  if (!run) notFound();
+  const data = await loadStrategyRuns();
+  const run = data.runs.find((item: StrategyRun) => item.run_id === runId);
+  if (!run) {
+    return <main className="mx-auto max-w-4xl p-6"><h1 className="text-2xl font-bold">Strategy not found</h1></main>;
+  }
   return (
     <>
       <section className="hero">

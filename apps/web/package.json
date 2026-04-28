@@ -9,6 +9,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@tanstack/react-table": "^8.21.3",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-dom": "latest",

@@ -1,7 +1,4 @@
-import Link from 'next/link';
-import { formatDays, formatKrwMillions, formatPercent } from '@/lib/format';
-
-type StrategyRun = {
+export type StrategyRun = {
   run_id: string;
   trial_number?: number;
   label: string;
