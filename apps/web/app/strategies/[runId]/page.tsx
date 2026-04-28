@@ -8,6 +8,11 @@ async function loadStrategyRuns() {
   }
 }
 
+export async function generateStaticParams() {
+  const data = await loadStrategyRuns();
+  return data.runs.map((run: { run_id: string }) => ({ runId: run.run_id }));
+}
+
 export default async function StrategyDetailPage({ params }: { params: Promise<{ runId: string }> }) {
   const { runId } = await params;
   const data = await loadStrategyRuns();
