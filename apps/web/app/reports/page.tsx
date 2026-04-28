@@ -1,6 +1,7 @@
-import { ReportsTable } from '@/components/reports/ReportsTable';
+import Link from 'next/link';
+import { MetricCard, StatusPill, TerminalHero } from '@/components/ui/Terminal';
 import { getReportRows } from '@/lib/artifacts';
-import { formatPercent } from '@/lib/format';
+import { formatDays, formatKrw, formatMultiple, formatPercent } from '@/lib/format';
 
 export default function ReportsPage() {
   const reports = getReportRows();
@@ -10,21 +11,34 @@ export default function ReportsPage() {
 
   return (
     <>
-      <section className="hero">
-        <div className="eyebrow">리포트 탐색기</div>
-        <h1>추출된 SNUSMIC 리포트를 한눈에 검증합니다.</h1>
-        <p>
-          기업명·심볼 검색, 거래소/목표 달성/현재 수익률 필터, 열별 정렬을 지원합니다. 현재 필터 결과만
-          내려받거나 전체 데이터셋을 CSV로 내려받아 Google Sheets에서 이어서 분석할 수 있습니다.
-        </p>
-      </section>
+      <TerminalHero eyebrow="Report explorer" title="모든 추출 리포트를 가격 증거와 함께 봅니다.">
+        <p>실현 수익률 기준 상위 행을 먼저 보여줍니다. 상세 페이지는 발간일 마커, 목표가 선, 도달일, 시뮬레이션에 사용된 Markdown 증거를 함께 표시합니다.</p>
+      </TerminalHero>
       <section className="grid cards" style={{ marginBottom: '1rem' }}>
-        <div className="card"><div className="muted">가격 매칭 리포트</div><div className="metric">{reports.length.toLocaleString('ko-KR')}</div><p>시뮬레이션 성과 테이블 기준</p></div>
-        <div className="card"><div className="muted">목표가 달성</div><div className="metric good">{targetHitCount.toLocaleString('ko-KR')}</div><p>{formatPercent(targetHitCount / Math.max(1, reports.length))}</p></div>
-        <div className="card"><div className="muted">현재 플러스 수익률</div><div className="metric warn">{positiveReturnCount.toLocaleString('ko-KR')}</div><p>{formatPercent(positiveReturnCount / Math.max(1, reports.length))}</p></div>
-        <div className="card"><div className="muted">최신 게시일</div><div className="metric">{latestDate || '—'}</div><p>정적 artifact에서 직접 렌더링</p></div>
+        <MetricCard label="표시 행" value={topRows.length.toLocaleString('ko-KR')} detail={`전체 ${reports.length.toLocaleString('ko-KR')}개 가격 매칭 리포트 중`} />
+        <MetricCard label="목표가 도달" value={reports.filter((report) => report.targetHit).length.toLocaleString('ko-KR')} tone="good" />
+        <MetricCard label="미도달/진행 중" value={reports.filter((report) => !report.targetHit).length.toLocaleString('ko-KR')} tone="warn" />
       </section>
-      <ReportsTable reports={reports} />
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr><th>리포트</th><th>발간일</th><th>진입가</th><th>목표가</th><th>제시 업사이드</th><th>실현 수익률</th><th>도달 증거</th></tr>
+          </thead>
+          <tbody>
+            {topRows.map((report) => (
+              <tr key={report.reportId}>
+                <td><Link href={`/reports/${report.reportId}`}>{report.company}</Link><div className="muted">{report.symbol} · {report.exchange}</div></td>
+                <td>{report.publicationDate}</td>
+                <td>{formatKrw(report.entryPriceKrw)}</td>
+                <td>{formatKrw(report.targetPriceKrw)}</td>
+                <td>{formatMultiple(report.targetUpsideAtPub, 2)}</td>
+                <td className={(report.currentReturn ?? 0) >= 0 ? 'good' : 'bad'}>{formatPercent(report.currentReturn)}</td>
+                <td>{report.targetHit ? <StatusPill tone="good">{formatDays(report.daysToTarget)} 만에 도달</StatusPill> : <StatusPill>미도달</StatusPill>}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }

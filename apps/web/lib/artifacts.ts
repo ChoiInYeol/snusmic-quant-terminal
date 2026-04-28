@@ -32,7 +32,7 @@ export type DataQuality = { extractedReports: number; reportsWithPrices: number;
 
 type CsvRow = Record<string, string>;
 
-const repoRoot = path.resolve(process.cwd(), '../..');
+const repoRoot = path.resolve(/* turbopackIgnore: true */ process.cwd(), '../..');
 
 function readText(relativePath: string): string {
   return fs.readFileSync(path.join(repoRoot, relativePath), 'utf8');

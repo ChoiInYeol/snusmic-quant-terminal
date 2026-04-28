@@ -2,20 +2,25 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { PriceEvidenceChart } from '@/components/charts/PriceEvidenceChart';
-import { getMarkdownSnippet, getPriceSeries, getReportById, getReportRows, type PricePoint, type ReportRow } from '@/lib/artifacts';
+import { MetricCard, Panel, TerminalHero } from '@/components/ui/Terminal';
+import { getMarkdownSnippet, getPriceSeries, getReportById, getReportRows } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
+
+type ReportParams = Promise<{ reportId: string }>;
 
 export function generateStaticParams() {
   return getReportRows().map((report) => ({ reportId: report.reportId }));
 }
 
-export function generateMetadata({ params }: { params: { reportId: string } }): Metadata {
-  const report = getReportById(params.reportId);
-  return { title: report ? `${report.company} 리포트 검증` : '리포트 검증' };
+export async function generateMetadata({ params }: { params: ReportParams }): Promise<Metadata> {
+  const { reportId } = await params;
+  const report = getReportById(reportId);
+  return { title: report ? `${report.company} 리포트 증거` : '리포트 증거' };
 }
 
-export default function ReportDetailPage({ params }: { params: { reportId: string } }) {
-  const report = getReportById(params.reportId);
+export default async function ReportDetailPage({ params }: { params: ReportParams }) {
+  const { reportId } = await params;
+  const report = getReportById(reportId);
   if (!report) notFound();
   const prices = getPriceSeries(report.symbol, report.publicationDate, report.lastCloseDate);
   const snippet = getMarkdownSnippet(report);
@@ -24,53 +29,29 @@ export default function ReportDetailPage({ params }: { params: { reportId: strin
 
   return (
     <>
-      <section className="hero">
-        <div className="eyebrow"><Link href="/reports">← 리포트 목록</Link></div>
-        <h1>{report.company}</h1>
-        <p>{report.title} · {report.symbol} · 발간일 {report.publicationDate}</p>
-      </section>
+      <TerminalHero eyebrow="Report detail" title={report.company}>
+        <p><Link href="/reports">← 리포트 목록</Link> · {report.title} · {report.symbol} · {report.publicationDate} 발간</p>
+      </TerminalHero>
       <section className="grid cards" style={{ marginBottom: '1rem' }}>
-        <div className="card"><div className="muted">진입 종가</div><div className="metric">{formatKrw(report.entryPriceKrw)}</div></div>
-        <div className="card"><div className="muted">추출 목표가</div><div className="metric">{formatKrw(report.targetPriceKrw)}</div><p>발간 시점 대비 {formatPercent(report.targetUpsideAtPub)} 업사이드</p></div>
-        <div className="card"><div className="muted">현재 수익률</div><div className={`metric ${(report.currentReturn ?? 0) >= 0 ? 'good' : 'bad'}`}>{formatPercent(report.currentReturn)}</div></div>
-        <div className="card"><div className="muted">목표가 판정</div><div className="metric">{report.targetHit ? '도달' : '미도달'}</div><p>{report.targetHit ? `${report.targetHitDate} · ${formatDays(report.daysToTarget)}` : `잔여 갭 ${formatPercent(report.targetGapPct)}`}</p></div>
+        <MetricCard label="진입 종가" value={formatKrw(report.entryPriceKrw)} />
+        <MetricCard label="추출 목표가" value={formatKrw(report.targetPriceKrw)} detail={`${formatPercent(report.targetUpsideAtPub)} 발간 시점 업사이드`} tone="accent" />
+        <MetricCard label="현재 수익률" value={formatPercent(report.currentReturn)} tone={(report.currentReturn ?? 0) >= 0 ? 'good' : 'bad'} />
+        <MetricCard label="목표 상태" value={report.targetHit ? '도달' : '진행'} detail={report.targetHit ? `${report.targetHitDate} · ${formatDays(report.daysToTarget)}` : `격차 ${formatPercent(report.targetGapPct)}`} tone={report.targetHit ? 'good' : 'warn'} />
       </section>
       <section className="detail-grid">
-        <div className="panel">
-          <h2>목표가 대비 가격 경로</h2>
-          <p>
-            발간일, 목표가 도달일, 관측 고점/저점을 한 차트에 표시했습니다. 마우스를 올리면 해당일 종가와
-            목표가까지 남은 갭을 확인할 수 있습니다.
-          </p>
-          <PriceEvidenceChart
-            priceSeries={prices}
-            targetPrice={report.targetPriceKrw}
-            publicationDate={report.publicationDate}
-            targetHitDate={report.targetHitDate}
-            evidenceMarkers={pathEvidence.markers}
-          />
-        </div>
+        <Panel title="가격 경로 vs 추출 목표가">
+          <PriceEvidenceChart priceSeries={prices} targetPrice={report.targetPriceKrw} publicationDate={report.publicationDate} targetHitDate={report.targetHitDate} />
+        </Panel>
         <aside className="grid">
-          <div className="panel">
-            <h2>경로 통계</h2>
-            <div className="stat-row"><span className="muted">최고 수익률</span><strong className="good">{formatPercent(report.peakReturn)}</strong></div>
-            <div className="stat-row"><span className="muted">최저 수익률</span><strong className="bad">{formatPercent(report.troughReturn)}</strong></div>
-            <div className="stat-row"><span className="muted">관측 고점</span><strong>{pathEvidence.peak ? `${formatKrw(pathEvidence.peak.value)} · ${pathEvidence.peak.time}` : '—'}</strong></div>
-            <div className="stat-row"><span className="muted">관측 저점</span><strong>{pathEvidence.trough ? `${formatKrw(pathEvidence.trough.value)} · ${pathEvidence.trough.time}` : '—'}</strong></div>
-            <div className="stat-row"><span className="muted">마지막 종가</span><strong>{formatKrw(report.lastCloseKrw)} · {report.lastCloseDate ?? '—'}</strong></div>
-            {report.pdfUrl ? <p><a href={report.pdfUrl}>원문 PDF source →</a></p> : null}
-          </div>
-          <div className="panel">
-            <h2>투자 메모</h2>
-            <p>{memo.summary}</p>
-            <ul className="memo-list">
-              {memo.bullets.map((bullet) => <li key={bullet.label}><strong>{bullet.label}</strong> — {bullet.text}</li>)}
-            </ul>
-          </div>
-          <div className="panel">
-            <h2>추출 Markdown 근거</h2>
+          <Panel title="경로 통계">
+            <p>최고 수익률: <span className="good">{formatPercent(report.peakReturn)}</span></p>
+            <p>최저 수익률: <span className="bad">{formatPercent(report.troughReturn)}</span></p>
+            <p>마지막 종가: {formatKrw(report.lastCloseKrw)} ({report.lastCloseDate})</p>
+            {report.pdfUrl ? <p><a href={report.pdfUrl}>원본 PDF 소스 →</a></p> : null}
+          </Panel>
+          <Panel title="추출 Markdown 증거">
             <div className="markdown-snippet">{snippet}</div>
-          </div>
+          </Panel>
         </aside>
       </section>
     </>

@@ -1,4 +1,5 @@
-import { getDataQuality, getOverview, getReportRows, getWebDataQuality } from '@/lib/artifacts';
+import { MetricCard, Panel, TerminalHero } from '@/components/ui/Terminal';
+import { getDataQuality, getReportRows } from '@/lib/artifacts';
 import { formatPercent } from '@/lib/format';
 
 export default function DataQualityPage() {
@@ -16,67 +17,26 @@ export default function DataQualityPage() {
 
   return (
     <>
-      <section className="hero">
-        <div className="eyebrow">데이터 품질</div>
-        <h1>누락·제외·검토 사유를 숨기지 않습니다.</h1>
-        <p>
-          리포트 추출 커버리지, 가격 매칭, 목표가 도달 상태, 수동 검토 사유를 한 곳에 공개합니다.
-          이 페이지는 모델 주장을 강화하기 위한 장식이 아니라 표본의 한계를 드러내기 위한 감사 로그입니다.
-        </p>
+      <TerminalHero eyebrow="Data quality" title="제외와 한계를 숨기지 않습니다.">
+        <p>추출 커버리지, 가격 매칭, 목표가 도달 상태, 데이터 주의사항을 함께 노출해 설득보다 증거에 가까운 대시보드를 유지합니다.</p>
+      </TerminalHero>
+      <section className="grid cards">
+        <MetricCard label="추출 리포트" value={quality.extractedReports.toLocaleString('ko-KR')} />
+        <MetricCard label="리포트 통계 모집단" value={quality.totalReports.toLocaleString('ko-KR')} />
+        <MetricCard label="가격 매칭" value={quality.reportsWithPrices.toLocaleString('ko-KR')} tone="accent" />
+        <MetricCard label="목표가 도달률" value={formatPercent(quality.targetHitRate)} tone="good" />
       </section>
-
-      <section className="grid cards" style={{ marginBottom: '1rem' }}>
-        <div className="card"><div className="muted">추출 리포트</div><div className="metric">{quality.extractedReports.toLocaleString('ko-KR')}</div><p>warehouse reports {coverage.warehouse_reports ?? overview.report_counts?.web_report_rows ?? '—'}</p></div>
-        <div className="card"><div className="muted">성과 산출 행</div><div className="metric">{quality.totalReports.toLocaleString('ko-KR')}</div><p>performance rows {coverage.report_performance_rows ?? quality.totalReports}</p></div>
-        <div className="card"><div className="muted">가격 매칭</div><div className="metric good">{quality.reportsWithPrices.toLocaleString('ko-KR')}</div><p>미매칭 심볼 {quality.missingPriceSymbols.toLocaleString('ko-KR')}개</p></div>
-        <div className="card"><div className="muted">목표 도달률</div><div className="metric">{formatPercent(quality.targetHitRate)}</div><p>open / 미도달 {openRows.length.toLocaleString('ko-KR')}건</p></div>
-      </section>
-
-      <section className="grid two-col" style={{ marginBottom: '1rem' }}>
-        <Distribution title="투자의견 분포" rows={ratingCounts} />
-        <Distribution title="통화 분포" rows={currencyCounts} />
-      </section>
-
-      <section className="panel" style={{ marginBottom: '1rem' }}>
-        <h2>검토 사유</h2>
-        <div className="tag-row">
-          {Object.entries(reasonCounts).length ? Object.entries(reasonCounts).map(([key, value]) => (
-            <span className="pill" key={key}>{translateReason(key)} · {String(value)}</span>
-          )) : <span className="pill">검토 사유 없음</span>}
-        </div>
-      </section>
-
-      <section className="panel" style={{ marginBottom: '1rem' }}>
-        <h2>가격 미매칭 심볼</h2>
-        {webQuality.missing_symbols?.length ? (
-          <div className="tag-row">
-            {webQuality.missing_symbols.map((item) => <span className="pill" key={item.symbol}>{item.symbol}{item.company ? ` · ${item.company}` : ''}</span>)}
-          </div>
-        ) : <p>현재 공개된 missing-symbol artifact가 없거나 미매칭 심볼이 없습니다.</p>}
-      </section>
-
-      <section className="panel">
-        <h2>수동 검토 샘플</h2>
-        <div className="table-wrap inset">
-          <table>
-            <thead><tr><th>회사</th><th>티커</th><th>의견</th><th>목표가</th><th>사유</th></tr></thead>
-            <tbody>
-              {reviewRows.map((row, index) => {
-                const item = row as Record<string, unknown>;
-                return (
-                  <tr key={`${String(item.ticker)}-${index}`}>
-                    <td>{String(item.company ?? '—')}</td>
-                    <td>{String(item.ticker ?? '—')}</td>
-                    <td>{String(item.rating || '누락')}</td>
-                    <td>{String(item.base_target ?? '—')}</td>
-                    <td>{Array.isArray(item.reasons) ? item.reasons.map(String).join(', ') : String(item.reasons ?? '—')}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <Panel title="현재 주의사항">
+        <ul>
+          <li>{quality.missingPriceSymbols.toLocaleString('ko-KR')}개 심볼은 시뮬레이션 집계에서 가격 누락 심볼로 보고됩니다.</li>
+          <li>{openRows.length.toLocaleString('ko-KR')}개 가격 매칭 행은 마지막 종가 기준 추출 목표가에 도달하지 못했습니다.</li>
+          <li>리포트 단위 비교 전에 목표가와 가격은 KRW 기준으로 정규화됩니다.</li>
+          <li>모든 웹 페이지는 커밋된 아티팩트만 읽는 정적 뷰어이며, 시장 데이터 갱신이나 시뮬레이션 변경을 수행하지 않습니다.</li>
+        </ul>
+      </Panel>
+      <Panel title="원본 추출 품질 아티팩트">
+        <pre className="markdown-snippet">{JSON.stringify(quality.extractionQuality, null, 2)}</pre>
+      </Panel>
     </>
   );
 }

@@ -1,32 +1,55 @@
-import { StrategySummary, type StrategyRun } from "../../../components/strategies/StrategySummary";
+import { notFound } from 'next/navigation';
+import { StrategySummary } from '@/components/strategies/StrategySummary';
+import { Panel, TerminalHero } from '@/components/ui/Terminal';
 
-export function generateStaticParams() {
-  return getStrategyRuns().runs.map((run) => ({ runId: run.run_id }));
+type StrategyRun = {
+  run_id: string;
+  label: string;
+  scope?: string;
+  sampler?: string;
+  params?: Record<string, string | number | boolean>;
+  metrics: Record<string, number | null | undefined>;
+  warnings?: string[];
+};
+
+type StrategyRunsArtifact = { runs: StrategyRun[] };
+type StrategyParams = Promise<{ runId: string }>;
+
+async function loadStrategyRuns(): Promise<StrategyRunsArtifact> {
+  try {
+    return (await import('../../../public/artifacts/strategy-runs.json')).default as StrategyRunsArtifact;
+  } catch {
+    return { runs: [] };
+  }
 }
 
-export default async function StrategyDetailPage({ params }: { params: Promise<{ runId: string }> }) {
+export async function generateStaticParams() {
+  const data = await loadStrategyRuns();
+  return data.runs.map((run) => ({ runId: run.run_id }));
+}
+
+export default async function StrategyDetailPage({ params }: { params: StrategyParams }) {
   const { runId } = await params;
   const data = await loadStrategyRuns();
-  const run = data.runs.find((item: StrategyRun) => item.run_id === runId);
-  if (!run) {
-    return <main className="mx-auto max-w-4xl p-6"><h1 className="text-2xl font-bold">Strategy not found</h1></main>;
-  }
+  const run = data.runs.find((item) => item.run_id === runId);
+  if (!run) notFound();
+
   return (
     <>
-      <section className="hero">
-        <div className="eyebrow"><Link href="/strategies">← 전략 리더보드</Link></div>
-        <h1>{run.label}</h1>
-        <p>파라미터와 점수를 그대로 공개해 재현성과 과최적화 위험을 함께 보여줍니다.</p>
-      </section>
+      <TerminalHero eyebrow="Strategy detail" title={run.label}>
+        <p>로컬 탐색에서 내보낸 단일 전략 후보입니다. 공개 웹은 이 JSON 스냅샷을 읽기만 합니다.</p>
+      </TerminalHero>
       <StrategySummary run={run} />
-      <section className="panel" style={{ marginTop: '1rem' }}>
-        <h2>원본 파라미터</h2>
-        <pre className="markdown-snippet">{JSON.stringify(run.params ?? {}, null, 2)}</pre>
-      </section>
-      <section className="panel" style={{ marginTop: '1rem' }}>
-        <h2>원본 지표</h2>
-        <pre className="markdown-snippet">{JSON.stringify(run.metrics, null, 2)}</pre>
-      </section>
+      <Panel title="파라미터">
+        <dl className="param-grid">
+          {Object.entries(run.params ?? {}).map(([key, value]) => (
+            <div className="param" key={key}>
+              <dt>{key}</dt>
+              <dd>{String(value)}</dd>
+            </div>
+          ))}
+        </dl>
+      </Panel>
     </>
   );
 }

@@ -1,28 +1,24 @@
+import { Panel, TerminalHero } from '@/components/ui/Terminal';
+
 export default function MethodologyPage() {
   return (
     <>
-      <section className="hero">
-        <div className="eyebrow">Methodology</div>
-        <h1>Python computes. Next.js explains.</h1>
-        <p>The web app is an artifact viewer for the existing SNUSMIC pipeline, not a second simulation engine.</p>
-      </section>
+      <TerminalHero eyebrow="Methodology" title="Python은 계산하고, Next.js는 설명합니다.">
+        <p>웹 앱은 기존 SNUSMIC 파이프라인의 정적 아티팩트 뷰어이며 두 번째 시뮬레이션 엔진이 아닙니다.</p>
+      </TerminalHero>
       <section className="grid">
-        <div className="panel">
-          <h2>Pipeline boundary</h2>
-          <p>SNUSMIC PDFs are downloaded and converted to markdown, target prices/tickers/publication dates are extracted to CSV, yfinance prices are normalized to KRW, and the Python simulation writes report-level and persona artifacts under <code>data/</code>.</p>
-        </div>
-        <div className="panel">
-          <h2>Report evidence model</h2>
-          <p>Each detail page joins <code>data/sim/report_performance.csv</code>, <code>data/warehouse/reports.csv</code>, markdown snippets, and <code>data/warehouse/daily_prices.csv</code>. The chart marks publication date, extracted target price, and target-hit date when available.</p>
-        </div>
-        <div className="panel">
-          <h2>Strategy honesty</h2>
-          <p>Oracle/prophet personas are upper bounds with future information. SMIC follower personas are mechanical baselines. Future Optuna runs must stay local-only and export results as artifacts for public visualization.</p>
-        </div>
-        <div className="panel">
-          <h2>Static deployment</h2>
-          <p>Next.js uses static export so Vercel/GitHub Pages can serve a reproducible snapshot. The public app must not trigger Optuna, market-data refreshes, or PDF parsing.</p>
-        </div>
+        <Panel title="파이프라인 경계">
+          <p>SNUSMIC PDF를 다운로드해 Markdown으로 변환하고, 목표가·티커·발간일을 CSV로 추출한 뒤, 가격을 KRW로 정규화해 Python 시뮬레이션이 리포트와 페르소나 아티팩트를 <code>data/</code> 아래에 작성합니다.</p>
+        </Panel>
+        <Panel title="리포트 증거 모델">
+          <p>상세 페이지는 <code>data/sim/report_performance.csv</code>, <code>data/warehouse/reports.csv</code>, Markdown 스니펫, <code>data/warehouse/daily_prices.csv</code>를 조인합니다. 차트는 발간일, 추출 목표가, 목표가 도달일을 함께 표시합니다.</p>
+        </Panel>
+        <Panel title="전략 정직성">
+          <p>Oracle/prophet 페르소나는 미래 정보를 가진 상한선입니다. SMIC follower 페르소나는 기계적 기준선입니다. Optuna 탐색은 로컬에서만 실행하고 공개 웹에는 아티팩트만 내보냅니다.</p>
+        </Panel>
+        <Panel title="정적 배포">
+          <p>Next.js는 static export를 사용합니다. 공개 앱은 Optuna, 시장 데이터 갱신, PDF 파싱을 트리거하지 않고 재현 가능한 스냅샷만 제공합니다.</p>
+        </Panel>
       </section>
     </>
   );
