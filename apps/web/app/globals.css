@@ -395,7 +395,7 @@ select:focus-visible { border-color: rgba(215,255,79,.62); box-shadow: 0 0 0 4px
   place-items: center;
   color: var(--muted);
 }
-.chart-tooltip { position: absolute; z-index: 3; min-width: 175px; border: 1px solid rgba(215,255,79,.28); border-radius: 14px; background: rgba(5,6,7,.88); padding: .7rem; box-shadow: var(--shadow); font-size: .82rem; backdrop-filter: blur(16px); }
+.chart-tooltip { position: absolute; z-index: 3; min-width: 175px; border: 1px solid rgba(215,255,79,.28); border-radius: 14px; background: rgba(5,6,7,.88); padding: .7rem; box-shadow: var(--shadow); font-size: .82rem; backdrop-filter: blur(16px); pointer-events: none; }
 .tooltip-date { color: var(--accent); font-family: var(--mono); font-weight: 900; }
 .markdown-snippet { max-height: 360px; overflow: auto; white-space: pre-wrap; font-size: .82rem; color: #dde6d8; }
 .code-block { overflow: auto; border-radius: 16px; background: #030504; border: 1px solid var(--line); padding: 1rem; color: #edf8df; }

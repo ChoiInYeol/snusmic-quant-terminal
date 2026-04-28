@@ -54,7 +54,11 @@ export type MonthlyHoldingRow = {
   symbol: string;
   company: string;
   qty: number | null;
+  avgCostKrw: number | null;
+  monthCloseKrw: number | null;
   marketValueKrw: number | null;
+  unrealizedPnlKrw: number | null;
+  unrealizedReturn: number | null;
   weightInPortfolio: number | null;
 };
 
@@ -338,7 +342,7 @@ export function getReportRows(): ReportRow[] {
 }
 
 function fromRawReport(row: RawReport): ReportRow {
-  return {
+  const report: ReportRow = {
     reportId: String(row.report_id ?? row.reportId ?? ''),
     symbol: String(row.symbol ?? ''),
     company: String(row.company ?? ''),
@@ -362,6 +366,33 @@ function fromRawReport(row: RawReport): ReportRow {
     targetGapPct: num(row.target_gap_pct ?? row.targetGapPct),
     caveatFlags: Array.isArray(row.caveat_flags) ? row.caveat_flags : [],
   };
+  return withOhlcTargetTouch(report);
+}
+
+function withOhlcTargetTouch(report: ReportRow): ReportRow {
+  if (!report.symbol || !report.publicationDate || !report.targetPriceKrw || !report.entryPriceKrw || report.entryPriceKrw <= 0) return report;
+  const direction = report.targetPriceKrw > report.entryPriceKrw ? 'upside' : report.targetPriceKrw < report.entryPriceKrw ? 'downside' : null;
+  if (!direction) return report;
+  const prices = getPriceSeries(report.symbol, report.publicationDate);
+  const hit = prices.find((point) => {
+    const high = point.high ?? point.close ?? point.value;
+    const low = point.low ?? point.close ?? point.value;
+    return direction === 'upside' ? high >= report.targetPriceKrw! : low <= report.targetPriceKrw!;
+  });
+  if (!hit) return { ...report, targetHit: false, targetHitDate: null, daysToTarget: null };
+  return {
+    ...report,
+    targetHit: true,
+    targetHitDate: hit.time,
+    daysToTarget: diffDays(report.publicationDate, hit.time),
+  };
+}
+
+function diffDays(start: string, end: string): number | null {
+  const startMs = Date.parse(`${start}T00:00:00Z`);
+  const endMs = Date.parse(`${end}T00:00:00Z`);
+  if (!Number.isFinite(startMs) || !Number.isFinite(endMs)) return null;
+  return Math.round((endMs - startMs) / 86_400_000);
 }
 
 export function getReportById(reportId: string): ReportRow | undefined {
@@ -555,16 +586,86 @@ let monthlyHoldingsCache: MonthlyHoldingRow[] | undefined;
 export function getMonthlyHoldings(): MonthlyHoldingRow[] {
   if (monthlyHoldingsCache) return monthlyHoldingsCache;
   const raw = readJson<RawReport[]>('data/web/monthly-holdings.json', []);
+  const costBySnapshot = buildMonthlyCostBasis(raw);
   monthlyHoldingsCache = raw.map((row) => ({
-    persona: String(row.persona ?? ''),
-    monthEnd: String(row.month_end ?? row.monthEnd ?? ''),
-    symbol: String(row.symbol ?? ''),
-    company: String(row.company ?? row.symbol ?? ''),
-    qty: num(row.qty),
-    marketValueKrw: num(row.market_value_krw ?? row.marketValueKrw),
-    weightInPortfolio: num(row.weight_in_portfolio ?? row.weightInPortfolio),
+    ...enrichMonthlyHolding(row, costBySnapshot),
   })).sort((a, b) => b.monthEnd.localeCompare(a.monthEnd) || (b.marketValueKrw ?? 0) - (a.marketValueKrw ?? 0));
   return monthlyHoldingsCache;
+}
+
+function enrichMonthlyHolding(row: RawReport, costBySnapshot: Map<string, number | null>): MonthlyHoldingRow {
+  const persona = String(row.persona ?? '');
+  const monthEnd = String(row.month_end ?? row.monthEnd ?? '');
+  const symbol = String(row.symbol ?? '');
+  const qty = num(row.qty);
+  const marketValueKrw = num(row.market_value_krw ?? row.marketValueKrw);
+  const monthCloseKrw = qty && qty > 0 && marketValueKrw !== null ? marketValueKrw / qty : null;
+  const avgCostKrw = costBySnapshot.get(`${persona}|${monthEnd}|${symbol}`) ?? null;
+  const costValueKrw = avgCostKrw !== null && qty !== null ? avgCostKrw * qty : null;
+  const unrealizedPnlKrw = marketValueKrw !== null && costValueKrw !== null ? marketValueKrw - costValueKrw : null;
+  const unrealizedReturn = avgCostKrw !== null && avgCostKrw > 0 && monthCloseKrw !== null ? monthCloseKrw / avgCostKrw - 1 : null;
+  return {
+    persona,
+    monthEnd,
+    symbol,
+    company: String(row.company ?? row.symbol ?? ''),
+    qty,
+    avgCostKrw,
+    monthCloseKrw,
+    marketValueKrw,
+    unrealizedPnlKrw,
+    unrealizedReturn,
+    weightInPortfolio: num(row.weight_in_portfolio ?? row.weightInPortfolio),
+  };
+}
+
+function buildMonthlyCostBasis(rows: RawReport[]): Map<string, number | null> {
+  const snapshots = [...rows]
+    .map((row) => ({
+      persona: String(row.persona ?? ''),
+      monthEnd: String(row.month_end ?? row.monthEnd ?? ''),
+      symbol: String(row.symbol ?? ''),
+      qty: num(row.qty),
+    }))
+    .filter((row) => row.persona && row.monthEnd && row.symbol)
+    .sort((a, b) => a.monthEnd.localeCompare(b.monthEnd));
+  const trades = parseCsv(readText('data/sim/trades.csv')).map((row) => ({
+    persona: String(row.persona ?? ''),
+    date: String(row.date ?? ''),
+    symbol: String(row.symbol ?? ''),
+    side: String(row.side ?? ''),
+    qty: num(row.qty),
+    price: num(row.fill_price_krw),
+  })).sort((a, b) => a.date.localeCompare(b.date));
+  const out = new Map<string, number | null>();
+  const state = new Map<string, { qty: number; cost: number }>();
+  let tradeIndex = 0;
+  for (const snapshot of snapshots) {
+    while (tradeIndex < trades.length && trades[tradeIndex].date <= snapshot.monthEnd) {
+      applyCostBasisTrade(state, trades[tradeIndex]);
+      tradeIndex += 1;
+    }
+    const key = `${snapshot.persona}|${snapshot.symbol}`;
+    const lot = state.get(key);
+    const avgCost = lot && lot.qty > 0 ? lot.cost / lot.qty : null;
+    out.set(`${snapshot.persona}|${snapshot.monthEnd}|${snapshot.symbol}`, avgCost);
+  }
+  return out;
+}
+
+function applyCostBasisTrade(state: Map<string, { qty: number; cost: number }>, trade: { persona: string; symbol: string; side: string; qty: number | null; price: number | null }) {
+  if (!trade.persona || !trade.symbol || !trade.qty || trade.qty <= 0 || trade.price === null || trade.price <= 0) return;
+  const key = `${trade.persona}|${trade.symbol}`;
+  const lot = state.get(key) ?? { qty: 0, cost: 0 };
+  if (trade.side === 'buy') {
+    state.set(key, { qty: lot.qty + trade.qty, cost: lot.cost + trade.qty * trade.price });
+    return;
+  }
+  if (trade.side === 'sell') {
+    const avgCost = lot.qty > 0 ? lot.cost / lot.qty : 0;
+    const nextQty = Math.max(0, lot.qty - trade.qty);
+    state.set(key, { qty: nextQty, cost: Math.max(0, lot.cost - avgCost * Math.min(lot.qty, trade.qty)) });
+  }
 }
 
 let tradesCache: TradeRow[] | undefined;

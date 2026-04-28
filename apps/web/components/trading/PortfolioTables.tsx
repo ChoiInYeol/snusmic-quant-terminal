@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useMemo, useState } from 'react';
 import type { HoldingRow, ReportTargetDigest } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
-import { PaginationControls, SortHeader, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
+import { PaginationControls, SortHeader, defaultPersonaFor, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
 
 type Props = {
   holdings: HoldingRow[];
@@ -16,13 +16,13 @@ type Props = {
 type HoldingSortKey = 'strategy' | 'market' | 'symbol' | 'target' | 'qty' | 'avgCost' | 'lastClose' | 'marketValue' | 'stockReturn' | 'contribution' | 'firstBuy';
 
 export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {}, targetsBySymbol }: Props) {
-  const personas = useMemo(() => ['all', ...Array.from(new Set(holdings.map((row) => row.persona))).sort()], [holdings]);
-  const [persona, setPersona] = useState('all');
+  const personas = useMemo(() => Array.from(new Set(holdings.map((row) => row.persona))).sort(), [holdings]);
+  const [persona, setPersona] = useState(() => defaultPersonaFor(personas));
   const [sort, setSort] = useState<SortState<HoldingSortKey>>({ key: 'marketValue', direction: 'desc' });
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(25);
   useUrlBackedStrategy(persona, setPersona, personas);
-  const currentRows = useMemo(() => sortRows(holdings.filter((row) => persona === 'all' || row.persona === persona), sort, {
+  const currentRows = useMemo(() => sortRows(holdings.filter((row) => row.persona === persona), sort, {
     strategy: (row) => personaLabels[row.persona] ?? row.persona,
     market: (row) => marketLabel(targetsBySymbol[row.symbol]?.marketRegion),
     symbol: (row) => row.company || row.symbol,
@@ -48,7 +48,7 @@ export function PortfolioTables({ holdings, personaLabels, capitalByPersona = {}
         <div className="strategy-tabs" role="group" aria-label="전략 선택">
           {personas.map((item) => (
             <button type="button" key={item} aria-pressed={persona === item} className={persona === item ? 'active' : ''} onClick={() => { setPersona(item); setPage(0); }}>
-              {item === 'all' ? '전체 전략' : personaLabels[item] ?? item}
+              {personaLabels[item] ?? item}
             </button>
           ))}
         </div>

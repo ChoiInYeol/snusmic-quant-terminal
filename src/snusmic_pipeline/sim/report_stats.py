@@ -60,9 +60,9 @@ def compute_report_performance(
         target_hit_date: date | None = None
         days_to_target: int | None = None
         if target_direction == "upside" and target is not None:
-            target_hit_date = _first_close_at_or_above(board, pub_day, end_date, symbol, target)
+            target_hit_date = _first_ohlc_touch_at_or_above(board, pub_day, end_date, symbol, target)
         elif target_direction == "downside" and target is not None:
-            target_hit_date = _first_close_at_or_below(board, pub_day, end_date, symbol, target)
+            target_hit_date = _first_ohlc_touch_at_or_below(board, pub_day, end_date, symbol, target)
         if target_hit_date is not None:
             days_to_target = (target_hit_date - pub_day).days
 
@@ -234,12 +234,12 @@ def _min_close_after(board: PriceBoard, start: date, end: date, symbol: str) -> 
     return float(series.min())
 
 
-def _first_close_at_or_above(
+def _first_ohlc_touch_at_or_above(
     board: PriceBoard, start: date, end: date, symbol: str, threshold: float
 ) -> date | None:
     if board.is_empty or symbol not in board.close.columns:
         return None
-    col = board.close[symbol]
+    col = (board.high if board.high is not None else board.close)[symbol]
     ts_start = pd.Timestamp(start)
     ts_end = pd.Timestamp(end)
     series = col.loc[(col.index >= ts_start) & (col.index <= ts_end)].dropna()
@@ -259,12 +259,12 @@ def _target_direction(target: float | None, entry_price: float | None) -> str | 
     return None
 
 
-def _first_close_at_or_below(
+def _first_ohlc_touch_at_or_below(
     board: PriceBoard, start: date, end: date, symbol: str, threshold: float
 ) -> date | None:
     if board.is_empty or symbol not in board.close.columns:
         return None
-    col = board.close[symbol]
+    col = (board.low if board.low is not None else board.close)[symbol]
     ts_start = pd.Timestamp(start)
     ts_end = pd.Timestamp(end)
     series = col.loc[(col.index >= ts_start) & (col.index <= ts_end)].dropna()

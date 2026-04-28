@@ -35,6 +35,17 @@ from .warehouse import (
 # ---------------------------------------------------------------------------
 
 
+def _pivot_price(prices: pd.DataFrame, close: pd.DataFrame, column: str) -> pd.DataFrame:
+    if column not in prices.columns:
+        return close
+    prices[column] = pd.to_numeric(prices[column], errors="coerce")
+    return (
+        prices.pivot_table(index="date", columns="symbol", values=column, aggfunc="last")
+        .reindex(index=close.index, columns=close.columns)
+        .fillna(close)
+    )
+
+
 @dataclass
 class PriceBoard:
     """Date-indexed wide pivot of close prices in KRW.
@@ -45,6 +56,8 @@ class PriceBoard:
 
     close: pd.DataFrame  # index = pd.DatetimeIndex (UTC-naive midnight), columns = symbol
     open: pd.DataFrame  # may be the same as close if no opens were captured
+    high: pd.DataFrame | None = None  # falls back to close when unavailable
+    low: pd.DataFrame | None = None  # falls back to close when unavailable
 
     @classmethod
     def from_warehouse(cls, warehouse_dir: Path) -> PriceBoard:
@@ -59,16 +72,10 @@ class PriceBoard:
         close = prices.pivot_table(
             index="date", columns="symbol", values="close", aggfunc="last"
         ).sort_index()
-        if "open" in prices.columns:
-            prices["open"] = pd.to_numeric(prices["open"], errors="coerce")
-            open_pivot = (
-                prices.pivot_table(index="date", columns="symbol", values="open", aggfunc="last")
-                .reindex(index=close.index, columns=close.columns)
-                .fillna(close)
-            )
-        else:
-            open_pivot = close
-        return cls(close=close, open=open_pivot)
+        open_pivot = _pivot_price(prices, close, "open")
+        high_pivot = _pivot_price(prices, close, "high")
+        low_pivot = _pivot_price(prices, close, "low")
+        return cls(close=close, open=open_pivot, high=high_pivot, low=low_pivot)
 
     @property
     def is_empty(self) -> bool:
@@ -103,6 +110,34 @@ class PriceBoard:
             return None
         last = slice_.iloc[-1]
         return float(last) if last > 0 else None
+
+    def intraday_high_on(self, day: date, symbol: str) -> float | None:
+        return self._price_on(day, symbol, self.high if self.high is not None else self.close)
+
+    def intraday_low_on(self, day: date, symbol: str) -> float | None:
+        return self._price_on(day, symbol, self.low if self.low is not None else self.close)
+
+    def target_touched_on(self, day: date, symbol: str, threshold: float, direction: str = "upside") -> bool:
+        """Return true when any OHLC range available for the day touches target.
+
+        For upside targets, the day's high is enough. For downside targets, the
+        day's low is enough. Missing high/low data falls back to close so older
+        cached test fixtures keep the previous close-only behavior.
+        """
+        if direction == "downside":
+            low = self.intraday_low_on(day, symbol)
+            return low is not None and low <= threshold
+        high = self.intraday_high_on(day, symbol)
+        return high is not None and high >= threshold
+
+    def _price_on(self, day: date, symbol: str, frame: pd.DataFrame) -> float | None:
+        if frame.empty or symbol not in frame.columns:
+            return None
+        ts = pd.Timestamp(day)
+        if ts not in frame.index:
+            return None
+        value = frame.at[ts, symbol]
+        return float(value) if pd.notna(value) and float(value) > 0 else None
 
     def returns_window(
         self,

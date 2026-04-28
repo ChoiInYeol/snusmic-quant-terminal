@@ -205,10 +205,11 @@ def _check_target_hits(
         if target is None:
             continue
         close = board.asof(day, symbol)
+        threshold = target * multiplier
         if close is None:
             continue
-        if close >= target * multiplier:
-            account.sell_all(day, symbol, close, "target_hit")
+        if board.target_touched_on(day, symbol, threshold, "upside"):
+            account.sell_all(day, symbol, threshold, "target_hit")
             state.close_reports(symbol)
 
 

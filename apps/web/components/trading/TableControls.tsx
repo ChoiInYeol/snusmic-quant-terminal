@@ -5,6 +5,12 @@ import { useEffect } from 'react';
 export type SortDirection = 'asc' | 'desc';
 export type SortState<Key extends string> = { key: Key; direction: SortDirection };
 
+export const DEFAULT_PERSONA = 'smic_follower_v2';
+
+export function defaultPersonaFor(personas: string[]): string {
+  return personas.includes(DEFAULT_PERSONA) ? DEFAULT_PERSONA : (personas[0] ?? '');
+}
+
 export function SortHeader<Key extends string>({
   label,
   sortKey,
@@ -63,19 +69,24 @@ export function PaginationControls({
 
 export function useUrlBackedStrategy(persona: string, setPersona: (value: string) => void, validPersonas: string[]) {
   useEffect(() => {
+    if (validPersonas.length === 0) return;
     const query = new URLSearchParams(window.location.search);
     const requested = query.get('strategy');
-    if (requested && validPersonas.includes(requested)) setPersona(requested);
-  }, [setPersona, validPersonas]);
+    if (requested && validPersonas.includes(requested)) {
+      setPersona(requested);
+      return;
+    }
+    if (!validPersonas.includes(persona)) setPersona(defaultPersonaFor(validPersonas));
+  }, [persona, setPersona, validPersonas]);
 
   useEffect(() => {
+    if (!persona || !validPersonas.includes(persona)) return;
     const url = new URL(window.location.href);
-    if (persona === 'all') url.searchParams.delete('strategy');
-    else url.searchParams.set('strategy', persona);
+    url.searchParams.set('strategy', persona);
     const nextUrl = `${url.pathname}${url.search}${url.hash}`;
     const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
     if (nextUrl !== currentUrl) window.history.replaceState(null, '', nextUrl);
-  }, [persona]);
+  }, [persona, validPersonas]);
 }
 
 export function sortRows<T, Key extends string>(rows: T[], sort: SortState<Key>, read: Record<Key, (row: T) => string | number | null | undefined>): T[] {

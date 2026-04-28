@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useDeferredValue, useMemo, useState } from 'react';
 import type { PositionEpisodeRow, ReportTargetDigest, TradeRow } from '@/lib/artifacts';
 import { formatDays, formatKrw, formatPercent } from '@/lib/format';
-import { PaginationControls, SortHeader, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
+import { PaginationControls, SortHeader, defaultPersonaFor, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
 
 type Props = {
   trades: TradeRow[];
@@ -20,8 +20,8 @@ type EpisodeSortKey = 'strategy' | 'market' | 'symbol' | 'target' | 'openDate' |
 type TradeSortKey = 'date' | 'strategy' | 'market' | 'side' | 'symbol' | 'target' | 'qty' | 'price' | 'gross' | 'cash' | 'reason';
 
 export function TradesTable({ trades, episodes, personaLabels, capitalByPersona = {}, reportSymbolsById, targetsBySymbol, targetsByReportId }: Props) {
-  const personas = useMemo(() => ['all', ...Array.from(new Set(trades.map((trade) => trade.persona))).sort()], [trades]);
-  const [persona, setPersona] = useState('all');
+  const personas = useMemo(() => Array.from(new Set(trades.map((trade) => trade.persona))).sort(), [trades]);
+  const [persona, setPersona] = useState(() => defaultPersonaFor(personas));
   const [query, setQuery] = useState('');
   const [side, setSide] = useState('all');
   const [episodeSort, setEpisodeSort] = useState<SortState<EpisodeSortKey>>({ key: 'openDate', direction: 'desc' });
@@ -35,13 +35,13 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
   const normalizedQuery = deferredQuery.trim().toLowerCase();
 
   const filteredTrades = useMemo(() => trades.filter((trade) => {
-    if (persona !== 'all' && trade.persona !== persona) return false;
+    if (trade.persona !== persona) return false;
     if (side !== 'all' && trade.side !== side) return false;
     const haystack = `${trade.symbol} ${trade.reason} ${trade.reportId ?? ''}`.toLowerCase();
     return haystack.includes(normalizedQuery);
   }), [normalizedQuery, persona, side, trades]);
   const filteredEpisodes = useMemo(() => episodes.filter((episode) => {
-    if (persona !== 'all' && episode.persona !== persona) return false;
+    if (episode.persona !== persona) return false;
     const haystack = `${episode.symbol} ${episode.company} ${episode.exitReasons}`.toLowerCase();
     return haystack.includes(normalizedQuery);
   }), [episodes, normalizedQuery, persona]);
@@ -96,7 +96,7 @@ export function TradesTable({ trades, episodes, personaLabels, capitalByPersona 
               className={persona === item ? 'active' : ''}
               onClick={() => { setPersona(item); setEpisodePage(0); setTradePage(0); }}
             >
-              {item === 'all' ? '전체 전략' : personaLabels[item] ?? item}
+              {personaLabels[item] ?? item}
             </button>
           ))}
         </div>

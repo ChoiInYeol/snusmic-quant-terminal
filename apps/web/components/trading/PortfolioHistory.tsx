@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import type { MonthlyHoldingRow, ReportTargetDigest } from '@/lib/artifacts';
 import { formatKrw, formatPercent } from '@/lib/format';
-import { PaginationControls, SortHeader, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
+import { PaginationControls, SortHeader, defaultPersonaFor, pageRows, sortRows, useUrlBackedStrategy, type SortState } from './TableControls';
 
 type Props = {
   monthly: MonthlyHoldingRow[];
@@ -11,21 +11,21 @@ type Props = {
   targetsBySymbol: Record<string, ReportTargetDigest>;
 };
 
-type MonthlySortKey = 'month' | 'strategy' | 'market' | 'symbol' | 'target' | 'qty' | 'marketValue' | 'weight';
+type MonthlySortKey = 'month' | 'strategy' | 'market' | 'symbol' | 'target' | 'qty' | 'monthClose' | 'avgCost' | 'marketValue' | 'unrealizedPnl' | 'unrealizedReturn' | 'targetGap' | 'targetPnl' | 'weight';
 
 const STACK_COLORS = ['#d7ff4f', '#35f2c2', '#8ab4ff', '#ffd166', '#ff6f91', '#b892ff', '#7ee787', '#fca5a5', '#cbd5e1'];
 
 export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Props) {
-  const personas = useMemo(() => ['all', ...Array.from(new Set(monthly.map((row) => row.persona))).sort()], [monthly]);
+  const personas = useMemo(() => Array.from(new Set(monthly.map((row) => row.persona))).sort(), [monthly]);
   const months = useMemo(() => Array.from(new Set(monthly.map((row) => row.monthEnd))).sort().reverse(), [monthly]);
-  const [persona, setPersona] = useState('all');
+  const [persona, setPersona] = useState(() => defaultPersonaFor(personas));
   const [month, setMonth] = useState(months[0] ?? '');
   const [sort, setSort] = useState<SortState<MonthlySortKey>>({ key: 'weight', direction: 'desc' });
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(25);
   useUrlBackedStrategy(persona, setPersona, personas);
 
-  const filtered = useMemo(() => monthly.filter((row) => (persona === 'all' || row.persona === persona) && (!month || row.monthEnd === month)), [month, monthly, persona]);
+  const filtered = useMemo(() => monthly.filter((row) => row.persona === persona && (!month || row.monthEnd === month)), [month, monthly, persona]);
   const sorted = useMemo(() => sortRows(filtered, sort, {
     month: (row) => row.monthEnd,
     strategy: (row) => personaLabels[row.persona] ?? row.persona,
@@ -33,7 +33,13 @@ export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Pr
     symbol: (row) => row.company || row.symbol,
     target: (row) => targetsBySymbol[row.symbol]?.targetPriceKrw,
     qty: (row) => row.qty,
+    monthClose: (row) => row.monthCloseKrw,
+    avgCost: (row) => row.avgCostKrw,
     marketValue: (row) => row.marketValueKrw,
+    unrealizedPnl: (row) => row.unrealizedPnlKrw,
+    unrealizedReturn: (row) => row.unrealizedReturn,
+    targetGap: (row) => targetGap(row, targetsBySymbol[row.symbol]),
+    targetPnl: (row) => targetPnl(row, targetsBySymbol[row.symbol]),
     weight: (row) => row.weightInPortfolio,
   }), [filtered, personaLabels, sort, targetsBySymbol]);
   const rows = useMemo(() => pageRows(sorted, page, pageSize), [page, pageSize, sorted]);
@@ -50,7 +56,7 @@ export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Pr
         <div className="strategy-tabs" role="group" aria-label="전략 선택">
           {personas.map((item) => (
             <button type="button" key={item} aria-pressed={persona === item} className={persona === item ? 'active' : ''} onClick={() => { setPersona(item); setPage(0); }}>
-              {item === 'all' ? '전체 전략' : personaLabels[item] ?? item}
+              {personaLabels[item] ?? item}
             </button>
           ))}
         </div>
@@ -67,7 +73,7 @@ export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Pr
 
       <section className="panel">
         <h2>포트폴리오 비중 추이 · 100% 스택바</h2>
-        <p className="muted">월말마다 상위 8개 종목과 기타를 100%로 정규화해 전략별 보유 구조 변화를 보여줍니다.</p>
+        <p className="muted">선택한 전략의 월말 상위 8개 종목과 기타를 100%로 정규화해 보유 구조 변화를 보여줍니다.</p>
         <div className="stacked-history" aria-label="월말 포트폴리오 비중 추이">
           {stacks.map((stack) => (
             <div className="stack-row" key={stack.month}>
@@ -100,12 +106,20 @@ export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Pr
               <th><SortHeader label="심볼" sortKey="symbol" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="목표가" sortKey="target" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="수량" sortKey="qty" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="월말가" sortKey="monthClose" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="평단" sortKey="avgCost" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="평가액" sortKey="marketValue" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="미실현 손익" sortKey="unrealizedPnl" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="당시 수익률" sortKey="unrealizedReturn" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="목표까지" sortKey="targetGap" sort={sort} onSort={updateSort} /></th>
+              <th><SortHeader label="목표 달성 손익" sortKey="targetPnl" sort={sort} onSort={updateSort} /></th>
               <th><SortHeader label="비중" sortKey="weight" sort={sort} onSort={updateSort} /></th>
             </tr></thead>
             <tbody>
               {rows.map((row) => {
                 const target = targetsBySymbol[row.symbol];
+                const gap = targetGap(row, target);
+                const pnlToTarget = targetPnl(row, target);
                 return (
                 <tr key={`${row.persona}-${row.monthEnd}-${row.symbol}`}>
                   <td>{row.monthEnd}</td>
@@ -114,7 +128,13 @@ export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Pr
                   <td>{row.company || row.symbol}<div className="muted"><a href={`/reports/${row.symbol}`}>{row.symbol}</a></div></td>
                   <td>{formatKrw(target?.targetPriceKrw)}<div className="muted">{target?.publicationDate ?? '—'}</div></td>
                   <td>{row.qty?.toLocaleString('ko-KR') ?? '—'}</td>
+                  <td>{formatKrw(row.monthCloseKrw)}</td>
+                  <td>{formatKrw(row.avgCostKrw)}</td>
                   <td>{formatKrw(row.marketValueKrw)}</td>
+                  <td className={(row.unrealizedPnlKrw ?? 0) >= 0 ? 'good' : 'bad'}>{formatKrw(row.unrealizedPnlKrw)}</td>
+                  <td className={(row.unrealizedReturn ?? 0) >= 0 ? 'good' : 'bad'}>{formatPercent(row.unrealizedReturn)}</td>
+                  <td className={(gap ?? 0) >= 0 ? 'good' : 'bad'}>{formatPercent(gap)}</td>
+                  <td className={(pnlToTarget ?? 0) >= 0 ? 'good' : 'bad'}>{formatKrw(pnlToTarget)}</td>
                   <td>{formatPercent(row.weightInPortfolio)}</td>
                 </tr>
                 );
@@ -130,8 +150,8 @@ export function PortfolioHistory({ monthly, personaLabels, targetsBySymbol }: Pr
 function buildStacks(rows: MonthlyHoldingRow[], persona: string) {
   const groups = new Map<string, MonthlyHoldingRow[]>();
   for (const row of rows) {
-    if (persona !== 'all' && row.persona !== persona) continue;
-    const key = persona === 'all' ? `${row.monthEnd} · ${row.persona}` : row.monthEnd;
+    if (row.persona !== persona) continue;
+    const key = row.monthEnd;
     groups.set(key, [...(groups.get(key) ?? []), row]);
   }
   return [...groups.entries()].sort(([a], [b]) => b.localeCompare(a)).slice(0, 24).reverse().map(([month, group]) => {
@@ -145,10 +165,10 @@ function buildStacks(rows: MonthlyHoldingRow[], persona: string) {
 }
 
 function downloadMonthly(rows: MonthlyHoldingRow[], targetsBySymbol: Record<string, ReportTargetDigest>) {
-  const headers = ['month_end', 'persona', 'market_region', 'symbol', 'company', 'target_price_krw', 'target_publication_date', 'qty', 'market_value_krw', 'weight_in_portfolio'];
+  const headers = ['month_end', 'persona', 'market_region', 'symbol', 'company', 'target_price_krw', 'target_publication_date', 'qty', 'month_close_krw', 'avg_cost_krw', 'market_value_krw', 'unrealized_pnl_krw', 'unrealized_return', 'target_gap_from_month_close', 'target_pnl_at_hit_krw', 'weight_in_portfolio'];
   const csv = [headers.join(','), ...rows.map((row) => {
     const target = targetsBySymbol[row.symbol];
-    return [row.monthEnd, row.persona, target?.marketRegion ?? '', row.symbol, row.company, target?.targetPriceKrw ?? '', target?.publicationDate ?? '', row.qty ?? '', row.marketValueKrw ?? '', row.weightInPortfolio ?? ''].map(csvEscape).join(',');
+    return [row.monthEnd, row.persona, target?.marketRegion ?? '', row.symbol, row.company, target?.targetPriceKrw ?? '', target?.publicationDate ?? '', row.qty ?? '', row.monthCloseKrw ?? '', row.avgCostKrw ?? '', row.marketValueKrw ?? '', row.unrealizedPnlKrw ?? '', row.unrealizedReturn ?? '', targetGap(row, target) ?? '', targetPnl(row, target) ?? '', row.weightInPortfolio ?? ''].map(csvEscape).join(',');
   })].join('\n');
   const blob = new Blob([`\ufeff${csv}`], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -168,4 +188,14 @@ function csvEscape(value: unknown): string {
 
 function marketLabel(region: 'domestic' | 'overseas' | undefined): string {
   return region === 'domestic' ? '국내' : '해외';
+}
+
+function targetGap(row: MonthlyHoldingRow, target: ReportTargetDigest | undefined): number | null {
+  if (!target?.targetPriceKrw || !row.monthCloseKrw || row.monthCloseKrw <= 0) return null;
+  return target.targetPriceKrw / row.monthCloseKrw - 1;
+}
+
+function targetPnl(row: MonthlyHoldingRow, target: ReportTargetDigest | undefined): number | null {
+  if (!target?.targetPriceKrw || !row.qty || row.marketValueKrw === null) return null;
+  return target.targetPriceKrw * row.qty - row.marketValueKrw;
 }
