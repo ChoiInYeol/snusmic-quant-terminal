@@ -15,10 +15,17 @@ REQUIRED_ARTIFACTS = [
     "personas.json",
     "reports.json",
     "report-rankings.json",
+    "report-detail-metrics.json",
+    "return-windows.json",
+    "target-hit-distribution.json",
+    "insights.json",
     "current-holdings.json",
     "monthly-holdings.json",
     "missing-symbols.json",
     "data-quality.json",
+    "table-download-reports.csv",
+    "table-download-strategies.csv",
+    "data-quality-download.csv",
 ]
 
 
@@ -55,20 +62,29 @@ def export_web_artifacts(inputs: ExportInputs) -> dict[str, Any]:
 
     report_rows = _build_report_rows(reports, report_performance, extraction_quality, missing_symbols)
     overview = _build_overview(reports, prices, summary, report_stats, missing_symbols, report_rows)
-    rankings = _build_rankings(report_stats)
+    return_windows = _build_return_windows(report_rows, prices)
+    detail_metrics = _build_detail_metrics(report_rows, prices, return_windows)
+    target_distribution = _build_target_hit_distribution(report_rows)
+    rankings = _build_rankings(report_stats, report_rows)
     data_quality = _build_data_quality(extraction_quality, missing_symbols, reports, report_performance)
+    insights = _build_insights(overview, rankings, target_distribution, return_windows, data_quality)
 
     _write_json(out / "overview.json", overview)
     _write_json(out / "personas.json", _records(summary))
     _write_json(out / "reports.json", report_rows)
     _write_json(out / "report-rankings.json", rankings)
+    _write_json(out / "report-detail-metrics.json", detail_metrics)
+    _write_json(out / "return-windows.json", return_windows)
+    _write_json(out / "target-hit-distribution.json", target_distribution)
+    _write_json(out / "insights.json", insights)
     _write_json(out / "current-holdings.json", _records(current_holdings))
     _write_json(out / "monthly-holdings.json", _records(monthly_holdings))
     _write_json(out / "missing-symbols.json", [{"symbol": symbol} for symbol in missing_symbols])
     _write_json(out / "data-quality.json", data_quality)
+    _write_download_csvs(out, report_rows, data_quality)
     _write_price_artifacts(prices, report_symbols - set(missing_symbols), prices_out)
 
-    written = sorted(str(path.relative_to(out)) for path in out.rglob("*.json"))
+    written = sorted(str(path.relative_to(out)) for path in out.rglob("*") if path.suffix in {".json", ".csv"})
     return {
         "out": str(out),
         "artifact_count": len(written),
@@ -127,7 +143,11 @@ def _write_json(path: Path, data: Any) -> None:
 
 
 def _snapshot_json_bytes(root: Path) -> dict[str, bytes]:
-    return {str(path.relative_to(root)): path.read_bytes() for path in sorted(root.rglob("*.json"))}
+    return {
+        str(path.relative_to(root)): path.read_bytes()
+        for path in sorted(root.rglob("*"))
+        if path.suffix in {".json", ".csv"}
+    }
 
 
 def _records(df: pd.DataFrame) -> list[dict[str, Any]]:
