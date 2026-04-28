@@ -20662,11 +20662,11 @@
       "close": 10360.0,
       "close_krw": 10360.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 10490.0,
       "low": 10310.0,
       "open": 10350.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 22435.0
     }
   ],

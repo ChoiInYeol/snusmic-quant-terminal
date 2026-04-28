@@ -14931,11 +14931,11 @@
       "close": 75900.0,
       "close_krw": 75900.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 78700.0,
       "low": 75500.0,
       "open": 78700.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 61404.0
     }
   ],

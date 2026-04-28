@@ -8144,11 +8144,11 @@
       "close": 16270.0,
       "close_krw": 16270.0,
       "date": "2026-04-27",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 16450.0,
       "low": 16210.0,
       "open": 16380.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 26683.0
     }
   ],

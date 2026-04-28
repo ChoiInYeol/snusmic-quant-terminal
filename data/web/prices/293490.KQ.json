@@ -15118,11 +15118,11 @@
       "close": 12290.0,
       "close_krw": 12290.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 12490.0,
       "low": 12270.0,
       "open": 12420.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 206509.0
     }
   ],

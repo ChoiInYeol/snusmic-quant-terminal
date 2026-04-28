@@ -20791,14 +20791,14 @@
       "volume": 2831700.0
     },
     {
-      "close": 1268.5,
-      "close_krw": 1268.5,
+      "close": 11681.616035461426,
+      "close_krw": 107575.9978,
       "date": "2026-04-28",
-      "display_currency": "",
-      "high": 1273.5,
-      "low": 1248.5,
-      "open": 1266.5,
-      "source_currency": "",
+      "display_currency": "KRW",
+      "high": 11727.661033630371,
+      "low": 11497.436042785645,
+      "open": 11663.198036193848,
+      "source_currency": "JPY",
       "volume": 5598200.0
     }
   ],

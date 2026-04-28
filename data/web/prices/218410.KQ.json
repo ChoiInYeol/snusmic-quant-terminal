@@ -20805,22 +20805,22 @@
       "close": 93100.0,
       "close_krw": 93100.0,
       "date": "2026-04-27",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 103500.0,
       "low": 90300.0,
       "open": 100000.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 878536.0
     },
     {
       "close": 87800.0,
       "close_krw": 87800.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 94600.0,
       "low": 86500.0,
       "open": 94600.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 777249.0
     }
   ],

@@ -37,6 +37,7 @@ export default function Home() {
   const v1 = personas.find((row) => row.persona === 'smic_follower');
   const allWeather = personas.find((row) => row.persona === 'all_weather');
   const reportStats = buildReportStats(reports);
+  const latestReportCloseDate = latestCloseDate(reports);
   const realizedPnl = episodes
     .filter((row) => row.persona === DEFAULT_PERSONA && row.status === 'closed')
     .reduce((sum, row) => sum + (row.realizedPnlKrw ?? 0), 0);
@@ -105,6 +106,11 @@ export default function Home() {
       <section className="panel" style={{ marginBottom: '1rem' }}>
         <h2>누적 수익률 경로</h2>
         <p className="muted">SMIC Follower v2가 단순 all-weather 대비 어떤 경로와 낙폭으로 움직였는지 비교합니다.</p>
+        <div className="data-freshness-row">
+          <span>시뮬레이션 최신일 {latestEquityDate(equity) ?? '—'}</span>
+          <span>{defaultLabel} {formatPercent(latestReturn(returnSeries, DEFAULT_PERSONA))}</span>
+          <span>All-Weather {formatPercent(latestReturn(returnSeries, 'all_weather'))}</span>
+        </div>
         <CumulativeReturnChart series={returnSeries} />
       </section>
 
@@ -152,16 +158,30 @@ export default function Home() {
 
       <section className="grid dashboard-stats-grid">
         <Panel title="SMIC 리포트 성과 분포">
-          <p className="muted">평균만 보면 왜곡됩니다. 평균과 중앙값, 왜도, 꼬리를 함께 봅니다.</p>
+          <p className="muted">최신 가격 기준일 {latestReportCloseDate ?? '—'} · 검증 가능 리포트 {reportStats.count.toLocaleString('ko-KR')}건. 평균만 보면 왜곡되므로 중앙값, 왜도, 꼬리를 함께 봅니다.</p>
           <DistributionGrid stats={reportStats.distributions} />
         </Panel>
         <Panel title="현재 수익률 히스토그램">
           <Histogram bins={reportStats.currentReturnHistogram} />
-          <p className="muted">오른쪽 꼬리가 길수록 소수의 큰 승자가 평균을 끌어올립니다. 중앙값이 낮으면 재현 가능한 매매 방식인지 더 보수적으로 봐야 합니다.</p>
+          <p className="muted">최신 가격 기준일 {latestReportCloseDate ?? '—'} 기준입니다. 오른쪽 꼬리가 길수록 소수의 큰 승자가 평균을 끌어올립니다. 중앙값이 낮으면 재현 가능한 매매 방식인지 더 보수적으로 봐야 합니다.</p>
         </Panel>
       </section>
     </>
   );
+}
+
+
+function latestEquityDate(equity: ReturnType<typeof getEquityDaily>): string | null {
+  return equity.reduce<string | null>((latest, point) => point.date > (latest ?? '') ? point.date : latest, null);
+}
+
+function latestReturn(series: ReturnSeries[], id: string): number | null {
+  const points = series.find((item) => item.id === id)?.points ?? [];
+  return points.at(-1)?.value ?? null;
+}
+
+function latestCloseDate(reports: ReportRow[]): string | null {
+  return reports.reduce<string | null>((latest, report) => report.lastCloseDate && report.lastCloseDate > (latest ?? '') ? report.lastCloseDate : latest, null);
 }
 
 function PortfolioHeatmap({ holdings }: { holdings: HoldingRow[] }) {
@@ -361,7 +381,7 @@ function histogram(values: number[], edges: number[]): HistogramBin[] {
   return edges.slice(0, -1).map((start, index) => {
     const end = edges[index + 1];
     const count = values.filter((value) => value >= start && value < end).length;
-    return { label: `${formatHistogramEdge(start)}~${formatHistogramEdge(end)}`, count, start, end };
+    return { label: formatHistogramLabel(start, end), count, start, end };
   });
 }
 
@@ -375,7 +395,7 @@ function autoHistogram(values: number[], targetBins: number): HistogramBin[] {
     const start = min + step * index;
     const end = index === targetBins - 1 ? max + Number.EPSILON : start + step;
     const count = values.filter((value) => value >= start && value < end).length;
-    return { label: `${formatHistogramEdge(start)}~${formatHistogramEdge(end)}`, count, start, end };
+    return { label: formatHistogramLabel(start, end), count, start, end };
   });
 }
 
@@ -539,4 +559,10 @@ function formatNumber(value: number | null, digits: number) {
 function formatHistogramEdge(value: number) {
   if (value === Number.POSITIVE_INFINITY) return '∞';
   return `${Math.round(value * 100)}%`;
+}
+
+function formatHistogramLabel(start: number, end: number) {
+  if (start <= -1) return `≤${formatHistogramEdge(end)}`;
+  if (end === Number.POSITIVE_INFINITY) return `≥${formatHistogramEdge(start)}`;
+  return `${formatHistogramEdge(start)}~${formatHistogramEdge(end)}`;
 }

@@ -20816,11 +20816,11 @@
       "close": 46600.0,
       "close_krw": 46600.0,
       "date": "2026-04-27",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 47650.0,
       "low": 45150.0,
       "open": 47400.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 433564.0
     }
   ],

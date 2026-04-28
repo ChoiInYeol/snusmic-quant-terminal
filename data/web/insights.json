@@ -1,18 +1,18 @@
 [
   {
     "id": "target-hit-rate",
-    "metric": 0.532407,
+    "metric": 0.523148,
     "related_report_ids": [],
-    "sentence": "가격 매칭 리포트 기준 목표가 도달률은 0.532407입니다.",
+    "sentence": "가격 매칭 리포트 기준 목표가 도달률은 0.523148입니다.",
     "title": "목표가 도달률"
   },
   {
     "id": "average-days-to-target",
-    "metric": 367.46,
+    "metric": 356.69,
     "related_report_ids": [
       "bb032f63980dd892"
     ],
-    "sentence": "목표가에 도달한 리포트의 평균 소요 기간은 367.46일입니다.",
+    "sentence": "목표가에 도달한 리포트의 평균 소요 기간은 356.69일입니다.",
     "title": "목표가 도달 속도"
   },
   {
@@ -33,11 +33,11 @@
   },
   {
     "id": "worst-current-return",
-    "metric": -1.0,
+    "metric": -0.95,
     "related_report_ids": [
-      "02f44f98e36b5ee9"
+      "cefde513c9366947"
     ],
-    "sentence": "현재 수익률 최하위 리포트는 Gaztransport&technigaz (GTT.PA)입니다.",
+    "sentence": "현재 수익률 최하위 리포트는 Chegg (CHGG)입니다.",
     "title": "하방 리스크 리포트"
   },
   {

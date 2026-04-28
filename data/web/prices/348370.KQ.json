@@ -12038,11 +12038,11 @@
       "close": 47600.0,
       "close_krw": 47600.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 50200.0,
       "low": 46950.0,
       "open": 49600.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 375008.0
     }
   ],

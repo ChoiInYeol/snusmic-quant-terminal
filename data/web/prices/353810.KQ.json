@@ -15723,22 +15723,22 @@
       "close": 7980.0,
       "close_krw": 7980.0,
       "date": "2026-04-27",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 8240.0,
       "low": 7930.0,
       "open": 7990.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 223244.0
     },
     {
       "close": 7910.0,
       "close_krw": 7910.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 8000.0,
       "low": 7770.0,
       "open": 8000.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 145766.0
     }
   ],

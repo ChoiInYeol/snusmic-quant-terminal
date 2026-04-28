@@ -279,32 +279,34 @@ def apply_daily_price_krw_conversion(
     frames = []
     for symbol, group in prices.copy().groupby(prices["symbol"].astype(str), sort=False):
         group = group.copy()
-        if (
-            "display_currency" in group.columns
-            and group["display_currency"].dropna().astype(str).str.upper().eq("KRW").all()
-            and group["display_currency"].notna().any()
-        ):
-            frames.append(group)
-            continue
         exchange = str(symbol_meta.get(symbol, {}).get("exchange", ""))
         source_currency = currency_for_symbol(symbol, exchange)
+        converted_mask = (
+            group.get("display_currency", pd.Series(index=group.index, dtype=object))
+            .astype(str)
+            .str.upper()
+            .eq("KRW")
+            & pd.to_numeric(group.get("krw_per_unit", pd.Series(index=group.index, dtype=object)), errors="coerce").notna()
+        )
+        needs_conversion = ~converted_mask
         group["source_currency"] = source_currency
         group["display_currency"] = "KRW" if source_currency else ""
         if normalize_currency(source_currency) == "KRW":
-            group["krw_per_unit"] = 1.0
+            group.loc[needs_conversion, "krw_per_unit"] = 1.0
             frames.append(group)
             continue
         rates = attach_krw_rate(group[["date"]].copy(), source_currency, fx_rates)
         if rates["krw_per_unit"].isna().all():
-            group["display_currency"] = source_currency
-            group["krw_per_unit"] = pd.NA
+            group.loc[needs_conversion, "display_currency"] = source_currency
+            group.loc[needs_conversion, "krw_per_unit"] = pd.NA
             frames.append(group)
             continue
         rate = pd.to_numeric(rates["krw_per_unit"], errors="coerce").to_numpy(dtype=float)
         for column in ["open", "high", "low", "close"]:
             if column in group:
-                group[column] = pd.to_numeric(group[column], errors="coerce") * rate
-        group["krw_per_unit"] = rate
+                numeric = pd.to_numeric(group[column], errors="coerce")
+                group.loc[needs_conversion, column] = numeric.loc[needs_conversion] * rate[needs_conversion.to_numpy()]
+        group.loc[needs_conversion, "krw_per_unit"] = rate[needs_conversion.to_numpy()]
         frames.append(group)
     return pd.concat(frames, ignore_index=True) if frames else prices
 

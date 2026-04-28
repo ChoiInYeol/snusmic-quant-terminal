@@ -7231,11 +7231,11 @@
       "close": 81600.0,
       "close_krw": 81600.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 84000.0,
       "low": 76400.0,
       "open": 81300.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 1200741.0
     }
   ],

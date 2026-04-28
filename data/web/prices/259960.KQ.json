@@ -12632,11 +12632,11 @@
       "close": 276000.0,
       "close_krw": 276000.0,
       "date": "2026-04-27",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 282500.0,
       "low": 273000.0,
       "open": 279000.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 145742.0
     }
   ],

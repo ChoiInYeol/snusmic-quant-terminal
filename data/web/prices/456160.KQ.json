@@ -1852,22 +1852,22 @@
       "close": 81800.0,
       "close_krw": 81800.0,
       "date": "2026-04-27",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 83200.0,
       "low": 80800.0,
       "open": 82400.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 253037.0
     },
     {
       "close": 79000.0,
       "close_krw": 79000.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 81000.0,
       "low": 77300.0,
       "open": 79800.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 208811.0
     }
   ],

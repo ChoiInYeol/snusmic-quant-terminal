@@ -12566,11 +12566,11 @@
       "close": 33750.0,
       "close_krw": 33750.0,
       "date": "2026-04-27",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 34150.0,
       "low": 33550.0,
       "open": 34150.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 27602.0
     }
   ],

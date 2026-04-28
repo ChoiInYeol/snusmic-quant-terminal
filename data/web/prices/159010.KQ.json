@@ -12236,11 +12236,11 @@
       "close": 10410.0,
       "close_krw": 10410.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 11160.0,
       "low": 10410.0,
       "open": 11040.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 153405.0
     }
   ],

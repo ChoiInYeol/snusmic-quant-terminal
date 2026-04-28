@@ -7825,11 +7825,11 @@
       "close": 105300.0,
       "close_krw": 105300.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 110900.0,
       "low": 99600.0,
       "open": 103000.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 157587.0
     }
   ],

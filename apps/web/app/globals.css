@@ -529,6 +529,21 @@ select:focus-visible {
 }
 .dashboard-main-panel { min-height: 520px; }
 .panel-caption { color: var(--muted); font-size: .82rem; margin-bottom: .75rem; }
+.data-freshness-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .45rem;
+  margin: .65rem 0 .75rem;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .74rem;
+}
+.data-freshness-row span {
+  padding: .28rem .52rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255,255,255,.035);
+}
 .portfolio-heatmap {
   position: relative;
   min-height: 450px;

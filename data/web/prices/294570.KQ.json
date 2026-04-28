@@ -13402,22 +13402,22 @@
       "close": 31300.0,
       "close_krw": 31300.0,
       "date": "2026-04-27",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 31850.0,
       "low": 31150.0,
       "open": 31700.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 34751.0
     },
     {
       "close": 30450.0,
       "close_krw": 30450.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 31050.0,
       "low": 29000.0,
       "open": 30950.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 30968.0
     }
   ],

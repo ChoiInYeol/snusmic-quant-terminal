@@ -20167,11 +20167,11 @@
       "close": 4260.0,
       "close_krw": 4260.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 4330.0,
       "low": 4260.0,
       "open": 4325.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 31008.0
     }
   ],

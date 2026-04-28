@@ -10146,22 +10146,22 @@
       "close": 54800.0,
       "close_krw": 54800.0,
       "date": "2026-04-27",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 57400.0,
       "low": 54100.0,
       "open": 54800.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 4303590.0
     },
     {
       "close": 53700.0,
       "close_krw": 53700.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 54900.0,
       "low": 52100.0,
       "open": 54900.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 2575107.0
     }
   ],

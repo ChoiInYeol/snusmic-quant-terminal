@@ -18187,11 +18187,11 @@
       "close": 4880.0,
       "close_krw": 4880.0,
       "date": "2026-04-28",
-      "display_currency": "",
+      "display_currency": "KRW",
       "high": 4990.0,
       "low": 4835.0,
       "open": 4965.0,
-      "source_currency": "",
+      "source_currency": "KRW",
       "volume": 150893.0
     }
   ],
