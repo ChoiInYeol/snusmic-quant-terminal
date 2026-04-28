@@ -253,7 +253,7 @@ def _build_overview(
     missing_symbols: list[str],
     report_rows: list[dict[str, Any]],
 ) -> dict[str, Any]:
-    dates = [row.get("date") for row in report_rows if row.get("date")]
+    dates = [str(row["date"]) for row in report_rows if row.get("date")]
     price_dates = prices["date"].tolist() if "date" in prices else []
     return {
         "generated_from": {
