@@ -501,3 +501,133 @@ select:focus-visible {
 .compact-table table { font-size: .86rem; }
 .compact-table th,
 .compact-table td { padding: .62rem .7rem; }
+
+.dashboard-hero-grid {
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, .75fr);
+}
+.dashboard-main-panel { min-height: 520px; }
+.panel-caption { color: var(--muted); font-size: .82rem; margin-bottom: .75rem; }
+.portfolio-heatmap {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: stretch;
+  gap: .45rem;
+  min-height: 430px;
+}
+.heatmap-cell {
+  min-width: 9.5rem;
+  min-height: 7.2rem;
+  display: grid;
+  align-content: space-between;
+  gap: .2rem;
+  padding: .72rem;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 15px;
+  color: var(--ink);
+  text-decoration: none;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 12px 30px rgba(0,0,0,.18);
+  overflow: hidden;
+  transition: transform .16s ease, border-color .16s ease, filter .16s ease;
+}
+.heatmap-cell:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,.34);
+  filter: saturate(1.15) brightness(1.05);
+}
+.heatmap-cell strong { font-size: .9rem; line-height: 1.1; letter-spacing: -.03em; }
+.heatmap-cell span { color: rgba(238,243,234,.72); font-family: var(--mono); font-size: .72rem; }
+.heatmap-cell em { font-style: normal; font-size: .78rem; color: rgba(238,243,234,.84); }
+.heatmap-cell b { font-size: 1rem; }
+.heatmap-legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: .35rem;
+  margin-top: .75rem;
+  font-family: var(--mono);
+  font-size: .72rem;
+  color: var(--muted);
+}
+.heatmap-legend span {
+  padding: .36rem .55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  text-align: center;
+}
+.legend-bad { background: rgba(255,111,145,.18); }
+.legend-neutral { background: rgba(203,213,225,.10); }
+.legend-good { background: rgba(103,232,165,.18); }
+.strategy-verdict {
+  display: inline-flex;
+  margin: .25rem 0 .65rem;
+  padding: .45rem .65rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  font-weight: 900;
+}
+.strategy-verdict.good { color: var(--good); background: rgba(103,232,165,.10); }
+.strategy-verdict.warn { color: var(--warn); background: rgba(255,209,102,.10); }
+.strategy-verdict.bad { color: var(--bad); background: rgba(255,111,145,.10); }
+.strategy-score-list { display: grid; gap: .55rem; margin: .85rem 0; }
+.strategy-score-row {
+  display: grid;
+  grid-template-columns: minmax(150px, 1fr) repeat(3, max-content);
+  gap: .65rem;
+  align-items: center;
+  padding: .62rem .7rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: rgba(255,255,255,.035);
+  font-size: .78rem;
+  font-variant-numeric: tabular-nums;
+}
+.dashboard-stats-grid { grid-template-columns: minmax(0, 1.25fr) minmax(360px, .75fr); }
+.distribution-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: .65rem;
+  margin-top: .75rem;
+}
+.distribution-card {
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: .72rem;
+  background: rgba(0,0,0,.16);
+  color: var(--muted);
+  font-size: .8rem;
+  line-height: 1.5;
+}
+.distribution-main {
+  margin: .35rem 0;
+  color: var(--ink);
+  font-size: 1.02rem;
+  font-weight: 950;
+  letter-spacing: -.03em;
+}
+.histogram { display: grid; gap: .52rem; margin: .75rem 0 1rem; }
+.histogram-row {
+  display: grid;
+  grid-template-columns: 86px minmax(100px, 1fr) 36px;
+  gap: .55rem;
+  align-items: center;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .74rem;
+}
+.histogram-track {
+  height: .72rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255,255,255,.07);
+}
+.histogram-track div {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--bad), var(--warn), var(--good));
+}
+.histogram-row strong { color: var(--ink); text-align: right; }
+
+@media (max-width: 980px) {
+  .dashboard-hero-grid,
+  .dashboard-stats-grid { grid-template-columns: 1fr; }
+  .strategy-score-row { grid-template-columns: 1fr 1fr; }
+}
