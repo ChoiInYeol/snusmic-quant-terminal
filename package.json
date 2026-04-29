@@ -3,5 +3,6 @@
   "scripts": {
     "vercel-build": "scripts/vercel_build.sh",
     "build": "scripts/vercel_build.sh"
-  }
+  },
+  "packageManager": "pnpm@10.33.2"
 }

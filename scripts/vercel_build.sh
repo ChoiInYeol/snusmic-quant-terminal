@@ -16,8 +16,8 @@ corepack enable
 corepack prepare pnpm@10.33.2 --activate
 (
   cd apps/web
-  pnpm install --frozen-lockfile
-  pnpm build
+  corepack pnpm install --frozen-lockfile
+  corepack pnpm build
 )
 
 rm -rf public
