@@ -8,6 +8,9 @@ on:
       - "data/sim/**"
       - "data/warehouse/**"
       - "scripts/refresh_web_artifacts.sh"
+      - "package.json"
+      - "vercel.json"
+      - "scripts/vercel_build.sh"
       - ".github/workflows/web.yml"
   push:
     branches: [main]
@@ -17,6 +20,9 @@ on:
       - "data/sim/**"
       - "data/warehouse/**"
       - "scripts/refresh_web_artifacts.sh"
+      - "package.json"
+      - "vercel.json"
+      - "scripts/vercel_build.sh"
       - ".github/workflows/web.yml"
   workflow_dispatch:
 
