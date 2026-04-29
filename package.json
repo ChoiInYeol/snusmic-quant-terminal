@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "vercel-build": "scripts/vercel_build.sh",
+    "build": "scripts/vercel_build.sh"
+  }
+}
