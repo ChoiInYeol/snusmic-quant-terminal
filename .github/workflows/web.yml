@@ -1,0 +1,137 @@
+name: web
+
+on:
+  pull_request:
+    paths:
+      - "apps/web/**"
+      - "data/web/**"
+      - "data/sim/**"
+      - "data/warehouse/**"
+      - "scripts/refresh_web_artifacts.sh"
+      - ".github/workflows/web.yml"
+  push:
+    branches: [main]
+    paths:
+      - "apps/web/**"
+      - "data/web/**"
+      - "data/sim/**"
+      - "data/warehouse/**"
+      - "scripts/refresh_web_artifacts.sh"
+      - ".github/workflows/web.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: web-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install Python dependencies
+        run: uv sync --group dev
+
+      - name: Refresh web data artifacts
+        run: scripts/refresh_web_artifacts.sh
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Enable pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.2 --activate
+
+      - name: Install web dependencies
+        working-directory: apps/web
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint web app
+        working-directory: apps/web
+        run: pnpm lint
+
+      - name: Type-check web app
+        working-directory: apps/web
+        run: pnpm typecheck
+
+      - name: Build static web app
+        working-directory: apps/web
+        run: pnpm build
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Check Vercel configuration
+        id: vercel
+        run: |
+          if [ -z "${VERCEL_TOKEN}" ] || [ -z "${VERCEL_ORG_ID}" ] || [ -z "${VERCEL_PROJECT_ID}" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Skipping Vercel deploy; configure VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID repository secrets to enable push-to-prod deployment."
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Check out repository
+        if: steps.vercel.outputs.configured == 'true'
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        if: steps.vercel.outputs.configured == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up uv
+        if: steps.vercel.outputs.configured == 'true'
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install Python dependencies
+        if: steps.vercel.outputs.configured == 'true'
+        run: uv sync --group dev
+
+      - name: Refresh web data artifacts
+        if: steps.vercel.outputs.configured == 'true'
+        run: scripts/refresh_web_artifacts.sh
+
+      - name: Set up Node.js
+        if: steps.vercel.outputs.configured == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Enable pnpm
+        if: steps.vercel.outputs.configured == 'true'
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.33.2 --activate
+
+      - name: Deploy prebuilt app to Vercel production
+        if: steps.vercel.outputs.configured == 'true'
+        working-directory: apps/web
+        run: |
+          npm install --global vercel@latest
+          vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          vercel build --prod --token="$VERCEL_TOKEN"
+          vercel deploy --prebuilt --prod --token="$VERCEL_TOKEN"

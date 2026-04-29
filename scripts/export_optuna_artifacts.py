@@ -14,8 +14,15 @@ from snusmic_pipeline.strategy_search.export import export_strategy_artifacts  #
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--study-db", type=Path, default=ROOT / "data" / "optuna" / "studies" / "smic_follower_v1.db", help="Accepted for plan-compatible CLI; trials CSV is the artifact source in the fallback path.")
-    parser.add_argument("--trials-csv", type=Path, default=ROOT / "data" / "optuna" / "exports" / "trials.csv")
+    parser.add_argument(
+        "--study-db",
+        type=Path,
+        default=ROOT / "data" / "optuna" / "studies" / "smic_follower_v1.db",
+        help="Accepted for plan-compatible CLI; trials CSV is the artifact source in the fallback path.",
+    )
+    parser.add_argument(
+        "--trials-csv", type=Path, default=ROOT / "data" / "optuna" / "exports" / "trials.csv"
+    )
     parser.add_argument("--study", default="smic-follower-v1")
     parser.add_argument("--out", type=Path, default=ROOT / "data" / "web")
     parser.add_argument("--top", type=int, default=20)

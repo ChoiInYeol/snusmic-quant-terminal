@@ -21,8 +21,8 @@ def test_export_web_artifacts_matches_baseline_counts(tmp_path: Path) -> None:
     assert overview["report_counts"] == {
         "extracted_reports": 216,
         "missing_price_symbols": 5,
-        "price_matched_reports": 206,
-        "report_stat_rows": 211,
+        "price_matched_reports": 211,
+        "report_stat_rows": 216,
         "web_report_rows": 216,
     }
     assert result["missing_symbols"] == ["003410.KS", "010620.KS", "287410.KQ", "NETI", "VTNR"]

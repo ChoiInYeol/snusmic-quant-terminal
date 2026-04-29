@@ -286,7 +286,9 @@ def apply_daily_price_krw_conversion(
             .astype(str)
             .str.upper()
             .eq("KRW")
-            & pd.to_numeric(group.get("krw_per_unit", pd.Series(index=group.index, dtype=object)), errors="coerce").notna()
+            & pd.to_numeric(
+                group.get("krw_per_unit", pd.Series(index=group.index, dtype=object)), errors="coerce"
+            ).notna()
         )
         needs_conversion = ~converted_mask
         group["source_currency"] = source_currency
@@ -305,7 +307,9 @@ def apply_daily_price_krw_conversion(
         for column in ["open", "high", "low", "close"]:
             if column in group:
                 numeric = pd.to_numeric(group[column], errors="coerce")
-                group.loc[needs_conversion, column] = numeric.loc[needs_conversion] * rate[needs_conversion.to_numpy()]
+                group.loc[needs_conversion, column] = (
+                    numeric.loc[needs_conversion] * rate[needs_conversion.to_numpy()]
+                )
         group.loc[needs_conversion, "krw_per_unit"] = rate[needs_conversion.to_numpy()]
         frames.append(group)
     return pd.concat(frames, ignore_index=True) if frames else prices

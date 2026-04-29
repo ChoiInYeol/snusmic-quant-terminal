@@ -7,9 +7,9 @@
 # (Generate payload.json by converting this yaml — a helper script will land
 #  alongside the settings bot when it is installed.)
 #
-# Required checks are intentionally limited to the surviving Python/data CI jobs.
-# Frontend/deployment and temporary phase-gate checks were removed when the
-# repository became server-simulation first.
+# Required checks cover the Python/data CI lane plus the static Next.js web
+# build. Deployment itself is intentionally not a required check because it
+# depends on repository Vercel secrets and only runs on pushes to main.
 
 branches:
   - name: main
@@ -26,6 +26,7 @@ branches:
           - ci / test
           - ci / schema-drift
           - ci / schema-compat
+          - web / build
       enforce_admins: true
       required_linear_history: true
       allow_force_pushes: false

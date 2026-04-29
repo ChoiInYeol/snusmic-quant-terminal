@@ -222,7 +222,6 @@ def test_split_scaled_report_target_is_aligned_to_market_price_units(tmp_path: P
     assert any(trade.reason == "target_hit" for trade in result.trades)
 
 
-
 def test_current_price_scale_mismatch_does_not_expand_plausible_target(tmp_path: Path):
     warehouse = tmp_path / "wh"
     warehouse.mkdir()
@@ -427,6 +426,7 @@ def test_downside_target_is_hit_when_close_falls_to_bearish_target(tmp_path: Pat
     assert perf.target_hit_date == date(2024, 1, 3)
     assert perf.target_gap_pct == pytest.approx(80.0 / 75.0 - 1.0)
     assert not result.trades
+
 
 def test_krw_price_conversion_is_idempotent_for_cached_rows():
     prices = pd.DataFrame(

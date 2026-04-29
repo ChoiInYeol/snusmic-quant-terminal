@@ -9,7 +9,9 @@ from typing import Any, cast
 import pandas as pd
 
 
-def export_strategy_artifacts(trials_csv: Path, out_dir: Path, *, study_name: str = "smic-follower-v1", top_n: int = 20) -> dict[str, Path]:
+def export_strategy_artifacts(
+    trials_csv: Path, out_dir: Path, *, study_name: str = "smic-follower-v1", top_n: int = 20
+) -> dict[str, Path]:
     """Write strategy-runs, trial rows, and simple parameter importance JSON."""
     if not trials_csv.exists():
         raise FileNotFoundError(f"Missing trials CSV: {trials_csv}")
@@ -25,7 +27,10 @@ def export_strategy_artifacts(trials_csv: Path, out_dir: Path, *, study_name: st
         "scope": "in-sample",
         "disclaimer": "Local-only research artifact. Optuna/random search is not run by the web app.",
         "best_run_id": _run_id(study_name, int(best["trial_number"])),
-        "runs": [_strategy_run(study_name, cast(dict[str, Any], row)) for row in trials.head(top_n).to_dict("records")],
+        "runs": [
+            _strategy_run(study_name, cast(dict[str, Any], row))
+            for row in trials.head(top_n).to_dict("records")
+        ],
     }
     importance = {
         "schema_version": 1,
@@ -39,7 +44,14 @@ def export_strategy_artifacts(trials_csv: Path, out_dir: Path, *, study_name: st
         "parameter_importance": out_dir / "parameter-importance.json",
     }
     _write_json(paths["strategy_runs"], strategy_runs)
-    _write_json(paths["optuna_trials"], {"schema_version": 1, "study_name": study_name, "trials": [_json_safe(row) for row in trials.to_dict("records")]})
+    _write_json(
+        paths["optuna_trials"],
+        {
+            "schema_version": 1,
+            "study_name": study_name,
+            "trials": [_json_safe(row) for row in trials.to_dict("records")],
+        },
+    )
     _write_json(paths["parameter_importance"], importance)
     return paths
 
@@ -77,7 +89,11 @@ def _parameter_importance(trials: pd.DataFrame) -> list[dict[str, Any]]:
         if column not in trials.columns:
             continue
         series = trials[column]
-        encoded = series.astype("category").cat.codes if series.dtype == object else pd.to_numeric(series, errors="coerce")
+        encoded = (
+            series.astype("category").cat.codes
+            if series.dtype == object
+            else pd.to_numeric(series, errors="coerce")
+        )
         corr = encoded.corr(score) if encoded.nunique(dropna=True) > 1 else 0.0
         out.append({"parameter": column, "importance": 0.0 if pd.isna(corr) else abs(float(corr))})
     return sorted(out, key=lambda item: item["importance"], reverse=True)
@@ -107,12 +123,35 @@ def _param_json_safe(value: Any) -> Any:
 
 
 _PARAMETER_COLUMNS = [
-    "target_hit_multiplier", "min_target_upside_at_pub", "max_target_upside_at_pub", "max_report_age_days",
-    "time_loss_days", "stop_loss_pct", "take_profit_pct", "rebalance", "max_positions", "weighting", "universe",
-    "exclude_missing_confidence_rows", "require_publication_price",
+    "target_hit_multiplier",
+    "min_target_upside_at_pub",
+    "max_target_upside_at_pub",
+    "max_report_age_days",
+    "time_loss_days",
+    "stop_loss_pct",
+    "take_profit_pct",
+    "rebalance",
+    "max_positions",
+    "weighting",
+    "universe",
+    "exclude_missing_confidence_rows",
+    "require_publication_price",
 ]
 _METRIC_COLUMNS = [
-    "score", "final_equity_krw", "net_profit_krw", "money_weighted_return", "cagr", "max_drawdown",
-    "trade_count", "turnover", "average_holding_days", "win_rate", "hit_rate", "max_single_position_weight",
-    "open_positions", "excess_return_vs_smic_follower", "excess_return_vs_smic_follower_v2", "excess_return_vs_all_weather",
+    "score",
+    "final_equity_krw",
+    "net_profit_krw",
+    "money_weighted_return",
+    "cagr",
+    "max_drawdown",
+    "trade_count",
+    "turnover",
+    "average_holding_days",
+    "win_rate",
+    "hit_rate",
+    "max_single_position_weight",
+    "open_positions",
+    "excess_return_vs_smic_follower",
+    "excess_return_vs_smic_follower_v2",
+    "excess_return_vs_all_weather",
 ]

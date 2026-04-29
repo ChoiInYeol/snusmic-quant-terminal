@@ -84,7 +84,9 @@ def export_web_artifacts(inputs: ExportInputs) -> dict[str, Any]:
     _write_download_csvs(out, report_rows, data_quality)
     _write_price_artifacts(prices, report_symbols - set(missing_symbols), prices_out)
 
-    written = sorted(str(path.relative_to(out)) for path in out.rglob("*") if path.suffix in {".json", ".csv"})
+    written = sorted(
+        str(path.relative_to(out)) for path in out.rglob("*") if path.suffix in {".json", ".csv"}
+    )
     return {
         "out": str(out),
         "artifact_count": len(written),
@@ -218,7 +220,9 @@ def _build_report_rows(
         caveats.extend(review_reasons.get(report_id, []))
         raw_target_price_krw = _number(row.get("target_price_krw"))
         perf_target_price_krw = _number(perf.get("target_price_krw"))
-        target_price_krw = perf_target_price_krw if perf_target_price_krw is not None else raw_target_price_krw
+        target_price_krw = (
+            perf_target_price_krw if perf_target_price_krw is not None else raw_target_price_krw
+        )
         raw_target_price = _number(row.get("target_price"))
         target_price = target_price_krw if target_price_krw is not None else raw_target_price
         if (
@@ -380,7 +384,9 @@ def _build_return_windows(
     priced["close_krw"] = priced.apply(
         lambda row: (_number(row.get("close")) or 0) * (_number(row.get("krw_per_unit")) or 1.0), axis=1
     )
-    by_symbol = {str(symbol): group.sort_values("date") for symbol, group in priced.groupby("symbol", sort=True)}
+    by_symbol = {
+        str(symbol): group.sort_values("date") for symbol, group in priced.groupby("symbol", sort=True)
+    }
     results: list[dict[str, Any]] = []
     for report in sorted(report_rows, key=lambda row: str(row.get("report_id"))):
         symbol = str(report.get("symbol") or "")
@@ -435,7 +441,9 @@ def _build_detail_metrics(
     priced["close_krw"] = priced.apply(
         lambda row: (_number(row.get("close")) or 0) * (_number(row.get("krw_per_unit")) or 1.0), axis=1
     )
-    by_symbol = {str(symbol): group.sort_values("date") for symbol, group in priced.groupby("symbol", sort=True)}
+    by_symbol = {
+        str(symbol): group.sort_values("date") for symbol, group in priced.groupby("symbol", sort=True)
+    }
     details: dict[str, dict[str, Any]] = {}
     for report in sorted(report_rows, key=lambda row: str(row.get("report_id"))):
         report_id = str(report["report_id"])
@@ -449,7 +457,12 @@ def _build_detail_metrics(
         entry_price = _number(report.get("entry_price_krw")) or _number(report.get("publication_price_krw"))
         target_price = _number(report.get("target_price_krw"))
         markers = [
-            {"date": report.get("date"), "type": "publication", "label": "리포트 발간", "price_krw": entry_price}
+            {
+                "date": report.get("date"),
+                "type": "publication",
+                "label": "리포트 발간",
+                "price_krw": entry_price,
+            }
         ]
         peak = trough = None
         if not after_publication.empty:
@@ -481,7 +494,9 @@ def _build_detail_metrics(
             "target_hit": _bool(report.get("target_hit")),
             "days_to_target": _number(report.get("days_to_target")),
             "return_windows": windows_by_id.get(report_id, {}),
-            "markers": sorted([marker for marker in markers if marker.get("date")], key=lambda marker: str(marker["date"])),
+            "markers": sorted(
+                [marker for marker in markers if marker.get("date")], key=lambda marker: str(marker["date"])
+            ),
             "price_extremes": {"peak": peak, "trough": trough},
         }
     return details
@@ -517,7 +532,9 @@ def _build_target_hit_distribution(report_rows: list[dict[str, Any]]) -> dict[st
         ("181-365일", 181, 365),
         ("365일+", 366, None),
     ]
-    hit_rows = [row for row in report_rows if row.get("target_hit") and _number(row.get("days_to_target")) is not None]
+    hit_rows = [
+        row for row in report_rows if row.get("target_hit") and _number(row.get("days_to_target")) is not None
+    ]
     day_buckets = []
     for label, lower, upper in bins:
         count = sum(
@@ -545,7 +562,11 @@ def _build_target_hit_distribution(report_rows: list[dict[str, Any]]) -> dict[st
             and (upper is None or upside < upper)
         ]
         hit_count = sum(1 for row in bucket_rows if row.get("target_hit"))
-        returns = [_number(row.get("current_return")) for row in bucket_rows if _number(row.get("current_return")) is not None]
+        returns = [
+            _number(row.get("current_return"))
+            for row in bucket_rows
+            if _number(row.get("current_return")) is not None
+        ]
         upside_buckets.append(
             {
                 "bucket": label,
