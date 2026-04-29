@@ -29,3 +29,4 @@ data/web/strategy-runs.json
 data/web/optuna-trials.json
 data/web/parameter-importance.json
 public/
+.vercel/
